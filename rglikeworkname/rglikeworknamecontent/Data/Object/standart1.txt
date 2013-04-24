@@ -1,0 +1,51 @@
+~Block,0,0
+name="???"
+mmcol="black"
+walkable
+transparent
+
+~Block,1,1
+name="Кирпичная кладка"
+mmcol="brown"
+
+~StorageBlock,2,2
+name="Шкаф"
+mmcol="yellow"
+actionopencontainer
+
+~Block,3,3
+name="Деревянная дверь (закрыта)"
+mmcol="white"
+actionopenclose
+afterid=7
+
+~Block,4,4
+name="Металлическая дверь (закрыта)"
+mmcol="white"
+actionopenclose
+afterid=8
+
+~Block,5,5
+name="Металлическая дверь (закрыта)"
+mmcol="white"
+actionopenclose
+
+~Block,6,6
+name="Деревянная дверь (закрыта)"
+mmcol="white"
+
+~Block,7,7
+name="Деревянная дверь (открыта)"
+mmcol="white"
+actionopenclose
+afterid=3
+walkable
+transparent
+
+~Block,8,8
+name="Металлическая дверь (открыта)"
+mmcol="white"
+actionopenclose
+afterid=4
+walkable
+transparent

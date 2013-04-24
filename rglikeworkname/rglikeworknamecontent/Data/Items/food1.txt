@@ -1,0 +1,9 @@
+~0,0
+name="black item"
+
+~1,2
+name="Кола"
+nameret="Банка"
+nuth2o=500
+weight=500
+nutcarb=52
