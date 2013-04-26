@@ -15,12 +15,14 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly Collection<Texture2D> atlas_, flatlas_;
         public Block[] blocks_;
         public Floor[] floor_;
-        private readonly List<Street> streets_ = new List<Street>();
+        private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
         private readonly SpriteBatch spriteBatch_;
         private readonly BlockDataBase blockDataBase;
         private readonly FloorDataBase floorDataBase;
         private readonly SchemesDataBase schemesBase;
         private Random rnd = new Random();
+
+        private Texture2D minimap;
 
         public List<StorageBlock> GetStorageBlocks() {
             List<StorageBlock> temp = new List<StorageBlock>();
@@ -73,17 +75,18 @@ namespace rglikeworknamelib.Dungeon.Level {
             floorDataBase = fdb_;
             schemesBase = sdb_;
 
+            minimap = new Texture2D(spriteBatch.GraphicsDevice, rx, ry);
+
             int i = rx * ry;
             while (i-- != 0) {
                 floor_[i] = new Floor();
                 blocks_[i] = new Block();
             }
 
-            MapGenerators.FillTest1(ref blocks_, ref floor_, rx, ry, 1);
-            MapGenerators.GenerateStreets(ref streets_, rx, ry, 100, 30, 2, 3);
-            MapGenerators.FillStreets(streets_, ref floor_, rx, ry);
+            //MapGenerators.GenerateStreets(ref streets_, rx, ry, 100, 30, 2, 3);
+           // MapGenerators.FillStreets(streets_, ref floor_, rx, ry);
 
-            MapGenerators.AddTestScheme(this, schemesBase, rx, ry);
+          //  MapGenerators.AddTestScheme(this, schemesBase, rx, ry);
 
             //for (int i = 0; i < DungDimX; i++) {
 
@@ -97,6 +100,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             atlas_ = atlas;
             flatlas_ = flatlas;
             spriteBatch_ = spriteBatch;
+        }
+
+        public void Rebuild()
+        {
+            MapGenerators.FillTest1(ref blocks_, ref floor_, rx, ry, 1);
+            MapGenerators.GenerateStreetsNew(ref floor_, rx, ry, 100, 100, 25, 2, 3);
         }
 
         public GameLevel(int rx_ = 100, int ry_ = 100)
@@ -130,6 +139,19 @@ namespace rglikeworknamelib.Dungeon.Level {
         public bool IsInMapBounds(int x, int y)
         {
             return (x >= 0 && y >= 0 && x < rx && y < ry);
+        }
+
+        public void GenerateMinimap(GraphicsDevice gd)
+        {
+            var data = new Color[rx * ry];
+            for (int i = 0; i < floor_.Length; i++) {
+                if (blocks_[i].explored) {
+                    data[i] = floorDataBase.Data[floor_[i].ID].MMCol;
+                } else {
+                    data[i] = Color.Black;
+                }
+            }
+            minimap.SetData(data);
         }
 
         public short[] CalcWision(Creature who, float dirAngle, float seeAngleDeg)
@@ -218,6 +240,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
 
                 while (true) {
+
                     if (dir == 0 & ((x_top - pos_x) == see || (x_top - pos_x) >= rx - 1)) {
                         break;
                     }
@@ -374,6 +397,10 @@ namespace rglikeworknamelib.Dungeon.Level {
         public bool IsCreatureMeele(int nx, int ny, Player player) {
             return (Settings.GetMeeleActionRange() >=
                     Vector2.Distance(new Vector2((nx + 0.5f)*32, (ny + 0.5f)*32), new Vector2(player.Position.X, player.Position.Y)));
+        }
+
+        public Texture2D GetMinimap() {
+            return minimap;
         }
     }
 }

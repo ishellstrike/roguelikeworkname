@@ -2,7 +2,7 @@
 
 namespace rglikeworknamelib.Dungeon.Level
 {
-    public class Street
+    public class StreetOld__
     {
         public Vector2 from, to;
         public float widthdiv2;

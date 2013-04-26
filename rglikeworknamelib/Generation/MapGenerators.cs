@@ -6,6 +6,43 @@ using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Generation
 {
+
+    internal class Street {
+
+        public Street(float x, float y, float a, float b)
+        {
+            Start = new Vector2(x,y);
+            End = new Vector2(a, b);
+        }
+
+        public Vector2 Start, End;
+        public float Length {
+            get { return Vector2.Distance(Start, End); }
+        }
+    }
+
+    internal class StreetNode {
+
+        public StreetNode(float x, float y)
+        {
+            Position = new Vector2(x,y);
+        }
+
+        public Vector2 Position;
+    }
+
+    internal class StreetSquare {
+        public Vector2 Min, Max;
+
+        public float Width {
+            get { return Max.X - Min.Y; }
+        }
+
+        public float Height {
+            get { return Max.Y - Min.Y; }
+        }
+    }
+
     internal static class MapGenerators
     {
         static Random rnd = new Random();
@@ -24,6 +61,62 @@ namespace rglikeworknamelib.Generation
             }
         }
 
+        public static void GenerateStreetsNew(ref Floor[] ff, int rx, int ry, int count, int len, int step, int flid, int trid) {
+            List<Street> streets = new List<Street>();
+            List<StreetNode> snodes = new List<StreetNode>();
+
+            snodes.Add(new StreetNode(GetRandomCoordInCenter(rx), GetRandomCoordInCenter(ry)));
+
+            for (int i = 0; i < count; i++) {
+                int num = rnd.Next(0, snodes.Count);
+                var cur = snodes[num];
+                snodes.RemoveAt(num);
+
+                int curlen = rnd.Next(len/10, len);
+                int curoffs = rnd.Next(0, curlen);
+
+                bool isHorizontal = rnd.Next(0, 2) == 0;
+
+                if (isHorizontal) {
+                    streets.Add(new Street(cur.Position.X - curoffs, cur.Position.Y, cur.Position.X + curlen - curoffs, cur.Position.Y));
+                } else {
+                   streets.Add(new Street(cur.Position.X, cur.Position.Y - curoffs, cur.Position.X, cur.Position.Y + curlen - curoffs));
+                }
+
+                for(int j=0;j< len/step;j++) {
+                    if (isHorizontal) {
+                        snodes.Add(new StreetNode(cur.Position.X - curoffs + j*step, cur.Position.Y));
+                    } else {
+                        snodes.Add(new StreetNode(cur.Position.X, cur.Position.Y - curoffs + j * step));
+                    }
+                }
+            }
+
+            FillStreetsNew(streets, ref ff, rx, ry, flid, trid);
+        }
+
+        public static void FillStreetsNew(List<Street> st, ref Floor[] ff, int rx, int ry, int flid, int trid)
+        {
+            foreach (var street in st) {
+                for (int i = (int)street.Start.X - 1; i < (int)street.End.X + 4; i++) {
+                    for (int j = (int)street.Start.Y - 1; j < (int)street.End.Y + 4; j++) {
+                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = trid;
+                    }
+                }
+            }
+
+            foreach (var street in st) {
+                for (int i = (int)street.Start.X; i < (int)street.End.X + 3; i++) {
+                    for (int j = (int)street.Start.Y; j < (int)street.End.Y + 3; j++) {
+                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = flid;
+                    }
+                }
+            }
+        }
+
+        private static int GetRandomCoordInCenter(int rx) {
+            return rnd.Next(-rx/10,rx/10)+rx/2;
+        }
 
         public static void GenerateRoads1(ref Block[] bb, ref Floor[] ff, int rx, int ry, int count, int len, int flid)
         {
@@ -45,7 +138,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void GenerateStreets(ref List<Street> st, int rx, int ry, int count, int len, int flid, int trid)
+        public static void GenerateStreets(ref List<StreetOld__> st, int rx, int ry, int count, int len, int flid, int trid)
         {
             float widthdiv2 = 3;
             int trotwid = 2;
@@ -57,7 +150,7 @@ namespace rglikeworknamelib.Generation
                 int dx = rnd.Next(-1, 1);
                 int dy = 0;
                 if (dx == 0) dy = rnd.Next(0, 1) == 0 ? 1 : -1;
-                Street tmp = new Street();
+                StreetOld__ tmp = new StreetOld__();
                 tmp.widthdiv2 = widthdiv2;
                 tmp.trotwidth = trotwid;
                 tmp.id = flid;
@@ -74,7 +167,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void FillStreets(List<Street> st, ref Floor[] ff, int rx, int ry)
+        public static void FillStreets(List<StreetOld__> st, ref Floor[] ff, int rx, int ry)
         {
             foreach (var street in st) {
                 for (int i = (int)street.from.X - (int)street.trotwidth; i < (int)street.to.X + 1 + street.trotwidth; i++) {
