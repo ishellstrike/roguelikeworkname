@@ -3,47 +3,32 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
+using System.Linq;
 
 namespace rglikeworknamelib.Generation
 {
 
-    internal class Street {
+    public struct MinMax {
 
-        public Street(float x, float y, float a, float b)
+        public MinMax(float x, float y, float a, float b)
         {
-            Start = new Vector2(x,y);
-            End = new Vector2(a, b);
+            Min = new Vector2(x,y);
+            Max = new Vector2(a, b);
         }
 
-        public Vector2 Start, End;
-        public float Length {
-            get { return Vector2.Distance(Start, End); }
-        }
-    }
-
-    internal class StreetNode {
-
-        public StreetNode(float x, float y)
+        public MinMax(Vector2 a, Vector2 b)
         {
-            Position = new Vector2(x,y);
+            Min = a;
+            Max = b;
         }
 
-        public Vector2 Position;
-    }
-
-    internal class StreetSquare {
         public Vector2 Min, Max;
-
-        public float Width {
-            get { return Max.X - Min.Y; }
-        }
-
-        public float Height {
-            get { return Max.Y - Min.Y; }
+        public float Length {
+            get { return Vector2.Distance(Min, Max); }
         }
     }
 
-    internal static class MapGenerators
+    public static class MapGenerators
     {
         static Random rnd = new Random();
         public static void GenerateTest1(ref Block[] bb, ref Floor[] ff, int rx, int ry)
@@ -60,55 +45,102 @@ namespace rglikeworknamelib.Generation
                 floor.ID = id;
             }
         }
-
+        //blanks 4 5 6 7
         public static void GenerateStreetsNew(ref Floor[] ff, int rx, int ry, int count, int len, int step, int flid, int trid) {
-            List<Street> streets = new List<Street>();
-            List<StreetNode> snodes = new List<StreetNode>();
+            List<MinMax> streets = new List<MinMax>();
+            List<Vector2> sNodes = new List<Vector2>();
+            List<Vector2> visitedSNodes = new List<Vector2>();
 
-            snodes.Add(new StreetNode(GetRandomCoordInCenter(rx), GetRandomCoordInCenter(ry)));
+            sNodes.Add(new Vector2(GetRandomCoordInCenter(rx), GetRandomCoordInCenter(ry)));
 
             for (int i = 0; i < count; i++) {
-                int num = rnd.Next(0, snodes.Count);
-                var cur = snodes[num];
-                snodes.RemoveAt(num);
+                int num = rnd.Next(0, sNodes.Count);
+                var cur = sNodes[num];
+                visitedSNodes.Add(cur);
+                sNodes.RemoveAt(num);
 
-                int curlen = rnd.Next(len/10, len);
-                int curoffs = rnd.Next(0, curlen);
+                int lenstep = len / step;
+
+                int curlen = rnd.Next(step/2, len);
+                int curoffs = rnd.Next(0, curlen/step + 1) * step;
 
                 bool isHorizontal = rnd.Next(0, 2) == 0;
 
                 if (isHorizontal) {
-                    streets.Add(new Street(cur.Position.X - curoffs, cur.Position.Y, cur.Position.X + curlen - curoffs, cur.Position.Y));
+                    streets.Add(new MinMax(cur.X - curoffs, cur.Y, cur.X + curlen - curoffs, cur.Y));
                 } else {
-                   streets.Add(new Street(cur.Position.X, cur.Position.Y - curoffs, cur.Position.X, cur.Position.Y + curlen - curoffs));
+                   streets.Add(new MinMax(cur.X, cur.Y - curoffs, cur.X, cur.Y + curlen - curoffs));
                 }
 
-                for(int j=0;j< len/step;j++) {
+                for (int j = 0; j < curlen; j+= step) {
                     if (isHorizontal) {
-                        snodes.Add(new StreetNode(cur.Position.X - curoffs + j*step, cur.Position.Y));
+                        sNodes.Add(new Vector2(cur.X - curoffs + j, cur.Y));
                     } else {
-                        snodes.Add(new StreetNode(cur.Position.X, cur.Position.Y - curoffs + j * step));
+                        sNodes.Add(new Vector2(cur.X, cur.Y - curoffs + j));
                     }
                 }
             }
 
             FillStreetsNew(streets, ref ff, rx, ry, flid, trid);
+
+            visitedSNodes = visitedSNodes.Distinct().ToList();
+
+
+            var squares = GetSquaresFromNodes(visitedSNodes);
+
+            FillMinMaxRandomly(squares, ref ff, rx, ry, new int[] {3});
+    }
+
+        public static List<MinMax> GetSquaresFromNodes(List<Vector2> visitedSNodes)
+        {
+            List<MinMax> squares = new List<MinMax>();
+            foreach (var a in visitedSNodes) {
+                var tempx = visitedSNodes.Where(c => (c.X > a.X) && (c.Y == a.Y)).Select(c => c.X).ToList();
+                var tempy = visitedSNodes.Where(c => (c.Y > a.Y) && (c.X == a.X)).Select(c => c.Y).ToList();
+
+
+                float minx;
+                if (tempx.Count != 0) {
+                    minx = tempx.Min();
+                } else continue;
+
+                float miny;
+                if (tempy.Count != 0) {
+                    miny = tempy.Min();
+                } else continue;
+
+                squares.Add(new MinMax(a.X, a.Y, minx, miny));
+            }
+
+            return squares;
         }
 
-        public static void FillStreetsNew(List<Street> st, ref Floor[] ff, int rx, int ry, int flid, int trid)
+        public static void FillStreetsNew(List<MinMax> st, ref Floor[] ff, int rx, int ry, int flid, int trid)
         {
             foreach (var street in st) {
-                for (int i = (int)street.Start.X - 1; i < (int)street.End.X + 4; i++) {
-                    for (int j = (int)street.Start.Y - 1; j < (int)street.End.Y + 4; j++) {
+                for (int i = (int)street.Min.X - 1; i < (int)street.Max.X + 4; i++) {
+                    for (int j = (int)street.Min.Y - 1; j < (int)street.Max.Y + 4; j++) {
                         if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = trid;
                     }
                 }
             }
 
             foreach (var street in st) {
-                for (int i = (int)street.Start.X; i < (int)street.End.X + 3; i++) {
-                    for (int j = (int)street.Start.Y; j < (int)street.End.Y + 3; j++) {
+                for (int i = (int)street.Min.X; i < (int)street.Max.X + 3; i++) {
+                    for (int j = (int)street.Min.Y; j < (int)street.Max.Y + 3; j++) {
                         if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = flid;
+                    }
+                }
+            }
+        }
+
+        public static void FillMinMaxRandomly(List<MinMax> st, ref Floor[] ff, int rx, int ry, int[] arrid)
+        {
+            foreach (var street in st) {
+                var tempcol = arrid[rnd.Next(0, arrid.Length)];
+                for (int i = (int)street.Min.X + 4; i < (int)street.Max.X - 1; i++) {
+                    for (int j = (int)street.Min.Y + 4; j < (int)street.Max.Y - 1; j++) {
+                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = tempcol;
                     }
                 }
             }

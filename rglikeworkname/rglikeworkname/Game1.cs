@@ -100,14 +100,9 @@ namespace jarg
                                                       bdb_, 
                                                       fdb_, 
                                                       sdb_,
-                                                      128,
-                                                      128
+                                                      512,
+                                                      512
                                                      );
-
-            foreach (var b in currentFloor_.blocks_) {
-                b.explored = true;
-                b.lightness = Color.White;
-            }
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_) {
             };
@@ -152,7 +147,7 @@ namespace jarg
                     seeAngleDeg = 60;
                 }
             }
-            currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
+            //currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
             player_.Update(gameTime, currentFloor_, bdb_);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 2);
@@ -160,7 +155,6 @@ namespace jarg
             if (rglikeworknamelib.Settings.DebugInfo) {
                 FrameRateCounter.Update(gameTime);
             }
-            //manager_.Update(gameTime);
         }
 
         private void KeyboardUpdate(GameTime gameTime)
@@ -187,6 +181,13 @@ namespace jarg
 
             if (ks_[Keys.G] == KeyState.Down && lks_[Keys.G] == KeyState.Up) {
                 currentFloor_.Rebuild();
+            }
+
+            if (ks_[Keys.H] == KeyState.Down && lks_[Keys.H] == KeyState.Up) {
+                foreach (var b in currentFloor_.blocks_) {
+                    b.explored = true;
+                    b.lightness = Color.White;
+                }
             }
 
             pivotpoint_ = new Vector2(player_.Position.X - (rglikeworknamelib.Settings.Resolution.X - 200) / 2, player_.Position.Y - rglikeworknamelib.Settings.Resolution.Y / 2);
@@ -233,7 +234,7 @@ namespace jarg
             currentFloor_.Draw2(gameTime, camera_);
             player_.Draw(gameTime, camera_);
 
-            spriteBatch_.Draw(currentFloor_.GetMinimap(), new Vector2(15, 15),
+            spriteBatch_.Draw(currentFloor_.GetMinimap(), new Rectangle(15,15,128,128),
                  Color.White);
             spriteBatch_.End();
             
