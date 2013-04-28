@@ -20,5 +20,8 @@ namespace jargtests
             pl.Position = new Vector3(2, 2, 0);
             Assert.AreEqual(pl.Position, new Vector3(2, 2, 0));
         }
+
+        //[TestMethod]
+        //public void 
     }
 }

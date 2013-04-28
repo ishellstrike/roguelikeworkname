@@ -23,6 +23,11 @@ namespace rglikeworknamelib.Creatures {
             set { _lastpos = value; }
         }
 
+        public void Update(GameTime gt)
+        {
+            LastPos = Position;
+        }
+
         public Vector2 InScreenPosition {
             get { return new Vector2(_position.X, _position.Y - _position.Z); }
         }

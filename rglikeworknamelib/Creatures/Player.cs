@@ -26,6 +26,8 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public void Update(GameTime gt, GameLevel df, BlockDataBase bdb) {
+            base.Update(gt);
+
             var time = (float) gt.ElapsedGameTime.TotalSeconds;
 
             var tpos = Position; 
@@ -47,7 +49,6 @@ namespace rglikeworknamelib.Creatures {
                 Velocity.Y = 0;
             }
 
-            LastPos = Position;
             Position += Velocity * time * 20;
 
             if (time != 0) {

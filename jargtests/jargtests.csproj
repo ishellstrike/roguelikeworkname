@@ -49,6 +49,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GWLTests.cs" />
     <Compile Include="HeroTests.cs" />
     <Compile Include="MapGeneratorTests.cs" />
     <Compile Include="MapTests.cs" />
@@ -60,6 +61,9 @@
       <Project>{0B9D01F6-F7FE-438B-A156-065D41408337}</Project>
       <Name>rglikeworknamelib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Shadow Include="Тестовые ссылки\rglikeworknamelib.accessor" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
