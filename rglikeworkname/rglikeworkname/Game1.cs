@@ -126,10 +126,10 @@ namespace jarg
             MouseUpdate(gameTime);
 
             sec += gameTime.ElapsedGameTime;
-            if (sec >= TimeSpan.FromSeconds(1)) {
+            if (sec >= TimeSpan.FromSeconds(0.5)) {
                 sec = TimeSpan.Zero;
 
-                currentFloor_.GenerateMinimap(GraphicsDevice);
+                currentFloor_.GenerateMinimap(GraphicsDevice, player_);
             }
 
 

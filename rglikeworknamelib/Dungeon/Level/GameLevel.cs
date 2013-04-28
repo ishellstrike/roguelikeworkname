@@ -75,7 +75,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             floorDataBase = fdb_;
             schemesBase = sdb_;
 
-            minimap = new Texture2D(spriteBatch.GraphicsDevice, rx, ry);
+            minimap = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
 
             int i = rx * ry;
             while (i-- != 0) {
@@ -140,14 +140,22 @@ namespace rglikeworknamelib.Dungeon.Level {
             return (x >= 0 && y >= 0 && x < rx && y < ry);
         }
 
-        public void GenerateMinimap(GraphicsDevice gd)
+        public void GenerateMinimap(GraphicsDevice gd, Creature pl)
         {
             var data = new Color[rx * ry];
-            for (int i = 0; i < floors_.Length; i++) {
-                if (blocks_[i].explored) {
-                    data[i] = floorDataBase.Data[floors_[i].ID].MMCol;
-                } else {
-                    data[i] = Color.Black;
+
+            int startx = Math.Max(0, (int)pl.Position.X / 32 - 64);
+            int starty = Math.Max(0, (int)pl.Position.Y / 32 - 64);
+            int endx = Math.Min(rx, (int)pl.Position.X / 32 + 64);
+            int endy = Math.Min(ry, (int)pl.Position.Y / 32 + 64);
+
+            for (int i = startx; i < endx; i++) {
+                for (int j = starty; j < endy; j++) {
+                    if (blocks_[i * ry + j].explored) {
+                        data[(j - starty) * 128 + (i - startx)] = floorDataBase.Data[floors_[i * ry + j].ID].MMCol;
+                    } else {
+                        data[(j - starty) * 128 + (i - startx)] = Color.Black;
+                    }
                 }
             }
             minimap.SetData(data);

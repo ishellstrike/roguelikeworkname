@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Dungeon\Bullets\Bullet.cs" />
     <Compile Include="Dungeon\Bullets\BulletSystem.cs" />
+    <Compile Include="Dungeon\GlobalWorldLogic.cs" />
     <Compile Include="Dungeon\Item\Item.cs" />
     <Compile Include="Dungeon\Item\ItemData.cs" />
     <Compile Include="Dungeon\Item\ItemDataBase.cs" />
