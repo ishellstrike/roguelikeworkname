@@ -44,5 +44,19 @@ namespace jargtests
             DateTime td = new DateTime(1, 7, 1);
             Assert.IsFalse(GlobalWorldLogic.IsWinter(td));
         }
+
+        [TestMethod]
+        public void IsMinus12At1Night()
+        {
+            DateTime dt = new DateTime(1, 1, 1, 0, 0, 0);
+            Assert.AreEqual(-12, GlobalWorldLogic.GetNormalTemp(dt));
+        }
+
+        [TestMethod]
+        public void IsMinus4_2At2Day()
+        {
+            DateTime dt = new DateTime(1, 2, 1, 12, 0, 0);
+            Assert.AreEqual(-4.2f, GlobalWorldLogic.GetNormalTemp(dt));
+        }
     }
 }

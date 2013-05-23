@@ -26,7 +26,7 @@ namespace rglikeworknamelib {
         }
 
         public static string GetTextureDirectory() {
-            return @"Content/Texture";
+            return @"Content/Textures";
         }
 
         public static string GetFloorDataDirectory() {
@@ -61,6 +61,15 @@ namespace rglikeworknamelib {
 
         public static void ChangeResolution(Vector2 res) {
             Resolution = res;
+        }
+
+        public static Color HUDcolor
+        {
+            get { return Color.LightGray; }
+        }
+
+        public static string GetParticleTextureDirectory() {
+            return @"Content/Textures/Particles";
         }
     }
 }

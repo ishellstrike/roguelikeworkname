@@ -53,7 +53,7 @@ namespace rglikeworknamelib.Dungeon
                     break;
             }
 
-            if (IsWinter(cur)) return temp - 6;
+            if (IsNight(cur)) return temp - 6;
 
             return temp;
         }

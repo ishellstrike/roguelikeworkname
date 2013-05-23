@@ -36,12 +36,13 @@ Content\Textures\Dungeon\Objects\door3.xnb
 Content\Textures\Dungeon\Objects\door4.xnb
 Content\Textures\Dungeon\Objects\door1_open.xnb
 Content\Textures\Dungeon\Objects\door2_open.xnb
-Content\Effects\reductionEffect.xnb
-Content\Effects\resolveShadowsEffect.xnb
 Content\Textures\Dungeon\Floor\blank1.xnb
 Content\Textures\Dungeon\Floor\blank2.xnb
 Content\Textures\Dungeon\Floor\blank3.xnb
 Content\Textures\Dungeon\Floor\blank4.xnb
+Content\Effects\reductionEffect.xnb
+Content\Effects\resolveShadowsEffect.xnb
+Content\Textures\Particles\p1.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Floor\textureloadorder.ord
@@ -53,3 +54,4 @@ Content\Skins\Extended.skin
 Content\Skins\Green.skin
 Content\Data\Object\standart1.txt
 Content\Data\Items\food1.txt
+Content\Textures\Particles\textureloadorder.ord

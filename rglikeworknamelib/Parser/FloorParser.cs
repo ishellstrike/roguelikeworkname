@@ -41,20 +41,19 @@ namespace rglikeworknamelib.Parser
                                     ParsersCore.stringExtractor.Match(lines[i]).ToString();
                                 ((FloorData)cur.Value).Name = extractedstring.Substring(1, extractedstring.Length - 2);
                             }
-                            if (lines[i].StartsWith("description="))
-                            {
+                            if (lines[i].StartsWith("description=")) {
                                 string extractedstring =
                                     ParsersCore.stringExtractor.Match(lines[i]).ToString();
                                 ((FloorData)cur.Value).Description = extractedstring.Substring(1,
                                                                                                 extractedstring.Length - 2);
                             }
-                            if (lines[i].StartsWith("mmcol="))
-                            {
+                            if (lines[i].StartsWith("mmcol=")) {
                                 ((FloorData)cur.Value).MMCol = ParsersCore.ParseStringToColor(lines[i]);
                             }
-                            if (lines[i].StartsWith("walkable"))
-                            {
+                            if (lines[i].StartsWith("walkable")) {
                                 ((FloorData)cur.Value).Walkable = true;
+                            }
+                            if (lines[i].StartsWith("walkable")) {
                             }
                         }
                     }

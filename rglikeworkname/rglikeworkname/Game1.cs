@@ -10,6 +10,7 @@ using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Parser;
+using rglikeworknamelib.Dungeon.Particles;
 
 namespace jarg
 {
@@ -20,6 +21,8 @@ namespace jarg
         private MonsterDataBase mdb_;
         private SchemesDataBase sdb_;
         private ItemDataBase idb_;
+        private WindowSystem ws_;
+        private ParticleSystem ps_;
 
         private GraphicsDeviceManager graphics_;
         private Vector2 camera_;
@@ -35,6 +38,8 @@ namespace jarg
         private Vector2 pivotpoint_;
         private Player player_;
         private SpriteBatch spriteBatch_;
+
+        private Texture2D whitepixel;
 
         //private Manager manager_;
 
@@ -61,12 +66,12 @@ namespace jarg
             graphics_.PreferredBackBufferWidth = (int)rglikeworknamelib.Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             
-            IsFixedTimeStep = true;
+            IsFixedTimeStep = false;
             IsMouseVisible = true;
             graphics_.ApplyChanges();
 
-
             base.Initialize();
+
         }
 
         private Texture2D itemSelectTex_;
@@ -76,16 +81,25 @@ namespace jarg
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
 
+            whitepixel = new Texture2D(graphics_.GraphicsDevice, 1, 1);
+            var data = new uint[1];
+            data[0] = 0xffffffff;
+            whitepixel.SetData(data);
+
             itemSelectTex_ = Content.Load<Texture2D>(@"Textures/Dungeon/Items/itemselect");
             transparentPixel_ = Content.Load<Texture2D>(@"Textures/transparent_pixel");
+            font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
 
             bdb_ = new BlockDataBase();
             fdb_ = new FloorDataBase();
             mdb_ = new MonsterDataBase();
             sdb_ = new SchemesDataBase();
             idb_ = new ItemDataBase(ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetItemDataDirectory() + @"/textureloadorder.ord", Content));
+            ws_ = new WindowSystem(whitepixel, font1_);
 
-            font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
+            ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
+
+            Window aaa = ws_.NewInfoWindow("This is info window long long long long long long long long...\nmultiline\n!!!\n123");
 
             var tex = new Collection<Texture2D> {
                                            Content.Load<Texture2D>(@"Textures/transparent_pixel"),
@@ -115,6 +129,7 @@ namespace jarg
 
         public static bool ErrorExit;
         public float seeAngleDeg = 60;
+        public float PlayerSeeAngle;
         public TimeSpan sec = TimeSpan.Zero;
         protected override void Update(GameTime gameTime)
         {
@@ -149,12 +164,16 @@ namespace jarg
             }
             //currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
             player_.Update(gameTime, currentFloor_, bdb_);
+            ps_.Update(gameTime);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 2);
 
             if (rglikeworknamelib.Settings.DebugInfo) {
                 FrameRateCounter.Update(gameTime);
             }
+
+            ws_.Update(gameTime, null, ms_, lms_);
+            PlayerSeeAngle = (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
         }
 
         private void KeyboardUpdate(GameTime gameTime)
@@ -162,7 +181,7 @@ namespace jarg
             lks_ = ks_;
             ks_ = Keyboard.GetState();
 
-            if (ks_[Keys.F4] == KeyState.Down && lks_[Keys.F4] == KeyState.Up) {
+            if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
                 rglikeworknamelib.Settings.DebugInfo = !rglikeworknamelib.Settings.DebugInfo;
             }
 
@@ -199,6 +218,10 @@ namespace jarg
             lms_ = ms_;
             ms_ = Mouse.GetState();
 
+            if(ms_.LeftButton == ButtonState.Pressed) {
+                ps_.CreateParticleWithRandomization(new Vector2(player_.Position.X, player_.Position.Y), 10, PlayerSeeAngle, 0.01f, 1, 10, 50);
+            }
+
             int aa = (ms_.X + (int)camera_.X) / 32 * currentFloor_.ry + (ms_.Y + (int)camera_.Y) / 32;
             if (aa >= 0 && currentFloor_.blocks_[aa].id != 0 && currentFloor_.blocks_[aa].explored)
             {
@@ -233,11 +256,13 @@ namespace jarg
             currentFloor_.Draw(gameTime, camera_);
             currentFloor_.Draw2(gameTime, camera_);
             player_.Draw(gameTime, camera_);
-
+            ps_.Draw(gameTime, camera_);
             spriteBatch_.Draw(currentFloor_.GetMinimap(), new Rectangle(15,15,128,128),
                  Color.White);
             spriteBatch_.End();
             
+            ws_.Draw(spriteBatch_, null);
+
             base.Draw(gameTime);
 
             if (rglikeworknamelib.Settings.DebugInfo) {
@@ -253,9 +278,7 @@ namespace jarg
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)rglikeworknamelib.Settings.Resolution.X,
                                   (int)rglikeworknamelib.Settings.Resolution.Y);
             spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, string.Format("{0}\n{1}\n{2}", (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X),
-                                                                           (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X) + MathHelper.ToRadians(60),
-                                                                           (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X) - MathHelper.ToRadians(60)), new Vector2(500, 10), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}", PlayerSeeAngle,ps_.Count()), new Vector2(500, 10), Color.White);
 
             spriteBatch_.End();
         }

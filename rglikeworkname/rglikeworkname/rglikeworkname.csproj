@@ -61,9 +61,8 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework.Windows">
+      <HintPath>.\MonoGame.Framework.Windows.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

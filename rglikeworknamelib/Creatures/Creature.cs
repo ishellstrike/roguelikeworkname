@@ -9,7 +9,9 @@ namespace rglikeworknamelib.Creatures {
 
         public Vector3 Position {
             get { return _position; }
-            set { _position = value; }
+            set {
+                _lastpos = _position; _position = value;
+            }
         }
 
         public void SetPositionInBlocks(int x, int y)
@@ -25,7 +27,7 @@ namespace rglikeworknamelib.Creatures {
 
         public void Update(GameTime gt)
         {
-            LastPos = Position;
+           
         }
 
         public Vector2 InScreenPosition {

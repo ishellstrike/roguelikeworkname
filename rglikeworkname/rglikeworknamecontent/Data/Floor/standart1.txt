@@ -33,3 +33,9 @@ walkable
 name="Бетон"
 mmcol="blue"
 walkable
+
+~8,8
+name="Пол Корабля"
+mmcol="blue"
+walkable
+altermtex=9,10,11,12,13,14,15

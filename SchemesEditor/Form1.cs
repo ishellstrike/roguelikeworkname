@@ -22,7 +22,7 @@ namespace SchemesEditor
             bdb = new BlockDataBase();
             fdb = new FloorDataBase();
             sdb = new SchemesDataBase();
-            gl = GameLevel.CreateGameLevel(null, null, null, bdb, fdb, sdb, 20, 20);
+            gl =new GameLevel(20, 20);
         }
 
         private PictureBox[] map;
@@ -86,7 +86,7 @@ namespace SchemesEditor
             sw.Read();
             string[] s = sw.ReadLine().Split(',');
             int x = int.Parse(s[0]), y = int.Parse(s[1]);
-            gl = GameLevel.CreateGameLevel(null, null, null, bdb, fdb, sdb, x, y);
+            gl = new GameLevel(x, y);
             char[] sep = {' '};
             String[] b = sw.ReadToEnd().Split(sep);
             int[] a = b.Select(int.Parse).ToArray();

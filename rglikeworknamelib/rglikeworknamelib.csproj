@@ -65,6 +65,7 @@
     <Compile Include="Dungeon\Level\SmartAction.cs" />
     <Compile Include="Dungeon\Level\StorageBlock.cs" />
     <Compile Include="Dungeon\Level\StreetOld__.cs" />
+    <Compile Include="Dungeon\Particles\Particles.cs" />
     <Compile Include="Generation\MapGenerators.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Creatures\AIStyle.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Creatures\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="obj\x86\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
@@ -88,9 +90,9 @@
     <Folder Include="obj\x86\Debug\TempPE\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MonoGame.Framework.Windows, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\rglikeworkname\rglikeworkname\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\rglikeworkname\rglikeworkname\MonoGame.Framework.Windows.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

@@ -71,5 +71,19 @@ namespace jargtests
 
             Assert.IsFalse(glg.IsCreatureMeele(1, 4, pl));
         }
+
+        [TestMethod]
+        public void InMapBounds()
+        {
+            GameLevel gl = new GameLevel(10, 10);
+            Assert.IsTrue(gl.IsInMapBounds(new Vector2(1,1)));
+        }
+
+        [TestMethod]
+        public void NotInMapBounds()
+        {
+            GameLevel gl = new GameLevel(10, 10);
+            Assert.IsFalse(gl.IsInMapBounds(new Vector2(10, 10)));
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public float HP;
         public int Mtex;
+        public int[] AlterMtex;
         public string Name;
 
         public bool Walkable;
