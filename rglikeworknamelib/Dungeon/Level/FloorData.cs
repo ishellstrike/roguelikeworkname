@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Level
 {
@@ -23,5 +24,16 @@ namespace rglikeworknamelib.Dungeon.Level
         public string Name;
 
         public bool Walkable;
+
+        public int RandomMtexFromAlters() {
+            if(AlterMtex == null || AlterMtex.Length == 0) {
+                return Mtex;
+            }
+            if (Settings.rnd.Next(1, 5) == 1) {
+                return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
+            }
+            return Mtex;
+        }
+
     }
 }

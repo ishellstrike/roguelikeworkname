@@ -39,19 +39,21 @@ namespace rglikeworknamelib.Generation
             GenerateRoads1(ref bb, ref ff, rx, ry, 100, 10, 2);
         }
 
-        public static void FillTest1(ref Block[] bb, ref Floor[] ff, int rx, int ry, int id)
+        public static void FillTest1(GameLevel gl, int id)
         {
-            foreach (var floor in ff) {
-                floor.ID = id;
+            for (int i = 0; i < gl.rx; i++) {
+                for (int j = 0; j < gl.ry; j++) {
+                    gl.CreateFloor(i, j, id);
+                }
             }
         }
         //blanks 4 5 6 7
-        public static void GenerateStreetsNew(ref Floor[] ff, int rx, int ry, int count, int len, int step, int flid, int trid) {
+        public static void GenerateStreetsNew(GameLevel gl, int count, int len, int step, int flid, int trid) {
             List<MinMax> streets = new List<MinMax>();
             List<Vector2> sNodes = new List<Vector2>();
             List<Vector2> visitedSNodes = new List<Vector2>();
 
-            sNodes.Add(new Vector2(GetRandomCoordInCenter(rx), GetRandomCoordInCenter(ry)));
+            sNodes.Add(new Vector2(GetRandomCoordInCenter(gl.rx), GetRandomCoordInCenter(gl.ry)));
 
             for (int i = 0; i < count; i++) {
                 int num = rnd.Next(0, sNodes.Count);
@@ -81,14 +83,14 @@ namespace rglikeworknamelib.Generation
                 }
             }
 
-            FillStreetsNew(streets, ref ff, rx, ry, flid, trid);
+            FillStreetsNew(streets, gl, flid, trid);
 
             visitedSNodes = visitedSNodes.Distinct().ToList();
 
 
             var squares = GetSquaresFromNodes(visitedSNodes);
 
-            FillMinMaxRandomly(squares, ref ff, rx, ry, new int[] {3});
+            FillMinMaxRandomly(squares, gl, new int[] {3});
     }
 
         public static List<MinMax> GetSquaresFromNodes(List<Vector2> visitedSNodes)
@@ -115,12 +117,12 @@ namespace rglikeworknamelib.Generation
             return squares;
         }
 
-        public static void FillStreetsNew(List<MinMax> st, ref Floor[] ff, int rx, int ry, int flid, int trid)
+        public static void FillStreetsNew(List<MinMax> st, GameLevel gl, int flid, int trid)
         {
             foreach (var street in st) {
                 for (int i = (int)street.Min.X - 1; i < (int)street.Max.X + 4; i++) {
                     for (int j = (int)street.Min.Y - 1; j < (int)street.Max.Y + 4; j++) {
-                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = trid;
+                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.CreateFloor(i, j, trid);
                     }
                 }
             }
@@ -128,19 +130,19 @@ namespace rglikeworknamelib.Generation
             foreach (var street in st) {
                 for (int i = (int)street.Min.X; i < (int)street.Max.X + 3; i++) {
                     for (int j = (int)street.Min.Y; j < (int)street.Max.Y + 3; j++) {
-                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = flid;
+                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.CreateFloor(i, j, flid);
                     }
                 }
             }
         }
 
-        public static void FillMinMaxRandomly(List<MinMax> st, ref Floor[] ff, int rx, int ry, int[] arrid)
+        public static void FillMinMaxRandomly(List<MinMax> st, GameLevel gl, int[] arrid)
         {
             foreach (var street in st) {
                 var tempcol = arrid[rnd.Next(0, arrid.Length)];
                 for (int i = (int)street.Min.X + 4; i < (int)street.Max.X - 1; i++) {
                     for (int j = (int)street.Min.Y + 4; j < (int)street.Max.Y - 1; j++) {
-                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = tempcol;
+                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.CreateFloor(i, j, tempcol);
                     }
                 }
             }
@@ -216,6 +218,11 @@ namespace rglikeworknamelib.Generation
                     }
                 }
             }
+        }
+
+        internal static void PlaceScheme(GameLevel gl, Schemes schem, int rx, int ry)
+        {
+
         }
 
         internal static void AddTestScheme(GameLevel gl, SchemesDataBase sch, int rx, int ry)

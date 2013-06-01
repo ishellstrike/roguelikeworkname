@@ -13,13 +13,15 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int rx = 100;
         public int ry = 100;
         private readonly Collection<Texture2D> atlas_, flatlas_;
-        public Block[] blocks_;
-        public Floor[] floors_;
+
+        private Block[] blocks_;
+        private Floor[] floors_;
+
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
         private readonly SpriteBatch spriteBatch_;
-        private readonly BlockDataBase blockDataBase;
-        private readonly FloorDataBase floorDataBase;
-        private readonly SchemesDataBase schemesBase;
+        public readonly BlockDataBase blockDataBase;
+        public readonly FloorDataBase floorDataBase;
+        public readonly SchemesDataBase schemesBase;
         private Random rnd = new Random();
 
         private Texture2D minimap;
@@ -33,16 +35,74 @@ namespace rglikeworknamelib.Dungeon.Level {
             return temp;
         }
 
-        public void CreateBlock(int x, int y, int id) {
-            if (blockDataBase.Data[id].blockPrototype == typeof (Block)) {
-                blocks_[x*ry+y] = new Block{ id = id };
+        public void ExploreAllMap()
+        {
+            foreach (var b in blocks_) {
+                b.explored = true;
+                b.lightness = Color.White;
+            }
+        }
+
+        public void CreateAllMapFromArray(int[] arr)
+        {
+            for (int i = 0; i < arr.Length; i++) {
+                CreateBlock(i, arr[i]);
+            }
+        }
+
+        public Block GetBlock(int x, int y)
+        {
+            return blocks_[x * ry + y];
+        }
+
+        public bool IsExplored(int x, int y)
+        {
+            return blocks_[x * ry + y].explored;
+        }
+
+        public bool IsExplored(int a)
+        {
+            return blocks_[a].explored;
+        }
+
+        public bool IsWalkable(int x, int y)
+        {
+            return blockDataBase.Data[blocks_[x * ry + y].id].isWalkable;
+        }
+
+        public void CreateFloor(int x, int y, int id)
+        {
+            floors_[x * rx + y].ID = id;
+            floors_[x * rx + y].Mtex = floorDataBase.Data[id].RandomMtexFromAlters();
+        }
+
+        public int GetId(int x, int y)
+        {
+            return blocks_[x * ry + y].id;
+        }
+
+        public int GetId(int a)
+        {
+            return blocks_[a].id;
+        }
+
+        public void CreateBlock(int a, int id)
+        {
+            if (blockDataBase.Data[id].blockPrototype == typeof(Block)) {
+                blocks_[a] = new Block {
+                    id = id
+                };
             }
             if (blockDataBase.Data[id].blockPrototype == typeof(StorageBlock)) {
-                blocks_[x * ry + y] = new StorageBlock {
-                                                           storedItems = new List<Item.Item>(),
-                                                           id = id
-                                                       };
+                blocks_[a] = new StorageBlock {
+                    storedItems = new List<Item.Item>(),
+                    id = id
+                };
             }
+        }
+
+        public void CreateBlock(int x, int y, int id) {
+            CreateBlock(x * ry + x, id);
         }
 
         public void CreateBlock(Vector2 where, int id) {
@@ -75,7 +135,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             floorDataBase = fdb_;
             schemesBase = sdb_;
 
-            minimap = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
+            if (spriteBatch != null) {
+                minimap = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
+            }
 
             int i = rx * ry;
             while (i-- != 0) {
@@ -103,8 +165,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void Rebuild()
         {
-            MapGenerators.FillTest1(ref blocks_, ref floors_, rx, ry, 1);
-            MapGenerators.GenerateStreetsNew(ref floors_, rx, ry, rnd.Next(80,200), rnd.Next(80,200), rnd.Next(20,30), 2, 3);
+            MapGenerators.FillTest1(this, 8);
+            MapGenerators.GenerateStreetsNew(this, rnd.Next(80,200), rnd.Next(80,200), rnd.Next(20,30), 2, 3);
         }
 
         public GameLevel(int rx_ = 100, int ry_ = 100)
@@ -370,7 +432,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = (int)min.X, ci = 0; i < (int)max.X; i++, ci++) {
                 for (int j = (int)min.Y, cj = 0; j < (int)max.Y; j++, cj++) {
                     int a = i * ry + j;
-                    spriteBatch_.Draw(flatlas_[floorDataBase.Data[floors_[a].ID].Mtex],
+                    spriteBatch_.Draw(flatlas_[floors_[a].Mtex],
                                       new Vector2(i * (Settings.FloorSpriteSize.X) - (int)camera_.X,
                                                   j * (Settings.FloorSpriteSize.Y) - (int)camera_.Y),
                                       null, blocks_[a].lightness);

@@ -53,7 +53,17 @@ namespace rglikeworknamelib.Parser
                             if (lines[i].StartsWith("walkable")) {
                                 ((FloorData)cur.Value).Walkable = true;
                             }
-                            if (lines[i].StartsWith("walkable")) {
+                            if (lines[i].StartsWith("altermtex=")) {
+                                string sub = lines[i].Substring(10);
+                                string[] subsub = sub.Replace(" ", "").Split(',');
+                                List<int> mt = new List<int>();
+                                foreach (var s1 in subsub) {
+                                    int a;
+                                    if (int.TryParse(s1, out a)) {
+                                        mt.Add(a);
+                                    }
+                                }
+                                ((FloorData) cur.Value).AlterMtex = mt.ToArray();
                             }
                         }
                     }

@@ -60,8 +60,9 @@ namespace SchemesEditor
         void Form1_Click(object sender, EventArgs e) {
             int y = (int) ((PictureBox) sender).Tag % 30 - camx;
             int x = (int) ((PictureBox) sender).Tag / 30 - camy;
-            if(x < gl.rx && y < gl.ry && x >= 0 && y >= 0)
-            gl.blocks_[x*gl.ry+y].id = listBox1.SelectedIndex;
+            if (x < gl.rx && y < gl.ry && x >= 0 && y >= 0) {
+                gl.CreateBlock(x, y, listBox1.SelectedIndex);
+            }
         }
 
         private int camx, camy;
@@ -70,7 +71,7 @@ namespace SchemesEditor
             for (int i = 0; i < 30; i++) {
                 for (int j = 0; j < 30; j++) {
                     if (i - camx < gl.rx && j - camy < gl.ry && i - camx >= 0 && j - camy >= 0)
-                        map[i * 30 + j].Image = imageList1.Images[bdb.Data[gl.blocks_[(i - camx) * gl.ry + j - camy].id].texNo];
+                        map[i * 30 + j].Image = gl.GetId(i - camx, j - camy) == 0 ? imageList1.Images[0] : imageList1.Images[1];
                     else map[i*30 + j].Image = imageList2.Images[2];
                 }
             }
@@ -86,17 +87,20 @@ namespace SchemesEditor
             sw.Read();
             string[] s = sw.ReadLine().Split(',');
             int x = int.Parse(s[0]), y = int.Parse(s[1]);
+            textBox1.Text = s[2];
             gl = new GameLevel(x, y);
             char[] sep = {' '};
             String[] b = sw.ReadToEnd().Split(sep);
             int[] a = b.Select(int.Parse).ToArray();
-            for (int i = 0; i < x*y; i++) {
-                    gl.blocks_[i].id = a[i];
-            }
+            gl.CreateAllMapFromArray(a);
             sw.Close();
+
+            numericUpDown1.Value = x;
+            numericUpDown2.Value = y;
         }
 
         private void button2_Click(object sender, EventArgs e) {
+            saveFileDialog1.FileName = textBox1.Text + ".txt";
             saveFileDialog1.ShowDialog();
         }
 
@@ -105,9 +109,9 @@ namespace SchemesEditor
             StreamWriter sw = new StreamWriter(saveFileDialog1.FileName);
             sw.Write("~" + gl.rx + "," + gl.ry + "," + textBox1.Text + "\n");
             for (int i = 0; i < gl.rx*gl.ry - 1; i++) {
-                    sw.Write(gl.blocks_[i].id+" ");
+                    sw.Write(gl.GetId(i)+" ");
                 }
-            sw.Write(gl.blocks_[gl.rx * gl.ry - 1].id);
+            sw.Write(gl.GetId(gl.rx * gl.ry - 1));
 
             sw.Write("\n");
             sw.Close();

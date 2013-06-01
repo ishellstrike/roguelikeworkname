@@ -49,3 +49,19 @@ actionopenclose
 afterid=4
 walkable
 transparent
+
+~Block,9,9
+name=" онсоль"
+mmcol="red"
+anim=9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+
+~Block,10,28
+name=" ровать"
+mmcol="red"
+altermtex=29,30,31,32
+
+~StorageBlock,15,33
+name="ящик"
+mmcol="yellow"
+actionopencontainer
+altermtex=34,35

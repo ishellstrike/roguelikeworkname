@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Mork;
 using System;
 using rglikeworknamelib;
+using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Creatures;
@@ -165,6 +166,7 @@ namespace jarg
             //currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
             player_.Update(gameTime, currentFloor_, bdb_);
             ps_.Update(gameTime);
+            GlobalWorldLogic.Update(gameTime);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 2);
 
@@ -203,10 +205,7 @@ namespace jarg
             }
 
             if (ks_[Keys.H] == KeyState.Down && lks_[Keys.H] == KeyState.Up) {
-                foreach (var b in currentFloor_.blocks_) {
-                    b.explored = true;
-                    b.lightness = Color.White;
-                }
+                currentFloor_.ExploreAllMap();
             }
 
             pivotpoint_ = new Vector2(player_.Position.X - (rglikeworknamelib.Settings.Resolution.X - 200) / 2, player_.Position.Y - rglikeworknamelib.Settings.Resolution.Y / 2);
@@ -223,11 +222,11 @@ namespace jarg
             }
 
             int aa = (ms_.X + (int)camera_.X) / 32 * currentFloor_.ry + (ms_.Y + (int)camera_.Y) / 32;
-            if (aa >= 0 && currentFloor_.blocks_[aa].id != 0 && currentFloor_.blocks_[aa].explored)
+            if (aa >= 0 && currentFloor_.GetId(aa) != 0 && currentFloor_.IsExplored(aa))
             {
                 int nx = (ms_.X + (int)camera_.X) / 32;
                 int ny = (ms_.Y + (int)camera_.Y) / 32;
-                var a = currentFloor_.blocks_[nx * currentFloor_.ry + ny];
+                var a = currentFloor_.GetBlock(nx, ny);
                 var b = bdb_.Data[a.id];
                 string s = Block.GetSmartActionName(b.smartAction) + " " + b.name;
                 if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.texNo;
@@ -278,7 +277,7 @@ namespace jarg
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)rglikeworknamelib.Settings.Resolution.X,
                                   (int)rglikeworknamelib.Settings.Resolution.Y);
             spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}", PlayerSeeAngle,ps_.Count()), new Vector2(500, 10), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} ", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime), new Vector2(500, 10), Color.White);
 
             spriteBatch_.End();
         }

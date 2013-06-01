@@ -25,7 +25,7 @@ namespace rglikeworknamelib.Creatures {
             Velocity += ac;
         }
 
-        public void Update(GameTime gt, GameLevel df, BlockDataBase bdb) {
+        public void Update(GameTime gt, GameLevel gl, BlockDataBase bdb) {
             base.Update(gt);
 
             var time = (float) gt.ElapsedGameTime.TotalSeconds;
@@ -41,10 +41,10 @@ namespace rglikeworknamelib.Creatures {
             int c = (int)(tpos2.X / 32.0);
             int d = (int)(tpos2.Y / 32.0);
 
-            if (a < 0 || b < 0 || !bdb.Data[df.blocks_[a * df.ry + b].id].isWalkable) {
+            if (a < 0 || b < 0 || !gl.IsWalkable(a, b)) {
                 Velocity.X = 0;
             }
-            if (c < 0 || d < 0 || !bdb.Data[df.blocks_[c * df.ry + d].id].isWalkable)
+            if (c < 0 || d < 0 || !gl.IsWalkable(c, d))
             {
                 Velocity.Y = 0;
             }

@@ -34,7 +34,7 @@ name="Бетон"
 mmcol="blue"
 walkable
 
-~8,8
+~8,16
 name="Пол Корабля"
 mmcol="blue"
 walkable

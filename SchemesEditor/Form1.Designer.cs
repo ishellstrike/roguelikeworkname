@@ -66,6 +66,14 @@
             this.imageList1.Images.SetKeyName(4, "door2.png");
             this.imageList1.Images.SetKeyName(5, "door3.png");
             this.imageList1.Images.SetKeyName(6, "door4.png");
+            this.imageList1.Images.SetKeyName(7, "door1_open.png");
+            this.imageList1.Images.SetKeyName(8, "door2_open.png");
+            this.imageList1.Images.SetKeyName(9, "s1console1.png");
+            this.imageList1.Images.SetKeyName(10, "bed1.png");
+            this.imageList1.Images.SetKeyName(11, "bed2.png");
+            this.imageList1.Images.SetKeyName(12, "bed3.png");
+            this.imageList1.Images.SetKeyName(13, "bed4.png");
+            this.imageList1.Images.SetKeyName(14, "bed5.png");
             // 
             // listBox1
             // 

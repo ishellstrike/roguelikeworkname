@@ -6,6 +6,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public Color lightness;
         public bool explored;
 
+        public int Mtex;
+
         public static string GetSmartActionName(SmartAction smartAction)
         {
             switch (smartAction) {

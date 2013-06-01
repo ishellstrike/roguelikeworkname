@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib {
     public static class Settings {
@@ -10,6 +11,8 @@ namespace rglikeworknamelib {
         public static int Framelimit;
 
         public static bool DebugInfo;
+
+        public static Random rnd = new Random();
 
         public static Rectangle KillArea;
 

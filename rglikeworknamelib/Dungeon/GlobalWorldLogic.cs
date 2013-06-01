@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon
 {
     public static class GlobalWorldLogic
     {
         static Random rnd = new Random();
-        static DateTime currentTime = new DateTime(2020, rnd.Next(1, 13), 1);
-        static float temperature = 10;
+        public static DateTime currentTime = new DateTime(2020, rnd.Next(1, 13), 1);
+        public static float temperature = 10;
+
+        public static void Update(GameTime gt) {
+            currentTime += TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds);
+            temperature -= temperature * (float)gt.ElapsedGameTime.TotalMinutes;
+            temperature += GetNormalTemp(currentTime) * (float)gt.ElapsedGameTime.TotalMinutes;
+        }
 
         public static float GetNormalTemp(DateTime cur)
         {
