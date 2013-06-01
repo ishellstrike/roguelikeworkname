@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,26 +14,22 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int rx = 100;
         public int ry = 100;
         private readonly Collection<Texture2D> atlas_, flatlas_;
-
-        private Block[] blocks_;
-        private Floor[] floors_;
+        
+        private readonly Block[] blocks_;
+        private readonly Floor[] floors_;
 
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
         private readonly SpriteBatch spriteBatch_;
-        public readonly BlockDataBase blockDataBase;
-        public readonly FloorDataBase floorDataBase;
-        public readonly SchemesDataBase schemesBase;
-        private Random rnd = new Random();
+        public readonly BlockDataBase BlockDataBase;
+        public readonly FloorDataBase FloorDataBase;
+        public readonly SchemesDataBase SchemesBase;
+        private readonly Random rnd_ = new Random();
 
-        private Texture2D minimap;
+        private readonly Texture2D minimap_;
 
-        public List<StorageBlock> GetStorageBlocks() {
-            List<StorageBlock> temp = new List<StorageBlock>();
-            foreach(var a in blocks_) {
-                if (blockDataBase.Data[a.id].blockPrototype == typeof(StorageBlock))
-                    temp.Add(a as StorageBlock);
-            }
-            return temp;
+        public List<StorageBlock> GetStorageBlocks()
+        {
+            return (from a in blocks_ where BlockDataBase.Data[a.id].blockPrototype == typeof (StorageBlock) select a as StorageBlock).ToList();
         }
 
         public void ExploreAllMap()
@@ -46,7 +43,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void CreateAllMapFromArray(int[] arr)
         {
             for (int i = 0; i < arr.Length; i++) {
-                CreateBlock(i, arr[i]);
+                SetBlock(i, arr[i]);
             }
         }
 
@@ -67,13 +64,13 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public bool IsWalkable(int x, int y)
         {
-            return blockDataBase.Data[blocks_[x * ry + y].id].isWalkable;
+            return BlockDataBase.Data[blocks_[x * ry + y].id].isWalkable;
         }
 
-        public void CreateFloor(int x, int y, int id)
+        public void SetFloor(int x, int y, int id)
         {
             floors_[x * rx + y].ID = id;
-            floors_[x * rx + y].Mtex = floorDataBase.Data[id].RandomMtexFromAlters();
+            floors_[x * rx + y].Mtex = FloorDataBase.Data[id].RandomMtexFromAlters();
         }
 
         public int GetId(int x, int y)
@@ -86,14 +83,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             return blocks_[a].id;
         }
 
-        public void CreateBlock(int a, int id)
+        public void SetBlock(int a, int id)
         {
-            if (blockDataBase.Data[id].blockPrototype == typeof(Block)) {
+            if (BlockDataBase.Data[id].blockPrototype == typeof(Block)) {
                 blocks_[a] = new Block {
                     id = id
                 };
             }
-            if (blockDataBase.Data[id].blockPrototype == typeof(StorageBlock)) {
+            if (BlockDataBase.Data[id].blockPrototype == typeof(StorageBlock)) {
                 blocks_[a] = new StorageBlock {
                     storedItems = new List<Item.Item>(),
                     id = id
@@ -101,12 +98,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public void CreateBlock(int x, int y, int id) {
-            CreateBlock(x * ry + x, id);
+        public void SetBlock(int x, int y, int id) {
+            SetBlock(x * ry + x, id);
         }
 
-        public void CreateBlock(Vector2 where, int id) {
-            CreateBlock((int)where.X, (int)where.Y, id);
+        public void SetBlock(Vector2 where, int id) {
+            SetBlock((int)where.X, (int)where.Y, id);
         }
 
         public void OpenCloseDoor(Vector2 where) {
@@ -115,8 +112,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void OpenCloseDoor(int x, int y)
         {
-            if(blockDataBase.Data[blocks_[x*ry+y].id].smartAction == SmartAction.ActionOpenClose) {
-                CreateBlock(x, y, blockDataBase.Data[blocks_[x * ry + y].id].afterdeathId);
+            if(BlockDataBase.Data[blocks_[x*ry+y].id].smartAction == SmartAction.ActionOpenClose) {
+                SetBlock(x, y, BlockDataBase.Data[blocks_[x * ry + y].id].afterdeathId);
             }
         }
 
@@ -131,12 +128,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             blocks_ = new Block[rx * ry];
             floors_ = new Floor[rx * ry];
 
-            blockDataBase = bdb_;
-            floorDataBase = fdb_;
-            schemesBase = sdb_;
+            BlockDataBase = bdb_;
+            FloorDataBase = fdb_;
+            SchemesBase = sdb_;
 
             if (spriteBatch != null) {
-                minimap = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
+                minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
             }
 
             int i = rx * ry;
@@ -166,17 +163,18 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void Rebuild()
         {
             MapGenerators.FillTest1(this, 8);
-            MapGenerators.GenerateStreetsNew(this, rnd.Next(80,200), rnd.Next(80,200), rnd.Next(20,30), 2, 3);
+            MapGenerators.GenerateStreetsNew(this, rnd_.Next(80,200), rnd_.Next(80,200), rnd_.Next(20,30), 2, 3);
         }
+
 
         public GameLevel(int rx_ = 100, int ry_ = 100)
         {
             //spriteBatch_ = new SpriteBatch(null);
             flatlas_ = new Collection<Texture2D>();
             atlas_ = new Collection<Texture2D>();
-            blockDataBase = new BlockDataBase(new Dictionary<int, BlockData>());
-            floorDataBase = new FloorDataBase(new Dictionary<int, FloorData>());
-            schemesBase = new SchemesDataBase(new List<Schemes>());
+            BlockDataBase = new BlockDataBase(new Dictionary<int, BlockData>());
+            FloorDataBase = new FloorDataBase(new Dictionary<int, FloorData>());
+            SchemesBase = new SchemesDataBase(new List<Schemes>());
             rx = rx_;
             ry = ry_;
 
@@ -214,25 +212,20 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = startx; i < endx; i++) {
                 for (int j = starty; j < endy; j++) {
                     if (blocks_[i * ry + j].explored) {
-                        data[(j - starty) * 128 + (i - startx)] = floorDataBase.Data[floors_[i * ry + j].ID].MMCol;
+                        data[(j - starty) * 128 + (i - startx)] = FloorDataBase.Data[floors_[i * ry + j].ID].MMCol;
                     } else {
                         data[(j - starty) * 128 + (i - startx)] = Color.Black;
                     }
                 }
             }
-            minimap.SetData(data);
+            minimap_.SetData(data);
         }
 
         public short[] CalcWision(Creature who, float dirAngle, float seeAngleDeg)
         {
-            int x_top;
-            int y_top;
-            int dx_top = 0;
-            int dy_top = 0;
+            int dxTop = 0;
+            int dyTop = 0;
             int dir;
-            float dist;
-            int seen;
-            int max, min, tmax;
             int dx, dy, s_x, s_y, r_x, r_y;
             int px, py;
             int a;
@@ -269,64 +262,65 @@ namespace rglikeworknamelib.Dungeon.Level {
                         blocks_[i * ry + j].explored = true;
                     }
                 }
-            } catch (Exception) {
+            } catch (Exception)
+            {
             }
 
 
-            x_top = pos_x - see;
-            y_top = pos_y - see;
+            int xTop = pos_x - see;
+            int yTop = pos_y - see;
 
 
             for (dir = 0; dir < 4; dir++) {
-                if (x_top < 0) {
-                    x_top = 0;
+                if (xTop < 0) {
+                    xTop = 0;
                 }
-                if (x_top >= rx) {
-                    x_top = rx - 1;
+                if (xTop >= rx) {
+                    xTop = rx - 1;
                 }
-                if (y_top < 0) {
-                    y_top = 0;
+                if (yTop < 0) {
+                    yTop = 0;
                 }
-                if (y_top >= ry) {
-                    y_top = ry - 1;
+                if (yTop >= ry) {
+                    yTop = ry - 1;
                 }
 
                 if (dir == 0) {
-                    dx_top = +1;
-                    dy_top = 0;
+                    dxTop = +1;
+                    dyTop = 0;
                 }
                 if (dir == 1) {
-                    dx_top = 0;
-                    dy_top = +1;
+                    dxTop = 0;
+                    dyTop = +1;
                 }
                 if (dir == 2) {
-                    dx_top = -1;
-                    dy_top = 0;
+                    dxTop = -1;
+                    dyTop = 0;
                 }
                 if (dir == 3) {
-                    dx_top = 0;
-                    dy_top = -1;
+                    dxTop = 0;
+                    dyTop = -1;
                 }
 
                 while (true) {
 
-                    if (dir == 0 & ((x_top - pos_x) == see || (x_top - pos_x) >= rx - 1)) {
+                    if (dir == 0 & ((xTop - pos_x) == see || (xTop - pos_x) >= rx - 1)) {
                         break;
                     }
-                    if (dir == 1 & ((y_top - pos_y) == see || (y_top - pos_x) >= ry - 1)) {
+                    if (dir == 1 & ((yTop - pos_y) == see || (yTop - pos_x) >= ry - 1)) {
                         break;
                     }
-                    if (dir == 2 & ((pos_x - x_top) == see || (pos_x - x_top) >= rx - 1)) {
+                    if (dir == 2 & ((pos_x - xTop) == see || (pos_x - xTop) >= rx - 1)) {
                         break;
                     }
-                    if (dir == 3 & ((pos_y - y_top) == see || (pos_y - y_top) >= ry - 1)) {
+                    if (dir == 3 & ((pos_y - yTop) == see || (pos_y - yTop) >= ry - 1)) {
                         break;
                     }
 
                     x1 = pos_x;
                     y1 = pos_y;
-                    x2 = x_top;
-                    y2 = y_top;
+                    x2 = xTop;
+                    y2 = yTop;
 
                     px = x2 - x1;
                     py = y2 - y1;
@@ -335,6 +329,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                     px = (px >= 0) ? px : -px;
                     py = (py >= 0) ? py : -py;
 
+                    int max;
+                    int min;
                     if (px >= py) {
                         max = px;
                         min = py;
@@ -347,7 +343,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         r_y = s_y;
                     }
 
-                    tmax = max;
+                    int tmax = max;
                     a = max >> 1;
                     while (tmax != 0) {
                         a += min;
@@ -362,18 +358,18 @@ namespace rglikeworknamelib.Dungeon.Level {
                         x1 += dx;
                         y1 += dy;
 
-                        if (pos_x == x_top || pos_y == y_top) {
+                        int seen;
+                        if (pos_x == xTop || pos_y == yTop) {
                             seen = see - 1;
                         } else {
                             seen = see;
                         }
-                        dist = Convert.ToInt32(Math.Sqrt(Math.Pow((pos_x - x1), 2) + Math.Pow((pos_y - y1), 2)));
+                        float dist = Convert.ToInt32(Math.Sqrt(Math.Pow((pos_x - x1), 2) + Math.Pow((pos_y - y1), 2)));
                         if (dist > seen) {
                             break;
                         }
 
-                        float curangle;
-                        curangle = (float)Math.Atan2(y1 - pos_y, x1 - pos_x);
+                        float curangle = (float)Math.Atan2(y1 - pos_y, x1 - pos_x);
                         float wrapedangle = MathHelper.WrapAngle(dirAngle);
                         if ((curangle - MathHelper.ToRadians(seeAngleDeg) > wrapedangle || curangle + MathHelper.ToRadians(seeAngleDeg) < wrapedangle) &&
                             (curangle - MathHelper.ToRadians(seeAngleDeg) > wrapedangle + MathHelper.TwoPi || curangle + MathHelper.ToRadians(seeAngleDeg) < wrapedangle + MathHelper.TwoPi) &&
@@ -383,7 +379,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                         if (x1 >= 0 && x1 < rx && y1 >= 0 && y1 < ry &&
                             (n[(x1 - los_x_null) * ry + y1 - los_y_null] != 0 || n[(x1 - los_x_null) * ry + y1 - los_y_null] == -1)) {
-                            if (!blockDataBase.Data[blocks_[x1 * ry + y1].id].isTransparent) {
+                            if (!BlockDataBase.Data[blocks_[x1 * ry + y1].id].isTransparent) {
                                 n[(x1 - los_x_null) * ry + y1 - los_y_null] = 2;
                                 blocks_[(x1 - los_x_null) * ry + y1 - los_y_null].explored = true;
                                 byte temp11 = Convert.ToByte(255 - dist / seen * 205);
@@ -402,8 +398,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                         tmax--;
                     }
 
-                    x_top += dx_top;
-                    y_top += dy_top;
+                    xTop += dxTop;
+                    yTop += dyTop;
                 }
             }
             n[pos_x * ry + pos_y] = 0;
@@ -417,11 +413,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             return n;
         }
 
-        public void Draw(GameTime gameTime, Vector2 camera_)
+        public void Draw(GameTime gameTime, Vector2 camera)
         {
-            var min = new Vector2((camera_.X) / Settings.FloorSpriteSize.X, (camera_.Y) / Settings.FloorSpriteSize.Y);
-            var max = new Vector2((camera_.X + Settings.Resolution.X) / Settings.FloorSpriteSize.X,
-                                  (camera_.Y + Settings.Resolution.Y) / Settings.FloorSpriteSize.Y);
+            var min = new Vector2((camera.X) / Settings.FloorSpriteSize.X, (camera.Y) / Settings.FloorSpriteSize.Y);
+            var max = new Vector2((camera.X + Settings.Resolution.X) / Settings.FloorSpriteSize.X,
+                                  (camera.Y + Settings.Resolution.Y) / Settings.FloorSpriteSize.Y);
 
             min.X = MathHelper.Max(min.X, 0);
             min.Y = MathHelper.Max(min.Y, 0);
@@ -433,18 +429,18 @@ namespace rglikeworknamelib.Dungeon.Level {
                 for (int j = (int)min.Y, cj = 0; j < (int)max.Y; j++, cj++) {
                     int a = i * ry + j;
                     spriteBatch_.Draw(flatlas_[floors_[a].Mtex],
-                                      new Vector2(i * (Settings.FloorSpriteSize.X) - (int)camera_.X,
-                                                  j * (Settings.FloorSpriteSize.Y) - (int)camera_.Y),
+                                      new Vector2(i * (Settings.FloorSpriteSize.X) - (int)camera.X,
+                                                  j * (Settings.FloorSpriteSize.Y) - (int)camera.Y),
                                       null, blocks_[a].lightness);
                 }
             }
         }
 
-        public void Draw2(GameTime gameTime, Vector2 camera_)
+        public void Draw2(GameTime gameTime, Vector2 camera)
         {
-            var min = new Vector2((camera_.X) / Settings.FloorSpriteSize.X, (camera_.Y) / Settings.FloorSpriteSize.Y);
-            var max = new Vector2((camera_.X + Settings.Resolution.X) / Settings.FloorSpriteSize.X,
-                                  (camera_.Y + Settings.Resolution.Y) / Settings.FloorSpriteSize.Y);
+            var min = new Vector2((camera.X) / Settings.FloorSpriteSize.X, (camera.Y) / Settings.FloorSpriteSize.Y);
+            var max = new Vector2((camera.X + Settings.Resolution.X) / Settings.FloorSpriteSize.X,
+                                  (camera.Y + Settings.Resolution.Y) / Settings.FloorSpriteSize.Y);
 
             min.X = MathHelper.Max(min.X, 0);
             min.Y = MathHelper.Max(min.Y, 0);
@@ -455,9 +451,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = (int)min.X, ci = 0; i < (int)max.X; i++, ci++) {
                 for (int j = (int)min.Y, cj = 0; j < (int)max.Y; j++, cj++) {
                     int a = i * ry + j;
-                    spriteBatch_.Draw(atlas_[blockDataBase.Data[blocks_[a].id].texNo],
-                                      new Vector2(i * (Settings.FloorSpriteSize.X) - (int)camera_.X,
-                                                  j * (Settings.FloorSpriteSize.Y) - (int)camera_.Y),
+                    spriteBatch_.Draw(atlas_[BlockDataBase.Data[blocks_[a].id].texNo],
+                                      new Vector2(i * (Settings.FloorSpriteSize.X) - (int)camera.X,
+                                                  j * (Settings.FloorSpriteSize.Y) - (int)camera.Y),
                                       null, blocks_[a].lightness);
                 }
             }
@@ -469,7 +465,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public Texture2D GetMinimap() {
-            return minimap;
+            return minimap_;
         }
     }
 }

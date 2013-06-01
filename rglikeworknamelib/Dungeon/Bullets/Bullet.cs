@@ -2,12 +2,12 @@
 
 namespace rglikeworknamelib.Dungeon.Bullets {
     internal class Bullet {
-        internal bool _gApply;
-        internal int _mtex;
-        internal Vector3 _position;
-        internal int _type;
+        internal bool GApply;
+        internal int Mtex;
+        internal Vector3 Position;
+        internal int Type;
 
-        internal Vector3 _velocity;
+        internal Vector3 Velocity;
 
         public void Update(GameTime gameTime) {}
 

@@ -61,7 +61,7 @@ namespace SchemesEditor
             int y = (int) ((PictureBox) sender).Tag % 30 - camx;
             int x = (int) ((PictureBox) sender).Tag / 30 - camy;
             if (x < gl.rx && y < gl.ry && x >= 0 && y >= 0) {
-                gl.CreateBlock(x, y, listBox1.SelectedIndex);
+                gl.SetBlock(x, y, listBox1.SelectedIndex);
             }
         }
 

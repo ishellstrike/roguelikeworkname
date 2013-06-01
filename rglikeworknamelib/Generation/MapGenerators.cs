@@ -43,7 +43,7 @@ namespace rglikeworknamelib.Generation
         {
             for (int i = 0; i < gl.rx; i++) {
                 for (int j = 0; j < gl.ry; j++) {
-                    gl.CreateFloor(i, j, id);
+                    gl.SetFloor(i, j, id);
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace rglikeworknamelib.Generation
             foreach (var street in st) {
                 for (int i = (int)street.Min.X - 1; i < (int)street.Max.X + 4; i++) {
                     for (int j = (int)street.Min.Y - 1; j < (int)street.Max.Y + 4; j++) {
-                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.CreateFloor(i, j, trid);
+                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.SetFloor(i, j, trid);
                     }
                 }
             }
@@ -130,7 +130,7 @@ namespace rglikeworknamelib.Generation
             foreach (var street in st) {
                 for (int i = (int)street.Min.X; i < (int)street.Max.X + 3; i++) {
                     for (int j = (int)street.Min.Y; j < (int)street.Max.Y + 3; j++) {
-                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.CreateFloor(i, j, flid);
+                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.SetFloor(i, j, flid);
                     }
                 }
             }
@@ -142,7 +142,7 @@ namespace rglikeworknamelib.Generation
                 var tempcol = arrid[rnd.Next(0, arrid.Length)];
                 for (int i = (int)street.Min.X + 4; i < (int)street.Max.X - 1; i++) {
                     for (int j = (int)street.Min.Y + 4; j < (int)street.Max.Y - 1; j++) {
-                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.CreateFloor(i, j, tempcol);
+                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.SetFloor(i, j, tempcol);
                     }
                 }
             }
@@ -232,7 +232,7 @@ namespace rglikeworknamelib.Generation
 
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
-                    gl.CreateBlock((int)start.X + i, (int)start.Y + j, scheme.data[i * scheme.y + j]);
+                    gl.SetBlock((int)start.X + i, (int)start.Y + j, scheme.data[i * scheme.y + j]);
                 }
             }
 
