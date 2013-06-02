@@ -19,6 +19,22 @@ mmcol="white"
 actionopenclose
 afterid=7
 
+~Block,6,6
+name="Деревянная дверь (закрыта)"
+mmcol="white"
+actionopenclose
+afterid=7
+
+~Block,7,7
+name="Деревянная дверь (открыта)"
+mmcol="white"
+actionopenclose
+afterid=3
+walkable
+transparent
+
+
+
 ~Block,4,4
 name="Металлическая дверь (закрыта)"
 mmcol="white"
@@ -29,18 +45,7 @@ afterid=8
 name="Металлическая дверь (закрыта)"
 mmcol="white"
 actionopenclose
-
-~Block,6,6
-name="Деревянная дверь (закрыта)"
-mmcol="white"
-
-~Block,7,7
-name="Деревянная дверь (открыта)"
-mmcol="white"
-actionopenclose
-afterid=3
-walkable
-transparent
+afterid=8
 
 ~Block,8,8
 name="Металлическая дверь (открыта)"
@@ -65,3 +70,11 @@ name="Ящик"
 mmcol="yellow"
 actionopencontainer
 altermtex=34,35
+
+~StorageBlock,16,36
+name="Дерево"
+mmcol="darkgreen"
+
+~StorageBlock,17,37
+name="Куст"
+mmcol="darkgreen"

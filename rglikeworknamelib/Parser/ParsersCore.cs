@@ -51,10 +51,16 @@ namespace rglikeworknamelib.Parser
                     return Color.Yellow;
                 case "blue":
                     return Color.Blue;
+                case "darkblue":
+                    return Color.DarkBlue;
                 case "red":
                     return Color.Red;
+                case "darkred":
+                    return Color.DarkRed;
                 case "green":
                     return Color.Green;
+                case "darkgreen":
+                    return Color.DarkGreen;
                 default:
                     return Color.Transparent;
             }

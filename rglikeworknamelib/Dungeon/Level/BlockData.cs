@@ -4,25 +4,25 @@ using Microsoft.Xna.Framework;
 namespace rglikeworknamelib.Dungeon.Level {
     public class BlockData 
     {
-        public int afterdeathId;
+        public int AfterDeathId;
 
-        public float damage;
-        public string description;
-        public bool isDestructable;
+        public float Damage;
+        public string Description;
+        public bool IsDestructable;
 
-        public Type blockPrototype;
-        public SmartAction smartAction;
+        public Type BlockPrototype;
+        public SmartAction SmartAction;
 
-        public float hp;
-        public int texNo;
-        public string name;
+        public float Hp;
+        public int TexNo;
+        public string Name;
 
-        public Color mmcol;
+        public Color MMCol;
 
-        public bool isWalkable;
-        public bool isTransparent;
+        public bool IsWalkable;
+        public bool IsTransparent;
 
-        public int storageSlots;
+        public int StorageSlots;
 
         public int Mtex;
         public int[] AlterMtex;
@@ -39,7 +39,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public BlockData(int mtex) {
-            texNo = mtex;
+            TexNo = mtex;
         }
         public BlockData() {
         }

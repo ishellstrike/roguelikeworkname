@@ -1,9 +1,89 @@
 ~0,0
-name="black item"
+name="blank item"
 
 ~1,2
 name="Кола"
 nameret="Банка"
 nuth2o=500
 weight=500
-nutcarb=52
+nutcal=50
+afteruse=8
+
+~2,0
+name="Банка сардин"
+nameret="Банка с едой"
+afteruse=8
+
+~3,0
+name="Пакет лапши"
+weight=100
+nutcal=80
+nameret="Пакет с едой"
+
+~4,0
+name="Коробка галет"
+weight=300
+nutcal=100
+nameret="Коробка с едой"
+
+~5,0
+name="Банка тушеной говядины"
+nameret="Банка с едой"
+weight=300
+nutcal=200
+afteruse=8
+
+~6,0
+name="Банка паштета"
+nameret="Банка с едой"
+weight=300
+nutcal=200
+afteruse=8
+
+~7,0
+name="Пакет молока"
+weight=1000
+afteruse=13
+
+
+~8,0
+name="Пустая банка"
+weight=30
+
+~9,0
+name="Фляга армейская (полная)"
+weight=600
+nuth2o=500
+afteruse=14
+
+~10,0
+name="Аварийный рацион питания"
+nameret="Странная коробка"
+weight=500
+nutcal=500
+afteruse=13
+
+~11,0
+name="Вода консервированая"
+nameret="Странный пакет"
+nuth2o=500
+weight=500
+afteruse=12
+
+~12,0
+name="Пустой пакет"
+weight=10
+
+~13,0
+name="Пустая коробка"
+weight=20
+
+~14,0
+name="Фляга армейская (пустая)"
+weight=100
+
+~15,0
+name=""
+
+~16,0
+name=""

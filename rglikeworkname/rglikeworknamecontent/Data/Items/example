@@ -11,14 +11,11 @@
 
 //hiddencost=""
 
-//leavecontainer=""
+//afteruse=""
 
 //weight=0
 
 //##food
-//nutprot=0
-//nutlip=0
-//nutcarb=0
+//nutcal=0
 //nuth2o=0
-//nutsalt=0
-//nutvit=0
+//vitamin

@@ -3,6 +3,7 @@ namespace rglikeworknamelib.Dungeon.Level {
     {
         house,
         shop,
-        hospital
+        hospital,
+        storage
     }
 }

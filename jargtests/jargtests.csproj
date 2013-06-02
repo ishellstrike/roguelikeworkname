@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreatureTest.cs" />
+    <Compile Include="GameLevelTest.cs" />
     <Compile Include="GWLTests.cs" />
     <Compile Include="HeroTests.cs" />
     <Compile Include="MapGeneratorTests.cs" />

@@ -31,13 +31,6 @@ namespace rglikeworknamelib.Generation
     public static class MapGenerators
     {
         static Random rnd = new Random();
-        public static void GenerateTest1(ref Block[] bb, ref Floor[] ff, int rx, int ry)
-        {
-            foreach (var floor in ff) {
-                floor.ID = 1;
-            }
-            GenerateRoads1(ref bb, ref ff, rx, ry, 100, 10, 2);
-        }
 
         public static void FillTest1(GameLevel gl, int id)
         {
@@ -49,19 +42,17 @@ namespace rglikeworknamelib.Generation
         }
         //blanks 4 5 6 7
         public static void GenerateStreetsNew(GameLevel gl, int count, int len, int step, int flid, int trid) {
-            List<MinMax> streets = new List<MinMax>();
-            List<Vector2> sNodes = new List<Vector2>();
-            List<Vector2> visitedSNodes = new List<Vector2>();
+            var streets = new List<MinMax>();
+            var sNodes = new List<Point>();
+            var visitedSNodes = new List<Point>();
 
-            sNodes.Add(new Vector2(GetRandomCoordInCenter(gl.rx), GetRandomCoordInCenter(gl.ry)));
+            sNodes.Add(new Point(GetRandomCoordInCenter(gl.rx), GetRandomCoordInCenter(gl.ry)));
 
             for (int i = 0; i < count; i++) {
                 int num = rnd.Next(0, sNodes.Count);
                 var cur = sNodes[num];
                 visitedSNodes.Add(cur);
                 sNodes.RemoveAt(num);
-
-                int lenstep = len / step;
 
                 int curlen = rnd.Next(step/2, len);
                 int curoffs = rnd.Next(0, curlen/step + 1) * step;
@@ -76,9 +67,9 @@ namespace rglikeworknamelib.Generation
 
                 for (int j = 0; j < curlen; j+= step) {
                     if (isHorizontal) {
-                        sNodes.Add(new Vector2(cur.X - curoffs + j, cur.Y));
+                        sNodes.Add(new Point(cur.X - curoffs + j, cur.Y));
                     } else {
-                        sNodes.Add(new Vector2(cur.X, cur.Y - curoffs + j));
+                        sNodes.Add(new Point(cur.X, cur.Y - curoffs + j));
                     }
                 }
             }
@@ -93,7 +84,7 @@ namespace rglikeworknamelib.Generation
             FillMinMaxRandomly(squares, gl, new int[] {3});
     }
 
-        public static List<MinMax> GetSquaresFromNodes(List<Vector2> visitedSNodes)
+        public static List<MinMax> GetSquaresFromNodes(List<Point> visitedSNodes)
         {
             List<MinMax> squares = new List<MinMax>();
             foreach (var a in visitedSNodes) {
@@ -220,9 +211,37 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        internal static void PlaceScheme(GameLevel gl, Schemes schem, int rx, int ry)
+        internal static void PlaceScheme(GameLevel gl, Schemes scheme, int x, int y)
         {
+            for (int i = 0; i < scheme.x; i++) {
+                for (int j = 0; j < scheme.y; j++) {
+                    if (x + i < gl.rx && y + j < gl.ry) {
+                        if (scheme.data[i * scheme.y + j] != 0) {
+                            gl.SetBlock(x + i, y + j, scheme.data[i*scheme.y + j]);
+                        }
+                    }
+                }
+            }
+        }
 
+        internal static void PlaceRandomSchemeByType(GameLevel gl, SchemesType st, int rx, int ry) {
+            List<Schemes> a;
+            switch (st) {
+                case SchemesType.house:
+                    a = gl.SchemesBase.Houses;
+                    break;
+
+                default:
+                    a = gl.SchemesBase.Data.Where(x => x.type == st).ToList();
+                    break;;
+            }
+           
+
+            if(a.Count > 0) {
+                int r = rnd.Next(0, a.Count);
+                PlaceScheme(gl, a[r], rx, ry);
+             
+            }
         }
 
         internal static void AddTestScheme(GameLevel gl, SchemesDataBase sch, int rx, int ry)
@@ -246,6 +265,12 @@ namespace rglikeworknamelib.Generation
                     });
                 }
                 
+            }
+        }
+
+        public static void ClearBlocks(GameLevel gameLevel) {
+            for(int i=0;i<gameLevel.rx*gameLevel.ry;i++) {
+                gameLevel.SetBlock(i, 0);
             }
         }
     }

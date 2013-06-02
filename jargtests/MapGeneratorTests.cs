@@ -15,7 +15,7 @@ namespace jargtests
         public void SingleSquareFrom4Nodes()
         {
             List<MinMax> complete = new List<MinMax>(){new MinMax(1, 1, 2, 2)};
-            Vector2[] a = {new Vector2(1, 1), new Vector2(1, 2),new Vector2(2, 2), new Vector2(2, 1)};
+            Point[] a = { new Point(1, 1), new Point(1, 2), new Point(2, 2), new Point(2, 1) };
             var real = MapGenerators.GetSquaresFromNodes(a.ToList());
             CollectionAssert.AreEqual(complete, real);
         }
@@ -24,7 +24,7 @@ namespace jargtests
         public void SingleSquareFrom6Nodes()
         {
             List<MinMax> complete = new List<MinMax>() { new MinMax(1, 1, 2, 2), new MinMax(1, 2, 2, 3) };
-            Vector2[] a = { new Vector2(1, 1), new Vector2(1, 2), new Vector2(2, 2), new Vector2(2, 1), new Vector2(1, 3)};
+            Point[] a = { new Point(1, 1), new Point(1, 2), new Point(2, 2), new Point(2, 1), new Point(1, 3) };
             var real = MapGenerators.GetSquaresFromNodes(a.ToList());
             CollectionAssert.AreEqual(complete, real);
         }

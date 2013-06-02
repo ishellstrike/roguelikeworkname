@@ -53,7 +53,7 @@ namespace SchemesEditor
 
             listBox1.Items.Clear();
             foreach (var a in bdb.Data) {
-                listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.texNo + " -- " + a.Value.name);
+                listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.TexNo + " -- " + a.Value.Name);
             }
         }
 

@@ -25,10 +25,10 @@ namespace rglikeworknamelib.Parser
                     KeyValuePair<int, object> cur = temp.Last();
                     switch (header[0]) {
                         case "StorageBlock":
-                            ((BlockData)cur.Value).blockPrototype = typeof(StorageBlock);
+                            ((BlockData)cur.Value).BlockPrototype = typeof(StorageBlock);
                             break;
                         default:
-                            ((BlockData)cur.Value).blockPrototype = typeof(Block);
+                            ((BlockData)cur.Value).BlockPrototype = typeof(Block);
                             break;
                     }
 
@@ -36,41 +36,41 @@ namespace rglikeworknamelib.Parser
                         if (lines[i].StartsWith("name=")) {
                             string extractedstring =
                                 ParsersCore.stringExtractor.Match(lines[i]).ToString();
-                            ((BlockData)cur.Value).name = extractedstring.Substring(1, extractedstring.Length - 2);
+                            ((BlockData)cur.Value).Name = extractedstring.Substring(1, extractedstring.Length - 2);
                         }
                         if (lines[i].StartsWith("afterid=")) {
                             string extractedstring =
                                 ParsersCore.intextractor.Match(lines[i]).ToString();
-                            ((BlockData)cur.Value).afterdeathId = Convert.ToInt32(extractedstring);
+                            ((BlockData)cur.Value).AfterDeathId = Convert.ToInt32(extractedstring);
                         }
                         if (lines[i].StartsWith("description=")) {
                             string extractedstring =
                                 ParsersCore.stringExtractor.Match(lines[i]).ToString();
-                            ((BlockData)cur.Value).description = extractedstring.Substring(1,
+                            ((BlockData)cur.Value).Description = extractedstring.Substring(1,
                                                                                             extractedstring.Length - 2);
                         }
                         if (lines[i].StartsWith("mmcol=")) {
-                            ((BlockData)cur.Value).mmcol = ParsersCore.ParseStringToColor(lines[i]);
+                            ((BlockData)cur.Value).MMCol = ParsersCore.ParseStringToColor(lines[i]);
                         }
                         if (lines[i].StartsWith("walkable")) {
-                            ((BlockData)cur.Value).isWalkable = true;
+                            ((BlockData)cur.Value).IsWalkable = true;
                         }
                         if (lines[i].StartsWith("transparent")) {
-                            ((BlockData)cur.Value).isTransparent = true;
+                            ((BlockData)cur.Value).IsTransparent = true;
                         }
                         if (lines[i].StartsWith("actionopencontainer")) {
-                            ((BlockData)cur.Value).smartAction = SmartAction.ActionOpenContainer;
+                            ((BlockData)cur.Value).SmartAction = SmartAction.ActionOpenContainer;
                         }
                         if (lines[i].StartsWith("actionloot"))
                         {
-                            ((BlockData)cur.Value).smartAction = SmartAction.ActionLoot;
+                            ((BlockData)cur.Value).SmartAction = SmartAction.ActionLoot;
                         }
                         if (lines[i].StartsWith("actionsmash"))
                         {
-                            ((BlockData)cur.Value).smartAction = SmartAction.ActionSmash;
+                            ((BlockData)cur.Value).SmartAction = SmartAction.ActionSmash;
                         }
                         if (lines[i].StartsWith("actionopenclose")) {
-                            ((BlockData)cur.Value).smartAction = SmartAction.ActionOpenClose;
+                            ((BlockData)cur.Value).SmartAction = SmartAction.ActionOpenClose;
                         }
                         if (lines[i].StartsWith("altermtex=")) {
                             string sub = lines[i].Substring(10);

@@ -20,16 +20,16 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
         private readonly SpriteBatch spriteBatch_;
-        public readonly BlockDataBase BlockDataBase;
-        public readonly FloorDataBase FloorDataBase;
-        public readonly SchemesDataBase SchemesBase;
+        public BlockDataBase BlockDataBase;
+        public FloorDataBase FloorDataBase;
+        public SchemesDataBase SchemesBase;
         private readonly Random rnd_ = new Random();
 
         private readonly Texture2D minimap_;
 
         public List<StorageBlock> GetStorageBlocks()
         {
-            return (from a in blocks_ where BlockDataBase.Data[a.id].blockPrototype == typeof (StorageBlock) select a as StorageBlock).ToList();
+            return (from a in blocks_ where BlockDataBase.Data[a.id].BlockPrototype == typeof (StorageBlock) select a as StorageBlock).ToList();
         }
 
         public void ExploreAllMap()
@@ -64,7 +64,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public bool IsWalkable(int x, int y)
         {
-            return BlockDataBase.Data[blocks_[x * ry + y].id].isWalkable;
+            return BlockDataBase.Data[blocks_[x * ry + y].id].IsWalkable;
         }
 
         public void SetFloor(int x, int y, int id)
@@ -85,12 +85,12 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SetBlock(int a, int id)
         {
-            if (BlockDataBase.Data[id].blockPrototype == typeof(Block)) {
+            if (BlockDataBase.Data[id].BlockPrototype == typeof(Block)) {
                 blocks_[a] = new Block {
                     id = id
                 };
             }
-            if (BlockDataBase.Data[id].blockPrototype == typeof(StorageBlock)) {
+            if (BlockDataBase.Data[id].BlockPrototype == typeof(StorageBlock)) {
                 blocks_[a] = new StorageBlock {
                     storedItems = new List<Item.Item>(),
                     id = id
@@ -99,7 +99,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void SetBlock(int x, int y, int id) {
-            SetBlock(x * ry + x, id);
+            SetBlock(x * ry + y, id);
         }
 
         public void SetBlock(Vector2 where, int id) {
@@ -112,8 +112,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void OpenCloseDoor(int x, int y)
         {
-            if(BlockDataBase.Data[blocks_[x*ry+y].id].smartAction == SmartAction.ActionOpenClose) {
-                SetBlock(x, y, BlockDataBase.Data[blocks_[x * ry + y].id].afterdeathId);
+            if(BlockDataBase.Data[blocks_[x*ry+y].id].SmartAction == SmartAction.ActionOpenClose) {
+                SetBlock(x, y, BlockDataBase.Data[blocks_[x * ry + y].id].AfterDeathId);
             }
         }
 
@@ -162,8 +162,11 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void Rebuild()
         {
-            MapGenerators.FillTest1(this, 8);
+            MapGenerators.FillTest1(this, 1);
+            MapGenerators.ClearBlocks(this);
             MapGenerators.GenerateStreetsNew(this, rnd_.Next(80,200), rnd_.Next(80,200), rnd_.Next(20,30), 2, 3);
+            for (int i = 0; i < 400;i++ )
+                MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rnd_.Next(0, rx), rnd_.Next(0, ry));
         }
 
 
@@ -212,7 +215,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = startx; i < endx; i++) {
                 for (int j = starty; j < endy; j++) {
                     if (blocks_[i * ry + j].explored) {
-                        data[(j - starty) * 128 + (i - startx)] = FloorDataBase.Data[floors_[i * ry + j].ID].MMCol;
+                        var a = blocks_[i*ry + j].id;
+                        if (a == 0) {
+                            data[(j - starty)*128 + (i - startx)] = FloorDataBase.Data[floors_[i*ry + j].ID].MMCol;
+                        } else {
+                            data[(j - starty) * 128 + (i - startx)] = BlockDataBase.Data[a].MMCol;
+                        }
                     } else {
                         data[(j - starty) * 128 + (i - startx)] = Color.Black;
                     }
@@ -379,7 +387,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                         if (x1 >= 0 && x1 < rx && y1 >= 0 && y1 < ry &&
                             (n[(x1 - los_x_null) * ry + y1 - los_y_null] != 0 || n[(x1 - los_x_null) * ry + y1 - los_y_null] == -1)) {
-                            if (!BlockDataBase.Data[blocks_[x1 * ry + y1].id].isTransparent) {
+                            if (!BlockDataBase.Data[blocks_[x1 * ry + y1].id].IsTransparent) {
                                 n[(x1 - los_x_null) * ry + y1 - los_y_null] = 2;
                                 blocks_[(x1 - los_x_null) * ry + y1 - los_y_null].explored = true;
                                 byte temp11 = Convert.ToByte(255 - dist / seen * 205);
@@ -451,7 +459,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = (int)min.X, ci = 0; i < (int)max.X; i++, ci++) {
                 for (int j = (int)min.Y, cj = 0; j < (int)max.Y; j++, cj++) {
                     int a = i * ry + j;
-                    spriteBatch_.Draw(atlas_[BlockDataBase.Data[blocks_[a].id].texNo],
+                    spriteBatch_.Draw(atlas_[BlockDataBase.Data[blocks_[a].id].TexNo],
                                       new Vector2(i * (Settings.FloorSpriteSize.X) - (int)camera.X,
                                                   j * (Settings.FloorSpriteSize.Y) - (int)camera.Y),
                                       null, blocks_[a].lightness);

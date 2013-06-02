@@ -67,7 +67,7 @@ namespace jarg
             graphics_.PreferredBackBufferWidth = (int)rglikeworknamelib.Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             
-            IsFixedTimeStep = false;
+            IsFixedTimeStep = false; //wierd, actually it's true
             IsMouseVisible = true;
             graphics_.ApplyChanges();
 
@@ -132,8 +132,8 @@ namespace jarg
         public float seeAngleDeg = 60;
         public float PlayerSeeAngle;
         public TimeSpan sec = TimeSpan.Zero;
-        protected override void Update(GameTime gameTime)
-        {
+        protected override void Update(GameTime gameTime) {
+
             if (ErrorExit) Exit();
 
             base.Update(gameTime);
@@ -163,7 +163,7 @@ namespace jarg
                     seeAngleDeg = 60;
                 }
             }
-            //currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
+            currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
             player_.Update(gameTime, currentFloor_, bdb_);
             ps_.Update(gameTime);
             GlobalWorldLogic.Update(gameTime);
@@ -228,15 +228,15 @@ namespace jarg
                 int ny = (ms_.Y + (int)camera_.Y) / 32;
                 var a = currentFloor_.GetBlock(nx, ny);
                 var b = bdb_.Data[a.id];
-                string s = Block.GetSmartActionName(b.smartAction) + " " + b.name;
-                if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.texNo;
+                string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
+                if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.TexNo;
 
                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && currentFloor_.IsCreatureMeele(nx, ny, player_)) {
                     var undermouseblock = bdb_.Data[a.id];
-                    if (undermouseblock.smartAction == SmartAction.ActionOpenContainer) {
+                    if (undermouseblock.SmartAction == SmartAction.ActionOpenContainer) {
                     }
 
-                    if(undermouseblock.smartAction == SmartAction.ActionOpenClose) {
+                    if(undermouseblock.SmartAction == SmartAction.ActionOpenClose) {
                        currentFloor_.OpenCloseDoor(nx, ny);
                     }
                 }
