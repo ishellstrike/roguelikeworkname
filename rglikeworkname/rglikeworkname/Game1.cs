@@ -163,7 +163,7 @@ namespace jarg
                     seeAngleDeg = 60;
                 }
             }
-            currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
+            //currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
             player_.Update(gameTime, currentFloor_, bdb_);
             ps_.Update(gameTime);
             GlobalWorldLogic.Update(gameTime);

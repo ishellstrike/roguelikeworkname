@@ -240,7 +240,7 @@ namespace rglikeworknamelib.Generation
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
                 PlaceScheme(gl, a[r], rx, ry);
-             
+                FillFloorFromArrayAndOffset(gl, a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], 8), rx, ry);
             }
         }
 
@@ -271,6 +271,44 @@ namespace rglikeworknamelib.Generation
         public static void ClearBlocks(GameLevel gameLevel) {
             for(int i=0;i<gameLevel.rx*gameLevel.ry;i++) {
                 gameLevel.SetBlock(i, 0);
+            }
+        }
+
+        public static int[] GetInnerFloorArrayWithId(Schemes a, int id) {
+            int[] visited = new int[a.data.Length];
+            Queue<int> todo = new Queue<int>();
+            if (a.data[0] == 0) todo.Enqueue(0); // угол 0,0
+            if (a.data[(a.x - 1) * a.y] == 0) todo.Enqueue((a.x - 1) * a.y); //угол х,0
+            if (a.data[a.y - 1] == 0) todo.Enqueue(a.y - 1); //угол 0,у
+            if (a.data[(a.x - 1) * a.y + a.y - 1] == 0) todo.Enqueue((a.x - 1) *a.y + a.y - 1); //угол х,у
+
+
+            while (todo.Count > 0) {
+                var t = todo.Dequeue();
+
+                if(visited[t] == 0 && a.data[t] == 0) {
+                    visited[t] = 1;
+                    if (t % a.y < a.x - 1) todo.Enqueue(t + 1);
+                    if (t % a.y > 0) todo.Enqueue(t - 1);
+                    if (t / a.y < a.y - 1) todo.Enqueue(t + a.y);
+                    if (t / a.y > 0) todo.Enqueue(t - a.y);
+                }
+            }
+
+            visited = visited.Select(x => x == 0 ? id : 0).ToArray();
+
+            return visited;
+        }
+
+        public static void FillFloorFromArrayAndOffset(GameLevel gl, int x, int y, int[] arr, int sx, int sy) {
+            for (int i = 0; i < x; i++) {
+                for (int j = 0; j < y; j++) {
+                    if (sx + i < gl.rx && sy + j < gl.ry) {
+                        if(arr[i*y+j] != 0) {
+                            gl.SetFloor(sx + i, sy + j, arr[i * y + j]);
+                        }
+                    }
+                }
             }
         }
     }

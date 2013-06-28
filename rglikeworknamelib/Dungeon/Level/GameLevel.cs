@@ -69,8 +69,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SetFloor(int x, int y, int id)
         {
-            floors_[x * rx + y].ID = id;
-            floors_[x * rx + y].Mtex = FloorDataBase.Data[id].RandomMtexFromAlters();
+            floors_[x * ry + y].ID = id;
+            floors_[x * ry + y].Mtex = FloorDataBase.Data[id].RandomMtexFromAlters();
         }
 
         public int GetId(int x, int y)
