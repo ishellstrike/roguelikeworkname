@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Parser
 {
@@ -12,7 +13,9 @@ namespace rglikeworknamelib.Parser
         {
             var temp = new List<KeyValuePair<int, object>>();
 
-            s = Regex.Replace(s, "//.*\n", "");
+            s = s.Remove(0, s.IndexOf('~'));
+
+            s = Regex.Replace(s, "//.*\r\n", "");
             s = Regex.Replace(s, "//.*", "");
 
             string[] blocks = s.Split('~');
@@ -44,6 +47,25 @@ namespace rglikeworknamelib.Parser
                         }
                         if (lines[i].StartsWith("mmcol=")) {
                             ((ItemData)cur.Value).mmcol = ParsersCore.ParseStringToColor(lines[i]);
+                        }
+                        if (lines[i].StartsWith("stype=")) {
+                            string extractedstring =
+                                ParsersCore.stringExtractor.Match(lines[i]).ToString();
+                            ((ItemData)cur.Value).stype = extractedstring.Substring(1, extractedstring.Length - 2);
+                        }
+                        if (lines[i].StartsWith("weight=")) {
+                            string extractedstring =
+                                ParsersCore.intextractor.Match(lines[i]).ToString();
+                            ((ItemData)cur.Value).weight = Convert.ToInt32(extractedstring);
+                        }
+                        if (lines[i].StartsWith("volume=")) {
+                            string extractedstring =
+                                ParsersCore.intextractor.Match(lines[i]).ToString();
+                            ((ItemData)cur.Value).volume = Convert.ToInt32(extractedstring);
+                        } if (lines[i].StartsWith("afteruse=")) {
+                            string extractedstring =
+                                ParsersCore.intextractor.Match(lines[i]).ToString();
+                            ((ItemData)cur.Value).afteruseId = Convert.ToInt32(extractedstring);
                         }
                     }
                 }

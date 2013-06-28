@@ -6,6 +6,9 @@ namespace rglikeworknamelib.Dungeon.Level {
     public class BlockDataBase {
         public Dictionary<int, BlockData> Data;
 
+        /// <summary>
+        /// WARNING! Also loading all data from standart patch
+        /// </summary>
         public BlockDataBase() {
             Data = new Dictionary<int, BlockData>();
             var a = ParsersCore.ParseDirectory<KeyValuePair<int, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetObjectDataDirectory(), BlockParser.Parser);

@@ -2,18 +2,23 @@
 
 ~5000,0
 name="Бинт"
+stype="med"
 
 
 ~5001,0
 name="Плотный бинт"
+stype="med"
 
 ~5002,0
 name="Жгут"
+stype="med"
 
 ~5003,0
 name="Пантоцид в упаковке"
+stype="med"
 doses=20
 
 ~5004,0
 name="Кофеин в упаковке"
 doses=20
+stype="med"

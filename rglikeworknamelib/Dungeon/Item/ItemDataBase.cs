@@ -9,10 +9,13 @@ namespace rglikeworknamelib.Dungeon.Item {
     public class ItemDataBase
     {
         public Dictionary<int, ItemData> data;
-        public Collection<Texture2D> texatlas;
+       // public Collection<Texture2D> texatlas;
 
-        public ItemDataBase(Collection<Texture2D> texatlas_) {
-            texatlas = texatlas_;
+        /// <summary>
+        /// WARNING! Also loading all data from standart patch
+        /// </summary>
+        public ItemDataBase() {
+            //texatlas = texatlas_;
             data = new Dictionary<int, ItemData>();
             var a = ParsersCore.ParseDirectory<KeyValuePair<int, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory(), ItemParser.Parser);
             foreach (var pair in a) {

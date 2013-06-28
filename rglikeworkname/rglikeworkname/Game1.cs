@@ -95,7 +95,7 @@ namespace jarg
             fdb_ = new FloorDataBase();
             mdb_ = new MonsterDataBase();
             sdb_ = new SchemesDataBase();
-            idb_ = new ItemDataBase(ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetItemDataDirectory() + @"/textureloadorder.ord", Content));
+            idb_ = new ItemDataBase(/*ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetItemDataDirectory() + @"/textureloadorder.ord", Content))*/);
             ws_ = new WindowSystem(whitepixel, font1_);
 
             ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));

@@ -12,6 +12,8 @@ namespace rglikeworknamelib.Parser
         {
             var temp = new List<KeyValuePair<int, object>>();
 
+            s = s.Remove(0, s.IndexOf('~'));
+
             s = Regex.Replace(s, "//.*\n", "");
             s = Regex.Replace(s, "//.*", "");
 

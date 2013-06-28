@@ -3,6 +3,9 @@ namespace rglikeworknamelib.Dungeon.Item {
     {
         public int stackNo;
 
+        public int weight;
+        public int afteruseId;
+
         public int hasHealth; //if has health, count became health
 
         public string name;
@@ -11,5 +14,8 @@ namespace rglikeworknamelib.Dungeon.Item {
         public int mtex;
 
         public Microsoft.Xna.Framework.Color mmcol;
+
+        public int volume;
+        public string stype;
     }
 }

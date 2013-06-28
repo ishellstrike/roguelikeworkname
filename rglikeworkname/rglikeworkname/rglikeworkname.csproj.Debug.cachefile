@@ -68,8 +68,6 @@ Content\Textures\Dungeon\Objects\s1console6.xnb
 Content\Textures\Dungeon\Objects\s1console7.xnb
 Content\Textures\Dungeon\Objects\s1console8.xnb
 Content\Textures\Dungeon\Objects\s1console9.xnb
-Content\Effects\reductionEffect.xnb
-Content\Effects\resolveShadowsEffect.xnb
 Content\Textures\Dungeon\Objects\bed1.xnb
 Content\Textures\Dungeon\Objects\bed2.xnb
 Content\Textures\Dungeon\Objects\bed3.xnb
@@ -80,6 +78,8 @@ Content\Textures\Dungeon\Objects\crates2.xnb
 Content\Textures\Dungeon\Objects\crates3.xnb
 Content\Textures\Dungeon\Objects\bush1.xnb
 Content\Textures\Dungeon\Objects\tree1.xnb
+Content\Effects\reductionEffect.xnb
+Content\Effects\resolveShadowsEffect.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Floor\textureloadorder.ord
@@ -95,4 +95,8 @@ Content\Data\Schemes\houseSmall1.txt
 Content\Data\Schemes\houseTiny1.txt
 Content\Data\Schemes\houseTiny2.txt
 Content\Data\Schemes\houseTiny3.txt
+Content\Data\Items\crafting1.txt
+Content\Data\Items\medicine1.txt
+Content\Data\Items\Spawnlists\house.txt
+Content\Data\Items\misc1.txt
 Content\Textures\Particles\textureloadorder.ord

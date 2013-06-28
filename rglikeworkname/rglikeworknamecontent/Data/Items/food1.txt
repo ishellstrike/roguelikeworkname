@@ -8,23 +8,27 @@ nuth2o=500
 weight=500
 nutcal=50
 afteruse=8
+stype="food"
 
 ~2,0
 name="Банка сардин"
 nameret="Банка с едой"
 afteruse=8
+stype="food"
 
 ~3,0
 name="Пакет лапши"
 weight=100
 nutcal=80
 nameret="Пакет с едой"
+stype="food"
 
 ~4,0
 name="Коробка галет"
 weight=300
 nutcal=100
 nameret="Коробка с едой"
+stype="food"
 
 ~5,0
 name="Банка тушеной говядины"
@@ -32,6 +36,7 @@ nameret="Банка с едой"
 weight=300
 nutcal=200
 afteruse=8
+stype="food"
 
 ~6,0
 name="Банка паштета"
@@ -39,11 +44,13 @@ nameret="Банка с едой"
 weight=300
 nutcal=200
 afteruse=8
+stype="food"
 
 ~7,0
 name="Пакет молока"
 weight=1000
 afteruse=13
+stype="food"
 
 
 ~8,0
@@ -55,6 +62,7 @@ name="Фляга армейская (полная)"
 weight=600
 nuth2o=500
 afteruse=14
+stype="food"
 
 ~10,0
 name="Аварийный рацион питания"
@@ -62,6 +70,7 @@ nameret="Странная коробка"
 weight=500
 nutcal=500
 afteruse=13
+stype="food"
 
 ~11,0
 name="Вода консервированая"
@@ -69,6 +78,7 @@ nameret="Странный пакет"
 nuth2o=500
 weight=500
 afteruse=12
+stype="food"
 
 ~12,0
 name="Пустой пакет"

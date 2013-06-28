@@ -575,9 +575,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Items\medicine1.txt">
+    <None Include="Data\Items\medicine1.txt">
       <Name>medicine1</Name>
-    </Compile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Items\Spawnlists\house.txt">
