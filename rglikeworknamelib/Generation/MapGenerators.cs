@@ -32,21 +32,21 @@ namespace rglikeworknamelib.Generation
     {
         static Random rnd = new Random();
 
-        public static void FillTest1(GameLevel gl, int id)
+        public static void FillTest1(MapSector gl, int id)
         {
-            for (int i = 0; i < gl.rx; i++) {
-                for (int j = 0; j < gl.ry; j++) {
+            for (int i = 0; i < MapSector.Rx; i++) {
+                for (int j = 0; j < MapSector.Ry; j++) {
                     gl.SetFloor(i, j, id);
                 }
             }
         }
         //blanks 4 5 6 7
-        public static void GenerateStreetsNew(GameLevel gl, int count, int len, int step, int flid, int trid) {
+        public static void GenerateStreetsNew(MapSector gl, int count, int len, int step, int flid, int trid) {
             var streets = new List<MinMax>();
             var sNodes = new List<Point>();
             var visitedSNodes = new List<Point>();
 
-            sNodes.Add(new Point(GetRandomCoordInCenter(gl.rx), GetRandomCoordInCenter(gl.ry)));
+            sNodes.Add(new Point(GetRandomCoordInCenter(MapSector.Rx), GetRandomCoordInCenter(MapSector.Ry)));
 
             for (int i = 0; i < count; i++) {
                 int num = rnd.Next(0, sNodes.Count);
@@ -108,12 +108,12 @@ namespace rglikeworknamelib.Generation
             return squares;
         }
 
-        public static void FillStreetsNew(List<MinMax> st, GameLevel gl, int flid, int trid)
+        public static void FillStreetsNew(List<MinMax> st, MapSector gl, int flid, int trid)
         {
             foreach (var street in st) {
                 for (int i = (int)street.Min.X - 1; i < (int)street.Max.X + 4; i++) {
                     for (int j = (int)street.Min.Y - 1; j < (int)street.Max.Y + 4; j++) {
-                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.SetFloor(i, j, trid);
+                        if (i < MapSector.Rx && j < MapSector.Ry && i >= 0 && j >= 0) gl.SetFloor(i, j, trid);
                     }
                 }
             }
@@ -121,19 +121,19 @@ namespace rglikeworknamelib.Generation
             foreach (var street in st) {
                 for (int i = (int)street.Min.X; i < (int)street.Max.X + 3; i++) {
                     for (int j = (int)street.Min.Y; j < (int)street.Max.Y + 3; j++) {
-                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.SetFloor(i, j, flid);
+                        if (i < MapSector.Rx && j < MapSector.Ry && i >= 0 && j >= 0) gl.SetFloor(i, j, flid);
                     }
                 }
             }
         }
 
-        public static void FillMinMaxRandomly(List<MinMax> st, GameLevel gl, int[] arrid)
+        public static void FillMinMaxRandomly(List<MinMax> st, MapSector gl, int[] arrid)
         {
             foreach (var street in st) {
                 var tempcol = arrid[rnd.Next(0, arrid.Length)];
                 for (int i = (int)street.Min.X + 4; i < (int)street.Max.X - 1; i++) {
                     for (int j = (int)street.Min.Y + 4; j < (int)street.Max.Y - 1; j++) {
-                        if (i < gl.rx && j < gl.ry && i >= 0 && j >= 0) gl.SetFloor(i, j, tempcol);
+                        if (i < MapSector.Rx && j < MapSector.Ry && i >= 0 && j >= 0) gl.SetFloor(i, j, tempcol);
                     }
                 }
             }
@@ -211,11 +211,11 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        internal static void PlaceScheme(GameLevel gl, Schemes scheme, int x, int y)
+        internal static void PlaceScheme(MapSector gl, Schemes scheme, int x, int y)
         {
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
-                    if (x + i < gl.rx && y + j < gl.ry) {
+                    if (x + i < MapSector.Rx && y + j < MapSector.Ry) {
                         if (scheme.data[i * scheme.y + j] != 0) {
                             gl.SetBlock(x + i, y + j, scheme.data[i*scheme.y + j]);
                         }
@@ -224,15 +224,15 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        internal static void PlaceRandomSchemeByType(GameLevel gl, SchemesType st, int rx, int ry) {
+        internal static void PlaceRandomSchemeByType(MapSector gl, SchemesType st, int rx, int ry) {
             List<Schemes> a;
             switch (st) {
                 case SchemesType.house:
-                    a = gl.SchemesBase.Houses;
+                    a = gl.schemesDataBase.Houses;
                     break;
 
                 default:
-                    a = gl.SchemesBase.Data.Where(x => x.type == st).ToList();
+                    a = gl.schemesDataBase.Data.Where(x => x.type == st).ToList();
                     break;;
             }
            
@@ -268,8 +268,8 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void ClearBlocks(GameLevel gameLevel) {
-            for(int i=0;i<gameLevel.rx*gameLevel.ry;i++) {
+        public static void ClearBlocks(MapSector gameLevel) {
+            for (int i = 0; i < MapSector.Rx * MapSector.Ry; i++) {
                 gameLevel.SetBlock(i, 0);
             }
         }
@@ -300,10 +300,10 @@ namespace rglikeworknamelib.Generation
             return visited;
         }
 
-        public static void FillFloorFromArrayAndOffset(GameLevel gl, int x, int y, int[] arr, int sx, int sy) {
+        public static void FillFloorFromArrayAndOffset(MapSector gl, int x, int y, int[] arr, int sx, int sy) {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    if (sx + i < gl.rx && sy + j < gl.ry) {
+                    if (sx + i < MapSector.Rx && sy + j < MapSector.Ry) {
                         if(arr[i*y+j] != 0) {
                             gl.SetFloor(sx + i, sy + j, arr[i * y + j]);
                         }

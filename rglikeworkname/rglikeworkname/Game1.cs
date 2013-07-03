@@ -109,14 +109,12 @@ namespace jarg
             monsterSystem_ = new MonsterSystem(spriteBatch_, tex);
 
 
-            currentFloor_ = GameLevel.CreateGameLevel(spriteBatch_, 
+            currentFloor_ = new GameLevel(spriteBatch_, 
                                                       ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetFloorDataDirectory() + @"/textureloadorder.ord", Content),
                                                       ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetObjectDataDirectory() + @"/textureloadorder.ord", Content), 
                                                       bdb_, 
                                                       fdb_, 
-                                                      sdb_,
-                                                      512,
-                                                      512
+                                                      sdb_
                                                      );
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_) {
@@ -165,6 +163,7 @@ namespace jarg
             }
             //currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
             player_.Update(gameTime, currentFloor_, bdb_);
+            currentFloor_.KillFarSectors(player_);
             ps_.Update(gameTime);
             GlobalWorldLogic.Update(gameTime);
 
@@ -222,14 +221,14 @@ namespace jarg
             }
 
             int aa = (ms_.X + (int)camera_.X) / 32 * currentFloor_.ry + (ms_.Y + (int)camera_.Y) / 32;
-            if (aa >= 0 && currentFloor_.GetId(aa) != 0 && currentFloor_.IsExplored(aa))
+            //if (aa >= 0 && currentFloor_.GetId(aa) != 0 )// currentFloor_.IsExplored(aa))
             {
                 int nx = (ms_.X + (int)camera_.X) / 32;
                 int ny = (ms_.Y + (int)camera_.Y) / 32;
                 var a = currentFloor_.GetBlock(nx, ny);
                 var b = bdb_.Data[a.id];
                 string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
-                if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.TexNo;
+                //if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.MTex;
 
                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && currentFloor_.IsCreatureMeele(nx, ny, player_)) {
                     var undermouseblock = bdb_.Data[a.id];
@@ -277,7 +276,7 @@ namespace jarg
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)rglikeworknamelib.Settings.Resolution.X,
                                   (int)rglikeworknamelib.Settings.Resolution.Y);
             spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} ", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime), new Vector2(500, 10), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} \nSectors {7}", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime, currentFloor_.SectorCount()), new Vector2(500, 10), Color.White);
 
             spriteBatch_.End();
         }

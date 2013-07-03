@@ -22,7 +22,7 @@ namespace SchemesEditor
             bdb = new BlockDataBase();
             fdb = new FloorDataBase();
             sdb = new SchemesDataBase();
-            gl =new GameLevel(20, 20);
+            //gl =new GameLevel(20, 20);
         }
 
         private PictureBox[] map;
@@ -53,7 +53,7 @@ namespace SchemesEditor
 
             listBox1.Items.Clear();
             foreach (var a in bdb.Data) {
-                listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.TexNo + " -- " + a.Value.Name);
+                listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.MTex + " -- " + a.Value.Name);
             }
         }
 
@@ -88,7 +88,7 @@ namespace SchemesEditor
             string[] s = sw.ReadLine().Split(',');
             int x = int.Parse(s[0]), y = int.Parse(s[1]);
             textBox1.Text = s[2];
-            gl = new GameLevel(x, y);
+           // gl = new GameLevel(x, y);
             char[] sep = {' '};
             String[] b = sw.ReadToEnd().Split(sep);
             int[] a = b.Select(int.Parse).ToArray();
@@ -109,9 +109,9 @@ namespace SchemesEditor
             StreamWriter sw = new StreamWriter(saveFileDialog1.FileName);
             sw.Write("~" + gl.rx + "," + gl.ry + "," + textBox1.Text + "\n");
             for (int i = 0; i < gl.rx*gl.ry - 1; i++) {
-                    sw.Write(gl.GetId(i)+" ");
+                   // sw.Write(gl.GetId(i)+" ");
                 }
-            sw.Write(gl.GetId(gl.rx * gl.ry - 1));
+          //  sw.Write(gl.GetId(gl.rx * gl.ry - 1));
 
             sw.Write("\n");
             sw.Close();
@@ -119,7 +119,7 @@ namespace SchemesEditor
 
         private void button3_Click(object sender, EventArgs e)
         {
-            gl = GameLevel.CreateGameLevel(null, null, null, bdb, fdb, sdb, (int)numericUpDown1.Value, (int)numericUpDown2.Value);
+            gl = new GameLevel(null, null, null, bdb, fdb, sdb);
             //foreach (var a in gl.blocks_) {
             //    a.id = 0;
             //}

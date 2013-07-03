@@ -14,7 +14,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public SmartAction SmartAction;
 
         public float Hp;
-        public int TexNo;
+        public int MTex;
         public string Name;
 
         public Color MMCol;
@@ -39,7 +39,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public BlockData(int mtex) {
-            TexNo = mtex;
+            MTex = mtex;
         }
         public BlockData() {
         }
