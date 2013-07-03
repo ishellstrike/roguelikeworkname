@@ -41,10 +41,10 @@ namespace rglikeworknamelib.Creatures {
             int c = (int)(tpos2.X / 32.0);
             int d = (int)(tpos2.Y / 32.0);
 
-            if (a < 0 || b < 0 || !gl.IsWalkable(a, b)) {
+            if (!gl.IsWalkable(a, b)) {
                 Velocity.X = 0;
             }
-            if (c < 0 || d < 0 || !gl.IsWalkable(c, d))
+            if (!gl.IsWalkable(c, d))
             {
                 Velocity.Y = 0;
             }

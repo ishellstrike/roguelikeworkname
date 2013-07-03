@@ -11,8 +11,8 @@ using rglikeworknamelib.Creatures;
 namespace rglikeworknamelib.Dungeon.Level {
 
     public class MapSector {
-        public const int Rx = 16;
-        public const int Ry = 16;
+        public const int Rx = 32;
+        public const int Ry = 32;
 
         public BlockDataBase blockDataBase;
         public FloorDataBase floorDataBase;
@@ -22,8 +22,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public int GLx, GLy;
 
-        public Block[] blocks_;
-        public Floor[] floors_;
+        internal Block[] blocks_;
+        internal Floor[] floors_;
 
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
 
@@ -161,9 +161,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int rx = 100;
         public int ry = 100;
         private readonly Collection<Texture2D> atlas_, flatlas_;
-        
-        private readonly Block[] blocks_;
-        private readonly Floor[] floors_;
 
         private List<MapSector> sectors_;
 
@@ -177,6 +174,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly Texture2D minimap_;
 
         public MapSector GetSector(int x, int y) {
+
             foreach (var sector in sectors_) {
                 if (sector.GLx == x && sector.GLy == y) return sector;
             }
@@ -239,8 +237,13 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SetFloor(int x, int y, int id)
         {
-            floors_[x * ry + y].ID = id;
-            floors_[x * ry + y].Mtex = floorDataBase.Data[id].RandomMtexFromAlters();
+            int divx = x / MapSector.Rx, divy = y / MapSector.Ry;
+            if (x < 0) divx = x / MapSector.Rx - 1;
+            if (y < 0) divy = y / MapSector.Ry - 1;
+            var sect = GetSector(divx, divy);
+
+            sect.floors_[(x - divx *MapSector.Rx) * MapSector.Ry + y - divy*MapSector.Ry].ID = id;
+            sect.floors_[(x - divx*MapSector.Rx) * MapSector.Ry + y - divy*MapSector.Ry].Mtex = floorDataBase.Data[id].RandomMtexFromAlters();
         }
 
         public int GetId(int x, int y) {
@@ -365,201 +368,25 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public short[] CalcWision(Creature who, float dirAngle, float seeAngleDeg)
         {
-            int dxTop = 0;
-            int dyTop = 0;
-            int dir;
-            int dx, dy, s_x, s_y, r_x, r_y;
-            int px, py;
-            int a;
-            int x1, x2, y1, y2;
-            int los_x_null = 0;
-            int los_y_null = 0;
-
-            int pos_x = (int)who.Position.X / 32;
-            int pos_y = (int)who.Position.Y / 32;
-
-            var n = new short[rx * ry];
-
-            if (!IsInMapBounds(pos_x, pos_y)) {
-                return n;
-            }
-
-            int see = 15;
-
-
-            for (int i = 0; i < rx; i++) {
-                for (int j = 0; j < ry; j++) {
-                    n[i * ry + j] = -1;
-                }
-            }
-
-            for (int i = 0; i < blocks_.Length; i++) {
-                blocks_[i].lightness = Color.Black;
-            }
-
-            try {
-                for (int i = pos_x - 1; i < pos_x + 1; i++) {
-                    for (int j = pos_y - 1; j < pos_y + 1; j++) {
-                        blocks_[i * ry + j].lightness = Color.White;
-                        blocks_[i * ry + j].explored = true;
-                    }
-                }
-            } catch (Exception)
-            {
-            }
-
-
-            int xTop = pos_x - see;
-            int yTop = pos_y - see;
-
-
-            for (dir = 0; dir < 4; dir++) {
-                if (xTop < 0) {
-                    xTop = 0;
-                }
-                if (xTop >= rx) {
-                    xTop = rx - 1;
-                }
-                if (yTop < 0) {
-                    yTop = 0;
-                }
-                if (yTop >= ry) {
-                    yTop = ry - 1;
-                }
-
-                if (dir == 0) {
-                    dxTop = +1;
-                    dyTop = 0;
-                }
-                if (dir == 1) {
-                    dxTop = 0;
-                    dyTop = +1;
-                }
-                if (dir == 2) {
-                    dxTop = -1;
-                    dyTop = 0;
-                }
-                if (dir == 3) {
-                    dxTop = 0;
-                    dyTop = -1;
-                }
-
-                while (true) {
-
-                    if (dir == 0 & ((xTop - pos_x) == see || (xTop - pos_x) >= rx - 1)) {
-                        break;
-                    }
-                    if (dir == 1 & ((yTop - pos_y) == see || (yTop - pos_x) >= ry - 1)) {
-                        break;
-                    }
-                    if (dir == 2 & ((pos_x - xTop) == see || (pos_x - xTop) >= rx - 1)) {
-                        break;
-                    }
-                    if (dir == 3 & ((pos_y - yTop) == see || (pos_y - yTop) >= ry - 1)) {
-                        break;
-                    }
-
-                    x1 = pos_x;
-                    y1 = pos_y;
-                    x2 = xTop;
-                    y2 = yTop;
-
-                    px = x2 - x1;
-                    py = y2 - y1;
-                    s_x = (px >= 0) ? 1 : -1;
-                    s_y = (py >= 0) ? 1 : -1;
-                    px = (px >= 0) ? px : -px;
-                    py = (py >= 0) ? py : -py;
-
-                    int max;
-                    int min;
-                    if (px >= py) {
-                        max = px;
-                        min = py;
-                        r_x = s_x;
-                        r_y = 0;
-                    } else {
-                        max = py;
-                        min = px;
-                        r_x = 0;
-                        r_y = s_y;
-                    }
-
-                    int tmax = max;
-                    a = max >> 1;
-                    while (tmax != 0) {
-                        a += min;
-                        if ((a - max) < 0) {
-                            dx = r_x;
-                            dy = r_y;
-                        } else {
-                            dx = s_x;
-                            dy = s_y;
-                            a -= max;
-                        }
-                        x1 += dx;
-                        y1 += dy;
-
-                        int seen;
-                        if (pos_x == xTop || pos_y == yTop) {
-                            seen = see - 1;
-                        } else {
-                            seen = see;
-                        }
-                        float dist = Convert.ToInt32(Math.Sqrt(Math.Pow((pos_x - x1), 2) + Math.Pow((pos_y - y1), 2)));
-                        if (dist > seen) {
-                            break;
-                        }
-
-                        float curangle = (float)Math.Atan2(y1 - pos_y, x1 - pos_x);
-                        float wrapedangle = MathHelper.WrapAngle(dirAngle);
-                        if ((curangle - MathHelper.ToRadians(seeAngleDeg) > wrapedangle || curangle + MathHelper.ToRadians(seeAngleDeg) < wrapedangle) &&
-                            (curangle - MathHelper.ToRadians(seeAngleDeg) > wrapedangle + MathHelper.TwoPi || curangle + MathHelper.ToRadians(seeAngleDeg) < wrapedangle + MathHelper.TwoPi) &&
-                            (curangle - MathHelper.ToRadians(seeAngleDeg) > wrapedangle - MathHelper.TwoPi || curangle + MathHelper.ToRadians(seeAngleDeg) < wrapedangle - MathHelper.TwoPi)) {
-                            break;
-                        }
-
-                        if (x1 >= 0 && x1 < rx && y1 >= 0 && y1 < ry &&
-                            (n[(x1 - los_x_null) * ry + y1 - los_y_null] != 0 || n[(x1 - los_x_null) * ry + y1 - los_y_null] == -1)) {
-                            if (!blockDataBase.Data[blocks_[x1 * ry + y1].id].IsTransparent) {
-                                n[(x1 - los_x_null) * ry + y1 - los_y_null] = 2;
-                                blocks_[(x1 - los_x_null) * ry + y1 - los_y_null].explored = true;
-                                byte temp11 = Convert.ToByte(255 - dist / seen * 205);
-                                blocks_[(x1 - los_x_null) * ry + y1 - los_y_null].lightness = new Color(temp11, temp11,
-                                                                                                        temp11);
-                                break;
-                            } else {
-                                n[(x1 - los_x_null) * ry + y1 - los_y_null] = 0;
-                                blocks_[(x1 - los_x_null) * ry + y1 - los_y_null].explored = true;
-                                byte temp11 = Convert.ToByte(255 - dist / seen * 205);
-                                blocks_[(x1 - los_x_null) * ry + y1 - los_y_null].lightness = new Color(temp11, temp11,
-                                                                                                        temp11);
-                            }
-                        }
-
-                        tmax--;
-                    }
-
-                    xTop += dxTop;
-                    yTop += dyTop;
-                }
-            }
-            n[pos_x * ry + pos_y] = 0;
-
-            for (int i = 0; i < blocks_.Length; i++) {
-                if (blocks_[i].explored && blocks_[i].lightness == Color.Black) {
-                    blocks_[i].lightness = new Color(50, 50, 50);
-                }
-            }
-
-            return n;
+            return new short[1];
         }
 
-        public void Draw(GameTime gameTime, Vector2 camera)
-        {
+        private Vector2 min, max;
+        public void Draw(GameTime gameTime, Vector2 camera) {
+            GetBlock((int)(camera.X / 32), (int)(camera.Y / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y) / 32));
+            GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+
+            min = new Vector2((camera.X) / Settings.FloorSpriteSize.X - 1, (camera.Y) / Settings.FloorSpriteSize.Y - 1);
+            max = new Vector2((camera.X + Settings.Resolution.X) / Settings.FloorSpriteSize.X,
+                                  (camera.Y + Settings.Resolution.Y) / Settings.FloorSpriteSize.Y);
+
             foreach (MapSector sector in sectors_) {
                 for (int i = 0; i < MapSector.Rx; i++) {
-                    for (int j = 0; j < MapSector.Ry; j++) {
+                    for (int j = 0; j < MapSector.Ry; j++)
+                        if (sector.GLx * MapSector.Rx + i > min.X && sector.GLy * MapSector.Ry + j > min.Y && sector.GLx * MapSector.Rx + i < max.X && sector.GLy * MapSector.Ry + j < max.Y)    
+                    {
                         int a = i*MapSector.Ry + j;
                         spriteBatch_.Draw(flatlas_[sector.floors_[a].Mtex],
                                           new Vector2(
@@ -577,7 +404,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         {
             foreach (MapSector sector in sectors_) {
                 for (int i = 0; i < MapSector.Rx; i++) {
-                    for (int j = 0; j < MapSector.Ry; j++) {
+                    for (int j = 0; j < MapSector.Ry; j++)
+                        if (sector.GLx * MapSector.Rx + i > min.X && sector.GLy * MapSector.Ry + j > min.Y && sector.GLx * MapSector.Rx + i < max.X && sector.GLy * MapSector.Ry + j < max.Y)   
+                    {
                         int a = i * MapSector.Ry + j;
                         spriteBatch_.Draw(atlas_[blockDataBase.Data[sector.blocks_[a].id].MTex],
                                           new Vector2(
