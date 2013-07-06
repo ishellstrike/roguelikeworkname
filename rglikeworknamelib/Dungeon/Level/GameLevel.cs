@@ -81,6 +81,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         {
             MapGenerators.FillTest1(this, 1);
             MapGenerators.ClearBlocks(this);
+            MapGenerators.FloorPerlin(this);
             MapGenerators.GenerateStreetsNew(this, rnd_.Next(1, 3), rnd_.Next(5, 10), rnd_.Next(2, 3), 2, 3);
             for (int i = 0; i < 3; i++)
                 MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rnd_.Next(0, MapSector.Rx), rnd_.Next(0, MapSector.Ry));

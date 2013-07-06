@@ -311,5 +311,57 @@ namespace rglikeworknamelib.Generation
                 }
             }
         }
+
+        private static double Noise(int x, int y)
+        {
+            int n = x + y * 57;
+            n = (n << 13) ^ n;
+            double value = (1.0f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f);
+            value = Math.Abs(value);
+            return value;
+        }
+
+        private static double[] NoiseMap(int x, int y, int sx, int sy) {
+            double[] a = new double[sx*sy];
+
+            for (int i = 0; i < sx; i++) {
+                for (int j = 0; j < sy; j++) {
+                    a[i*sy + j] = Noise(i + x*sx, j + y*sy);
+                }
+            }
+            return a;
+        }
+
+        private static double[] SmoothNoiseMap(int x, int y, int sx, int sy) {
+            var a = NoiseMap(x, y, sx, sy);
+            for (int i = 0; i < sx - 1; i++)
+                for (int j = 0; j < sy - 1; j++)
+                {
+                    {
+                        double round = (byte)((a[(i) * sy + j] + a[(i + 1) * sy + j] + a[(i + 1) * sy + j + 1] + a[(i) * sy + j+1]) / 4);
+                        a[(i) * sy + j] = ((a[(i)*sy+j] + round) / 2);
+                        a[(i+1) * sy + j] = ((a[(i+1)*sy+j]+ round) / 2);
+                        a[(i) * sy + j+1] = ((a[(i)*sy+j+1] + round) / 2);
+                        a[(i+1) * sy + j+1] = ((a[(i+1)*sy+j+1] + round) / 2);
+                    }
+                }
+            return a;
+        }
+
+        internal static void FloorPerlin(MapSector mapSector) {
+            var a = SmoothNoiseMap(mapSector.GLx, mapSector.GLy, MapSector.Rx, MapSector.Ry);
+            for (int i = 0; i < MapSector.Rx; i++) {
+                for (int j = 0; j < MapSector.Ry; j++) {
+                    var t = a[i*MapSector.Ry + j];
+                    if (t > 0.04) mapSector.SetFloor(i, j, 1);
+                    else {
+                        if (t > 0.08) mapSector.SetFloor(i, j, 2);
+                        else {
+                            mapSector.SetFloor(i, j, 3);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

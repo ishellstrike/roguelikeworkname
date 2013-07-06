@@ -67,7 +67,7 @@ namespace jarg
             graphics_.PreferredBackBufferWidth = (int)rglikeworknamelib.Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             
-            IsFixedTimeStep = false; //wierd, actually it's true
+            IsFixedTimeStep = true; //wierd, actually it's true
             IsMouseVisible = true;
             graphics_.ApplyChanges();
 
