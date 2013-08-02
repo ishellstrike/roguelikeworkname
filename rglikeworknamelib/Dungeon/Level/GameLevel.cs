@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,6 +13,7 @@ using rglikeworknamelib.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Level {
 
+    [Serializable]
     public class MapSector {
         public const int Rx = 32;
         public const int Ry = 32;
@@ -62,6 +66,17 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
+        public MapSector(BlockDataBase bdb_, FloorDataBase fdb_, SchemesDataBase sdb_, object x, object y, object mblocks, object mfloors) {
+            GLx = (int)x;
+            GLy = (int)y;
+            blockDataBase = bdb_;
+            floorDataBase = fdb_;
+            schemesDataBase = sdb_;
+
+            blocks_ = mblocks as Block[];
+            floors_ = mfloors as Floor[];
+        }
+
         public List<StorageBlock> GetStorageBlocks()
         {
             return (from a in blocks_
@@ -77,14 +92,19 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public void Rebuild()
+        /// <summary>
+        /// Main sector generation proc
+        /// </summary>
+        /// <param name="mapseed">глобальный сид карты</param>
+        public void Rebuild(int mapseed)
         {
+            Random rand = new Random(GLx|GLy|mapseed);
             MapGenerators.FillTest1(this, 1);
             MapGenerators.ClearBlocks(this);
             MapGenerators.FloorPerlin(this);
-            MapGenerators.GenerateStreetsNew(this, rnd_.Next(1, 3), rnd_.Next(5, 10), rnd_.Next(2, 3), 2, 3);
+            MapGenerators.GenerateStreetsNew(this, rand.Next(1, 3), rand.Next(5, 10), rand.Next(2, 3), 2, 3, rand);
             for (int i = 0; i < 3; i++)
-                MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rnd_.Next(0, MapSector.Rx), rnd_.Next(0, MapSector.Ry));
+                MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0, Rx), rand.Next(0, Ry), rand);
         }
 
         public Block GetBlock(int x, int y)
@@ -171,6 +191,11 @@ namespace rglikeworknamelib.Dungeon.Level {
         public FloorDataBase floorDataBase;
         public SchemesDataBase schemesDataBase;
         private readonly Random rnd_ = new Random();
+        readonly BinaryFormatter bf_ = new BinaryFormatter();
+        private FileStream streamWriter_;
+        private GZipStream gZipStream_;
+
+        public int MapSeed = 12345;
 
         private readonly Texture2D minimap_;
 
@@ -179,8 +204,22 @@ namespace rglikeworknamelib.Dungeon.Level {
             foreach (var sector in sectors_) {
                 if (sector.GLx == x && sector.GLy == y) return sector;
             }
+
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", x, y)))
+            {
+                streamWriter_ = new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", x, y), FileMode.Open);
+                gZipStream_ = new GZipStream(streamWriter_, CompressionMode.Decompress);
+                var q1 = bf_.Deserialize(gZipStream_);
+                var q2 = bf_.Deserialize(gZipStream_);
+                var q3 = bf_.Deserialize(gZipStream_);
+                var q4 = bf_.Deserialize(gZipStream_);
+                gZipStream_.Close();
+                streamWriter_.Close();
+                sectors_.Add(new MapSector(blockDataBase, floorDataBase, schemesDataBase, q1, q2, q3, q4));
+                return sectors_.Last();
+            }
             sectors_.Add(new MapSector(blockDataBase, floorDataBase, schemesDataBase, x, y));
-            sectors_.Last().Rebuild();
+            sectors_.Last().Rebuild(MapSeed);
             return sectors_.Last();
         }
 
@@ -286,6 +325,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = 0; i < sectors_.Count; i++) {
                 var a = sectors_[i];
                 if (Math.Abs(a.GLx*MapSector.Rx - cara.Position.X/32) > 64 || Math.Abs(a.GLy*MapSector.Ry - cara.Position.Y/32) > 64) {
+                    streamWriter_ = new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", a.GLx, a.GLy), FileMode.Create);
+                    gZipStream_ = new GZipStream(streamWriter_, CompressionMode.Compress);
+                    bf_.Serialize(gZipStream_, a.GLx);
+                    bf_.Serialize(gZipStream_, a.GLy);
+                    bf_.Serialize(gZipStream_, a.blocks_);
+                    bf_.Serialize(gZipStream_, a.floors_);
+                    gZipStream_.Close();
+                    streamWriter_.Close();
                     sectors_.Remove(a);
                 }
             }
@@ -294,24 +341,24 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void Rebuild()
         {
             foreach (var sector in sectors_) {
-                sector.Rebuild();
+                sector.Rebuild(MapSeed);
             }
         }
 
-        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, BlockDataBase bdb_, FloorDataBase fdb_, SchemesDataBase sdb_)
+        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb)
         {
 
-            blockDataBase = bdb_;
-            floorDataBase = fdb_;
-            schemesDataBase = sdb_;
+            blockDataBase = bdb;
+            floorDataBase = fdb;
+            schemesDataBase = sdb;
 
             if (spriteBatch != null) {
                 minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
             }
 
-            sectors_ = new List<MapSector> {new MapSector(bdb_, fdb_, sdb_, 0, 0)};
+            sectors_ = new List<MapSector> {new MapSector(bdb, fdb, sdb, 0, 0)};
 
-            sectors_[0].Rebuild();
+            sectors_[0].Rebuild(MapSeed);
 
             atlas_ = atlas;
             flatlas_ = flatlas;

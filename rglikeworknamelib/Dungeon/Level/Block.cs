@@ -1,6 +1,8 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Level {
+    [Serializable]
     public class Block {
         public int id;
         public Color lightness;

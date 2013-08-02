@@ -12,7 +12,7 @@ namespace rglikeworknamelib.Creatures {
             sb_ = sb;
             font_ = font;
             Tex = tex;
-            Position = new Vector3(1, 1, 0);
+            Position = new Vector2(1, 1);
         }
 
         public Player()
@@ -21,7 +21,7 @@ namespace rglikeworknamelib.Creatures {
 
         public Vector2 CurrentActiveRoom { get; set; }
 
-        public void Accelerate(Vector3 ac) {
+        public void Accelerate(Vector2 ac) {
             Velocity += ac;
         }
 
@@ -57,7 +57,7 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public void Draw(GameTime gt, Vector2 cam) {
-            sb_.Draw(Tex, InScreenPosition - cam, null, Color.White, 0, new Vector2(Tex.Width / 2, Tex.Height), 1,
+            sb_.Draw(Tex, Position - cam, null, Color.White, 0, new Vector2(Tex.Width / 2, Tex.Height), 1,
                      SpriteEffects.None, 1);
 
             if (Settings.DebugInfo)

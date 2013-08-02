@@ -1,18 +1,39 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Dungeon.Bullets {
-    internal class Bullet {
-        internal bool GApply;
+    public class Bullet {
         internal int Mtex;
-        internal Vector3 Position;
-        internal int Type;
+
+        internal Vector2 Pos;
+        internal float Vel;
+        internal float Angle, ASpeed;
+        internal TimeSpan Life;
+        private ParticleSystem ps;
+        private Random rnd = new Random();
 
         internal Vector3 Velocity;
 
-        public void Update(GameTime gameTime) {}
+        public Bullet(Vector2 pos, float vel, float an, float asp, int texn, TimeSpan ts, ParticleSystem p) {
+            Pos = pos;
+            Vel = vel;
+            ASpeed = asp;
+            Angle = an;
+            Mtex = texn;
+            Life = ts;
+
+            ps = p;
+
+            ps.CreateParticleWithRandomization(pos, 1, (float)rnd.NextDouble()*6f, 0, 1, 2, 10);
+        }
 
         public void Kill() {}
 
-        public void Draw(GameTime gameTime) {}
+        public void Update(GameTime gameTime) {
+
+            if(rnd.Next(1,3) == 1)
+            ps.CreateParticleWithRandomization(Pos, 1, (float)rnd.NextDouble() * 6f, 0, 1, 2, 10);
+        }
     }
 }

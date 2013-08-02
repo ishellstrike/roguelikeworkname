@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,11 +8,13 @@ using Mork;
 using System;
 using rglikeworknamelib;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Dungeon.Particles;
+using Settings = rglikeworknamelib.Settings;
 
 namespace jarg
 {
@@ -24,13 +27,14 @@ namespace jarg
         private ItemDataBase idb_;
         private WindowSystem ws_;
         private ParticleSystem ps_;
+        private BulletSystem bs_;
 
         private GraphicsDeviceManager graphics_;
         private Vector2 camera_;
         private GameLevel currentFloor_;
         private SpriteFont font1_;
         private KeyboardState ks_;
-        private Vector3 lastPos_;
+        private Vector2 lastPos_;
         private LineBatch lineBatch_;
         private KeyboardState lks_;
         private MouseState lms_;
@@ -55,6 +59,9 @@ namespace jarg
         {
             graphics_ = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            if (!Directory.Exists(Settings.GetWorldsDirectory())) {
+                Directory.CreateDirectory(Settings.GetWorldsDirectory());
+            }
         }
 
         protected override void Initialize()
@@ -99,6 +106,8 @@ namespace jarg
             ws_ = new WindowSystem(whitepixel, font1_);
 
             ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
+
+            bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), ps_);
 
             Window aaa = ws_.NewInfoWindow("This is info window long long long long long long long long...\nmultiline\n!!!\n123");
 
@@ -165,6 +174,7 @@ namespace jarg
             player_.Update(gameTime, currentFloor_, bdb_);
             currentFloor_.KillFarSectors(player_);
             ps_.Update(gameTime);
+            bs_.Update(gameTime);
             GlobalWorldLogic.Update(gameTime);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 2);
@@ -187,16 +197,16 @@ namespace jarg
             }
 
             if (ks_[Keys.W] == KeyState.Down) {
-                player_.Accelerate(new Vector3(0, -10, 0));
+                player_.Accelerate(new Vector2(0, -10));
             }
             if (ks_[Keys.S] == KeyState.Down) {
-                player_.Accelerate(new Vector3(0, 10, 0));
+                player_.Accelerate(new Vector2(0, 10));
             }
             if (ks_[Keys.A] == KeyState.Down) {
-                player_.Accelerate(new Vector3(-10, 0, 0));
+                player_.Accelerate(new Vector2(-10, 0));
             }
             if (ks_[Keys.D] == KeyState.Down) {
-                player_.Accelerate(new Vector3(10, 0, 0));
+                player_.Accelerate(new Vector2(10, 0));
             }
 
             if (ks_[Keys.G] == KeyState.Down && lks_[Keys.G] == KeyState.Up) {
@@ -216,8 +226,8 @@ namespace jarg
             lms_ = ms_;
             ms_ = Mouse.GetState();
 
-            if(ms_.LeftButton == ButtonState.Pressed) {
-                ps_.CreateParticleWithRandomization(new Vector2(player_.Position.X, player_.Position.Y), 10, PlayerSeeAngle, 0.01f, 1, 10, 50);
+            if(ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                bs_.AddBullet(player_, 5, PlayerSeeAngle);
             }
 
             int aa = (ms_.X + (int)camera_.X) / 32 * currentFloor_.ry + (ms_.Y + (int)camera_.Y) / 32;
@@ -255,6 +265,7 @@ namespace jarg
             currentFloor_.Draw2(gameTime, camera_);
             player_.Draw(gameTime, camera_);
             ps_.Draw(gameTime, camera_);
+            bs_.Draw(gameTime, camera_);
             spriteBatch_.Draw(currentFloor_.GetMinimap(), new Rectangle(15,15,128,128),
                  Color.White);
             spriteBatch_.End();
@@ -276,7 +287,7 @@ namespace jarg
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)rglikeworknamelib.Settings.Resolution.X,
                                   (int)rglikeworknamelib.Settings.Resolution.Y);
             spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} \nSectors {7}", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime, currentFloor_.SectorCount()), new Vector2(500, 10), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}   BCount {8}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} \nSectors {7}", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime, currentFloor_.SectorCount(), bs_.GetCount()), new Vector2(500, 10), Color.White);
 
             spriteBatch_.End();
         }

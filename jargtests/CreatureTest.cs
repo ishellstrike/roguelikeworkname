@@ -21,11 +21,11 @@ namespace jargtests
         public void LastPosTest()
         {
             Creature target = new Creature();
-            Vector3 expected = new Vector3(3,3,0);
-            Vector3 newpos = new Vector3(5,5,0);
+            Vector2 expected = new Vector2(3,3);
+            Vector2 newpos = new Vector2(5,5);
             target.Position = expected;
             target.Position = newpos;
-            Vector3 actual;
+            Vector2 actual;
             actual = target.LastPos;
             Assert.AreEqual(expected, actual);
         }
@@ -37,8 +37,8 @@ namespace jargtests
         public void PositionTest()
         {
             Creature target = new Creature(); 
-            Vector3 expected = new Vector3(3,3,0); 
-            Vector3 actual;
+            Vector2 expected = new Vector2(3,3); 
+            Vector2 actual;
             target.Position = expected;
             actual = target.Position;
             Assert.AreEqual(expected, actual);

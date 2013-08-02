@@ -52,6 +52,10 @@ namespace rglikeworknamelib {
 
         public static Vector2 FloorSpriteSize = new Vector2(32, 32);
         public static Vector2 Sqeezer = new Vector2(1, 1);
+        public static string GetWorldsDirectory() {
+            return @"Worlds/";
+        }
+    
 
         public static Vector2 Resolution {
             set {

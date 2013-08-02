@@ -62,6 +62,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Dungeon\Bullets\BasicBulletShleif.cs" />
     <Compile Include="Dungeon\Bullets\Bullet.cs" />
     <Compile Include="Dungeon\Bullets\BulletSystem.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />

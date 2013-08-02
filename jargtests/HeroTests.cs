@@ -17,8 +17,8 @@ namespace jargtests
         public void CreatureHeroPositionChange()
         {
             Player pl = new Player();
-            pl.Position = new Vector3(2, 2, 0);
-            Assert.AreEqual(pl.Position, new Vector3(2, 2, 0));
+            pl.Position = new Vector2(2, 2);
+            Assert.AreEqual(pl.Position, new Vector2(2, 2));
         }
 
         //[TestMethod]

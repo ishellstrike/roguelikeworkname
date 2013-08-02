@@ -30,8 +30,6 @@ namespace rglikeworknamelib.Generation
 
     public static class MapGenerators
     {
-        static Random rnd = new Random();
-
         public static void FillTest1(MapSector gl, int id)
         {
             for (int i = 0; i < MapSector.Rx; i++) {
@@ -41,20 +39,21 @@ namespace rglikeworknamelib.Generation
             }
         }
         //blanks 4 5 6 7
-        public static void GenerateStreetsNew(MapSector gl, int count, int len, int step, int flid, int trid) {
+        public static void GenerateStreetsNew(MapSector mapSector, int streetCount, int streetLength, int step, int floorId, int trotuarId, Random rnd)
+        {
             var streets = new List<MinMax>();
             var sNodes = new List<Point>();
             var visitedSNodes = new List<Point>();
 
-            sNodes.Add(new Point(GetRandomCoordInCenter(MapSector.Rx), GetRandomCoordInCenter(MapSector.Ry)));
+            sNodes.Add(new Point(GetRandomCoordInCenter(MapSector.Rx, rnd), GetRandomCoordInCenter(MapSector.Ry,rnd)));
 
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < streetCount; i++) {
                 int num = rnd.Next(0, sNodes.Count);
                 var cur = sNodes[num];
                 visitedSNodes.Add(cur);
                 sNodes.RemoveAt(num);
 
-                int curlen = rnd.Next(step/2, len);
+                int curlen = rnd.Next(step/2, streetLength);
                 int curoffs = rnd.Next(0, curlen/step + 1) * step;
 
                 bool isHorizontal = rnd.Next(0, 2) == 0;
@@ -74,14 +73,14 @@ namespace rglikeworknamelib.Generation
                 }
             }
 
-            FillStreetsNew(streets, gl, flid, trid);
+            FillStreetsNew(streets, mapSector, floorId, trotuarId);
 
             visitedSNodes = visitedSNodes.Distinct().ToList();
 
 
             var squares = GetSquaresFromNodes(visitedSNodes);
 
-            FillMinMaxRandomly(squares, gl, new int[] {3});
+            FillMinMaxRandomly(squares, mapSector, new int[] {3}, rnd);
     }
 
         public static List<MinMax> GetSquaresFromNodes(List<Point> visitedSNodes)
@@ -127,7 +126,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void FillMinMaxRandomly(List<MinMax> st, MapSector gl, int[] arrid)
+        public static void FillMinMaxRandomly(List<MinMax> st, MapSector gl, int[] arrid, Random rnd)
         {
             foreach (var street in st) {
                 var tempcol = arrid[rnd.Next(0, arrid.Length)];
@@ -139,11 +138,12 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        private static int GetRandomCoordInCenter(int rx) {
+        private static int GetRandomCoordInCenter(int rx, Random rnd)
+        {
             return rnd.Next(-rx/10,rx/10)+rx/2;
         }
 
-        public static void GenerateRoads1(ref Block[] bb, ref Floor[] ff, int rx, int ry, int count, int len, int flid)
+        public static void GenerateRoads1(ref Block[] bb, ref Floor[] ff, int rx, int ry, int count, int len, int flid, Random rnd)
         {
             int tx = rnd.Next(0, rx);
             int ty = rnd.Next(0, ry);
@@ -163,7 +163,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void GenerateStreets(ref List<StreetOld__> st, int rx, int ry, int count, int len, int flid, int trid)
+        public static void GenerateStreets(ref List<StreetOld__> st, int rx, int ry, int count, int len, int flid, int trid, Random rnd)
         {
             float widthdiv2 = 3;
             int trotwid = 2;
@@ -192,7 +192,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void FillStreets(List<StreetOld__> st, ref Floor[] ff, int rx, int ry)
+        public static void FillStreets(List<StreetOld__> st, ref Floor[] ff, int rx, int ry, Random rnd)
         {
             foreach (var street in st) {
                 for (int i = (int)street.from.X - (int)street.trotwidth; i < (int)street.to.X + 1 + street.trotwidth; i++) {
@@ -224,27 +224,28 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        internal static void PlaceRandomSchemeByType(MapSector gl, SchemesType st, int rx, int ry) {
+        internal static void PlaceRandomSchemeByType(MapSector mapSector, SchemesType schemeType, int posX, int posY, Random rnd)
+        {
             List<Schemes> a;
-            switch (st) {
+            switch (schemeType) {
                 case SchemesType.house:
-                    a = gl.schemesDataBase.Houses;
+                    a = mapSector.schemesDataBase.Houses;
                     break;
 
                 default:
-                    a = gl.schemesDataBase.Data.Where(x => x.type == st).ToList();
+                    a = mapSector.schemesDataBase.Data.Where(x => x.type == schemeType).ToList();
                     break;;
             }
            
 
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
-                PlaceScheme(gl, a[r], rx, ry);
-                FillFloorFromArrayAndOffset(gl, a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], 8), rx, ry);
+                PlaceScheme(mapSector, a[r], posX, posY);
+                FillFloorFromArrayAndOffset(mapSector, a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], 8), posX, posY);
             }
         }
 
-        internal static void AddTestScheme(GameLevel gl, SchemesDataBase sch, int rx, int ry)
+        internal static void AddTestScheme(GameLevel gl, SchemesDataBase sch, int rx, int ry, Random rnd)
         {
             Vector2 start = new Vector2(0, 0);
             var scheme = sch.Data[0];

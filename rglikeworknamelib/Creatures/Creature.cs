@@ -7,7 +7,7 @@ namespace rglikeworknamelib.Creatures {
         public int ID;
         public int Mtex;
 
-        private Vector3 lastpos_;
+        private Vector2 lastpos_;
 
         public bool IsWarmCloth() {
             return true;
@@ -28,8 +28,8 @@ namespace rglikeworknamelib.Creatures {
             get { return heat_; }
         }
 
-        private Vector3 position_;
-        public Vector3 Position  {
+        private Vector2 position_;
+        public Vector2 Position  {
             get { return position_; }
             set {
                 lastpos_ = position_; 
@@ -39,10 +39,10 @@ namespace rglikeworknamelib.Creatures {
 
         public void SetPositionInBlocks(int x, int y)
         {
-            position_ = new Vector3((x + 0.5f) * 32, (y + 0.5f) * 32, 0);
+            position_ = new Vector2((x + 0.5f) * 32, (y + 0.5f) * 32);
         }
 
-        public Vector3 LastPos
+        public Vector2 LastPos
         {
             get { return lastpos_; }
             set { lastpos_ = value; }
@@ -59,12 +59,9 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        public Vector2 InScreenPosition {
-            get { return new Vector2(position_.X, position_.Y - position_.Z); }
-        }
 
-        public Vector3 ShootPoint { get; set; }
+        public Vector2 ShootPoint { get; set; }
 
-        public Vector3 Velocity;
+        public Vector2 Velocity;
     }
 }
