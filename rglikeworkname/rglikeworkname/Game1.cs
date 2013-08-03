@@ -179,7 +179,7 @@ namespace jarg
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 2);
 
-            if (rglikeworknamelib.Settings.DebugInfo) {
+            if (Settings.DebugInfo) {
                 FrameRateCounter.Update(gameTime);
             }
 
@@ -193,7 +193,7 @@ namespace jarg
             ks_ = Keyboard.GetState();
 
             if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
-                rglikeworknamelib.Settings.DebugInfo = !rglikeworknamelib.Settings.DebugInfo;
+                Settings.DebugInfo = !Settings.DebugInfo;
             }
 
             if (ks_[Keys.W] == KeyState.Down) {
@@ -217,7 +217,7 @@ namespace jarg
                 currentFloor_.ExploreAllMap();
             }
 
-            pivotpoint_ = new Vector2(player_.Position.X - (rglikeworknamelib.Settings.Resolution.X - 200) / 2, player_.Position.Y - rglikeworknamelib.Settings.Resolution.Y / 2);
+            pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200) / 2, player_.Position.Y - Settings.Resolution.Y / 2);
 
         }
 
@@ -230,18 +230,18 @@ namespace jarg
                 bs_.AddBullet(player_, 5, PlayerSeeAngle);
             }
 
-            int aa = (ms_.X + (int)camera_.X) / 32 * currentFloor_.ry + (ms_.Y + (int)camera_.Y) / 32;
+            int aa = (ms_.X + (int)camera_.X) / 32 * currentFloor_.Ry + (ms_.Y + (int)camera_.Y) / 32;
             //if (aa >= 0 && currentFloor_.GetId(aa) != 0 )// currentFloor_.IsExplored(aa))
             {
                 int nx = (ms_.X + (int)camera_.X) / 32;
                 int ny = (ms_.Y + (int)camera_.Y) / 32;
                 var a = currentFloor_.GetBlock(nx, ny);
-                var b = bdb_.Data[a.id];
+                var b = bdb_.Data[a.Id];
                 string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
                 //if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.MTex;
 
                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && currentFloor_.IsCreatureMeele(nx, ny, player_)) {
-                    var undermouseblock = bdb_.Data[a.id];
+                    var undermouseblock = bdb_.Data[a.Id];
                     if (undermouseblock.SmartAction == SmartAction.ActionOpenContainer) {
                     }
 
@@ -274,7 +274,7 @@ namespace jarg
 
             base.Draw(gameTime);
 
-            if (rglikeworknamelib.Settings.DebugInfo) {
+            if (Settings.DebugInfo) {
                 DebugInfoDraw(gameTime);
             }
 
@@ -284,8 +284,8 @@ namespace jarg
 
         private void DebugInfoDraw(GameTime gameTime)
         {
-            FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)rglikeworknamelib.Settings.Resolution.X,
-                                  (int)rglikeworknamelib.Settings.Resolution.Y);
+            FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
+                                  (int)Settings.Resolution.Y);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}   BCount {8}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} \nSectors {7}", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime, currentFloor_.SectorCount(), bs_.GetCount()), new Vector2(500, 10), Color.White);
 

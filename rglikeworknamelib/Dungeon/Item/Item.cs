@@ -5,7 +5,7 @@ namespace rglikeworknamelib.Dungeon.Item
     [Serializable]
     public class Item
     {
-        public int id;
-        public int count;
+        public int Id;
+        public int Count;
     }
 }

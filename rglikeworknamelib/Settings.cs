@@ -70,7 +70,7 @@ namespace rglikeworknamelib {
             Resolution = res;
         }
 
-        public static Color HUDcolor
+        public static Color HudСolor
         {
             get { return Color.LightGray; }
         }

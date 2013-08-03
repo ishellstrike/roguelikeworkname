@@ -5,6 +5,6 @@ namespace rglikeworknamelib.Dungeon.Level {
     [Serializable]
     public class StorageBlock : Block
     {
-        public List<Item.Item> storedItems;
+        public List<Item.Item> StoredItems;
     }
 }

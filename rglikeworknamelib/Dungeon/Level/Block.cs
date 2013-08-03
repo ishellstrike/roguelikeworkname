@@ -4,9 +4,9 @@ using Microsoft.Xna.Framework;
 namespace rglikeworknamelib.Dungeon.Level {
     [Serializable]
     public class Block {
-        public int id;
-        public Color lightness;
-        public bool explored;
+        public int Id;
+        public Color Lightness;
+        public bool Explored;
 
         public int Mtex;
 

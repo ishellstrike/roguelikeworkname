@@ -25,8 +25,7 @@ namespace jargtests
             Vector2 newpos = new Vector2(5,5);
             target.Position = expected;
             target.Position = newpos;
-            Vector2 actual;
-            actual = target.LastPos;
+            Vector2 actual = target.LastPos;
             Assert.AreEqual(expected, actual);
         }
 

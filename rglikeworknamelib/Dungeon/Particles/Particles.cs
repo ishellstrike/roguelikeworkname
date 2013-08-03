@@ -33,13 +33,13 @@ namespace rglikeworknamelib.Dungeon.Particles
 
     public class ParticleSystem {
         private Random rnd = new Random();
-        private Collection<Particle> particles_ = new Collection<Particle>();
-        private SpriteBatch spriteBatch_;
-        private Collection<Texture2D> partatlas;
+        private readonly Collection<Particle> particles_ = new Collection<Particle>();
+        private readonly SpriteBatch spriteBatch_;
+        private readonly Collection<Texture2D> partatlas_;
 
         public ParticleSystem(SpriteBatch sb, Collection<Texture2D> pa) {
             spriteBatch_ = sb;
-            partatlas = pa;
+            partatlas_ = pa;
         }
 
         public void CreateParticle(Vector2 pos, float vel, float an, float asp, int texn, int lifeInSeconds) {
@@ -57,7 +57,7 @@ namespace rglikeworknamelib.Dungeon.Particles
 
         public void Draw(GameTime gameTime, Vector2 camera) {
             for(int i=0;i<particles_.Count;i++) {
-                    spriteBatch_.Draw(partatlas[particles_[i].MTex],
+                    spriteBatch_.Draw(partatlas_[particles_[i].MTex],
                                       particles_[i].Pos-camera,
                                       null, Color.White);
                 }

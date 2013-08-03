@@ -6,11 +6,11 @@ namespace rglikeworknamelib.Creatures {
     public class Player : Creature {
         private readonly SpriteBatch sb_;
         public Texture2D Tex;
-        public SpriteFont font_;
+        public SpriteFont Font;
 
         public Player(SpriteBatch sb, Texture2D tex, SpriteFont font) {
             sb_ = sb;
-            font_ = font;
+            Font = font;
             Tex = tex;
             Position = new Vector2(1, 1);
         }
@@ -62,7 +62,7 @@ namespace rglikeworknamelib.Creatures {
 
             if (Settings.DebugInfo)
             {
-                sb_.DrawString(font_, string.Format("{0}", Position), new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
+                sb_.DrawString(Font, string.Format("{0}", Position), new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
             }
         }
     }

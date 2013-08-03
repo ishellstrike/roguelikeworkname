@@ -41,15 +41,15 @@ namespace rglikeworknamelib.Generation
         //blanks 4 5 6 7
         public static void GenerateStreetsNew(MapSector mapSector, int streetCount, int streetLength, int step, int floorId, int trotuarId, Random rnd)
         {
-            var streets = new List<MinMax>();
-            var sNodes = new List<Point>();
-            var visitedSNodes = new List<Point>();
+            List<MinMax> streets = new List<MinMax>();
+            List<Point> sNodes = new List<Point>();
+            List<Point> visitedSNodes = new List<Point>();
 
             sNodes.Add(new Point(GetRandomCoordInCenter(MapSector.Rx, rnd), GetRandomCoordInCenter(MapSector.Ry,rnd)));
 
             for (int i = 0; i < streetCount; i++) {
                 int num = rnd.Next(0, sNodes.Count);
-                var cur = sNodes[num];
+                Point cur = sNodes[num];
                 visitedSNodes.Add(cur);
                 sNodes.RemoveAt(num);
 
@@ -78,7 +78,7 @@ namespace rglikeworknamelib.Generation
             visitedSNodes = visitedSNodes.Distinct().ToList();
 
 
-            var squares = GetSquaresFromNodes(visitedSNodes);
+            List<MinMax> squares = GetSquaresFromNodes(visitedSNodes);
 
             FillMinMaxRandomly(squares, mapSector, new int[] {3}, rnd);
     }
@@ -87,8 +87,8 @@ namespace rglikeworknamelib.Generation
         {
             List<MinMax> squares = new List<MinMax>();
             foreach (var a in visitedSNodes) {
-                var tempx = visitedSNodes.Where(c => (c.X > a.X) && (c.Y == a.Y)).Select(c => c.X).ToList();
-                var tempy = visitedSNodes.Where(c => (c.Y > a.Y) && (c.X == a.X)).Select(c => c.Y).ToList();
+                List<int> tempx = visitedSNodes.Where(c => (c.X > a.X) && (c.Y == a.Y)).Select(c => c.X).ToList();
+                List<int> tempy = visitedSNodes.Where(c => (c.Y > a.Y) && (c.X == a.X)).Select(c => c.Y).ToList();
 
 
                 float minx;
@@ -129,7 +129,7 @@ namespace rglikeworknamelib.Generation
         public static void FillMinMaxRandomly(List<MinMax> st, MapSector gl, int[] arrid, Random rnd)
         {
             foreach (var street in st) {
-                var tempcol = arrid[rnd.Next(0, arrid.Length)];
+                int tempcol = arrid[rnd.Next(0, arrid.Length)];
                 for (int i = (int)street.Min.X + 4; i < (int)street.Max.X - 1; i++) {
                     for (int j = (int)street.Min.Y + 4; j < (int)street.Max.Y - 1; j++) {
                         if (i < MapSector.Rx && j < MapSector.Ry && i >= 0 && j >= 0) gl.SetFloor(i, j, tempcol);
@@ -158,7 +158,7 @@ namespace rglikeworknamelib.Generation
                     if (ty >= ry) ty = 0;
                     if (tx < 0) tx = rx - 1;
                     if (ty < 0) ty = ry - 1;
-                    ff[tx * ry + ty].ID = flid;
+                    ff[tx * ry + ty].Id = flid;
                 }
             }
         }
@@ -197,7 +197,7 @@ namespace rglikeworknamelib.Generation
             foreach (var street in st) {
                 for (int i = (int)street.from.X - (int)street.trotwidth; i < (int)street.to.X + 1 + street.trotwidth; i++) {
                     for (int j = (int)street.from.Y - (int)street.trotwidth; j < (int)street.to.Y + 1 + street.trotwidth; j++) {
-                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = street.tid;
+                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].Id = street.tid;
                     }
                 }
             }
@@ -205,7 +205,7 @@ namespace rglikeworknamelib.Generation
             foreach (var street in st) {
                 for (int i = (int)street.from.X; i < (int)street.to.X + 1; i++) {
                     for (int j = (int)street.from.Y; j < (int)street.to.Y + 1; j++) {
-                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].ID = street.id;
+                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].Id = street.id;
                     }
                 }
             }
@@ -229,14 +229,13 @@ namespace rglikeworknamelib.Generation
             List<Schemes> a;
             switch (schemeType) {
                 case SchemesType.house:
-                    a = mapSector.schemesDataBase.Houses;
+                    a = mapSector.SchemesDataBase.Houses;
                     break;
 
                 default:
-                    a = mapSector.schemesDataBase.Data.Where(x => x.type == schemeType).ToList();
+                    a = mapSector.SchemesDataBase.Data.Where(x => x.type == schemeType).ToList();
                     break;;
             }
-           
 
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
@@ -248,7 +247,7 @@ namespace rglikeworknamelib.Generation
         internal static void AddTestScheme(GameLevel gl, SchemesDataBase sch, int rx, int ry, Random rnd)
         {
             Vector2 start = new Vector2(0, 0);
-            var scheme = sch.Data[0];
+            Schemes scheme = sch.Data[0];
 
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
@@ -260,9 +259,9 @@ namespace rglikeworknamelib.Generation
 
             foreach (var storageBlock in storageBlocks) {
                 for (int i = 0; i < 10; i++) {
-                    storageBlock.storedItems.Add(new Item {
-                        count = 3,
-                        id = rnd.Next(1,19)
+                    storageBlock.StoredItems.Add(new Item {
+                        Count = 3,
+                        Id = rnd.Next(1,19)
                     });
                 }
                 
@@ -285,7 +284,7 @@ namespace rglikeworknamelib.Generation
 
 
             while (todo.Count > 0) {
-                var t = todo.Dequeue();
+                int t = todo.Dequeue();
 
                 if(visited[t] == 0 && a.data[t] == 0) {
                     visited[t] = 1;
@@ -322,42 +321,43 @@ namespace rglikeworknamelib.Generation
             return value;
         }
 
-        private static double[] NoiseMap(int x, int y, int sx, int sy) {
-            double[] a = new double[sx*sy];
+        private static double[] NoiseMap(int x, int y, int sx, int sy)
+        {
+            double[] a = new double[sx * sy];
 
             for (int i = 0; i < sx; i++) {
                 for (int j = 0; j < sy; j++) {
-                    a[i*sy + j] = Noise(i + x*sx, j + y*sy);
+                    a[i * sy + j] = Noise(i + x * sx, j + y * sy);
                 }
             }
             return a;
         }
 
         private static double[] SmoothNoiseMap(int x, int y, int sx, int sy) {
-            var a = NoiseMap(x, y, sx, sy);
-            for (int i = 0; i < sx - 1; i++)
-                for (int j = 0; j < sy - 1; j++)
-                {
-                    {
-                        double round = (byte)((a[(i) * sy + j] + a[(i + 1) * sy + j] + a[(i + 1) * sy + j + 1] + a[(i) * sy + j+1]) / 4);
-                        a[(i) * sy + j] = ((a[(i)*sy+j] + round) / 2);
-                        a[(i+1) * sy + j] = ((a[(i+1)*sy+j]+ round) / 2);
-                        a[(i) * sy + j+1] = ((a[(i)*sy+j+1] + round) / 2);
-                        a[(i+1) * sy + j+1] = ((a[(i+1)*sy+j+1] + round) / 2);
-                    }
+            double[] a = NoiseMap(x, y, sx, sy);
+            for (int i = 0; i < sx - 1; i++) {
+                for (int j = 0; j < sy - 1; j++) {
+                    double round = (byte) ((a[(i)*sy + j] + a[(i + 1)*sy + j] + a[(i + 1)*sy + j + 1] + a[(i)*sy + j + 1])/4);
+                    a[(i)*sy + j] = ((a[(i)*sy + j] + round)/2);
+                    a[(i + 1)*sy + j] = ((a[(i + 1)*sy + j] + round)/2);
+                    a[(i)*sy + j + 1] = ((a[(i)*sy + j + 1] + round)/2);
+                    a[(i + 1)*sy + j + 1] = ((a[(i + 1)*sy + j + 1] + round)/2);
                 }
+            }
             return a;
         }
 
         internal static void FloorPerlin(MapSector mapSector) {
-            var a = SmoothNoiseMap(mapSector.GLx, mapSector.GLy, MapSector.Rx, MapSector.Ry);
+            double[] a = SmoothNoiseMap(mapSector.SectorOffsetX, mapSector.SectorOffsetY, MapSector.Rx, MapSector.Ry);
             for (int i = 0; i < MapSector.Rx; i++) {
                 for (int j = 0; j < MapSector.Ry; j++) {
-                    var t = a[i*MapSector.Ry + j];
-                    if (t > 0.04) mapSector.SetFloor(i, j, 1);
-                    else {
-                        if (t > 0.08) mapSector.SetFloor(i, j, 2);
-                        else {
+                    double t = a[i * MapSector.Ry + j];
+                    if (t > 0.04) {
+                        mapSector.SetFloor(i, j, 1);
+                    } else {
+                        if (t > 0.08) {
+                            mapSector.SetFloor(i, j, 2);
+                        } else {
                             mapSector.SetFloor(i, j, 3);
                         }
                     }

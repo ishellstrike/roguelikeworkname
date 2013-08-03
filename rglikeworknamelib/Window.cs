@@ -10,12 +10,12 @@ namespace rglikeworknamelib
 {
         public class WindowSystem : IGameWindowComponent
         {
-            private static List<Window> windows = new List<Window>();
+            private static readonly List<Window> Windows = new List<Window>();
             Random rnd = new Random();
-            public bool mopusehook, keyboardhook;
+            public bool Mopusehook, Keyboardhook;
 
-            private Texture2D whitepixel_;
-            private SpriteFont font1_;
+            private readonly Texture2D whitepixel_;
+            private readonly SpriteFont font1_;
 
             public WindowSystem(Texture2D wp, SpriteFont f1) {
                 whitepixel_ = wp;
@@ -24,10 +24,10 @@ namespace rglikeworknamelib
 
             public Window NewDebugWindow()
             {
-                windows.Add(new Window(new Rectangle(rnd.Next(50, 1600), rnd.Next(50, 1000), 200 + rnd.Next(50, 200), 200 + rnd.Next(50, 200)), "Debug window", true, whitepixel_, font1_, this));
-                windows.Last().components.Add(new Label(new Vector2(10, 10), "label1", whitepixel_, font1_));
-                windows.Last().components.Add(new Button(new Vector2(10, 100), "Button1", null, whitepixel_, font1_));
-                return windows.Last();
+                Windows.Add(new Window(new Rectangle(rnd.Next(50, 1600), rnd.Next(50, 1000), 200 + rnd.Next(50, 200), 200 + rnd.Next(50, 200)), "Debug window", true, whitepixel_, font1_, this));
+                Windows.Last().Components.Add(new Label(new Vector2(10, 10), "label1", whitepixel_, font1_));
+                Windows.Last().Components.Add(new Button(new Vector2(10, 100), "Button1", null, whitepixel_, font1_));
+                return Windows.Last();
             }
 
             public Window NewInfoWindow(string info) {
@@ -39,9 +39,9 @@ namespace rglikeworknamelib
                 int h = (int) Settings.Resolution.Y/5;
                 h = Math.Max(h, (int) font1_.MeasureString(info).Y + 80);
 
-                windows.Add(new Window(new Rectangle(a, b, w, h), "Info", true,whitepixel_,font1_, this));
-                windows.Last().components.Add(new Label(new Vector2(10, 10), info,whitepixel_,font1_));
-                return windows.Last();
+                Windows.Add(new Window(new Rectangle(a, b, w, h), "Info", true,whitepixel_,font1_, this));
+                Windows.Last().Components.Add(new Label(new Vector2(10, 10), info,whitepixel_,font1_));
+                return Windows.Last();
             }
 
             //public Window New 
@@ -50,7 +50,7 @@ namespace rglikeworknamelib
             public void Draw(SpriteBatch sb, IGameWindowComponent owner)
             {
                 sb.Begin();
-                foreach (var component in windows) {
+                foreach (var component in Windows) {
                     component.Draw(sb, this);
                 }
                 sb.End();
@@ -58,15 +58,15 @@ namespace rglikeworknamelib
 
             public void Update(GameTime gt, IGameWindowComponent owner, MouseState ms, MouseState lms)
             {
-                mopusehook = false;
-                keyboardhook = false;
+                Mopusehook = false;
+                Keyboardhook = false;
 
-                if (windows.Count != 0)
-                    for (int i = windows.Count - 1; i >= 0; i--) {
-                        if (windows.Count > i) {
-                            var component = windows[i];
-                            if (component.readytoclose) {
-                                windows.Remove(component);
+                if (Windows.Count != 0)
+                    for (int i = Windows.Count - 1; i >= 0; i--) {
+                        if (Windows.Count > i) {
+                            var component = Windows[i];
+                            if (component.Readytoclose) {
+                                Windows.Remove(component);
                                 continue;
                             }
                             component.Update(gt, this, ms, lms);
@@ -81,93 +81,93 @@ namespace rglikeworknamelib
 
             internal void ToTop(Window win)
             {
-                windows.Remove(win);
-                windows.Insert(windows.Count, win);
+                Windows.Remove(win);
+                Windows.Insert(Windows.Count, win);
             }
         }
 
         public class Window : IGameWindowComponent
         {
-            internal List<IGameWindowComponent> components = new List<IGameWindowComponent>();
+            internal List<IGameWindowComponent> Components = new List<IGameWindowComponent>();
 
-            private WindowSystem parent;
+            private readonly WindowSystem parent_;
 
-            public Rectangle locate;
-            private Color backtransparent;
+            public Rectangle Locate;
+            private readonly Color backtransparent_;
 
-            public bool readytoclose = false;
+            public bool Readytoclose;
 
-            public bool closable = true;
-            public bool moveable = true;
+            public bool Closable = true;
+            public bool Moveable = true;
 
-            private Texture2D whitepixel_;
-            private SpriteFont font1_;
+            private readonly Texture2D whitepixel_;
+            private readonly SpriteFont font1_;
 
-            public string name;
+            public string Name;
 
             public Window(Rectangle loc, string n, bool clos, Texture2D wp, SpriteFont wf, WindowSystem p) {
                 whitepixel_ = wp;
                 font1_ = wf;
-                parent = p;
+                parent_ = p;
 
-                name = n;
-                locate = loc;
-                backtransparent = Color.Black;
-                backtransparent.A = 220;
-                closable = clos;
-                if (closable)
-                    components.Add(new Button(new Vector2(locate.Width - 22, -22), "x", Close,whitepixel_,font1_));
+                Name = n;
+                Locate = loc;
+                backtransparent_ = Color.Black;
+                backtransparent_.A = 220;
+                Closable = clos;
+                if (Closable)
+                    Components.Add(new Button(new Vector2(Locate.Width - 22, -22), "x", Close,whitepixel_,font1_));
 
-                if (name == "Info") {
-                    components.Add(new Button(new Vector2(locate.Width/2 - 10, locate.Height - 50), "OK", Close,whitepixel_,font1_));
+                if (Name == "Info") {
+                    Components.Add(new Button(new Vector2(Locate.Width/2 - 10, Locate.Height - 50), "OK", Close,whitepixel_,font1_));
                 }
             }
 
             public void Close()
             {
-                readytoclose = true;
+                Readytoclose = true;
             }
 
             public void Draw(SpriteBatch sb, IGameWindowComponent owner)
             {
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Y), null, backtransparent, 0, Vector2.Zero, new Vector2(locate.Width, locate.Height), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, backtransparent_, 0, Vector2.Zero, new Vector2(Locate.Width, Locate.Height), SpriteEffects.None, 0);
 
 
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Y), null, Settings.HUDcolor, 0, Vector2.Zero, new Vector2(locate.Width, 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Y + 20), null, Settings.HUDcolor, 0, Vector2.Zero, new Vector2(locate.Width, 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y + 20), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
 
-                Vector2 textpos = new Vector2(locate.X + locate.Width / 2 - -font1_.MeasureString(name).X / 2, locate.Y);
+                Vector2 textpos = new Vector2(Locate.X + Locate.Width / 2 - -font1_.MeasureString(Name).X / 2, Locate.Y);
 
-                sb.DrawString(font1_, name, textpos, Settings.HUDcolor);
+                sb.DrawString(font1_, Name, textpos, Settings.HudСolor);
 
 
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Y), null, Settings.HUDcolor, 0, Vector2.Zero, new Vector2(2, locate.Height), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate.Right, locate.Y), null, Settings.HUDcolor, 0, Vector2.Zero, new Vector2(2, locate.Height + 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Bottom), null, Settings.HUDcolor, 0, Vector2.Zero, new Vector2(locate.Width + 2, 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, Locate.Height), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(Locate.Right, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, Locate.Height + 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Bottom), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(Locate.Width + 2, 2), SpriteEffects.None, 0);
 
-                for (int i = 0; i < components.Count; i++) {
-                    var component = components[i];
+                for (int i = 0; i < Components.Count; i++) {
+                    var component = Components[i];
                     component.Draw(sb, this);
                 }
             }
 
             public void Update(GameTime gt, IGameWindowComponent owner, MouseState ms, MouseState lms)
             {
-                if (parent.mopusehook == false && lms.X >= locate.Left && lms.Y >= locate.Top && lms.X <= locate.Right && lms.Y <= locate.Bottom) {
-                    parent.mopusehook = true;
+                if (parent_.Mopusehook == false && lms.X >= Locate.Left && lms.Y >= Locate.Top && lms.X <= Locate.Right && lms.Y <= Locate.Bottom) {
+                    parent_.Mopusehook = true;
 
                     if (lms.LeftButton == ButtonState.Pressed || ms.RightButton == ButtonState.Pressed) {
 
-                        parent.ToTop(this);
+                        parent_.ToTop(this);
                     }
 
-                    if (moveable && lms.LeftButton == ButtonState.Pressed && lms.Y <= locate.Top + 20) {
-                        locate.X += (int)(ms.X - lms.X);
-                        locate.Y += (int)(ms.Y - lms.Y);
+                    if (Moveable && lms.LeftButton == ButtonState.Pressed && lms.Y <= Locate.Top + 20) {
+                        Locate.X += (int)(ms.X - lms.X);
+                        Locate.Y += (int)(ms.Y - lms.Y);
                     }
 
-                    for (int i = components.Count - 1; i >= 0; i--) {
-                        var component = components[i];
+                    for (int i = Components.Count - 1; i >= 0; i--) {
+                        var component = Components[i];
                         component.Update(gt, this, ms, lms);
                     }
                 }
@@ -175,40 +175,40 @@ namespace rglikeworknamelib
 
             public Vector2 GetLocation()
             {
-                return new Vector2(locate.X + 2, locate.Y + 22);
+                return new Vector2(Locate.X + 2, Locate.Y + 22);
             }
         }
 
         public class Label : IGameWindowComponent
         {
-            private Vector2 pos;
-            public String text;
-            private Color col;
+            private readonly Vector2 pos_;
+            public String Text;
+            private Color col_;
 
             private Texture2D whitepixel_;
-            private SpriteFont font1_;
+            private readonly SpriteFont font1_;
 
             public Label(Vector2 p, string s, Color c, Texture2D wp, SpriteFont wf)
             {
                 whitepixel_ = wp;
                 font1_ = wf;
-                pos = p;
-                text = s;
-                col = c;
+                pos_ = p;
+                Text = s;
+                col_ = c;
             }
 
             public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf)
             {
                 whitepixel_ = wp;
                 font1_ = wf;
-                pos = p;
-                text = s;
-                col = Settings.HUDcolor;
+                pos_ = p;
+                Text = s;
+                col_ = Settings.HudСolor;
             }
 
             public void Draw(SpriteBatch sb, IGameWindowComponent owner)
             {
-                sb.DrawString(font1_, text, owner.GetLocation() + pos, Settings.HUDcolor);
+                sb.DrawString(font1_, Text, owner.GetLocation() + pos_, Settings.HudСolor);
             }
 
             public void Update(GameTime gt, IGameWindowComponent owner, MouseState ms, MouseState lms)
@@ -218,29 +218,29 @@ namespace rglikeworknamelib
 
             public Vector2 GetLocation()
             {
-                return pos;
+                return pos_;
             }
         }
 
         public class Button : IGameWindowComponent
         {
-            private Rectangle locate;
-            public String text;
-            private ComponentAction action;
-            private bool aimed = false;
+            private Rectangle locate_;
+            public String Text;
+            private readonly ComponentAction action;
+            private bool aimed_;
 
-            private Texture2D whitepixel_;
-            private SpriteFont font1_;
+            private readonly Texture2D whitepixel_;
+            private readonly SpriteFont font1_;
 
             public Button(Vector2 p, string s, ComponentAction ac, Texture2D wp, SpriteFont wf)
             {
                 whitepixel_ = wp;
                 font1_ = wf;
-                locate.X = (int)p.X;
-                locate.Y = (int)p.Y;
-                locate.Height = 20;
-                locate.Width = (int)(font1_.MeasureString(s).X + 10);
-                text = s;
+                locate_.X = (int)p.X;
+                locate_.Y = (int)p.Y;
+                locate_.Height = 20;
+                locate_.Width = (int)(font1_.MeasureString(s).X + 10);
+                Text = s;
                 action = ac;
             }
 
@@ -249,36 +249,36 @@ namespace rglikeworknamelib
                 Vector2 realpos = owner.GetLocation() + GetLocation();
 
                 Color col;
-                if (!aimed)
-                    col = Settings.HUDcolor;
+                if (!aimed_)
+                    col = Settings.HudСolor;
                 else col = Color.White;
 
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(locate.Width, 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(2, locate.Height), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate.Right, locate.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(2, locate.Height + 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate.X, locate.Bottom) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(locate.Width + 2, 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
 
-                sb.DrawString(font1_, text, realpos + new Vector2(5, 0), col);
+                sb.DrawString(font1_, Text, realpos + new Vector2(5, 0), col);
             }
 
             public void Update(GameTime gt, IGameWindowComponent owner, MouseState ms, MouseState lms)
             {
                 Vector2 realpos = owner.GetLocation() + GetLocation();
                 Vector2 realdl = realpos;
-                realdl.X += locate.Width;
-                realdl.Y += locate.Height;
+                realdl.X += locate_.Width;
+                realdl.Y += locate_.Height;
 
                 if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
-                    aimed = true;
+                    aimed_ = true;
                     if (lms.LeftButton == ButtonState.Released && ms.LeftButton == ButtonState.Pressed)
                         if (action != null) action();
                 } else
-                    aimed = false;
+                    aimed_ = false;
             }
 
             public Vector2 GetLocation()
             {
-                return new Vector2(locate.X, locate.Y);
+                return new Vector2(locate_.X, locate_.Y);
             }
         }
 
