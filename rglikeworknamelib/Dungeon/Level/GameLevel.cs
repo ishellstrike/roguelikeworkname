@@ -195,6 +195,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int Rx = 100;
         public int Ry = 100;
         private readonly Collection<Texture2D> atlas_, flatlas_;
+        private Texture2D whitepixel;
 
         private List<MapSector> sectors_;
 
@@ -265,25 +266,23 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public Block GetBlock(int x, int y)
         {
-            int divx = x / MapSector.Rx, divy = y / MapSector.Ry;
-            if (x < 0) divx = x/MapSector.Rx - 1;
-            if (y < 0) divy = y / MapSector.Ry - 1;
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
             return sect.GetBlock(x-divx*MapSector.Rx, y-divy*MapSector.Ry);//blocks_[x * ry + y];
         }
 
         public bool IsExplored(int x, int y) {
-            int divx = x / MapSector.Rx, divy = y / MapSector.Ry;
-            if (x < 0) divx = x / MapSector.Rx - 1;
-            if (y < 0) divy = y / MapSector.Ry - 1;
+            int divx = x < 0 ? (x + 1)/MapSector.Rx - 1 : x/MapSector.Rx;
+            int divy = y < 0 ? (y + 1)/MapSector.Ry - 1 : y/MapSector.Ry;
+
             var sect = GetSector(divx, divy);
             return sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry].Explored;
         }
 
         public bool IsWalkable(int x, int y) {
-            int divx = x / MapSector.Rx, divy = y / MapSector.Ry;
-            if (x < 0) divx = x / MapSector.Rx - 1;
-            if (y < 0) divy = y / MapSector.Ry - 1;
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
             return blockDataBase.Data[sect.Blocks[(x-divx*MapSector.Rx) * MapSector.Ry + y-divy*MapSector.Ry].Id].IsWalkable;
         }
@@ -360,6 +359,11 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb)
         {
+
+            whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            var data = new uint[1];
+            data[0] = 0xffffffff;
+            whitepixel.SetData(data);
 
             blockDataBase = bdb;
             floorDataBase = fdb;
@@ -466,19 +470,33 @@ namespace rglikeworknamelib.Dungeon.Level {
             foreach (MapSector sector in sectors_) {
                 for (int i = 0; i < MapSector.Rx; i++) {
                     for (int j = 0; j < MapSector.Ry; j++)
-                        if (sector.SectorOffsetX * MapSector.Rx + i > min.X && sector.SectorOffsetY * MapSector.Ry + j > min.Y && sector.SectorOffsetX * MapSector.Rx + i < max.X && sector.SectorOffsetY * MapSector.Ry + j < max.Y)   
-                    {
-                        int a = i * MapSector.Ry + j;
-                        spriteBatch_.Draw(atlas_[blockDataBase.Data[sector.Blocks[a].Id].MTex],
-                                          new Vector2(
-                                              i * (Settings.FloorSpriteSize.X) - (int)camera.X +
-                                              MapSector.Rx * Settings.FloorSpriteSize.X * sector.SectorOffsetX,
-                                              j * (Settings.FloorSpriteSize.Y) - (int)camera.Y +
-                                              MapSector.Ry * Settings.FloorSpriteSize.Y * sector.SectorOffsetY),
-                                          null, Color.White);//sector.blocks_[a].lightness);
-                    }
+                        if (sector.SectorOffsetX*MapSector.Rx + i > min.X &&
+                            sector.SectorOffsetY*MapSector.Ry + j > min.Y &&
+                            sector.SectorOffsetX*MapSector.Rx + i < max.X &&
+                            sector.SectorOffsetY*MapSector.Ry + j < max.Y) {
+                            int a = i*MapSector.Ry + j;
+                            spriteBatch_.Draw(atlas_[blockDataBase.Data[sector.Blocks[a].Id].MTex],
+                                              new Vector2(
+                                                  i*(Settings.FloorSpriteSize.X) - (int) camera.X +
+                                                  MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX,
+                                                  j*(Settings.FloorSpriteSize.Y) - (int) camera.Y +
+                                                  MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY),
+                                              null, Color.White); //sector.blocks_[a].lightness);
+                        }
+                }
+
+                if (Settings.DebugInfo) {
+                    spriteBatch_.Draw(whitepixel, new Vector2(-(int) camera.X +
+                                                              MapSector.Rx*Settings.FloorSpriteSize.X*
+                                                              sector.SectorOffsetX, - (int) camera.Y +
+                                                  MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY), null, Color.White, 0, Vector2.Zero, new Vector2(1,1024), SpriteEffects.None, 0);
+                    spriteBatch_.Draw(whitepixel, new Vector2(-(int) camera.X +
+                                                              MapSector.Rx*Settings.FloorSpriteSize.X*
+                                                              sector.SectorOffsetX, - (int) camera.Y +
+                                                  MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY), null, Color.White, 0, Vector2.Zero, new Vector2(1024,1), SpriteEffects.None, 0);
                 }
             }
+        
         }
 
         public bool IsCreatureMeele(int nx, int ny, Player player) {

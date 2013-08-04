@@ -248,10 +248,7 @@ namespace rglikeworknamelib
             {
                 Vector2 realpos = owner.GetLocation() + GetLocation();
 
-                Color col;
-                if (!aimed_)
-                    col = Settings.HudСolor;
-                else col = Color.White;
+                Color col = !aimed_ ? Settings.HudСolor : Color.White;
 
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + owner.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);

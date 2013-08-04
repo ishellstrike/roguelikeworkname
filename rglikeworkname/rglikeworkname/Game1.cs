@@ -68,10 +68,10 @@ namespace jarg
         {
             Log.Init();
 
-            rglikeworknamelib.Settings.Resolution = new Vector2(1024, 768);
+            Settings.Resolution = new Vector2(1024, 768);
             graphics_.IsFullScreen = false;
-            graphics_.PreferredBackBufferHeight = (int)rglikeworknamelib.Settings.Resolution.Y;
-            graphics_.PreferredBackBufferWidth = (int)rglikeworknamelib.Settings.Resolution.X;
+            graphics_.PreferredBackBufferHeight = (int)Settings.Resolution.Y;
+            graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             
             IsFixedTimeStep = true; //wierd, actually it's true
@@ -194,6 +194,11 @@ namespace jarg
 
             if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
                 Settings.DebugInfo = !Settings.DebugInfo;
+            }
+
+            if (ks_[Keys.F2] == KeyState.Down)
+            {
+                currentFloor_.SetFloor(Settings.rnd.Next(-10000, 10000), Settings.rnd.Next(-10000, 10000), 1);
             }
 
             if (ks_[Keys.W] == KeyState.Down) {
