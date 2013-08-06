@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Creatures {
@@ -17,5 +19,6 @@ namespace rglikeworknamelib.Creatures {
         Vector2 WorldPosition();
         Vector2 GetWorldPositionInBlocks();
         event EventHandler onDamageRecieve;
+        List<IBuff> buffs { get; set; }
     }
 }

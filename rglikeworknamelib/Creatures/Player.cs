@@ -45,8 +45,6 @@ namespace rglikeworknamelib.Creatures {
         public Item ItemAmmo;
         public Item ItemBag;
 
-        public List<IBuff> buffs = new List<IBuff>(); 
-
         /// <summary>
         /// Experience for other abilities. From monsters
         /// </summary>
@@ -178,6 +176,10 @@ namespace rglikeworknamelib.Creatures {
             }
 
             sec_shoot += gt.ElapsedGameTime;
+
+            foreach (var buff in buffs) {
+                buff.Update(gt);
+            }
         }
 
         public void Draw(GameTime gt, Vector2 cam) {

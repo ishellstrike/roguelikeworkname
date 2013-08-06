@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
 
@@ -24,6 +25,10 @@ namespace rglikeworknamelib.Dungeon.Buffs {
                 return true;
             }
             return false;
+        }
+
+        public virtual void Update(GameTime gt) {
+            
         }
 
         internal bool applied_;

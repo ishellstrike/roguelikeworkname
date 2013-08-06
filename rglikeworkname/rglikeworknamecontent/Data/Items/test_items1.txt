@@ -3,11 +3,11 @@ Name=Тестовая шляпа
 Buff={hpup5,hpup2}
 Weight=100
 Volume=300
-SType="Hat"
+SType=Hat
 
 ~Item,testhat2
 Name=Тестовая шляпа2
-Buff={hpup5}
+Buff={hpup5,burn}
 Weight=100
 Volume=300
-SType="Hat"
+SType=Hat

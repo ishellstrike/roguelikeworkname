@@ -12,3 +12,7 @@ Duration=0
 Name=Повышение здоровья +5
 Value1=5
 Duration=0
+
+~BuffBurn,burn
+Name=Горим!
+Duration=0

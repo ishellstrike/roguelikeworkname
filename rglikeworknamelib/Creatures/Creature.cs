@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
 
@@ -75,6 +77,19 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public event EventHandler onDamageRecieve;
+
+        private List<IBuff> buffs_ = new List<IBuff>();
+        public List<IBuff> buffs 
+        {
+            get
+            {
+                return buffs_;
+            }
+            set
+            {
+                buffs_ = value;
+            }
+        }
 
         public Vector2 LastPos
         {
@@ -155,6 +170,10 @@ namespace rglikeworknamelib.Creatures {
                         position_.X = 0;
                     }
                 }
+            }
+
+            foreach (var buff in buffs) {
+                buff.Update(gt);
             }
         }
 

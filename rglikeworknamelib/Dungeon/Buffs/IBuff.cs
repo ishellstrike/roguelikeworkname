@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using rglikeworknamelib.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Effects {
@@ -8,6 +9,7 @@ namespace rglikeworknamelib.Dungeon.Effects {
         string Id { get; set; }
         bool RemoveFromTarget(Player p);
         bool ApplyToTarget(Player p);
+        void Update(GameTime gt);
         bool Applied { get; }
     }
 }
