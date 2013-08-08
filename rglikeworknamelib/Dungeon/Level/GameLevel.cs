@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -12,6 +13,13 @@ using rglikeworknamelib.Generation;
 using rglikeworknamelib.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Level {
+
+    enum SectorBiom {
+        Forest,
+        Field,
+        AgroField,
+        Bushland
+    }
 
     [Serializable]
     public class MapSector {
@@ -25,14 +33,20 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// </summary>
         public const int Ry = 32;
 
+        public bool ready;
+
         public BlockDataBase BlockDataBase;
         public FloorDataBase FloorDataBase;
         public SchemesDataBase SchemesDataBase;
+        public GameLevel Parent;
+        private BackgroundWorker bw;
 
         public int SectorOffsetX, SectorOffsetY;
 
         internal Block[] Blocks;
         internal Floor[] Floors;
+        internal List<Vector2> initialNodes;
+        internal SectorBiom biom;
 
         public MapSector(int sectorOffsetX, int sectorOffsetY) {
             SectorOffsetX = sectorOffsetX;
@@ -50,14 +64,16 @@ namespace rglikeworknamelib.Dungeon.Level {
             BlockDataBase = new BlockDataBase(new Dictionary<int, BlockData>());
             FloorDataBase = new FloorDataBase(new Dictionary<int, FloorData>());
             SchemesDataBase = new SchemesDataBase(new List<Schemes>());
+            initialNodes = new List<Vector2>();
         }
 
-        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, int sectorOffsetX, int sectorOffsetY) {
+        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, GameLevel parent, int sectorOffsetX, int sectorOffsetY) {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
             BlockDataBase = bdb;
             FloorDataBase = fdb;
             SchemesDataBase = sdb;
+            Parent = parent;
 
             Blocks = new Block[Rx * Ry];
             Floors = new Floor[Rx * Ry];
@@ -67,6 +83,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Floors[i] = new Floor();
                 Blocks[i] = new Block();
             }
+            initialNodes = new List<Vector2>();
         }
 
         /// <summary>
@@ -79,15 +96,19 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="sectorOffsetY"></param>
         /// <param name="blocksArray"></param>
         /// <param name="floorsArray"></param>
-        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray) {
+        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object initialn, object obiom)
+        {
             SectorOffsetX = (int)sectorOffsetX;
             SectorOffsetY = (int)sectorOffsetY;
             BlockDataBase = bdb;
             FloorDataBase = fdb;
             SchemesDataBase = sdb;
+            Parent = parent;
 
             Blocks = blocksArray as Block[];
             Floors = floorsArray as Floor[];
+            initialNodes = initialn as List<Vector2>;
+            biom = (SectorBiom)obiom;
         }
 
         public List<StorageBlock> GetStorageBlocks()
@@ -109,15 +130,73 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// Main sector generation proc
         /// </summary>
         /// <param name="mapseed">глобальный сид карты</param>
-        public void Rebuild(int mapseed)
-        {
-            Random rand = new Random(SectorOffsetX|SectorOffsetY|mapseed);
+        public void Rebuild(int mapseed) {
+            Action<int> a = AsyncGeneration;
+            AsyncGeneration(mapseed);
+            if(SectorOffsetX == 0 && SectorOffsetY == 0) initialNodes.Add(new Vector2(10,0));
+        }
+
+        /// <summary>
+        /// ###---### Main generation proc ###---###
+        /// </summary>
+        /// <param name="mapseed">Global map seed</param>
+        private void AsyncGeneration(int mapseed) {
+            int s = (int)(MapGenerators.Noise2D(SectorOffsetX,SectorOffsetY)*int.MaxValue);
+            Random rand = new Random(s);
             MapGenerators.FillTest1(this, 1);
             MapGenerators.ClearBlocks(this);
             MapGenerators.FloorPerlin(this);
-            MapGenerators.GenerateStreetsNew(this, rand.Next(1, 3), rand.Next(5, 10), rand.Next(2, 3), 2, 3, rand);
-            for (int i = 0; i < 3; i++)
-                MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0, Rx), rand.Next(0, Ry), rand);
+
+            var tt = Parent.GetDownN(SectorOffsetX, SectorOffsetY);
+            if(tt != null)
+            foreach (var ino in tt.initialNodes) {
+                if(ino.Y == 0) AddInitialNode(ino.X, Ry - 1);
+            }
+
+            
+            tt = Parent.GetUpN(SectorOffsetX, SectorOffsetY);
+            if (tt != null)
+            foreach (var ino in tt.initialNodes)
+            {
+                if (ino.Y == Ry - 1) AddInitialNode(ino.X, 0);
+            }
+
+            
+            tt = Parent.GetLeftN(SectorOffsetX, SectorOffsetY);
+            if (tt != null)
+            foreach (var ino in tt.initialNodes)
+            {
+                if (ino.X == 0) AddInitialNode(Rx - 1, ino.Y);
+            }
+
+            
+            tt = Parent.GetRightN(SectorOffsetX, SectorOffsetY);
+            if (tt != null)
+            foreach (var ino in tt.initialNodes)
+            {
+                if (ino.X == Rx - 1) AddInitialNode(Rx - 1, ino.Y);
+            }
+
+            MapGenerators.GenerateStreetGrid(this, initialNodes.ToArray(), rand);
+
+            biom = (SectorBiom)rand.Next(1, 5);
+
+            switch (biom) {
+                    case SectorBiom.Bushland:
+                    for (int i = 0; i < rand.Next(14, 40); i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), 16);
+                        break;
+
+                    case SectorBiom.Forest:
+                        for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), 17);
+                        break;
+            }
+
+            for (int i = 0; i < 2; i++) {
+                MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0,Rx-1),rand.Next(0,Ry-1), rand);
+            }
+
+            Parent.generated++;
+            ready = true;
         }
 
         public Block GetBlock(int x, int y)
@@ -187,54 +266,194 @@ namespace rglikeworknamelib.Dungeon.Level {
                 SetBlock(x, y, BlockDataBase.Data[Blocks[x * Ry + y].Id].AfterDeathId);
             }
         }
-        
+
+        public void AddInitialNode(float p0, float p1) {
+            initialNodes.Add(new Vector2(p0, p1));
+        }
+
+        public void CreateAllMapFromArray(int[] arr)
+        {
+            for (int i = 0; i < MapSector.Rx; i++)
+            {
+                for (int j = 0; j < MapSector.Ry; j++)
+                {
+                    SetBlock(i, j, arr[i]);
+                }
+            }
+        }
     }
 
     public class GameLevel
     {
-        public int Rx = 100;
-        public int Ry = 100;
+        public int MapSeed = 23142455;
+
         private readonly Collection<Texture2D> atlas_, flatlas_;
         private Texture2D whitepixel;
 
         private List<MapSector> sectors_;
+        public int generated;
 
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
         private readonly SpriteBatch spriteBatch_;
+        private readonly SpriteFont font_;
         public BlockDataBase blockDataBase;
         public FloorDataBase floorDataBase;
-        public SchemesDataBase schemesDataBase;
-
-        private readonly BinaryFormatter binaryFormatter_ = new BinaryFormatter();
-        private FileStream fileStream_;
-        private GZipStream gZipStream_;
-
-        public int MapSeed = 12345;
+        public SchemesDataBase schemesDataBase; 
 
         private readonly Texture2D minimap_;
 
-        public MapSector GetSector(int sectorOffsetX, int sectorOffsetY) {
+        public MapSector[] GetNeibours(MapSector ms) {
+            return GetNeibours(ms.SectorOffsetX, ms.SectorOffsetY);
+        }
 
-            foreach (var sector in sectors_) {
-                if (sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY) return sector;
+        public MapSector[] GetNeibours(int sectorOffsetX, int sectorOffsetY) {
+            List<MapSector> arrr = new List<MapSector>();
+
+            MapSector a = GetRightN(sectorOffsetX, sectorOffsetY), b = GetLeftN(sectorOffsetX, sectorOffsetY), c = GetUpN(sectorOffsetX, sectorOffsetY), d = GetDownN(sectorOffsetX, sectorOffsetY);
+
+            if (a != null) arrr.Add(a);
+            if (b != null) arrr.Add(b);
+            if (c != null) arrr.Add(c);
+            if (d != null) arrr.Add(d);
+
+            return arrr.ToArray();
+        }
+
+         public MapSector GetDownN(int sectorOffsetX, int sectorOffsetY) {
+             foreach (var sector in sectors_) {
+                 if (sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY + 1) {
+                     return sector;
+                 }
+             }
+
+             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY + 1)))
+             {
+                 var temp = LoadSector(sectorOffsetX, sectorOffsetY + 1);
+                 sectors_.Add(temp);
+                 return temp;
+             }
+
+             return null;
+         }
+
+         public MapSector GetUpN(int sectorOffsetX, int sectorOffsetY)
+         {
+             foreach (var sector in sectors_)
+             {
+                 if (sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY - 1)
+                 {
+                     return sector;
+                 }
+             }
+
+             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY - 1)))
+             {
+                 var temp = LoadSector(sectorOffsetX, sectorOffsetY - 1);
+                 sectors_.Add(temp);
+                 return temp;
+             }
+
+             return null;
+         }
+
+         public MapSector GetLeftN(int sectorOffsetX, int sectorOffsetY)
+         {
+             foreach (var sector in sectors_)
+             {
+                 if (sector.SectorOffsetX == sectorOffsetX - 1 && sector.SectorOffsetY == sectorOffsetY)
+                 {
+                     return sector;
+                 }
+             }
+
+             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX - 1, sectorOffsetY)))
+             {
+                 var temp = LoadSector(sectorOffsetX - 1, sectorOffsetY);
+                 sectors_.Add(temp);
+                 return temp;
+             }
+
+             return null;
+         }
+
+         public MapSector GetRightN(int sectorOffsetX, int sectorOffsetY)
+         {
+             foreach (var sector in sectors_)
+             {
+                 if (sector.SectorOffsetX == sectorOffsetX + 1 && sector.SectorOffsetY == sectorOffsetY)
+                 {
+                     return sector;
+                 }
+             }
+
+             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX + 1, sectorOffsetY)))
+             {
+                 return LoadSector(sectorOffsetX + 1, sectorOffsetY);
+             }
+
+             return null;
+         }
+
+        public MapSector GetSector(int sectorOffsetX, int sectorOffsetY) {
+            for (int i = 0; i < sectors_.Count; i++) {
+                var sector = sectors_[i];
+                if (sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY) {
+                    return sector;
+                }
             }
 
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY)))
-            {
-                fileStream_ = new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY), FileMode.Open);
+            MapSector last = LoadSector(sectorOffsetX, sectorOffsetY);
+            if(last != null) return last;
+
+            var temp = new MapSector(blockDataBase, floorDataBase, schemesDataBase, this, sectorOffsetX, sectorOffsetY);
+            sectors_.Add(temp);
+            temp.Rebuild(MapSeed);
+            if (temp.ready) return temp;
+            return null;
+        }
+
+        private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY) {
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY))) {
+                BinaryFormatter binaryFormatter_ = new BinaryFormatter();
+                FileStream fileStream_;
+                GZipStream gZipStream_;
+
+                fileStream_ =
+                    new FileStream(
+                        Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY),
+                        FileMode.Open);
                 gZipStream_ = new GZipStream(fileStream_, CompressionMode.Decompress);
                 var q1 = binaryFormatter_.Deserialize(gZipStream_);
                 var q2 = binaryFormatter_.Deserialize(gZipStream_);
                 var q3 = binaryFormatter_.Deserialize(gZipStream_);
                 var q4 = binaryFormatter_.Deserialize(gZipStream_);
+                var q5 = binaryFormatter_.Deserialize(gZipStream_);
+                var q6 = binaryFormatter_.Deserialize(gZipStream_);
                 gZipStream_.Close();
                 fileStream_.Close();
-                sectors_.Add(new MapSector(blockDataBase, floorDataBase, schemesDataBase, q1, q2, q3, q4));
-                return sectors_.Last();
+                return new MapSector(blockDataBase, floorDataBase, schemesDataBase, this, q1, q2, q3, q4, q5, q6);
             }
-            sectors_.Add(new MapSector(blockDataBase, floorDataBase, schemesDataBase, sectorOffsetX, sectorOffsetY));
-            sectors_.Last().Rebuild(MapSeed);
-            return sectors_.Last();
+            return null;
+        }
+
+        private void SaveSector(MapSector a)
+        {
+            BinaryFormatter binaryFormatter_ = new BinaryFormatter();
+            FileStream fileStream_;
+            GZipStream gZipStream_;
+
+            fileStream_ =
+                new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", a.SectorOffsetX, a.SectorOffsetY),
+                               FileMode.Create);
+            gZipStream_ = new GZipStream(fileStream_, CompressionMode.Compress);
+            binaryFormatter_.Serialize(gZipStream_, a.SectorOffsetX);
+            binaryFormatter_.Serialize(gZipStream_, a.SectorOffsetY);
+            binaryFormatter_.Serialize(gZipStream_, a.Blocks);
+            binaryFormatter_.Serialize(gZipStream_, a.Floors);
+            binaryFormatter_.Serialize(gZipStream_, a.initialNodes);
+            binaryFormatter_.Serialize(gZipStream_, a.biom);
+            gZipStream_.Close();
+            fileStream_.Close();
         }
 
         public void ExploreAllMap()
@@ -255,21 +474,15 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         //------------------
 
-        public void CreateAllMapFromArray(int[] arr)
-        {
-            for (int i = 0; i < MapSector.Rx; i++) {
-                for (int j = 0; j < MapSector.Ry; j++) {
-                    SetBlock(i, j, arr[i]);
-                }
-            }
-        }
-
         public Block GetBlock(int x, int y)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
-            return sect.GetBlock(x-divx*MapSector.Rx, y-divy*MapSector.Ry);//blocks_[x * ry + y];
+            if (sect != null)
+                return sect.GetBlock(x - divx * MapSector.Rx, y - divy * MapSector.Ry);//blocks_[x * ry + y];
+
+            return null;
         }
 
         public bool IsExplored(int x, int y) {
@@ -294,8 +507,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (y < 0) divy = y / MapSector.Ry - 1;
             var sect = GetSector(divx, divy);
 
-            sect.Floors[(x - divx *MapSector.Rx) * MapSector.Ry + y - divy*MapSector.Ry].Id = id;
-            sect.Floors[(x - divx*MapSector.Rx) * MapSector.Ry + y - divy*MapSector.Ry].Mtex = floorDataBase.Data[id].RandomMtexFromAlters();
+            if (sect != null) {
+                sect.Floors[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Id = id;
+                sect.Floors[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Mtex =
+                    floorDataBase.Data[id].RandomMtexFromAlters();
+            }
         }
 
         public int GetId(int x, int y) {
@@ -312,17 +528,22 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (x < 0) divx = x / MapSector.Rx - 1;
             if (y < 0) divy = y / MapSector.Ry - 1;
             var sect = GetSector(divx, divy);
-
-            if (blockDataBase.Data[id].BlockPrototype == typeof(Block)) {
-                sect.Blocks[(x-divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry] = new Block {
-                    Id = id
-                };
-            }
-            if (blockDataBase.Data[id].BlockPrototype == typeof(StorageBlock)) {
-                sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry] = new StorageBlock {
-                    StoredItems = new List<Item.Item>(),
-                    Id = id
-                };
+            if (sect != null)
+            {
+                if (blockDataBase.Data[id].BlockPrototype == typeof(Block))
+                {
+                    sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry] = new Block
+                    {
+                        Id = id
+                    };
+                }
+                if (blockDataBase.Data[id].BlockPrototype == typeof(StorageBlock))
+                {
+                    sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry] = new StorageBlock
+                    {
+                        StoredItems=new List<Item.Item>(),Id=id
+                    };
+                }
             }
         }
 
@@ -337,14 +558,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = 0; i < sectors_.Count; i++) {
                 var a = sectors_[i];
                 if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 64 || Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 64) {
-                    fileStream_ = new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", a.SectorOffsetX, a.SectorOffsetY), FileMode.Create);
-                    gZipStream_ = new GZipStream(fileStream_, CompressionMode.Compress);
-                    binaryFormatter_.Serialize(gZipStream_, a.SectorOffsetX);
-                    binaryFormatter_.Serialize(gZipStream_, a.SectorOffsetY);
-                    binaryFormatter_.Serialize(gZipStream_, a.Blocks);
-                    binaryFormatter_.Serialize(gZipStream_, a.Floors);
-                    gZipStream_.Close();
-                    fileStream_.Close();
+                    SaveSector(a);
                     sectors_.Remove(a);
                 }
             }
@@ -357,9 +571,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb)
-        {
-
+        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, SpriteFont sf, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb) {
+            MapGenerators.seed = MapSeed;
             whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             var data = new uint[1];
             data[0] = 0xffffffff;
@@ -373,13 +586,15 @@ namespace rglikeworknamelib.Dungeon.Level {
                 minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
             }
 
-            sectors_ = new List<MapSector> {new MapSector(bdb, fdb, sdb, 0, 0)};
+            sectors_ = new List<MapSector> { new MapSector(bdb, fdb, sdb, this, 0, 0) };
 
             sectors_[0].Rebuild(MapSeed);
 
             atlas_ = atlas;
             flatlas_ = flatlas;
             spriteBatch_ = spriteBatch;
+            font_ = sf;
+         
         }
 
         public GameLevel()
@@ -394,15 +609,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void Update(GameTime gt, MouseState ms, MouseState lms) {
-        }
-
-        public bool IsInMapBounds(Vector2 t)
-        {
-            return IsInMapBounds((int)t.X, (int)t.Y);
-        }
-        public bool IsInMapBounds(int x, int y)
-        {
-            return (x >= 0 && y >= 0 && x < Rx && y < Ry);
         }
 
         public void GenerateMinimap(GraphicsDevice gd, Creature pl)
@@ -448,6 +654,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                                   (camera.Y + Settings.Resolution.Y) / Settings.FloorSpriteSize.Y);
 
             foreach (MapSector sector in sectors_) {
+                if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
+                if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
                 for (int i = 0; i < MapSector.Rx; i++) {
                     for (int j = 0; j < MapSector.Ry; j++)
                         if (sector.SectorOffsetX * MapSector.Rx + i > min.X && sector.SectorOffsetY * MapSector.Ry + j > min.Y && sector.SectorOffsetX * MapSector.Rx + i < max.X && sector.SectorOffsetY * MapSector.Ry + j < max.Y)    
@@ -468,6 +676,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void Draw2(GameTime gameTime, Vector2 camera)
         {
             foreach (MapSector sector in sectors_) {
+                if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
+                if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
                 for (int i = 0; i < MapSector.Rx; i++) {
                     for (int j = 0; j < MapSector.Ry; j++)
                         if (sector.SectorOffsetX*MapSector.Rx + i > min.X &&
@@ -486,14 +696,15 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
 
                 if (Settings.DebugInfo) {
-                    spriteBatch_.Draw(whitepixel, new Vector2(-(int) camera.X +
-                                                              MapSector.Rx*Settings.FloorSpriteSize.X*
-                                                              sector.SectorOffsetX, - (int) camera.Y +
-                                                  MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY), null, Color.White, 0, Vector2.Zero, new Vector2(1,1024), SpriteEffects.None, 0);
-                    spriteBatch_.Draw(whitepixel, new Vector2(-(int) camera.X +
-                                                              MapSector.Rx*Settings.FloorSpriteSize.X*
-                                                              sector.SectorOffsetX, - (int) camera.Y +
-                                                  MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY), null, Color.White, 0, Vector2.Zero, new Vector2(1024,1), SpriteEffects.None, 0);
+                    Vector2 ff = new Vector2(-(int) camera.X +
+                                         MapSector.Rx*Settings.FloorSpriteSize.X*
+                                         sector.SectorOffsetX, - (int) camera.Y +
+                                                               MapSector.Ry*Settings.FloorSpriteSize.Y*
+                                                               sector.SectorOffsetY);
+
+                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1,1024), SpriteEffects.None, 0);
+                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1024,1), SpriteEffects.None, 0);
+                    spriteBatch_.DrawString(font_, sector.biom.ToString(), new Vector2(20,20)+ff, Color.White);
                 }
             }
         

@@ -30,110 +30,62 @@ namespace rglikeworknamelib.Generation
 
     public static class MapGenerators
     {
+        public static void GenerateStreetGrid(MapSector ms, Vector2[] initialNodes, Random rnd) {
+            int gg = rnd.Next(1, 10);
+            for (int i = 0; i < initialNodes.Length; i++) {
+                if (gg < 8) {
+                    if (initialNodes[i].X == MapSector.Rx - 1 || initialNodes[i].X == 0) {
+                        FillFromTo(ms, new Vector2(MapSector.Rx - 1, initialNodes[i].Y - 1), new Vector2(0, initialNodes[i].Y + 1), 2);
+                        ms.AddInitialNode(0, initialNodes[i].Y);
+                    }
+                    if (initialNodes[i].Y == MapSector.Ry - 1 || initialNodes[i].Y == 0) {
+                        FillFromTo(ms, new Vector2(initialNodes[i].X - 1, MapSector.Ry - 1), new Vector2(initialNodes[i].X + 1, 0), 2);
+                        ms.AddInitialNode(initialNodes[i].X, 0);
+                    }          
+                } else {
+                    //if (initialNodes[i].X == MapSector.Rx - 1 || initialNodes[i].X == 0) {
+                    //    FillFromTo(ms, new Vector2(initialNodes[i].X, initialNodes[i].Y - 1), new Vector2(MapSector.Rx/2, initialNodes[i].Y + 1), 2);
+                    //}
+                    //if (initialNodes[i].Y == MapSector.Ry - 1 || initialNodes[i].Y == 0) {
+                    //    FillFromTo(ms, new Vector2(initialNodes[i].X - 1, initialNodes[i].Y), new Vector2(initialNodes[i].X + 1, MapSector.Ry/2), 2);
+                    //}
+                }
+            }
+            if (gg == 4) {
+
+                    ms.AddInitialNode(MapSector.Rx - 1, rnd.Next(0, MapSector.Ry-1)); 
+                    ms.AddInitialNode(0, rnd.Next(0, MapSector.Ry - 1));
+                    ms.AddInitialNode(rnd.Next(0, MapSector.Rx - 1), MapSector.Ry - 1);
+                    ms.AddInitialNode(rnd.Next(0, MapSector.Rx - 1), 0);
+            }
+        }
+
+        public static void FillFromTo(MapSector ms, Vector2 from, Vector2 to, int id) {
+            if (from.X > to.X) {
+                float a = from.X;
+                from.X = to.X;
+                to.X = a;
+            }
+            if (from.Y > to.Y)
+            {
+                float a = from.Y;
+                from.Y = to.Y;
+                to.Y = a;
+            }
+
+            for (int i = (int)from.X; i <= to.X; i++) {
+                for (int j = (int)from.Y; j <= to.Y; j++)
+                {
+                    ms.SetFloor(i, j, id);
+                }
+            }
+        }
+
         public static void FillTest1(MapSector gl, int id)
         {
             for (int i = 0; i < MapSector.Rx; i++) {
                 for (int j = 0; j < MapSector.Ry; j++) {
                     gl.SetFloor(i, j, id);
-                }
-            }
-        }
-        //blanks 4 5 6 7
-        public static void GenerateStreetsNew(MapSector mapSector, int streetCount, int streetLength, int step, int floorId, int trotuarId, Random rnd)
-        {
-            List<MinMax> streets = new List<MinMax>();
-            List<Point> sNodes = new List<Point>();
-            List<Point> visitedSNodes = new List<Point>();
-
-            sNodes.Add(new Point(GetRandomCoordInCenter(MapSector.Rx, rnd), GetRandomCoordInCenter(MapSector.Ry,rnd)));
-
-            for (int i = 0; i < streetCount; i++) {
-                int num = rnd.Next(0, sNodes.Count);
-                Point cur = sNodes[num];
-                visitedSNodes.Add(cur);
-                sNodes.RemoveAt(num);
-
-                int curlen = rnd.Next(step/2, streetLength);
-                int curoffs = rnd.Next(0, curlen/step + 1) * step;
-
-                bool isHorizontal = rnd.Next(0, 2) == 0;
-
-                if (isHorizontal) {
-                    streets.Add(new MinMax(cur.X - curoffs, cur.Y, cur.X + curlen - curoffs, cur.Y));
-                } else {
-                   streets.Add(new MinMax(cur.X, cur.Y - curoffs, cur.X, cur.Y + curlen - curoffs));
-                }
-
-                for (int j = 0; j < curlen; j+= step) {
-                    if (isHorizontal) {
-                        sNodes.Add(new Point(cur.X - curoffs + j, cur.Y));
-                    } else {
-                        sNodes.Add(new Point(cur.X, cur.Y - curoffs + j));
-                    }
-                }
-            }
-
-            FillStreetsNew(streets, mapSector, floorId, trotuarId);
-
-            visitedSNodes = visitedSNodes.Distinct().ToList();
-
-
-            List<MinMax> squares = GetSquaresFromNodes(visitedSNodes);
-
-            FillMinMaxRandomly(squares, mapSector, new int[] {3}, rnd);
-    }
-
-        public static List<MinMax> GetSquaresFromNodes(List<Point> visitedSNodes)
-        {
-            List<MinMax> squares = new List<MinMax>();
-            foreach (var a in visitedSNodes) {
-                List<int> tempx = visitedSNodes.Where(c => (c.X > a.X) && (c.Y == a.Y)).Select(c => c.X).ToList();
-                List<int> tempy = visitedSNodes.Where(c => (c.Y > a.Y) && (c.X == a.X)).Select(c => c.Y).ToList();
-
-
-                float minx;
-                if (tempx.Count != 0) {
-                    minx = tempx.Min();
-                } else continue;
-
-                float miny;
-                if (tempy.Count != 0) {
-                    miny = tempy.Min();
-                } else continue;
-
-                squares.Add(new MinMax(a.X, a.Y, minx, miny));
-            }
-
-            return squares;
-        }
-
-        public static void FillStreetsNew(List<MinMax> st, MapSector gl, int flid, int trid)
-        {
-            foreach (var street in st) {
-                for (int i = (int)street.Min.X - 1; i < (int)street.Max.X + 4; i++) {
-                    for (int j = (int)street.Min.Y - 1; j < (int)street.Max.Y + 4; j++) {
-                        if (i < MapSector.Rx && j < MapSector.Ry && i >= 0 && j >= 0) gl.SetFloor(i, j, trid);
-                    }
-                }
-            }
-
-            foreach (var street in st) {
-                for (int i = (int)street.Min.X; i < (int)street.Max.X + 3; i++) {
-                    for (int j = (int)street.Min.Y; j < (int)street.Max.Y + 3; j++) {
-                        if (i < MapSector.Rx && j < MapSector.Ry && i >= 0 && j >= 0) gl.SetFloor(i, j, flid);
-                    }
-                }
-            }
-        }
-
-        public static void FillMinMaxRandomly(List<MinMax> st, MapSector gl, int[] arrid, Random rnd)
-        {
-            foreach (var street in st) {
-                int tempcol = arrid[rnd.Next(0, arrid.Length)];
-                for (int i = (int)street.Min.X + 4; i < (int)street.Max.X - 1; i++) {
-                    for (int j = (int)street.Min.Y + 4; j < (int)street.Max.Y - 1; j++) {
-                        if (i < MapSector.Rx && j < MapSector.Ry && i >= 0 && j >= 0) gl.SetFloor(i, j, tempcol);
-                    }
                 }
             }
         }
@@ -143,83 +95,15 @@ namespace rglikeworknamelib.Generation
             return rnd.Next(-rx/10,rx/10)+rx/2;
         }
 
-        public static void GenerateRoads1(ref Block[] bb, ref Floor[] ff, int rx, int ry, int count, int len, int flid, Random rnd)
-        {
-            int tx = rnd.Next(0, rx);
-            int ty = rnd.Next(0, ry);
-            for (int i = 0; i < count; i++) {
-                int dx = rnd.Next(-1, 1);
-                int dy = 0;
-                if (dx == 0) dy = rnd.Next(0, 1) == 0 ? 1 : -1;
-                for (int j = 0; j < len; j++) {
-                    tx += dx;
-                    ty += dy;
-                    if (tx >= rx) tx = 0;
-                    if (ty >= ry) ty = 0;
-                    if (tx < 0) tx = rx - 1;
-                    if (ty < 0) ty = ry - 1;
-                    ff[tx * ry + ty].Id = flid;
-                }
-            }
-        }
-
-        public static void GenerateStreets(ref List<StreetOld__> st, int rx, int ry, int count, int len, int flid, int trid, Random rnd)
-        {
-            float widthdiv2 = 3;
-            int trotwid = 2;
-
-            int tx = rnd.Next(0, rx);
-            int ty = rnd.Next(0, ry);
-
-            for (int i = 0; i < count; i++) {
-                int dx = rnd.Next(-1, 1);
-                int dy = 0;
-                if (dx == 0) dy = rnd.Next(0, 1) == 0 ? 1 : -1;
-                StreetOld__ tmp = new StreetOld__();
-                tmp.widthdiv2 = widthdiv2;
-                tmp.trotwidth = trotwid;
-                tmp.id = flid;
-                tmp.tid = trid;
-                tmp.from = new Vector2(tx - widthdiv2 + 1, ty - widthdiv2 + 1);
-                tx += dx * len;
-                ty += dy * len;
-                if (tx >= rx) tx = 0;
-                if (ty >= ry) ty = 0;
-                if (tx < 0) tx = rx - 1;
-                if (ty < 0) ty = ry - 1;
-                tmp.to = new Vector2(tx + widthdiv2 - 1, ty + widthdiv2 - 1);
-                st.Add(tmp);
-            }
-        }
-
-        public static void FillStreets(List<StreetOld__> st, ref Floor[] ff, int rx, int ry, Random rnd)
-        {
-            foreach (var street in st) {
-                for (int i = (int)street.from.X - (int)street.trotwidth; i < (int)street.to.X + 1 + street.trotwidth; i++) {
-                    for (int j = (int)street.from.Y - (int)street.trotwidth; j < (int)street.to.Y + 1 + street.trotwidth; j++) {
-                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].Id = street.tid;
-                    }
-                }
-            }
-
-            foreach (var street in st) {
-                for (int i = (int)street.from.X; i < (int)street.to.X + 1; i++) {
-                    for (int j = (int)street.from.Y; j < (int)street.to.Y + 1; j++) {
-                        if (i < rx && j < ry && i >= 0 && j >= 0) ff[i * rx + j].Id = street.id;
-                    }
-                }
-            }
-        }
-
-        internal static void PlaceScheme(MapSector gl, Schemes scheme, int x, int y)
+        internal static void PlaceScheme(MapSector gl, GameLevel level, Schemes scheme, int x, int y)
         {
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
-                    if (x + i < MapSector.Rx && y + j < MapSector.Ry) {
+                   
                         if (scheme.data[i * scheme.y + j] != 0) {
-                            gl.SetBlock(x + i, y + j, scheme.data[i*scheme.y + j]);
+                            level.SetBlock(x + i + gl.SectorOffsetX * MapSector.Rx, y + j + gl.SectorOffsetY * MapSector.Ry, scheme.data[i * scheme.y + j]);
                         }
-                    }
+                    
                 }
             }
         }
@@ -239,8 +123,8 @@ namespace rglikeworknamelib.Generation
 
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
-                PlaceScheme(mapSector, a[r], posX, posY);
-                FillFloorFromArrayAndOffset(mapSector, a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], 8), posX, posY);
+                PlaceScheme(mapSector, mapSector.Parent, a[r], posX, posY);
+                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent,  a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], 8), posX, posY);
             }
         }
 
@@ -300,20 +184,21 @@ namespace rglikeworknamelib.Generation
             return visited;
         }
 
-        public static void FillFloorFromArrayAndOffset(MapSector gl, int x, int y, int[] arr, int sx, int sy) {
+        public static void FillFloorFromArrayAndOffset(MapSector gl, GameLevel level, int x, int y, int[] arr, int sx, int sy) {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    if (sx + i < MapSector.Rx && sy + j < MapSector.Ry) {
+                    
                         if(arr[i*y+j] != 0) {
-                            gl.SetFloor(sx + i, sy + j, arr[i * y + j]);
+                            level.SetFloor(sx + i + gl.SectorOffsetX * MapSector.Rx, sy + j + gl.SectorOffsetY * MapSector.Ry, arr[i * y + j]);
                         }
-                    }
+                    
                 }
             }
         }
 
-        private static int seed = 12345;
-        private static double Noise2D(double x, double y) {
+        public static int seed = 12345;
+
+        internal static double Noise2D(double x, double y) {
             return ((0x6C078965 * (seed ^ (((int)x * 2971902361) ^ ((int)y * 3572953751)))) & 0x7FFFFFFF)/(double)int.MaxValue;
         }
 
@@ -447,7 +332,7 @@ namespace rglikeworknamelib.Generation
                         mapSector.SetFloor(i, j, 1);
                     } else {
                         if (t > 0.5) {
-                            mapSector.SetFloor(i, j, 2);
+                            mapSector.SetFloor(i, j, 8);
                         } else {
                             mapSector.SetFloor(i, j, 3);
                         }

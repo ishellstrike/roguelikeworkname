@@ -80,6 +80,9 @@ Content\Textures\Dungeon\Objects\bush1.xnb
 Content\Textures\Dungeon\Objects\tree1.xnb
 Content\Effects\reductionEffect.xnb
 Content\Effects\resolveShadowsEffect.xnb
+Content\Textures\Dungeon\Objects\tree2.xnb
+Content\Textures\Dungeon\Objects\glass_hor.xnb
+Content\Textures\Dungeon\Objects\glass_ver.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Floor\textureloadorder.ord

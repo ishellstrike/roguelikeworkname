@@ -121,6 +121,7 @@ namespace jarg
             currentFloor_ = new GameLevel(spriteBatch_, 
                                                       ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetFloorDataDirectory() + @"/textureloadorder.ord", Content),
                                                       ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetObjectDataDirectory() + @"/textureloadorder.ord", Content), 
+                                                      font1_,
                                                       bdb_, 
                                                       fdb_, 
                                                       sdb_
@@ -235,23 +236,26 @@ namespace jarg
                 bs_.AddBullet(player_, 5, PlayerSeeAngle);
             }
 
-            int aa = (ms_.X + (int)camera_.X) / 32 * currentFloor_.Ry + (ms_.Y + (int)camera_.Y) / 32;
+            int aa = (ms_.X + (int)camera_.X) / 32 * MapSector.Ry + (ms_.Y + (int)camera_.Y) / 32;
             //if (aa >= 0 && currentFloor_.GetId(aa) != 0 )// currentFloor_.IsExplored(aa))
             {
                 int nx = (ms_.X + (int)camera_.X) / 32;
                 int ny = (ms_.Y + (int)camera_.Y) / 32;
                 var a = currentFloor_.GetBlock(nx, ny);
-                var b = bdb_.Data[a.Id];
-                string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
-                //if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.MTex;
+                if (a != null) {
+                    var b = bdb_.Data[a.Id];
+                    string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
+                    //if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.id + " tex" + b.MTex;
 
-                if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && currentFloor_.IsCreatureMeele(nx, ny, player_)) {
-                    var undermouseblock = bdb_.Data[a.Id];
-                    if (undermouseblock.SmartAction == SmartAction.ActionOpenContainer) {
-                    }
+                    if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released &&
+                        currentFloor_.IsCreatureMeele(nx, ny, player_)) {
+                        var undermouseblock = bdb_.Data[a.Id];
+                        if (undermouseblock.SmartAction == SmartAction.ActionOpenContainer) {
+                        }
 
-                    if(undermouseblock.SmartAction == SmartAction.ActionOpenClose) {
-                       currentFloor_.OpenCloseDoor(nx, ny);
+                        if (undermouseblock.SmartAction == SmartAction.ActionOpenClose) {
+                            currentFloor_.OpenCloseDoor(nx, ny);
+                        }
                     }
                 }
             }
@@ -292,7 +296,7 @@ namespace jarg
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
                                   (int)Settings.Resolution.Y);
             spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}   BCount {8}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} \nSectors {7}", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime, currentFloor_.SectorCount(), bs_.GetCount()), new Vector2(500, 10), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}   BCount {8}\nHung {2} Thir {3} Heat {4}\nDT {6} WorldT {5} \nSectors {7} Generated {9}", PlayerSeeAngle, ps_.Count(), player_.Hunger, player_.Thirst, player_.Heat, GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime, currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated), new Vector2(500, 10), Color.White);
 
             spriteBatch_.End();
         }

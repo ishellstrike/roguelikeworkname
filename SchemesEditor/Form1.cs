@@ -29,7 +29,7 @@ namespace SchemesEditor
         private BlockDataBase bdb;
         private SchemesDataBase sdb;
         private FloorDataBase fdb;
-        private GameLevel gl;
+        private MapSector gl;
         SpriteBatch sb;
 
         private bool mouseleftdown;
@@ -60,7 +60,8 @@ namespace SchemesEditor
         void Form1_Click(object sender, EventArgs e) {
             int y = (int) ((PictureBox) sender).Tag % 30 - camx;
             int x = (int) ((PictureBox) sender).Tag / 30 - camy;
-            if (x < gl.Rx && y < gl.Ry && x >= 0 && y >= 0) {
+            if (x < MapSector.Rx && y < MapSector.Ry && x >= 0 && y >= 0)
+            {
                 gl.SetBlock(x, y, listBox1.SelectedIndex);
             }
         }
@@ -70,7 +71,7 @@ namespace SchemesEditor
         {
             for (int i = 0; i < 30; i++) {
                 for (int j = 0; j < 30; j++) {
-                    if (i - camx < gl.Rx && j - camy < gl.Ry && i - camx >= 0 && j - camy >= 0)
+                    if (i - camx < MapSector.Rx && j - camy < MapSector.Ry && i - camx >= 0 && j - camy >= 0)
                         map[i * 30 + j].Image = gl.GetId(i - camx, j - camy) == 0 ? imageList1.Images[0] : imageList1.Images[1];
                     else map[i*30 + j].Image = imageList2.Images[2];
                 }
@@ -107,8 +108,9 @@ namespace SchemesEditor
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             StreamWriter sw = new StreamWriter(saveFileDialog1.FileName);
-            sw.Write("~" + gl.Rx + "," + gl.Ry + "," + textBox1.Text + "\n");
-            for (int i = 0; i < gl.Rx*gl.Ry - 1; i++) {
+            sw.Write("~" + MapSector.Rx + "," + MapSector.Ry + "," + textBox1.Text + "\n");
+            for (int i = 0; i < MapSector.Rx * MapSector.Ry - 1; i++)
+            {
                    // sw.Write(gl.GetId(i)+" ");
                 }
           //  sw.Write(gl.GetId(gl.rx * gl.ry - 1));
@@ -119,7 +121,7 @@ namespace SchemesEditor
 
         private void button3_Click(object sender, EventArgs e)
         {
-            gl = new GameLevel(null, null, null, bdb, fdb, sdb);
+            gl = new MapSector(bdb, fdb, sdb, null, 0, 0);
             //foreach (var a in gl.blocks_) {
             //    a.id = 0;
             //}
