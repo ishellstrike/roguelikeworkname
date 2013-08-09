@@ -41,12 +41,24 @@ namespace rglikeworknamelib.Creatures {
             int c = (int)(tpos2.X / 32.0);
             int d = (int)(tpos2.Y / 32.0);
 
+            if (tpos.X < 0) a--;
+            if (tpos.Y < 0) b--;
+            if (tpos2.X < 0) c--;
+            if (tpos2.Y < 0) d--;
+
             if (!gl.IsWalkable(a, b)) {
                 Velocity.X = 0;
+                if(bdb.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
+                    gl.OpenCloseDoor(a,b);
+                }
             }
             if (!gl.IsWalkable(c, d))
             {
                 Velocity.Y = 0;
+                if (bdb.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
+                {
+                    gl.OpenCloseDoor(c, d);
+                }
             }
 
             Position += Velocity * time * 20;

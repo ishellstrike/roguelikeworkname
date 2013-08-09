@@ -8,8 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework.Graphics;
+using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Level;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
+using Image = System.Drawing.Image;
 
 namespace SchemesEditor
 {
@@ -29,7 +31,7 @@ namespace SchemesEditor
         private BlockDataBase bdb;
         private SchemesDataBase sdb;
         private FloorDataBase fdb;
-        private MapSector gl;
+        private SchemesMap gl;
         SpriteBatch sb;
 
         private bool mouseleftdown;
@@ -44,25 +46,36 @@ namespace SchemesEditor
                 map[i].Left = 10 + i / 30 * 16;
                 Controls.Add(map[i]);
                 map[i].Tag = i;
-                map[i].MouseClick += Form1_Click;
-               // map[i].MouseEnter += Form1_Click;
+                map[i].MouseDown += Form1_MouseDown_1;
+                map[i].MouseMove += Form1_MouseMove;
+                map[i].MouseUp += Form1_MouseUp;
             }
 
             openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory()+@"\Content\Data\Schemes";
             saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory() + @"\Content\Data\Schemes";
 
+            bdb = new BlockDataBase();
+            sdb = new SchemesDataBase();
+            fdb = new FloorDataBase();
+            gl = new SchemesMap(20, 20);
+
+            imageList1.Images.Clear();
+            StreamReader sr = new StreamReader(Settings.GetObjectDataDirectory() + @"\textureloadorder.ord", Encoding.Default);
+
+
             listBox1.Items.Clear();
-            foreach (var a in bdb.Data) {
+            foreach (var a in bdb.Data)
+            {
                 listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.MTex + " -- " + a.Value.Name);
             }
-        }
 
-        void Form1_Click(object sender, EventArgs e) {
-            int y = (int) ((PictureBox) sender).Tag % 30 - camx;
-            int x = (int) ((PictureBox) sender).Tag / 30 - camy;
-            if (x < MapSector.Rx && y < MapSector.Ry && x >= 0 && y >= 0)
+            while (true)
             {
-                gl.SetBlock(x, y, listBox1.SelectedIndex);
+                string t = sr.ReadLine();
+                if (t == null || t.Length < 3) break;
+
+                Image tr = Image.FromFile("Content/"+t + ".png");
+                imageList1.Images.Add(tr);
             }
         }
 
@@ -71,8 +84,8 @@ namespace SchemesEditor
         {
             for (int i = 0; i < 30; i++) {
                 for (int j = 0; j < 30; j++) {
-                    if (i - camx < MapSector.Rx && j - camy < MapSector.Ry && i - camx >= 0 && j - camy >= 0)
-                        map[i * 30 + j].Image = gl.GetId(i - camx, j - camy) == 0 ? imageList1.Images[0] : imageList1.Images[1];
+                    if (i - camx < gl.rx && j - camy < gl.ry && i - camx >= 0 && j - camy >= 0)
+                        map[i * 30 + j].Image = gl.block[i - camx, j - camy].Id == 0 ? imageList1.Images[0] : imageList1.Images[gl.block[i - camx, j - camy].Mtex];
                     else map[i*30 + j].Image = imageList2.Images[2];
                 }
             }
@@ -93,7 +106,8 @@ namespace SchemesEditor
             char[] sep = {' '};
             String[] b = sw.ReadToEnd().Split(sep);
             int[] a = b.Select(int.Parse).ToArray();
-            gl.CreateAllMapFromArray(a);
+            gl = new SchemesMap(x,y);
+            gl.CreateAllMapFromArray(a,bdb);
             sw.Close();
 
             numericUpDown1.Value = x;
@@ -108,27 +122,26 @@ namespace SchemesEditor
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             StreamWriter sw = new StreamWriter(saveFileDialog1.FileName);
-            sw.Write("~" + MapSector.Rx + "," + MapSector.Ry + "," + textBox1.Text + "\n");
-            for (int i = 0; i < MapSector.Rx * MapSector.Ry - 1; i++)
+            sw.Write("~" + gl.rx + "," + gl.ry + "," + textBox1.Text + "\n");
+            for (int i = 0; i < gl.rx * gl.ry - 1; i++)
             {
-                   // sw.Write(gl.GetId(i)+" ");
+                    sw.Write(gl.block[i/gl.ry,i%gl.ry].Id+" ");
                 }
-          //  sw.Write(gl.GetId(gl.rx * gl.ry - 1));
+            sw.Write(gl.block[gl.rx-1,gl.ry-1].Id);
 
             sw.Write("\n");
             sw.Close();
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            gl = new MapSector(bdb, fdb, sdb, null, 0, 0);
-            //foreach (var a in gl.blocks_) {
-            //    a.id = 0;
-            //}
-        }
+        private void button3_Click(object sender, EventArgs e) {
+            gl = new SchemesMap((int)numericUpDown1.Value,(int)numericUpDown2.Value);
 
-        private void Form1_MouseDown(object sender, MouseEventArgs e) {
-            mouseleftdown = true;
+            for (int index0 = 0; index0 < gl.block.GetUpperBound(0); index0++) {
+                for (int index1 = 0; index1 < gl.block.GetUpperBound(1); index1++) {
+                    gl.block[index0, index1].Id = 0;
+                    gl.block[index0, index1].Mtex = 0;
+                }
+            }
         }
 
         private void Form1_MouseUp(object sender, MouseEventArgs e) {
@@ -150,6 +163,60 @@ namespace SchemesEditor
         private void button7_Click(object sender, EventArgs e)
         {
             camy++;
+        }
+
+        private void Form1_Click(object sender, MouseEventArgs e)
+        {
+            if ((sender is PictureBox)) {
+                int y = (int) ((PictureBox) sender).Tag%30 - camx;
+                int x = (int) ((PictureBox) sender).Tag/30 - camy;
+                if (x < gl.rx && y < gl.ry && x >= 0 && y >= 0) {
+
+                    gl.block[x, y].Id =
+                        int.Parse(
+                            listBox1.Items[listBox1.SelectedIndex].ToString().Substring(0,
+                                                                                        listBox1.Items[
+                                                                                            listBox1.SelectedIndex].
+                                                                                            ToString().IndexOf(" ")).
+                                Substring(2));
+                    gl.block[x, y].Mtex = bdb.Data[gl.block[x, y].Id].MTex;
+                }
+            }
+        }
+
+        private void Form1_MouseDown_1(object sender, MouseEventArgs e)
+        {
+            mouseleftdown = true;
+            Form1_Click(sender, e);
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(mouseleftdown)
+                Form1_Click(sender, e);
+        }
+    }
+
+    public class SchemesMap {
+        public Block[,] block;
+        public int rx, ry;
+         public SchemesMap(int x, int y) {
+             rx = x;
+             ry = y;
+             block = new Block[x,y];
+
+             for (int i = 0; i < x; i++) {
+                 for (int j = 0; j < y; j++) {
+                     block[i,j] = new Block();
+                 }
+             }
+         }
+
+        public void CreateAllMapFromArray(int[] ints, BlockDataBase bdb) {
+            for (int i = 0; i < ints.Length; i++) {
+                block[i/ry, i%ry].Id = ints[i];
+                block[i/ry, i%ry].Mtex = bdb.Data[ints[i]].MTex;
+            }
         }
     }
 }

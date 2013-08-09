@@ -281,6 +281,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
         }
+
+        public int GetMtex(int i, int i1) {
+            return Blocks[i*Rx + i1].Mtex;
+        }
     }
 
     public class GameLevel
@@ -502,9 +506,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SetFloor(int x, int y, int id)
         {
-            int divx = x / MapSector.Rx, divy = y / MapSector.Ry;
-            if (x < 0) divx = x / MapSector.Rx - 1;
-            if (y < 0) divy = y / MapSector.Ry - 1;
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
 
             if (sect != null) {
@@ -515,18 +518,16 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public int GetId(int x, int y) {
-            int divx = x / MapSector.Rx, divy = y / MapSector.Ry;
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
-            if (x < 0) divx = x / MapSector.Rx - 1;
-            if (y < 0) divy = y / MapSector.Ry - 1;
             return sect.Blocks[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Id;
         }
 
         public void SetBlock(int x, int y, int id)
         {
-            int divx = x / MapSector.Rx, divy = y / MapSector.Ry;
-            if (x < 0) divx = x / MapSector.Rx - 1;
-            if (y < 0) divy = y / MapSector.Ry - 1;
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
             if (sect != null)
             {
@@ -544,6 +545,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                         StoredItems=new List<Item.Item>(),Id=id
                     };
                 }
+                sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry].Mtex =
+                    blockDataBase.Data[id].RandomMtexFromAlters();
             }
         }
 
@@ -564,10 +567,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public void Rebuild()
-        {
-            foreach (var sector in sectors_) {
-                sector.Rebuild(MapSeed);
+        public void Rebuild() {
+            for (int i = 0; i < sectors_.Count; i++) {
+                sectors_[i] .Rebuild(MapSeed);
             }
         }
 
@@ -637,9 +639,65 @@ namespace rglikeworknamelib.Dungeon.Level {
             //minimap_.SetData(data);
         }
 
-        public short[] CalcWision(Creature who, float dirAngle, float seeAngleDeg)
-        {
-            return new short[1];
+        public void CalcWision(Creature who, float dirAngle, float seeAngleDeg) {
+            var a = who.GetPositionInBlocks();
+            //for (int i = -20; i < 20; i++) {
+            //    for (int j = -20; j < 20; j++) {
+            //        var tt = 1 -
+            //                 (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f)*32, (a.Y + j + 0.5f)*32)))/
+            //                 500.0f;
+            //        tt *= 255;
+
+            //        if (tt > 255) tt = 255;
+            //        if (tt < 0) tt = 0;
+            //        var bb = GetBlock((int)a.X + i,(int)a.Y+j);
+            //        if(bb != null) {
+            //            bb.Lightness = new Color(tt, tt, tt);
+            //            bb.Explored = true;
+            //        }
+            //    }
+            //}
+
+            //for (int i = -20; i < 20; i++) {
+            //    Vector2 start = who.Position;
+            //    Vector2 end1 = new Vector2((a.X + i + 0.5f)*32, (-20 + 0.5f)*32);
+            //    Vector2 end2 = new Vector2((a.X + i + 0.5f) * 32, (20 + 0.5f) * 32);
+            //    Vector2 end3 = new Vector2((-20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
+            //    Vector2 end4 = new Vector2((20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
+
+            //    GetValue(start, end1);
+            //    GetValue(start, end2);
+            //    GetValue(start, end3);
+            //    GetValue(start, end4);
+            //}
+
+        }
+
+        private const int acc = 5;
+        private void GetValue(Vector2 start, Vector2 end1) {
+
+            bool prep = false;
+            for (int i = 0; i < acc; i++)
+            {
+                Vector2 te = Vector2.Lerp(start, end1, i / (float)acc - 1);
+
+                int nx = te.X/32 < 0 ? (int) te.X/32 - 1 : (int) te.X/32;
+                int ny = te.Y/32 < 0 ? (int) te.Y/32 - 1 : (int) te.Y/32;
+
+                var temp = GetBlock(nx, ny);
+
+                if (!prep) {
+                    if (!blockDataBase.Data[temp.Id].IsWalkable) prep = true;
+                }
+
+                if(prep) {
+                    temp.Lightness = Color.Black;
+                }
+                else {
+                    temp.Lightness = Color.White;
+                    temp.Explored = true;
+                }
+            }
         }
 
         private Vector2 min, max;
@@ -667,7 +725,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                                               MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX,
                                               j * Settings.FloorSpriteSize.Y - (int)camera.Y +
                                               MapSector.Ry * Settings.FloorSpriteSize.Y * sector.SectorOffsetY),
-                                          null, Color.White); //sector.blocks_[a].lightness);
+                                          null, sector.Blocks[a].Lightness);
                     }
                 }
             }
@@ -685,13 +743,13 @@ namespace rglikeworknamelib.Dungeon.Level {
                             sector.SectorOffsetX*MapSector.Rx + i < max.X &&
                             sector.SectorOffsetY*MapSector.Ry + j < max.Y) {
                             int a = i*MapSector.Ry + j;
-                            spriteBatch_.Draw(atlas_[blockDataBase.Data[sector.Blocks[a].Id].MTex],
+                            spriteBatch_.Draw(atlas_[sector.Blocks[a].Mtex],
                                               new Vector2(
                                                   i*(Settings.FloorSpriteSize.X) - (int) camera.X +
                                                   MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX,
                                                   j*(Settings.FloorSpriteSize.Y) - (int) camera.Y +
                                                   MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY),
-                                              null, Color.White); //sector.blocks_[a].lightness);
+                                              null, sector.Blocks[a].Lightness);
                         }
                 }
 

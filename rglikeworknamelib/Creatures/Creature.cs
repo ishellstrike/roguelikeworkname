@@ -13,20 +13,14 @@ namespace rglikeworknamelib.Creatures {
             return true;
         }
 
-        private float hunger_=100;
-        public float Hunger {
-            get { return hunger_; }
-        }
+        public float hunger_ = 100;
+        public float maxHunger_ = 100;
 
-        private float thirst_=100;
-        public float Thirst {
-            get { return thirst_; }
-        }
+        public float thirst_ = 100;
+        public float maxThirst_ = 100;
 
-        private float heat_=36;
-        public float Heat {
-            get { return heat_; }
-        }
+        public float heat_ = 36;
+        public float maxHeat_ = 36;
 
         private Vector2 position_;
         public Vector2 Position  {
@@ -40,6 +34,13 @@ namespace rglikeworknamelib.Creatures {
         public void SetPositionInBlocks(int x, int y)
         {
             position_ = new Vector2((x + 0.5f) * 32, (y + 0.5f) * 32);
+        }
+
+        public Vector2 GetPositionInBlocks() {
+            var po = Position;
+            po.X = po.X < 0 ? po.X / 32 - 1 : po.X / 32;
+            po.Y = po.Y < 0 ? po.Y / 32 - 1 : po.Y / 32;
+            return po;
         }
 
         public Vector2 LastPos

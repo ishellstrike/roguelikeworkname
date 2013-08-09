@@ -10,6 +10,10 @@ namespace rglikeworknamelib.Dungeon.Level
         public List<Schemes> Data;
         public List<Schemes> Houses;
         public List<Schemes> Storages;
+
+        /// <summary>
+        /// WARNING! Also loading all data from standart patch
+        /// </summary>
         public SchemesDataBase()
         {
             Data = new List<Schemes>();

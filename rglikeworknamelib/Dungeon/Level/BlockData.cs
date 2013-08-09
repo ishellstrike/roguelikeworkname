@@ -24,18 +24,14 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public int StorageSlots;
 
-        public int Mtex;
         public int[] AlterMtex;
 
         public int RandomMtexFromAlters()
         {
             if (AlterMtex == null || AlterMtex.Length == 0) {
-                return Mtex;
+                return MTex;
             }
-            if (Settings.rnd.Next(1, 5) == 1) {
-                return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
-            }
-            return Mtex;
+            return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
         }
 
         public BlockData(int mtex) {
