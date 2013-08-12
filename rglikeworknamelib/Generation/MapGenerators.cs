@@ -53,10 +53,10 @@ namespace rglikeworknamelib.Generation
             }
             if (gg == 4) {
 
-                    ms.AddInitialNode(MapSector.Rx - 1, rnd.Next(0, MapSector.Ry-1)); 
-                    ms.AddInitialNode(0, rnd.Next(0, MapSector.Ry - 1));
-                    ms.AddInitialNode(rnd.Next(0, MapSector.Rx - 1), MapSector.Ry - 1);
-                    ms.AddInitialNode(rnd.Next(0, MapSector.Rx - 1), 0);
+                    ms.AddInitialNode(MapSector.Rx - 1, rnd.Next(1, MapSector.Ry-2)); 
+                    ms.AddInitialNode(0, rnd.Next(1, MapSector.Ry - 2));
+                    ms.AddInitialNode(rnd.Next(1, MapSector.Rx - 2), MapSector.Ry - 1);
+                    ms.AddInitialNode(rnd.Next(1, MapSector.Rx - 2), 0);
             }
         }
 

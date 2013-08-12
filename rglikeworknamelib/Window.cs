@@ -67,6 +67,17 @@ namespace rglikeworknamelib
             public void AddWindow(Window w) {
                 Windows.Add(w);
             }
+
+            public bool CloseTop() {
+                for (int i = Windows.Count-1; i >= 0; i--) {
+                    var window = Windows[i];
+                    if (window.Closable && window.Visible) {
+                        window.Visible = false;
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         public class Window : IGameWindowComponent
@@ -78,17 +89,39 @@ namespace rglikeworknamelib
             public Rectangle Locate;
             private readonly Color backtransparent_;
 
+            private Button closeButton_;
+
             public bool Readytoclose;
 
-            public bool Closable = true;
+            private bool closable_ = true;
+            public bool Closable {
+                get { return closable_; }
+                set
+                {
+                    closable_ = value;
+                    if (closeButton_ != null) {
+                        closeButton_.Visible = value;
+                    }
+                }
+            }
             public bool Moveable = true;
             public bool Visible = true;
+            public bool NoBorder;
 
             private readonly Texture2D whitepixel_;
             private readonly SpriteFont font1_;
 
             public string Name;
 
+            /// <summary>
+            /// Create window in exact position whith exact sise
+            /// </summary>
+            /// <param name="location"></param>
+            /// <param name="caption"></param>
+            /// <param name="closeable"></param>
+            /// <param name="wp"></param>
+            /// <param name="wf"></param>
+            /// <param name="parent"></param>
             public Window(Rectangle location, string caption, bool closeable, Texture2D wp, SpriteFont wf, WindowSystem parent) {
                 whitepixel_ = wp;
                 font1_ = wf;
@@ -99,46 +132,94 @@ namespace rglikeworknamelib
                 backtransparent_ = Color.Black;
                 backtransparent_.A = 220;
                 Closable = closeable;
-                if (Closable)
-                    Components.Add(new Button(new Vector2(Locate.Width - 22, -22), "x", Close,whitepixel_,font1_, this));
+                
+                closeButton_ = new Button(new Vector2(Locate.Width - 22, -22), "x", whitepixel_, font1_, this);
+                closeButton_.onPressed += closeButton__onPressed;
+                if (!Closable) {
+                    closeButton_.Visible = false;
+                }
 
                 parent.AddWindow(this);
+            }
+
+            /// <summary>
+            /// Create window at center of screen
+            /// </summary>
+            /// <param name="size"></param>
+            /// <param name="caption"></param>
+            /// <param name="closeable"></param>
+            /// <param name="wp"></param>
+            /// <param name="wf"></param>
+            /// <param name="parent"></param>
+            public Window(Vector2 size, string caption, bool closeable, Texture2D wp, SpriteFont wf, WindowSystem parent)
+            {
+                whitepixel_ = wp;
+                font1_ = wf;
+                parent_ = parent;
+
+                Name = caption;
+                Locate = new Rectangle((int)(Settings.Resolution.X/2 - size.X/2),(int)(Settings.Resolution.Y/2 - size.Y/2), (int)size.X, (int)size.Y);
+                backtransparent_ = Color.Black;
+                backtransparent_.A = 220;
+                Closable = closeable;
+
+                closeButton_ = new Button(new Vector2(Locate.Width - 22, -22), "x", whitepixel_, font1_, this);
+                closeButton_.onPressed += closeButton__onPressed;
+                if (!Closable)
+                {
+                    closeButton_.Visible = false;
+                }
+
+                parent.AddWindow(this);
+            }
+
+            void closeButton__onPressed(object sender, EventArgs e)
+            {
+                Close();
             }
 
             public void AddComponent(IGameWindowComponent component) {
                 Components.Add(component);
             }
 
-            public void Close()
-            {
-                Readytoclose = true;
+            public void Close() {
+                Visible = false;
             }
 
             public void Draw(SpriteBatch sb)
             {
-                if (Visible) {
-                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, backtransparent_, 0, Vector2.Zero,
-                            new Vector2(Locate.Width, Locate.Height), SpriteEffects.None, 0);
+                if (Visible)
+                {
+                    if(!NoBorder)
+                    {
+                        sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, backtransparent_, 0, Vector2.Zero,
+                                new Vector2(Locate.Width, Locate.Height), SpriteEffects.None, 0);
 
 
-                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero,
-                            new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
-                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y + 20), null, Settings.HudСolor, 0, Vector2.Zero,
-                            new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
+                        sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero,
+                                new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
+                        sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y + 20), null, Settings.HudСolor, 0,
+                                Vector2.Zero,
+                                new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
 
-                    Vector2 textpos = new Vector2(Locate.X + Locate.Width/2 - -font1_.MeasureString(Name).X/2, Locate.Y);
+                        Vector2 textpos = new Vector2(Locate.X + Locate.Width/2 - 11 - font1_.MeasureString(Name).X/2,
+                                                      Locate.Y);
 
-                    sb.DrawString(font1_, Name, textpos, Settings.HudСolor);
+                        sb.DrawString(font1_, Name, textpos, Settings.HudСolor);
 
 
-                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero,
-                            new Vector2(2, Locate.Height), SpriteEffects.None, 0);
-                    sb.Draw(whitepixel_, new Vector2(Locate.Right, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero,
-                            new Vector2(2, Locate.Height + 2), SpriteEffects.None, 0);
-                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Bottom), null, Settings.HudСolor, 0, Vector2.Zero,
-                            new Vector2(Locate.Width + 2, 2), SpriteEffects.None, 0);
+                        sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero,
+                                new Vector2(2, Locate.Height), SpriteEffects.None, 0);
+                        sb.Draw(whitepixel_, new Vector2(Locate.Right, Locate.Y), null, Settings.HudСolor, 0,
+                                Vector2.Zero,
+                                new Vector2(2, Locate.Height + 2), SpriteEffects.None, 0);
+                        sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Bottom), null, Settings.HudСolor, 0,
+                                Vector2.Zero,
+                                new Vector2(Locate.Width + 2, 2), SpriteEffects.None, 0);
+                    }
 
-                    for (int i = 0; i < Components.Count; i++) {
+                    for (int i = 0; i < Components.Count; i++)
+                    {
                         var component = Components[i];
                         component.Draw(sb);
                     }
@@ -174,6 +255,10 @@ namespace rglikeworknamelib
             {
                 return new Vector2(Locate.X + 2, Locate.Y + 22);
             }
+
+            public void OnTop() {
+                parent_.ToTop(this);
+            }
         }
 
         public class Label : IGameWindowComponent
@@ -182,6 +267,7 @@ namespace rglikeworknamelib
             public String Text;
             private Color col_;
             private Window Parent;
+            private bool isHudColored;
 
             private readonly SpriteFont font1_;
 
@@ -195,17 +281,23 @@ namespace rglikeworknamelib
                 Parent.AddComponent(this);
             }
 
-            public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf)
+            public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, Window win)
             {
                 font1_ = wf;
                 pos_ = p;
                 Text = s;
-                col_ = Settings.HudСolor;
+                Parent = win;
+                Parent.AddComponent(this);
+                isHudColored = true;
             }
 
             public void Draw(SpriteBatch sb)
             {
-                sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, col_);
+                if(isHudColored) {
+                    sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, Settings.HudСolor);
+                } else {
+                    sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, col_);
+                }
             }
 
             public void Update(GameTime gt, MouseState ms, MouseState lms)
@@ -302,14 +394,14 @@ namespace rglikeworknamelib
         {
             private Rectangle locate_;
             public String Text;
-            private readonly ComponentAction action;
             private bool aimed_;
             private Window Parent;
 
             private readonly Texture2D whitepixel_;
             private readonly SpriteFont font1_;
+            public bool Visible = true;
 
-            public Button(Vector2 p, string s, ComponentAction ac, Texture2D wp, SpriteFont wf, Window pa)
+            public Button(Vector2 p, string s, Texture2D wp, SpriteFont wf, Window pa)
             {
                 whitepixel_ = wp;
                 font1_ = wf;
@@ -318,38 +410,55 @@ namespace rglikeworknamelib
                 locate_.Height = 20;
                 locate_.Width = (int)(font1_.MeasureString(s).X + 10);
                 Text = s;
-                action = ac;
                 Parent = pa;
                 Parent.AddComponent(this);
             }
 
+            public event EventHandler onPressed;
+
+            void PressButton() {
+                if (onPressed != null) {
+                    onPressed(this, null);
+                }
+            }
+
             public void Draw(SpriteBatch sb)
             {
-                Vector2 realpos = Parent.GetLocation() + GetLocation();
+                if (Visible) {
+                    Vector2 realpos = Parent.GetLocation() + GetLocation();
 
-                Color col = !aimed_ ? Settings.HudСolor : Color.White;
+                    Color col = !aimed_ ? Settings.HudСolor : Color.White;
 
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + Parent.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + Parent.GetLocation(), null, col, 0, Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
+                    sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, col, 0,
+                            Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
+                    sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, col, 0,
+                            Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
+                    sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + Parent.GetLocation(), null, col, 0,
+                            Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
+                    sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + Parent.GetLocation(), null, col, 0,
+                            Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
 
-                sb.DrawString(font1_, Text, realpos + new Vector2(5, 0), col);
+                    sb.DrawString(font1_, Text, realpos + new Vector2(5, 0), col);
+                }
             }
 
             public void Update(GameTime gt, MouseState ms, MouseState lms)
             {
-                Vector2 realpos = Parent.GetLocation() + GetLocation();
-                Vector2 realdl = realpos;
-                realdl.X += locate_.Width;
-                realdl.Y += locate_.Height;
+                if (Visible) {
+                    Vector2 realpos = Parent.GetLocation() + GetLocation();
+                    Vector2 realdl = realpos;
+                    realdl.X += locate_.Width;
+                    realdl.Y += locate_.Height;
 
-                if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
-                    aimed_ = true;
-                    if (lms.LeftButton == ButtonState.Released && ms.LeftButton == ButtonState.Pressed)
-                        if (action != null) action();
-                } else
-                    aimed_ = false;
+                    if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
+                        aimed_ = true;
+                        if (lms.LeftButton == ButtonState.Released && ms.LeftButton == ButtonState.Pressed) {
+                            PressButton();
+                        }
+                    }
+                    else
+                        aimed_ = false;
+                }
             }
 
             public Vector2 GetLocation()
@@ -360,7 +469,7 @@ namespace rglikeworknamelib
 
         public class ImageButton : Button {
             private Texture2D Im;
-            public ImageButton(Vector2 p, string s, ComponentAction ac, Texture2D wp, Texture2D im, SpriteFont wf, Window ow) : base(p, s, ac, wp, wf, ow) {
+            public ImageButton(Vector2 p, string s, ComponentAction ac, Texture2D wp, Texture2D im, SpriteFont wf, Window ow) : base(p, s, wp, wf, ow) {
                 Im = im;
             }
             public virtual void Draw(SpriteBatch sb) {

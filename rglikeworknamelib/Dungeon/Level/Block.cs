@@ -21,5 +21,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                     return "Осмотреть";
             }
         }
+
+        public void SetLight(Color color) {
+            Lightness = color;
+        }
     }
 }

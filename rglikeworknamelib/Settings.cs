@@ -70,9 +70,10 @@ namespace rglikeworknamelib {
             Resolution = res;
         }
 
-        public static Color HudСolor
-        {
-            get { return Color.LightGray; }
+        private static Color hcol_ = Color.LightGray;
+        public static Color HudСolor {
+            get { return hcol_; }
+            set { hcol_ = value; }
         }
 
         public static string GetParticleTextureDirectory() {

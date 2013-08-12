@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -64,9 +65,20 @@ namespace jarg
             }
         }
 
+        private void f_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+            currentFloor_.SaveAll();
+        }
+
         protected override void Initialize()
         {
             Log.Init();
+
+            Assembly currentAssembly = Assembly.Load("jarg");
+            var OurName = AssemblyName.GetAssemblyName(currentAssembly.Location).Name;
+            var OurVer = "v" + AssemblyName.GetAssemblyName(currentAssembly.Location).Version;
+
+            Window.Title = OurName + " " + OurVer;
 
             Settings.Resolution = new Vector2(1024, 768);
             graphics_.IsFullScreen = false;
@@ -89,6 +101,22 @@ namespace jarg
         private ProgressBar StatsHunger;
         private ProgressBar StatsJajda;
         private ProgressBar StatsHeat;
+        private Button CloseAllTestButton;
+
+        private Window WindowMinimap;
+        private Image ImageMinimap;
+
+        private Window WindowSettings;
+        private Label LabelHudColor;
+        private Button ButtonHudColor1;
+        private Button ButtonHudColor2;
+        private Button ButtonHudColor3;
+        private Button ButtonHudColor4;
+        private Button ButtonHudColor5;
+
+        private Window WindowIngameMenu;
+        private Label LabelIngameMenu1;
+        private Button ButtonIngameMenuSettings;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
@@ -96,6 +124,61 @@ namespace jarg
             StatsHeat = new ProgressBar(new Rectangle(50,50,100,20), "", wp, sf, WindowStats);
             StatsJajda = new ProgressBar(new Rectangle(50, 50 + 30, 100, 20), "", wp, sf, WindowStats);
             StatsHunger = new ProgressBar(new Rectangle(50, 50 + 30*2, 100, 20), "", wp, sf, WindowStats);
+            CloseAllTestButton = new Button(new Vector2(10,100), "Close all", wp, sf, WindowStats);
+            CloseAllTestButton.onPressed += CloseAllTestButton_onPressed;
+
+            WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 100, 100), "minimap", true,
+                                       wp, sf, ws) {NoBorder = true, Closable = false, Moveable = false};
+            ImageMinimap = new Image(new Vector2(10,10), new Texture2D(GraphicsDevice, 88, 88), Color.White, WindowMinimap);
+
+            WindowSettings =
+                new Window(
+                    new Rectangle(100, 100, (int) Settings.Resolution.X - 200, (int) Settings.Resolution.Y - 200),
+                    "Settings", true, wp, sf, ws) {Visible = false};
+            LabelHudColor = new Label(new Vector2(10,10), "HUD color", wp, sf, WindowSettings);
+            ButtonHudColor1 = new Button(new Vector2(10 + 50 + 40 * 1, 10), "1", wp, sf, WindowSettings);
+            ButtonHudColor1.onPressed += ButtonHudColor1_onPressed;
+            ButtonHudColor2 = new Button(new Vector2(10 + 50 + 40 * 2, 10), "2", wp, sf, WindowSettings);
+            ButtonHudColor2.onPressed += ButtonHudColor2_onPressed;
+            ButtonHudColor3 = new Button(new Vector2(10 + 50 + 40 * 3, 10), "3", wp, sf, WindowSettings);
+            ButtonHudColor3.onPressed += ButtonHudColor3_onPressed;
+            ButtonHudColor4 = new Button(new Vector2(10 + 50 + 40 * 4, 10), "4", wp, sf, WindowSettings);
+            ButtonHudColor4.onPressed += ButtonHudColor4_onPressed;
+            ButtonHudColor5 = new Button(new Vector2(10 + 50 + 40 * 5, 10), "5", wp, sf, WindowSettings);
+            ButtonHudColor5.onPressed += ButtonHudColor5_onPressed;
+
+            WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) {Visible = false};
+            ButtonIngameMenuSettings = new Button(new Vector2(20,100), "Settings", wp, sf, WindowIngameMenu);
+            ButtonIngameMenuSettings.onPressed += ButtonIngameMenuSettings_onPressed;
+        }
+
+        void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e) {
+            WindowSettings.Visible = true;
+            WindowSettings.OnTop();
+        }
+
+        private void ButtonHudColor3_onPressed(object sender, EventArgs e) {
+            Settings.Hud—olor = Color.DarkGray;
+        }
+
+        private void ButtonHudColor5_onPressed(object sender, EventArgs e) {
+            Settings.Hud—olor = Color.LightGreen;
+        }
+
+        private void ButtonHudColor4_onPressed(object sender, EventArgs e) {
+            Settings.Hud—olor = Color.DarkOrange;
+        }
+
+        private void ButtonHudColor2_onPressed(object sender, EventArgs e) {
+            Settings.Hud—olor = Color.LightGray;
+        }
+
+        void ButtonHudColor1_onPressed(object sender, EventArgs e) {
+            Settings.Hud—olor = Color.White;
+        }
+
+        void CloseAllTestButton_onPressed(object sender, EventArgs e) {
+            player_.hunger_--;
         }
 
         private void WindowsUpdate(GameTime gt) {
@@ -108,7 +191,11 @@ namespace jarg
                 StatsJajda.Progress = (int) player_.thirst_;
 
                 StatsHunger.Max = (int) player_.maxHunger_;
-                StatsHunger.Progress = (int) player_.maxHunger_;
+                StatsHunger.Progress = (int) player_.hunger_;
+            }
+
+            if(WindowMinimap.Visible) {
+                ImageMinimap.image = currentFloor_.GetMinimap();
             }
         }
 #endregion
@@ -137,9 +224,9 @@ namespace jarg
             idb_ = new ItemDataBase(/*ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetItemDataDirectory() + @"/textureloadorder.ord", Content))*/);
             ws_ = new WindowSystem(whitepixel, font1_);
 
-            ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
+            ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
 
-            bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), ps_);
+            bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), ps_);
 
             var tex = new Collection<Texture2D> {
                                            Content.Load<Texture2D>(@"Textures/transparent_pixel"),
@@ -148,7 +235,7 @@ namespace jarg
             monsterSystem_ = new MonsterSystem(spriteBatch_, tex);
 
             Window bbb = new Window(new Rectangle(10, 10, 200, 200), "Info", true, whitepixel, font1_, ws_);
-            Label ccc = new Label(new Vector2(20,20), "qwerr", whitepixel, font1_, Color.WhiteSmoke, bbb);
+            Label ccc = new Label(new Vector2(20,20), "qwerr", whitepixel, font1_, bbb);
             Image ddd = new Image(new Vector2(40,40), tex[1], Color.Red, bbb);
             fff = new ProgressBar(new Rectangle(10,50,100,20), "Progress", whitepixel, font1_, bbb);
             CreateWindows(whitepixel, font1_, ws_);
@@ -168,7 +255,7 @@ namespace jarg
 
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+           
         }
 
         public static bool ErrorExit;
@@ -185,12 +272,10 @@ namespace jarg
             MouseUpdate(gameTime);
 
             sec += gameTime.ElapsedGameTime;
-            if (sec >= TimeSpan.FromSeconds(0.1)) {
+            if (sec >= TimeSpan.FromSeconds(0.5)) {
                 sec = TimeSpan.Zero;
 
-                //currentFloor_.GenerateMinimap(GraphicsDevice, player_);
-                fff.Progress++;
-                if (fff.Progress == fff.Max) fff.Progress = 0;
+                currentFloor_.GenerateMinimap(GraphicsDevice, player_);
             }
 
 
@@ -261,6 +346,13 @@ namespace jarg
                 currentFloor_.ExploreAllMap();
             }
 
+            if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up) {
+                if(!ws_.CloseTop()) {
+                    WindowIngameMenu.Visible = true;
+                }
+
+            }
+
             pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200) / 2, player_.Position.Y - Settings.Resolution.Y / 2);
 
         }
@@ -316,8 +408,6 @@ namespace jarg
             player_.Draw(gameTime, camera_);
             ps_.Draw(gameTime, camera_);
             bs_.Draw(gameTime, camera_);
-            spriteBatch_.Draw(currentFloor_.GetMinimap(), new Rectangle(15,15,128,128),
-                 Color.White);
             spriteBatch_.End();
             
             ws_.Draw(spriteBatch_);

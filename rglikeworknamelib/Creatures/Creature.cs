@@ -36,6 +36,10 @@ namespace rglikeworknamelib.Creatures {
             position_ = new Vector2((x + 0.5f) * 32, (y + 0.5f) * 32);
         }
 
+        /// <summary>
+        /// Returns creature position in game blocks
+        /// </summary>
+        /// <returns></returns>
         public Vector2 GetPositionInBlocks() {
             var po = Position;
             po.X = po.X < 0 ? po.X / 32 - 1 : po.X / 32;

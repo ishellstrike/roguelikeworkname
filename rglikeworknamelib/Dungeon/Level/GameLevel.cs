@@ -550,6 +550,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
+        public Vector2 GetInSectorPosition(Vector2 Pos) {
+            return new Vector2(Pos.X < 0 ? (Pos.X + 1) / MapSector.Rx - 1 : Pos.X / MapSector.Rx, Pos.Y < 0 ? (Pos.Y + 1) / MapSector.Ry - 1 : Pos.Y / MapSector.Ry);
+        }
+
         public void OpenCloseDoor(int x, int y)
         {
             if(blockDataBase.Data[GetBlock(x,y).Id].SmartAction == SmartAction.ActionOpenClose) {
@@ -560,7 +564,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void KillFarSectors(Creature cara) {
             for (int i = 0; i < sectors_.Count; i++) {
                 var a = sectors_[i];
-                if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 64 || Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 64) {
+                if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 640 || Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 640) {
                     SaveSector(a);
                     sectors_.Remove(a);
                 }
@@ -615,52 +619,66 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void GenerateMinimap(GraphicsDevice gd, Creature pl)
         {
-            //var data = new Color[rx * ry];
+            var data = new Color[128 * 128];
+            for (int i = 0; i < data.Length; i++) {
+                data[i] = Color.Black;
+            }
 
-            //int startx = Math.Max(0, (int)pl.Position.X / 32 - 64);
-            //int starty = Math.Max(0, (int)pl.Position.Y / 32 - 64);
-            //int endx = Math.Min(rx, (int)pl.Position.X / 32 + 64);
-            //int endy = Math.Min(ry, (int)pl.Position.Y / 32 + 64);
+            var pos = GetInSectorPosition(pl.GetPositionInBlocks());
 
-            //for (int i = startx; i < endx; i++) {
-            //    for (int j = starty; j < endy; j++) {
-            //        if (blocks_[i * ry + j].explored) {
-            //            var a = blocks_[i*ry + j].id;
-            //            if (a == 0) {
-            //                data[(j - starty)*128 + (i - startx)] = floorDataBase.Data[floors_[i*ry + j].ID].MMCol;
-            //            } else {
-            //                data[(j - starty) * 128 + (i - startx)] = blockDataBase.Data[a].MMCol;
-            //            }
-            //        } else {
-            //            data[(j - starty) * 128 + (i - startx)] = Color.Black;
-            //        }
-            //    }
-            //}
-            //minimap_.SetData(data);
+            foreach (var sector in sectors_)
+            {
+                if (sector.SectorOffsetX > pos.X - 5 && sector.SectorOffsetX < pos.X + 5 && sector.SectorOffsetY > pos.Y - 5 && sector.SectorOffsetY < pos.Y + 5)
+                {
+                    int x = sector.SectorOffsetX - (int)pos.X + 5;
+                    int y = sector.SectorOffsetY - (int)pos.Y + 5;
+
+                    for (int i = x * 10; i < x * 10 + 11; i++)
+                    {
+                        for (int j = y * 10; j < y * 10 + 11; j++)
+                        {
+                            data[i + j * 128] = Color.White;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 6* 10; i < 6 * 10 + 11; i++) {
+                for (int j = 6*10; j < 6*10 + 11; j++) {
+                    data[i + j * 128] = Color.Red;
+                }
+            }
+
+            minimap_.SetData(data);
         }
 
         public void CalcWision(Creature who, float dirAngle, float seeAngleDeg) {
             var a = who.GetPositionInBlocks();
-            //for (int i = -20; i < 20; i++) {
-            //    for (int j = -20; j < 20; j++) {
-            //        var tt = 1 -
-            //                 (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f)*32, (a.Y + j + 0.5f)*32)))/
-            //                 500.0f;
-            //        tt *= 255;
+            for (int i = -20; i < 20; i++)
+            {
+                for (int j = -20; j < 20; j++)
+                {
+                    //var tt = 1 -
+                    //         (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f) * 32, (a.Y + j + 0.5f) * 32))) /
+                    //         500.0f;
+                    //tt *= 255;
 
-            //        if (tt > 255) tt = 255;
-            //        if (tt < 0) tt = 0;
-            //        var bb = GetBlock((int)a.X + i,(int)a.Y+j);
-            //        if(bb != null) {
-            //            bb.Lightness = new Color(tt, tt, tt);
-            //            bb.Explored = true;
-            //        }
-            //    }
-            //}
+                    //if (tt > 255) tt = 255;
+                    //if (tt < 0) tt = 0;
+                    //var bb = GetBlock((int)a.X + i, (int)a.Y + j);
+                    //if (bb != null)
+                    //{
+                    //    bb.SetLight(new Color(tt, tt, tt));
+                    //    bb.Explored = true;
+                    //}
+                    GetBlock((int)a.X + i, (int)a.Y + j).SetLight(Color.White);
+                }
+            }
 
-            //for (int i = -20; i < 20; i++) {
+            //for (int i = -20; i < 20; i++)
+            //{
             //    Vector2 start = who.Position;
-            //    Vector2 end1 = new Vector2((a.X + i + 0.5f)*32, (-20 + 0.5f)*32);
+            //    Vector2 end1 = new Vector2((a.X + i + 0.5f) * 32, (-20 + 0.5f) * 32);
             //    Vector2 end2 = new Vector2((a.X + i + 0.5f) * 32, (20 + 0.5f) * 32);
             //    Vector2 end3 = new Vector2((-20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
             //    Vector2 end4 = new Vector2((20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
@@ -670,10 +688,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             //    GetValue(start, end3);
             //    GetValue(start, end4);
             //}
-
         }
 
-        private const int acc = 5;
+        private const int acc = 20;
         private void GetValue(Vector2 start, Vector2 end1) {
 
             bool prep = false;
@@ -687,15 +704,15 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var temp = GetBlock(nx, ny);
 
                 if (!prep) {
-                    if (!blockDataBase.Data[temp.Id].IsWalkable) prep = true;
+                    if (!blockDataBase.Data[temp.Id].IsTransparent) prep = true;
                 }
 
                 if(prep) {
                     temp.Lightness = Color.Black;
                 }
                 else {
-                    temp.Lightness = Color.White;
-                    temp.Explored = true;
+                   // temp.Lightness = Color.White;
+                   // temp.Explored = true;
                 }
             }
         }
@@ -779,6 +796,12 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public int SectorCount() {
             return sectors_.Count;
+        }
+
+        public void SaveAll() {
+            foreach (var sector in sectors_) {
+                SaveSector(sector);
+            }
         }
     }
 }
