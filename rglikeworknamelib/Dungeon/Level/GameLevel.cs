@@ -564,7 +564,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void KillFarSectors(Creature cara) {
             for (int i = 0; i < sectors_.Count; i++) {
                 var a = sectors_[i];
-                if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 640 || Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 640) {
+                if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 128 || Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 128) {
                     SaveSector(a);
                     sectors_.Remove(a);
                 }
@@ -658,21 +658,21 @@ namespace rglikeworknamelib.Dungeon.Level {
             {
                 for (int j = -20; j < 20; j++)
                 {
-                    //var tt = 1 -
-                    //         (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f) * 32, (a.Y + j + 0.5f) * 32))) /
-                    //         500.0f;
-                    //tt *= 255;
+            //        var tt = 1 -
+            //                 (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f) * 32, (a.Y + j + 0.5f) * 32))) /
+            //                 500.0f;
+            //        tt *= 255;
 
-                    //if (tt > 255) tt = 255;
-                    //if (tt < 0) tt = 0;
-                    //var bb = GetBlock((int)a.X + i, (int)a.Y + j);
-                    //if (bb != null)
-                    //{
-                    //    bb.SetLight(new Color(tt, tt, tt));
-                    //    bb.Explored = true;
-                    //}
-                    GetBlock((int)a.X + i, (int)a.Y + j).SetLight(Color.White);
-                }
+            //        if (tt > 255) tt = 255;
+            //        if (tt < 0) tt = 0;
+            //        var bb = GetBlock((int)a.X + i, (int)a.Y + j);
+            //        if (bb != null)
+            //        {
+            //            bb.SetLight(new Color(tt, tt, tt));
+            //            bb.Explored = true;
+            //        }
+                    GetBlock((int)a.X + i, (int)a.Y + j).SetLight(Color.Black);
+               }
             }
 
             //for (int i = -20; i < 20; i++)
@@ -688,9 +688,23 @@ namespace rglikeworknamelib.Dungeon.Level {
             //    GetValue(start, end3);
             //    GetValue(start, end4);
             //}
+
+            for (int i = -20; i < 20; i++) {
+                for (int j = -20; j < 20; j++) {
+                    if(PathClear(a, new Vector2(a.X + i, a.Y + j))) {
+                        var temp2 = GetBlock((int)a.X + i, (int)a.Y + j);
+                        temp2.Lightness = Color.White;
+                        temp2.Explored = true;
+                    }
+                }
+            }
+
+            var temp = GetBlock((int)a.X, (int)a.Y);
+            temp.Lightness = Color.White;
+            temp.Explored = true;
         }
 
-        private const int acc = 20;
+        private const int acc = 30;
         private void GetValue(Vector2 start, Vector2 end1) {
 
             bool prep = false;
@@ -715,6 +729,60 @@ namespace rglikeworknamelib.Dungeon.Level {
                    // temp.Explored = true;
                 }
             }
+        }
+
+        bool PathClear(Vector2 start, Vector2 end)
+        {
+            float xDelta = (end.X - start.X);
+            float yDelta = (end.Y - start.Y);
+            float unitX;
+            float uintY;
+
+            Vector2 checkPoint = start;
+
+            if (Math.Abs(xDelta) > Math.Abs(yDelta))
+            {
+                if (end.X == 30 && end.Y == 37)
+                    end.X = 30;
+                unitX = xDelta / Math.Abs(xDelta);
+                uintY = yDelta / Math.Abs(xDelta);
+                for (int x = 1; x <= Math.Abs(xDelta); x++)
+                {
+                    checkPoint.X = start.X + (int)Math.Round(x * unitX, 0);
+                    checkPoint.Y = start.Y + (int)Math.Round(x * uintY, 0);
+                    if (!blockDataBase.Data[GetBlock((int)checkPoint.X, (int)checkPoint.Y).Id].IsTransparent)
+                    {
+                        GetBlock((int)checkPoint.X, (int)checkPoint.Y).Lightness = Color.White;
+                        return false;
+                    }
+                   
+                    //var temp = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
+                    //temp.Lightness = Color.White;
+                    //temp.Explored = true;
+                }
+            }
+            else
+            {
+                unitX = xDelta / Math.Abs(yDelta);
+                uintY = yDelta / Math.Abs(yDelta);
+
+                for (int x = 1; x <= Math.Abs(yDelta); x++)
+                {
+                    checkPoint.X = start.X + (int)Math.Round(x * unitX, 0);
+                    checkPoint.Y = start.Y + (int)Math.Round(x * uintY, 0);
+
+                    if (!blockDataBase.Data[GetBlock((int)checkPoint.X, (int)checkPoint.Y).Id].IsTransparent)
+                    {
+                        GetBlock((int)checkPoint.X, (int)checkPoint.Y).Lightness = Color.White;
+                        return false;
+                    }
+                    
+                    //var temp = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
+                    //temp.Lightness = Color.White;
+                    //temp.Explored = true;
+                }
+            }
+            return true;
         }
 
         private Vector2 min, max;

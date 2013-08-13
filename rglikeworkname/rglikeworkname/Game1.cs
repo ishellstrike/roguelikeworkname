@@ -69,16 +69,11 @@ namespace jarg
         {
             currentFloor_.SaveAll();
         }
-
         protected override void Initialize()
         {
             Log.Init();
 
-            Assembly currentAssembly = Assembly.Load("jarg");
-            var OurName = AssemblyName.GetAssemblyName(currentAssembly.Location).Name;
-            var OurVer = "v" + AssemblyName.GetAssemblyName(currentAssembly.Location).Version;
-
-            Window.Title = OurName + " " + OurVer;
+            Window.Title = Version.GetLong();
 
             Settings.Resolution = new Vector2(1024, 768);
             graphics_.IsFullScreen = false;
@@ -117,10 +112,17 @@ namespace jarg
         private Window WindowIngameMenu;
         private Label LabelIngameMenu1;
         private Button ButtonIngameMenuSettings;
+
+        private Window WindowMainMenu;
+        private Label LabelMainMenu;
+        private Button ButtonNewGame;
+        private Button ButtonSettings;
+        private RunningLabel RunningMotd;
+        private Button ButtonOpenGit;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
-            WindowStats = new Window(new Rectangle(50,50,400,400), "Stats", true, wp, sf, ws);
+            WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws) { Visible = false };
             StatsHeat = new ProgressBar(new Rectangle(50,50,100,20), "", wp, sf, WindowStats);
             StatsJajda = new ProgressBar(new Rectangle(50, 50 + 30, 100, 20), "", wp, sf, WindowStats);
             StatsHunger = new ProgressBar(new Rectangle(50, 50 + 30*2, 100, 20), "", wp, sf, WindowStats);
@@ -150,6 +152,32 @@ namespace jarg
             WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) {Visible = false};
             ButtonIngameMenuSettings = new Button(new Vector2(20,100), "Settings", wp, sf, WindowIngameMenu);
             ButtonIngameMenuSettings.onPressed += ButtonIngameMenuSettings_onPressed;
+
+            WindowMainMenu = new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y/2), "MAIN MENU",
+                                        false, wp, sf, ws) {NoBorder = true, Moveable = false};
+            LabelMainMenu = new Label(new Vector2(10, 10), @"     __                     
+    |__|____ _______  ____  
+    |  \__  \\_  __ \/ ___\ 
+    |  |/ __ \|  | \/ /_/  >
+/\__|  (____  /__|  \___  / 
+\______|    \/     /_____/  " + " " + Version.GetLong(), wp, sf, WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(LabelMainMenu);
+            ButtonNewGame = new Button(new Vector2(10,100 + 40*1), "New game", wp, sf, WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(ButtonNewGame);
+
+            ButtonSettings = new Button(new Vector2(10, 100 + 40 * 5), "Settings", wp, sf, WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(ButtonSettings);
+            ButtonSettings.onPressed += ButtonIngameMenuSettings_onPressed;
+            RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y / 2 - 50), "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.", 50, wp, sf, WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(RunningMotd);
+            ButtonOpenGit = new Button(new Vector2(10, Settings.Resolution.Y / 2 - 20), "Open in browser", wp, sf, WindowMainMenu);
+            ButtonOpenGit.onPressed += new EventHandler(ButtonOpenGit_onPressed);
+            WindowMainMenu.CenterComponentHor(ButtonOpenGit);
+        }
+
+        void ButtonOpenGit_onPressed(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/ishellstrike/roguelikeworkname/issues");
         }
 
         void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e) {
@@ -234,12 +262,6 @@ namespace jarg
                                         };
             monsterSystem_ = new MonsterSystem(spriteBatch_, tex);
 
-            Window bbb = new Window(new Rectangle(10, 10, 200, 200), "Info", true, whitepixel, font1_, ws_);
-            Label ccc = new Label(new Vector2(20,20), "qwerr", whitepixel, font1_, bbb);
-            Image ddd = new Image(new Vector2(40,40), tex[1], Color.Red, bbb);
-            fff = new ProgressBar(new Rectangle(10,50,100,20), "Progress", whitepixel, font1_, bbb);
-            CreateWindows(whitepixel, font1_, ws_);
-
 
             currentFloor_ = new GameLevel(spriteBatch_, 
                                                       ParsersCore.LoadTexturesInOrder(Settings.GetFloorDataDirectory() + @"/textureloadorder.ord", Content),
@@ -251,6 +273,8 @@ namespace jarg
                                                      );
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
+
+            CreateWindows(whitepixel, font1_, ws_);
         }
 
         protected override void UnloadContent()
@@ -262,6 +286,8 @@ namespace jarg
         public float seeAngleDeg = 60;
         public float PlayerSeeAngle;
         public TimeSpan sec = TimeSpan.Zero;
+        public int jji=-2, jjj=-2;
+        private Action<GameTime> UpdateAction = x => { };
         protected override void Update(GameTime gameTime) {
 
             if (ErrorExit) Exit();
@@ -271,36 +297,7 @@ namespace jarg
             KeyboardUpdate(gameTime);
             MouseUpdate(gameTime);
 
-            sec += gameTime.ElapsedGameTime;
-            if (sec >= TimeSpan.FromSeconds(0.5)) {
-                sec = TimeSpan.Zero;
-
-                currentFloor_.GenerateMinimap(GraphicsDevice, player_);
-            }
-
-
-            lastPos_ = player_.Position;
-            if ((int)player_.Position.X / 3 == (int)player_.LastPos.X / 3 && (int)player_.Position.Y / 3 == (int)player_.LastPos.Y / 3) {
-                if (seeAngleDeg < 150) {
-                    seeAngleDeg += (float)gameTime.ElapsedGameTime.TotalSeconds * 50;
-                } else {
-                    seeAngleDeg = 150;
-                }
-            } else {
-                if (seeAngleDeg > 60) {
-                    seeAngleDeg -= (float)gameTime.ElapsedGameTime.TotalSeconds * 2000;
-                } else {
-                    seeAngleDeg = 60;
-                }
-            }
-            currentFloor_.CalcWision(player_, (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X), seeAngleDeg);
-            player_.Update(gameTime, currentFloor_, bdb_);
-            currentFloor_.KillFarSectors(player_);
-            ps_.Update(gameTime);
-            bs_.Update(gameTime);
-            GlobalWorldLogic.Update(gameTime);
-
-            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 2);
+            UpdateAction(gameTime);
 
             if (Settings.DebugInfo) {
                 FrameRateCounter.Update(gameTime);
@@ -309,6 +306,46 @@ namespace jarg
             WindowsUpdate(gameTime);
             ws_.Update(gameTime, ms_, lms_);
             PlayerSeeAngle = (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
+        }
+
+        private void GameUpdate(GameTime gameTime) {
+            sec += gameTime.ElapsedGameTime;
+            if (sec >= TimeSpan.FromSeconds(0.2)) {
+                sec = TimeSpan.Zero;
+
+                currentFloor_.GenerateMinimap(GraphicsDevice, player_);
+            }
+
+
+            lastPos_ = player_.Position;
+            if ((int) player_.Position.X/3 == (int) player_.LastPos.X/3 &&
+                (int) player_.Position.Y/3 == (int) player_.LastPos.Y/3) {
+                if (seeAngleDeg < 150) {
+                    seeAngleDeg += (float) gameTime.ElapsedGameTime.TotalSeconds*50;
+                }
+                else {
+                    seeAngleDeg = 150;
+                }
+            }
+            else {
+                if (seeAngleDeg > 60) {
+                    seeAngleDeg -= (float) gameTime.ElapsedGameTime.TotalSeconds*2000;
+                }
+                else {
+                    seeAngleDeg = 60;
+                }
+            }
+            currentFloor_.CalcWision(player_,
+                                     (float)
+                                     Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X),
+                                     seeAngleDeg);
+            player_.Update(gameTime, currentFloor_, bdb_);
+            currentFloor_.KillFarSectors(player_);
+            ps_.Update(gameTime);
+            bs_.Update(gameTime);
+            GlobalWorldLogic.Update(gameTime);
+
+            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*2);
         }
 
         private void KeyboardUpdate(GameTime gameTime)
@@ -394,6 +431,8 @@ namespace jarg
             }
         }
 
+
+        private Action<GameTime> DrawAction = x => { };  
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -402,14 +441,8 @@ namespace jarg
         {
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch_.Begin();
-            currentFloor_.Draw(gameTime, camera_);
-            currentFloor_.Draw2(gameTime, camera_);
-            player_.Draw(gameTime, camera_);
-            ps_.Draw(gameTime, camera_);
-            bs_.Draw(gameTime, camera_);
-            spriteBatch_.End();
-            
+            DrawAction(gameTime);
+
             ws_.Draw(spriteBatch_);
 
             base.Draw(gameTime);
@@ -420,6 +453,16 @@ namespace jarg
 
             lineBatch_.Draw();
             lineBatch_.Clear();
+        }
+
+        private void GameDraw(GameTime gameTime) {
+            spriteBatch_.Begin();
+            currentFloor_.Draw(gameTime, camera_);
+            currentFloor_.Draw2(gameTime, camera_);
+            player_.Draw(gameTime, camera_);
+            ps_.Draw(gameTime, camera_);
+            bs_.Draw(gameTime, camera_);
+            spriteBatch_.End();
         }
 
         private void DebugInfoDraw(GameTime gameTime)

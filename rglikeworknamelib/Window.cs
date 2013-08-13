@@ -58,6 +58,18 @@ namespace rglikeworknamelib
                 return Vector2.Zero;
             }
 
+            public Vector2 GetPosition() {
+                return Vector2.Zero;
+            }
+
+            public void SetPosition(Vector2 pos) {
+               
+            }
+
+            public float Width() {
+                return 0;
+            }
+
             internal void ToTop(Window win)
             {
                 Windows.Remove(win);
@@ -173,6 +185,18 @@ namespace rglikeworknamelib
                 parent.AddWindow(this);
             }
 
+            public void CenterComponentHor(IGameWindowComponent a) {
+                var p = a.GetPosition();
+                a.SetPosition(new Vector2((Locate.Width / 2 - a.Width()/2), p.Y));
+            }
+
+            [Obsolete]
+            public void CenterComponentVert(IGameWindowComponent a)
+            {
+                var p = a.GetPosition();
+                a.SetPosition(new Vector2(p.X, (Locate.Height / 2 + a.Width()) / 2));
+            }
+
             void closeButton__onPressed(object sender, EventArgs e)
             {
                 Close();
@@ -242,11 +266,11 @@ namespace rglikeworknamelib
                             Locate.X += (int) (ms.X - lms.X);
                             Locate.Y += (int) (ms.Y - lms.Y);
                         }
-
-                        for (int i = Components.Count - 1; i >= 0; i--) {
-                            var component = Components[i];
-                            component.Update(gt, ms, lms);
-                        }
+                    }
+                    for (int i = Components.Count - 1; i >= 0; i--)
+                    {
+                        var component = Components[i];
+                        component.Update(gt, ms, lms);
                     }
                 }
             }
@@ -256,6 +280,19 @@ namespace rglikeworknamelib
                 return new Vector2(Locate.X + 2, Locate.Y + 22);
             }
 
+            public Vector2 GetPosition() {
+                return new Vector2(Locate.X, Locate.Y);
+            }
+
+            public void SetPosition(Vector2 pos) {
+                Locate.X = (int) pos.X;
+                Locate.Y = (int) pos.Y;
+            }
+
+            public float Width() {
+                return Locate.Width;
+            }
+
             public void OnTop() {
                 parent_.ToTop(this);
             }
@@ -263,13 +300,17 @@ namespace rglikeworknamelib
 
         public class Label : IGameWindowComponent
         {
-            private readonly Vector2 pos_;
+            protected Vector2 pos_;
             public String Text;
-            private Color col_;
-            private Window Parent;
-            private bool isHudColored;
+            protected Color col_;
+            protected Window Parent;
+            protected bool isHudColored;
 
-            private readonly SpriteFont font1_;
+            protected readonly SpriteFont font1_;
+
+            public void SetPos(Vector2 pos) {
+                pos_ = pos;
+            }
 
             public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, Window win)
             {
@@ -291,7 +332,7 @@ namespace rglikeworknamelib
                 isHudColored = true;
             }
 
-            public void Draw(SpriteBatch sb)
+            public virtual void Draw(SpriteBatch sb)
             {
                 if(isHudColored) {
                     sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, Settings.HudСolor);
@@ -300,7 +341,7 @@ namespace rglikeworknamelib
                 }
             }
 
-            public void Update(GameTime gt, MouseState ms, MouseState lms)
+            public virtual void Update(GameTime gt, MouseState ms, MouseState lms)
             {
                 
             }
@@ -309,11 +350,68 @@ namespace rglikeworknamelib
             {
                 return pos_;
             }
+
+            public Vector2 GetPosition() {
+                return pos_;
+            }
+
+            public void SetPosition(Vector2 pos) {
+                pos_ = pos;
+            }
+
+            public virtual float Width() {
+                return font1_.MeasureString(Text).X;
+            }
+        }
+
+        public class RunningLabel : Label {
+            private float runStep;
+            private int Size;
+            public RunningLabel(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, int size, Window win) : base(p, s, wp, wf, c, win) {
+                Size = size;
+                Text = s + " --- ";
+            }
+
+            public RunningLabel(Vector2 p, string s, int size, Texture2D wp, SpriteFont wf, Window win) : base(p, s, wp, wf, win) {
+                Size = size;
+                Text = s + " --- ";
+            }
+
+            public override void Draw(SpriteBatch sb) {
+
+                var offcet = (int)runStep % Text.Length;
+                var line = Shift(Text, offcet, Size);
+
+                if (isHudColored)
+                {
+                    sb.DrawString(font1_, line, Parent.GetLocation() + pos_, Settings.HudСolor);
+                }
+                else
+                {
+                    sb.DrawString(font1_, line, Parent.GetLocation() + pos_, col_);
+                }
+                
+            }
+
+            static string Shift(string text, int offset, int size) {
+                var ss = size > text.Length - 1 ? text.Length - 1 : size;
+                return (text.Remove(0, offset) + text.Remove(offset)).Substring(0,ss);
+            }
+
+            public override void Update(GameTime gt, MouseState ms, MouseState lms) {
+                runStep += 5*(float)gt.ElapsedGameTime.TotalSeconds;
+ 	            base.Update(gt, ms, lms);
+            }
+
+            public override float Width() {
+                var ss = Size > Text.Length - 1 ? Text.Length - 1 : Size;
+                return font1_.MeasureString("f").X * ss;
+            }
         }
 
         public class Image : IGameWindowComponent
         {
-            private readonly Vector2 pos_;
+            private Vector2 pos_;
             public String Text;
             public Color col_;
             public Texture2D image;
@@ -345,6 +443,18 @@ namespace rglikeworknamelib
             {
                 return pos_;
             }
+
+            public Vector2 GetPosition() {
+                return pos_;
+            }
+
+            public void SetPosition(Vector2 pos) {
+                pos_ = pos;
+            }
+
+            public float Width() {
+                return image.Width;
+            }
         }
 
         public class ProgressBar : IGameWindowComponent {
@@ -370,7 +480,7 @@ namespace rglikeworknamelib
             }
 
             public void Draw(SpriteBatch sb) {
-                Vector2 realpos = Parent.GetLocation() + GetLocation();
+                Vector2 realpos = Parent.GetLocation() + GetPosition();
 
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
@@ -385,8 +495,17 @@ namespace rglikeworknamelib
                 
             }
 
-            public Vector2 GetLocation() {
+            public Vector2 GetPosition() {
                 return new Vector2(locate_.X, locate_.Y);
+            }
+
+            public void SetPosition(Vector2 pos) {
+                locate_.X = (int) pos.X;
+                locate_.Y = (int) pos.Y;
+            }
+
+            public float Width() {
+                return locate_.Width;
             }
         }
 
@@ -425,7 +544,7 @@ namespace rglikeworknamelib
             public void Draw(SpriteBatch sb)
             {
                 if (Visible) {
-                    Vector2 realpos = Parent.GetLocation() + GetLocation();
+                    Vector2 realpos = Parent.GetLocation() + GetPosition();
 
                     Color col = !aimed_ ? Settings.HudСolor : Color.White;
 
@@ -445,7 +564,7 @@ namespace rglikeworknamelib
             public void Update(GameTime gt, MouseState ms, MouseState lms)
             {
                 if (Visible) {
-                    Vector2 realpos = Parent.GetLocation() + GetLocation();
+                    Vector2 realpos = Parent.GetLocation() + GetPosition();
                     Vector2 realdl = realpos;
                     realdl.X += locate_.Width;
                     realdl.Y += locate_.Height;
@@ -461,9 +580,19 @@ namespace rglikeworknamelib
                 }
             }
 
-            public Vector2 GetLocation()
+            public Vector2 GetPosition()
             {
                 return new Vector2(locate_.X, locate_.Y);
+            }
+
+            public void SetPosition(Vector2 pos)
+            {
+                locate_.X = (int)pos.X;
+                locate_.Y = (int)pos.Y;
+            }
+
+            public float Width() {
+                return locate_.Width;
             }
         }
 
@@ -482,7 +611,9 @@ namespace rglikeworknamelib
             void Draw(SpriteBatch sb);
             void Update(GameTime gt, MouseState ms, MouseState lms);
 
-            Vector2 GetLocation();
+            Vector2 GetPosition();
+            void SetPosition(Vector2 pos);
+            float Width();
         }
 
         public delegate void ComponentAction();
