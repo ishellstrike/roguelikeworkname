@@ -191,7 +191,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         break;
             }
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 1; i++) {
                 MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0,Rx-1),rand.Next(0,Ry-1), rand);
             }
 
@@ -325,7 +325,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
          public MapSector GetDownN(int sectorOffsetX, int sectorOffsetY) {
              foreach (var sector in sectors_) {
-                 if (sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY + 1) {
+                 if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY + 1) {
                      return sector;
                  }
              }
@@ -344,7 +344,7 @@ namespace rglikeworknamelib.Dungeon.Level {
          {
              foreach (var sector in sectors_)
              {
-                 if (sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY - 1)
+                 if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY - 1)
                  {
                      return sector;
                  }
@@ -364,7 +364,7 @@ namespace rglikeworknamelib.Dungeon.Level {
          {
              foreach (var sector in sectors_)
              {
-                 if (sector.SectorOffsetX == sectorOffsetX - 1 && sector.SectorOffsetY == sectorOffsetY)
+                 if (sector != null && sector.SectorOffsetX == sectorOffsetX - 1 && sector.SectorOffsetY == sectorOffsetY)
                  {
                      return sector;
                  }
@@ -384,7 +384,7 @@ namespace rglikeworknamelib.Dungeon.Level {
          {
              foreach (var sector in sectors_)
              {
-                 if (sector.SectorOffsetX == sectorOffsetX + 1 && sector.SectorOffsetY == sectorOffsetY)
+                 if (sector != null && sector.SectorOffsetX == sectorOffsetX + 1 && sector.SectorOffsetY == sectorOffsetY)
                  {
                      return sector;
                  }
@@ -401,13 +401,16 @@ namespace rglikeworknamelib.Dungeon.Level {
         public MapSector GetSector(int sectorOffsetX, int sectorOffsetY) {
             for (int i = 0; i < sectors_.Count; i++) {
                 var sector = sectors_[i];
-                if (sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY) {
+                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY)
+                {
                     return sector;
                 }
             }
 
             MapSector last = LoadSector(sectorOffsetX, sectorOffsetY);
-            if(last != null) return last;
+            if(last != null) {
+                sectors_.Add(last);
+                return last;}
 
             var temp = new MapSector(blockDataBase, floorDataBase, schemesDataBase, this, sectorOffsetX, sectorOffsetY);
             sectors_.Add(temp);
@@ -615,6 +618,11 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void Update(GameTime gt, MouseState ms, MouseState lms) {
+            for (int i = 0; i < sectors_.Count; i++) {
+                if (sectors_[i] == null) {
+                    sectors_.Remove(sectors_[i]);
+                }
+            }
         }
 
         public void GenerateMinimap(GraphicsDevice gd, Creature pl)
@@ -704,82 +712,51 @@ namespace rglikeworknamelib.Dungeon.Level {
             temp.Explored = true;
         }
 
-        private const int acc = 30;
-        private void GetValue(Vector2 start, Vector2 end1) {
-
-            bool prep = false;
-            for (int i = 0; i < acc; i++)
-            {
-                Vector2 te = Vector2.Lerp(start, end1, i / (float)acc - 1);
-
-                int nx = te.X/32 < 0 ? (int) te.X/32 - 1 : (int) te.X/32;
-                int ny = te.Y/32 < 0 ? (int) te.Y/32 - 1 : (int) te.Y/32;
-
-                var temp = GetBlock(nx, ny);
-
-                if (!prep) {
-                    if (!blockDataBase.Data[temp.Id].IsTransparent) prep = true;
-                }
-
-                if(prep) {
-                    temp.Lightness = Color.Black;
-                }
-                else {
-                   // temp.Lightness = Color.White;
-                   // temp.Explored = true;
-                }
-            }
-        }
-
         bool PathClear(Vector2 start, Vector2 end)
         {
-            float xDelta = (end.X - start.X);
-            float yDelta = (end.Y - start.Y);
-            float unitX;
-            float uintY;
+            if (Vector2.Distance(start, end) > 1) {
+                float xDelta = (end.X - start.X);
+                float yDelta = (end.Y - start.Y);
+                float unitX;
+                float uintY;
 
-            Vector2 checkPoint = start;
+                Vector2 checkPoint = start;
 
-            if (Math.Abs(xDelta) > Math.Abs(yDelta))
-            {
-                if (end.X == 30 && end.Y == 37)
-                    end.X = 30;
-                unitX = xDelta / Math.Abs(xDelta);
-                uintY = yDelta / Math.Abs(xDelta);
-                for (int x = 1; x <= Math.Abs(xDelta); x++)
-                {
-                    checkPoint.X = start.X + (int)Math.Round(x * unitX, 0);
-                    checkPoint.Y = start.Y + (int)Math.Round(x * uintY, 0);
-                    if (!blockDataBase.Data[GetBlock((int)checkPoint.X, (int)checkPoint.Y).Id].IsTransparent)
-                    {
-                        GetBlock((int)checkPoint.X, (int)checkPoint.Y).Lightness = Color.White;
-                        return false;
+                if (Math.Abs(xDelta) > Math.Abs(yDelta)) {
+                    if (end.X == 30 && end.Y == 37)
+                        end.X = 30;
+                    unitX = xDelta/Math.Abs(xDelta);
+                    uintY = yDelta/Math.Abs(xDelta);
+                    for (int x = 1; x <= Math.Abs(xDelta); x++) {
+                        checkPoint.X = start.X + (int) Math.Round(x*unitX, 2);
+                        checkPoint.Y = start.Y + (int) Math.Round(x*uintY, 2);
+                        if (!blockDataBase.Data[GetBlock((int) checkPoint.X, (int) checkPoint.Y).Id].IsTransparent) {
+                            GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
+                            return false;
+                        }
+
+                        //var temp = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
+                        //temp.Lightness = Color.White;
+                        //temp.Explored = true;
                     }
-                   
-                    //var temp = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
-                    //temp.Lightness = Color.White;
-                    //temp.Explored = true;
                 }
-            }
-            else
-            {
-                unitX = xDelta / Math.Abs(yDelta);
-                uintY = yDelta / Math.Abs(yDelta);
+                else {
+                    unitX = xDelta/Math.Abs(yDelta);
+                    uintY = yDelta/Math.Abs(yDelta);
 
-                for (int x = 1; x <= Math.Abs(yDelta); x++)
-                {
-                    checkPoint.X = start.X + (int)Math.Round(x * unitX, 0);
-                    checkPoint.Y = start.Y + (int)Math.Round(x * uintY, 0);
+                    for (int x = 1; x <= Math.Abs(yDelta); x++) {
+                        checkPoint.X = start.X + (int) Math.Round(x*unitX, 2);
+                        checkPoint.Y = start.Y + (int) Math.Round(x*uintY, 2);
 
-                    if (!blockDataBase.Data[GetBlock((int)checkPoint.X, (int)checkPoint.Y).Id].IsTransparent)
-                    {
-                        GetBlock((int)checkPoint.X, (int)checkPoint.Y).Lightness = Color.White;
-                        return false;
+                        if (!blockDataBase.Data[GetBlock((int) checkPoint.X, (int) checkPoint.Y).Id].IsTransparent) {
+                            GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
+                            return false;
+                        }
+
+                        //var temp = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
+                        //temp.Lightness = Color.White;
+                        //temp.Explored = true;
                     }
-                    
-                    //var temp = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
-                    //temp.Lightness = Color.White;
-                    //temp.Explored = true;
                 }
             }
             return true;

@@ -119,6 +119,10 @@ namespace jarg
         private Button ButtonSettings;
         private RunningLabel RunningMotd;
         private Button ButtonOpenGit;
+
+        private Window WindowCaracterCration;
+        private Button ButtonCaracterConfirm;
+        private Button ButtonCaracterCancel;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
@@ -163,6 +167,7 @@ namespace jarg
 \______|    \/     /_____/  " + " " + Version.GetLong(), wp, sf, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(LabelMainMenu);
             ButtonNewGame = new Button(new Vector2(10,100 + 40*1), "New game", wp, sf, WindowMainMenu);
+            ButtonNewGame.onPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
 
             ButtonSettings = new Button(new Vector2(10, 100 + 40 * 5), "Settings", wp, sf, WindowMainMenu);
@@ -171,8 +176,32 @@ namespace jarg
             RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y / 2 - 50), "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.", 50, wp, sf, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(RunningMotd);
             ButtonOpenGit = new Button(new Vector2(10, Settings.Resolution.Y / 2 - 20), "Open in browser", wp, sf, WindowMainMenu);
-            ButtonOpenGit.onPressed += new EventHandler(ButtonOpenGit_onPressed);
+            ButtonOpenGit.onPressed += ButtonOpenGit_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonOpenGit);
+
+            WindowCaracterCration = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y / 2), "CARACTER CREATION",
+                                        false, wp, sf, ws) { NoBorder = true, Moveable = false,Visible = false};
+            ButtonCaracterConfirm = new Button(new Vector2(Settings.Resolution.X / 4*2, Settings.Resolution.Y / 2 - 20), "Continue", wp, sf, WindowCaracterCration);
+            ButtonCaracterConfirm.onPressed += ButtonCaracterConfirm_onPressed;
+            ButtonCaracterCancel = new Button(new Vector2(0, Settings.Resolution.Y / 2 - 20), "Cancel", wp, sf, WindowCaracterCration);
+            ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
+        }
+
+        void ButtonCaracterCancel_onPressed(object sender, EventArgs e)
+        {
+            WindowMainMenu.Visible = true;
+            WindowCaracterCration.Visible = false;
+        }
+
+        void ButtonCaracterConfirm_onPressed(object sender, EventArgs e) {
+            WindowCaracterCration.Visible = false;
+            DrawAction = GameDraw;
+            UpdateAction = GameUpdate;
+        }
+
+        void ButtonNewGame_onPressed(object sender, EventArgs e) {
+            WindowMainMenu.Visible = false;
+            WindowCaracterCration.Visible = true;
         }
 
         void ButtonOpenGit_onPressed(object sender, EventArgs e)

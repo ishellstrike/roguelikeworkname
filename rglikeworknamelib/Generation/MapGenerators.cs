@@ -166,16 +166,17 @@ namespace rglikeworknamelib.Generation
             if (a.data[a.y - 1] == 0) todo.Enqueue(a.y - 1); //угол 0,у
             if (a.data[(a.x - 1) * a.y + a.y - 1] == 0) todo.Enqueue((a.x - 1) *a.y + a.y - 1); //угол х,у
 
+            var dd = Math.Max(a.y, a.x);
 
             while (todo.Count > 0) {
                 int t = todo.Dequeue();
 
                 if(visited[t] == 0 && a.data[t] == 0) {
                     visited[t] = 1;
-                    if (t % a.y < a.x - 1) todo.Enqueue(t + 1);
-                    if (t % a.y > 0) todo.Enqueue(t - 1);
-                    if (t / a.y < a.y - 1) todo.Enqueue(t + a.y);
-                    if (t / a.y > 0) todo.Enqueue(t - a.y);
+                    if (t % dd < a.x - 1) todo.Enqueue(t + 1);
+                    if (t % dd > 0) todo.Enqueue(t - 1);
+                    if (t / dd < a.y - 1) todo.Enqueue(t + dd);
+                    if (t / dd > 0) todo.Enqueue(t - dd);
                 }
             }
 
