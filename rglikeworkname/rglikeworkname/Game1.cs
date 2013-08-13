@@ -145,6 +145,7 @@ namespace jarg
         private Button ButtonNewGame;
         private Button ButtonSettings;
         private RunningLabel RunningMotd;
+        private Label LabelControls;
         private Button ButtonOpenGit;
 
         private Window WindowCaracterCration;
@@ -256,6 +257,8 @@ namespace jarg
             ButtonSettings.onPressed += ButtonIngameMenuSettings_onPressed;
             RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y / 2 - 50), "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.", 50, wp, sf, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(RunningMotd);
+            LabelControls = new Label(new Vector2(10, Settings.Resolution.Y/2 + 10), "I-inventory C-caracter page L-event log M-map WASD-moving LMB-shooting F1-debug info", wp, sf, WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(LabelControls);
             ButtonOpenGit = new Button(new Vector2(10, Settings.Resolution.Y / 2 - 20), "Open in browser", wp, sf, WindowMainMenu);
             ButtonOpenGit.onPressed += ButtonOpenGit_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonOpenGit);
