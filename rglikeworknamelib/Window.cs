@@ -14,6 +14,10 @@ namespace rglikeworknamelib
             Random rnd = new Random();
             public bool Mopusehook, Keyboardhook;
 
+            public bool Visible { get; set; }
+
+            public object Tag { get; set; }
+
             private readonly Texture2D whitepixel_;
             private readonly SpriteFont font1_;
 
@@ -91,7 +95,7 @@ namespace rglikeworknamelib
                 return false;
             }
         }
-
+    
         public class Window : IGameWindowComponent
         {
             internal List<IGameWindowComponent> Components = new List<IGameWindowComponent>();
@@ -117,8 +121,11 @@ namespace rglikeworknamelib
                 }
             }
             public bool Moveable = true;
-            public bool Visible = true;
             public bool NoBorder;
+
+            public bool Visible { get; set; }
+
+            public object Tag { get; set; }
 
             private readonly Texture2D whitepixel_;
             private readonly SpriteFont font1_;
@@ -138,6 +145,7 @@ namespace rglikeworknamelib
                 whitepixel_ = wp;
                 font1_ = wf;
                 parent_ = parent;
+                Visible = true;
 
                 Name = caption;
                 Locate = location;
@@ -174,6 +182,8 @@ namespace rglikeworknamelib
                 backtransparent_ = Color.Black;
                 backtransparent_.A = 220;
                 Closable = closeable;
+
+                Visible = true;
 
                 closeButton_ = new Button(new Vector2(Locate.Width - 22, -22), "x", whitepixel_, font1_, this);
                 closeButton_.onPressed += closeButton__onPressed;
@@ -298,6 +308,145 @@ namespace rglikeworknamelib
             }
         }
 
+        public class ListContainer : IGameWindowComponent {
+             private Rectangle location_;
+             private List<IGameWindowComponent> Items = new List<IGameWindowComponent>();
+             private int fromI_;
+             private readonly Texture2D whitepixel_;
+             private readonly SpriteFont font1_;
+             private Window parent_;
+             public bool Visible { get; set; }
+
+             public object Tag { get; set; }
+
+             private Button buttonUp_, buttonDown_;
+
+             public ListContainer(Rectangle loc, Texture2D wp, SpriteFont sf, Window win) {
+                 location_ = loc;
+                 whitepixel_ = wp;
+                 font1_ = sf;
+                 parent_ = win;
+                 parent_.AddComponent(this);
+
+                 Visible = true;
+
+                 buttonUp_ = new Button(new Vector2(location_.Width - 30 + loc.X, 2 +loc.Y), "^", wp, sf, win);
+                 buttonUp_.onPressed += buttonUp__onPressed;
+                 buttonDown_ = new Button(new Vector2(location_.Width - 30 + loc.X, location_.Height - 25 + loc.Y), "v", wp, sf, win);
+                 buttonDown_.onPressed += buttonDown__onPressed;
+             }
+
+             void buttonDown__onPressed(object sender, EventArgs e)
+             {
+                 ListDown();
+             }
+
+             void buttonUp__onPressed(object sender, EventArgs e)
+             {
+                 ListUp();
+             }
+
+             public List<IGameWindowComponent> GetItems() {
+                 return Items;
+             }
+
+             public void AddItem(IGameWindowComponent it) {
+                 Items.Add(it);
+             }
+             
+             public void RemoveItem(IGameWindowComponent it) {
+                 if(Items.Contains(it)) {
+                     Items.Remove(it);
+                 }
+             }
+
+            public void Clear() {
+                fromI_ = 0;
+                foreach (var item in Items) {
+                    parent_.Components.Remove(item);
+                }
+                Items.Clear();
+            }
+
+             public void Draw(SpriteBatch sb) {
+                 var ts = ToShow();
+
+                 var l = GetPosition();
+
+                 buttonUp_.SetPosition(new Vector2(location_.Width - 40 + l.X, 0 + l.Y));
+                 buttonDown_.SetPosition(new Vector2(location_.Width - 40 + l.X, location_.Height - 40 + l.Y));
+
+                 foreach (var item in Items) {
+                     item.Visible = false;
+                 }
+
+                 for (int i = fromI_; i < fromI_ + ts; i++) {
+                     Items[i].Visible = true;
+                     Items[i].SetPosition(new Vector2(l.X + 10, (i - fromI_)*30 + l.Y));
+                 }
+
+                 if (Visible) {
+                     var a = GetPosition() + parent_.GetPosition();
+                     var b = new Rectangle((int) a.X, (int) a.Y, location_.Width, location_.Height);
+                         sb.Draw(whitepixel_, new Vector2(b.X, b.Y), null, Settings.HudСolor, 0, Vector2.Zero,
+                                 new Vector2(b.Width, 2), SpriteEffects.None, 0);
+
+                         sb.Draw(whitepixel_, new Vector2(b.X, b.Y), null, Settings.HudСolor, 0, Vector2.Zero,
+                                 new Vector2(2, b.Height), SpriteEffects.None, 0);
+                         sb.Draw(whitepixel_, new Vector2(b.Right, b.Y), null, Settings.HudСolor, 0,
+                                 Vector2.Zero,
+                                 new Vector2(2, b.Height + 2), SpriteEffects.None, 0);
+                         sb.Draw(whitepixel_, new Vector2(b.X, b.Bottom), null, Settings.HudСolor, 0,
+                                 Vector2.Zero,
+                                 new Vector2(b.Width + 2, 2), SpriteEffects.None, 0);
+                     
+                 }
+             }
+
+            private int ToShow()
+             {
+                 int toshow = location_.Height / 30;
+                 return toshow = toshow > Items.Count - 1 ? Items.Count - 1 : toshow;
+             }
+
+             public void Update(GameTime gt, MouseState ms, MouseState lms) {
+                
+             }
+
+             public void ListDown() {
+                 fromI_ ++;
+                 var a = ToShow();
+                 if (fromI_ + a > Items.Count - 1) fromI_ = Items.Count - 1 - a;
+             }
+
+             public void ListUp() {
+                 fromI_--;
+                 if (fromI_ < 0) fromI_ = 0;
+             }
+
+             public Vector2 GetPosition() {
+                return new Vector2(location_.X, location_.Y);
+             }
+
+             public void SetPosition(Vector2 pos) {
+                 location_.X = (int)pos.X;
+                 location_.Y = (int)pos.Y;
+             }
+
+             public float Width() {
+                 return location_.Width;
+             }
+
+            public void SetVisible(bool vis) {
+                
+            }
+
+            public int GetTag()
+            {
+                return 0;
+            }
+        }
+
         public class Label : IGameWindowComponent
         {
             protected Vector2 pos_;
@@ -305,6 +454,12 @@ namespace rglikeworknamelib
             protected Color col_;
             protected Window Parent;
             protected bool isHudColored;
+            public bool Visible { get; set; }
+
+            private TimeSpan lastPressed;
+
+            public object Tag { get; set; }
+            private bool aimed_;
 
             protected readonly SpriteFont font1_;
 
@@ -320,6 +475,7 @@ namespace rglikeworknamelib
                 col_ = c;
                 Parent = win;
                 Parent.AddComponent(this);
+                Visible = true;
             }
 
             public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, Window win)
@@ -330,20 +486,57 @@ namespace rglikeworknamelib
                 Parent = win;
                 Parent.AddComponent(this);
                 isHudColored = true;
+                Visible = true;
             }
 
             public virtual void Draw(SpriteBatch sb)
             {
-                if(isHudColored) {
-                    sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, Settings.HudСolor);
-                } else {
-                    sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, col_);
+                if (Text != null && Visible) {
+                    if (!aimed_ || onPressed == null) {
+                        if (isHudColored) {
+                            sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, Settings.HudСolor);
+                        }
+                        else {
+                            sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, col_);
+                        }
+                    }
+                    else {
+                        sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, Color.White);
+                    }
                 }
             }
 
-            public virtual void Update(GameTime gt, MouseState ms, MouseState lms)
+            public virtual void Update(GameTime gt, MouseState ms, MouseState lms) {
+                if (Text != null) {
+                    var locate_ = new Rectangle((int) pos_.X, (int) pos_.Y, (int) font1_.MeasureString(Text).X,
+                                                (int) font1_.MeasureString(Text).Y);
+                    if (Visible) {
+                        Vector2 realpos = Parent.GetLocation() + GetPosition();
+                        Vector2 realdl = realpos;
+                        realdl.X += locate_.Width;
+                        realdl.Y += locate_.Height;
+
+                        if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
+                            aimed_ = true;
+                            if ((lms.LeftButton == ButtonState.Released || lastPressed.TotalMilliseconds - gt.TotalGameTime.TotalMilliseconds > 500) && ms.LeftButton == ButtonState.Pressed) {
+                                PressButton();
+                                lastPressed = gt.TotalGameTime;
+                            }
+                        }
+                        else
+                            aimed_ = false;
+                    }
+                }
+            }
+
+            public event EventHandler onPressed;
+
+            void PressButton()
             {
-                
+                if (onPressed != null)
+                {
+                    onPressed(this, null);
+                }
             }
 
             public Vector2 GetLocation()
@@ -361,6 +554,15 @@ namespace rglikeworknamelib
 
             public virtual float Width() {
                 return font1_.MeasureString(Text).X;
+            }
+
+            public void SetVisible(bool vis) {
+                Visible = vis;
+            }
+
+            public int GetTag()
+            {
+                return 0;
             }
         }
 
@@ -417,6 +619,10 @@ namespace rglikeworknamelib
             public Texture2D image;
             private Window Parent;
 
+            public bool Visible { get; set; }
+
+            public object Tag { get; set; }
+
             private readonly SpriteFont font1_;
 
             public Image(Vector2 p, Texture2D im, Color c, Window win)
@@ -427,6 +633,7 @@ namespace rglikeworknamelib
 
                 Parent = win;
                 Parent.AddComponent(this);
+                Visible = true;
             }
 
             public virtual void Draw(SpriteBatch sb)
@@ -462,6 +669,10 @@ namespace rglikeworknamelib
             public String Text;
             private Window Parent;
 
+            public bool Visible { get; set; }
+
+            public object Tag { get; set; }
+
             private readonly Texture2D whitepixel_;
             private readonly SpriteFont font1_;
 
@@ -477,6 +688,7 @@ namespace rglikeworknamelib
                 font1_ = sf;
                 Parent = pa;
                 Parent.AddComponent(this);
+                Visible = true;
             }
 
             public void Draw(SpriteBatch sb) {
@@ -518,7 +730,20 @@ namespace rglikeworknamelib
 
             private readonly Texture2D whitepixel_;
             private readonly SpriteFont font1_;
-            public bool Visible = true;
+            private TimeSpan lastPressed;
+            private bool firstPress = true;
+
+            public bool Visible
+            {
+                get;
+                set;
+            }
+
+            public object Tag
+            {
+                get;
+                set;
+            }
 
             public Button(Vector2 p, string s, Texture2D wp, SpriteFont wf, Window pa)
             {
@@ -531,6 +756,7 @@ namespace rglikeworknamelib
                 Text = s;
                 Parent = pa;
                 Parent.AddComponent(this);
+                Visible = true;
             }
 
             public event EventHandler onPressed;
@@ -569,14 +795,33 @@ namespace rglikeworknamelib
                     realdl.X += locate_.Width;
                     realdl.Y += locate_.Height;
 
-                    if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
+                    if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y)
+                    {
                         aimed_ = true;
-                        if (lms.LeftButton == ButtonState.Released && ms.LeftButton == ButtonState.Pressed) {
-                            PressButton();
+                        if (firstPress) {
+                            if ((lms.LeftButton == ButtonState.Released ||
+                                 gt.TotalGameTime.TotalMilliseconds - lastPressed.TotalMilliseconds > 500) &&
+                                ms.LeftButton == ButtonState.Pressed) {
+                                PressButton();
+                                lastPressed = gt.TotalGameTime;
+                                firstPress = false;
+                            }
+                        }
+                        else {
+                            if ((lms.LeftButton == ButtonState.Released ||
+                                 gt.TotalGameTime.TotalMilliseconds - lastPressed.TotalMilliseconds > 100) &&
+                                ms.LeftButton == ButtonState.Pressed)
+                            {
+                                PressButton();
+                                lastPressed = gt.TotalGameTime;
+                                firstPress = false;
+                            }
                         }
                     }
                     else
                         aimed_ = false;
+
+                    if (lms.LeftButton == ButtonState.Released) firstPress = true;
                 }
             }
 
@@ -614,6 +859,8 @@ namespace rglikeworknamelib
             Vector2 GetPosition();
             void SetPosition(Vector2 pos);
             float Width();
+            bool Visible { get; set; }
+            object Tag { get; set; }
         }
 
         public delegate void ComponentAction();

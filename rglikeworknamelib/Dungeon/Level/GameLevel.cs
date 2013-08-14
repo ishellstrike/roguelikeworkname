@@ -618,11 +618,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void Update(GameTime gt, MouseState ms, MouseState lms) {
-            for (int i = 0; i < sectors_.Count; i++) {
-                if (sectors_[i] == null) {
-                    sectors_.Remove(sectors_[i]);
-                }
-            }
+
         }
 
         public void GenerateMinimap(GraphicsDevice gd, Creature pl)

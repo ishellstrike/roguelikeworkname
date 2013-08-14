@@ -4,11 +4,11 @@ name="–юкзак походный"
 weight=1000
 volume=2000
 container=65000
-stype="bag"
+stype="Bag"
 
 ~8001,0
 name="–юкзак туристический"
 weight=600
 volume=1200
 container=28000
-stype="bag"
+stype="Bag"

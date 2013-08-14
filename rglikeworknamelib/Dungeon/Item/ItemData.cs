@@ -16,6 +16,6 @@ namespace rglikeworknamelib.Dungeon.Item {
         public Microsoft.Xna.Framework.Color mmcol;
 
         public int volume;
-        public string stype;
+        public ItemType stype;
     }
 }

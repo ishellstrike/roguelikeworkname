@@ -1,5 +1,5 @@
 namespace rglikeworknamelib.Dungeon.Item {
-    internal enum ItemType
+    public enum ItemType
     {
         Nothing,
 
@@ -18,10 +18,12 @@ namespace rglikeworknamelib.Dungeon.Item {
 
         Ammo,
 
+        Bag,
+
         Food,
         Medicine,
 
-        Parts,
+        Craft,
 
         Currency
     }

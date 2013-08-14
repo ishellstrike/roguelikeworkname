@@ -51,7 +51,14 @@ namespace rglikeworknamelib.Parser
                         if (lines[i].StartsWith("stype=")) {
                             string extractedstring =
                                 ParsersCore.stringExtractor.Match(lines[i]).ToString();
-                            ((ItemData)cur.Value).stype = extractedstring.Substring(1, extractedstring.Length - 2);
+                            ItemType a;
+
+                            if (ItemType.TryParse(extractedstring.Substring(1, extractedstring.Length - 2),out a)) {
+                                ((ItemData) cur.Value).stype = a;
+                            } else {
+                                ((ItemData) cur.Value).stype = ItemType.Nothing;
+                            }
+
                         }
                         if (lines[i].StartsWith("weight=")) {
                             string extractedstring =

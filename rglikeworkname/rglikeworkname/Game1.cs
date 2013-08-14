@@ -26,23 +26,26 @@ namespace jarg
         private MonsterDataBase mdb_;
         private SchemesDataBase sdb_;
         private ItemDataBase idb_;
+
         private WindowSystem ws_;
         private ParticleSystem ps_;
         private BulletSystem bs_;
+        private MonsterSystem monsterSystem_;
+        private GameLevel currentFloor_;
+        private InventorySystem inventory_;
+        
+        private Player player_;
 
         private GraphicsDeviceManager graphics_;
         private Vector2 camera_;
-        private GameLevel currentFloor_;
         private SpriteFont font1_;
         private KeyboardState ks_;
         private Vector2 lastPos_;
         private LineBatch lineBatch_;
         private KeyboardState lks_;
         private MouseState lms_;
-        private MonsterSystem monsterSystem_;
         private MouseState ms_;
         private Vector2 pivotpoint_;
-        private Player player_;
         private SpriteBatch spriteBatch_;
 
         private Texture2D whitepixel;
@@ -97,6 +100,7 @@ namespace jarg
         private ProgressBar StatsJajda;
         private ProgressBar StatsHeat;
         private Button CloseAllTestButton;
+        private ListContainer contaiter1;
 
         private Window WindowMinimap;
         private Image ImageMinimap;
@@ -123,15 +127,29 @@ namespace jarg
         private Window WindowCaracterCration;
         private Button ButtonCaracterConfirm;
         private Button ButtonCaracterCancel;
+
+        private Window WindowPickup;
+
+        private Window WindowInventory;
+        private ListContainer ContainerInventoryItems;
+        private Label InventoryMoreInfo;
+        private Button InventorySortAll;
+        private Button InventorySortMedicine;
+        private Button InventorySortFood;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
-            WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws) { Visible = false };
+            Random rnd = new Random();
+
+            WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws);
             StatsHeat = new ProgressBar(new Rectangle(50,50,100,20), "", wp, sf, WindowStats);
             StatsJajda = new ProgressBar(new Rectangle(50, 50 + 30, 100, 20), "", wp, sf, WindowStats);
             StatsHunger = new ProgressBar(new Rectangle(50, 50 + 30*2, 100, 20), "", wp, sf, WindowStats);
             CloseAllTestButton = new Button(new Vector2(10,100), "Close all", wp, sf, WindowStats);
             CloseAllTestButton.onPressed += CloseAllTestButton_onPressed;
+            contaiter1 = new ListContainer(new Rectangle(200,200,100,200), wp, sf, WindowStats);
+            for (int i = 1; i < 20; i++ )
+                contaiter1.AddItem(new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), wp, sf, WindowStats));
 
             WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 100, 100), "minimap", true,
                                        wp, sf, ws) {NoBorder = true, Closable = false, Moveable = false};
@@ -185,6 +203,58 @@ namespace jarg
             ButtonCaracterConfirm.onPressed += ButtonCaracterConfirm_onPressed;
             ButtonCaracterCancel = new Button(new Vector2(0, Settings.Resolution.Y / 2 - 20), "Cancel", wp, sf, WindowCaracterCration);
             ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
+
+            WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y/10), "Inventory", true, wp, sf, ws);
+            ContainerInventoryItems = new ListContainer(new Rectangle(10, 30, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
+            InventoryMoreInfo = new Label(new Vector2(WindowInventory.Locate.Width - 200, 40), "", wp, sf, WindowInventory);
+            InventorySortAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All", wp, sf, WindowInventory);
+            InventorySortAll.onPressed += new EventHandler(InventorySortAll_onPressed);
+            InventorySortMedicine = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30), "Medicine", wp, sf, WindowInventory);
+            InventorySortMedicine.onPressed += new EventHandler(InventorySortMedicine_onPressed);
+            InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2), "Food", wp, sf, WindowInventory);
+            InventorySortFood.onPressed += new EventHandler(InventorySortFood_onPressed);
+        }
+
+        void InventorySortFood_onPressed(object sender, EventArgs e)
+        {
+            nowSort_ = ItemType.Food;
+            UpdateInventoryContainer();
+        }
+
+        void InventorySortMedicine_onPressed(object sender, EventArgs e)
+        {
+            nowSort_ = ItemType.Medicine;
+            UpdateInventoryContainer();
+        }
+
+        void InventorySortAll_onPressed(object sender, EventArgs e)
+        {
+            nowSort_ = ItemType.Nothing;
+            UpdateInventoryContainer();
+        }
+
+        private ItemType nowSort_ = ItemType.Nothing;
+        private List<Item> inInv = new List<Item>(); 
+        void UpdateInventoryContainer() {
+            var a = inventory_.FilterByType(nowSort_);
+            inInv = a;
+
+            ContainerInventoryItems.Clear();
+
+            int cou = 0;
+            foreach (var item in a) {
+                var i = new Label(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count),
+                                  whitepixel, font1_, WindowInventory);
+                i.Tag = cou;
+                i.onPressed += PressInInventory;
+                cou++;
+                ContainerInventoryItems.AddItem(i);
+            }
+        }
+
+        void PressInInventory(object sender, EventArgs e) {
+            var a = (int) (sender as Label).Tag;
+            InventoryMoreInfo.Text = idb_.GetItemFullDescription(inInv[a].Id);
         }
 
         void ButtonCaracterCancel_onPressed(object sender, EventArgs e)
@@ -303,7 +373,19 @@ namespace jarg
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
+            inventory_ = new InventorySystem(idb_);
+
             CreateWindows(whitepixel, font1_, ws_);
+
+            Random rnd = new Random();
+            for (int i = 0; i < 1000; i++) {
+                int aa = rnd.Next(1, 100);
+                if (idb_.data.ContainsKey(aa)) {
+                    inventory_.items.Add(new Item() {Count = rnd.Next(1,10), Id = aa});
+                }
+            }
+            
+            UpdateInventoryContainer();
         }
 
         protected override void UnloadContent()
@@ -413,11 +495,17 @@ namespace jarg
             }
 
             if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up) {
-                if(!ws_.CloseTop()) {
+                if (!ws_.CloseTop()) {
                     WindowIngameMenu.Visible = true;
                 }
-
             }
+
+            if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
+                    WindowInventory.Visible = !WindowInventory.Visible;
+                if (WindowInventory.Visible) {
+                    WindowInventory.OnTop();
+                }
+           }
 
             pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200) / 2, player_.Position.Y - Settings.Resolution.Y / 2);
 
