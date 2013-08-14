@@ -71,6 +71,8 @@ namespace rglikeworknamelib {
         }
 
         private static Color hcol_ = Color.LightGray;
+        public static bool IsAMDM;
+
         public static Color HudСolor {
             get { return hcol_; }
             set { hcol_ = value; }

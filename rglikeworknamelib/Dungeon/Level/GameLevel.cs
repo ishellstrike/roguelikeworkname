@@ -557,10 +557,16 @@ namespace rglikeworknamelib.Dungeon.Level {
             return new Vector2(Pos.X < 0 ? (Pos.X + 1) / MapSector.Rx - 1 : Pos.X / MapSector.Rx, Pos.Y < 0 ? (Pos.Y + 1) / MapSector.Ry - 1 : Pos.Y / MapSector.Ry);
         }
 
-        public void OpenCloseDoor(int x, int y)
-        {
-            if(blockDataBase.Data[GetBlock(x,y).Id].SmartAction == SmartAction.ActionOpenClose) {
-                SetBlock(x, y, blockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);
+        public void OpenCloseDoor(int x, int y) {
+            var a = GetBlock(x, y);
+            if(blockDataBase.Data[a.Id].SmartAction == SmartAction.ActionOpenClose) {
+                if (blockDataBase.Data[a.Id].IsWalkable) {
+                    EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.currentTime, Color.Gray);
+                }
+                else {
+                    EventLog.Add("Вы открыли дверь", GlobalWorldLogic.currentTime, Color.LightGray);
+                }
+                SetBlock(x, y, blockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);               
             }
         }
 

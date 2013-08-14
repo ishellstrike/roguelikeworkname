@@ -123,6 +123,8 @@ namespace rglikeworknamelib
             public bool Moveable = true;
             public bool NoBorder;
 
+            public bool hides;
+
             public bool Visible { get; set; }
 
             public object Tag { get; set; }
@@ -224,7 +226,7 @@ namespace rglikeworknamelib
             {
                 if (Visible)
                 {
-                    if(!NoBorder)
+                    if(!NoBorder && (!hides || (hides && aimed)))
                     {
                         sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, backtransparent_, 0, Vector2.Zero,
                                 new Vector2(Locate.Width, Locate.Height), SpriteEffects.None, 0);
@@ -260,11 +262,12 @@ namespace rglikeworknamelib
                 }
             }
 
-            public void Update(GameTime gt, MouseState ms, MouseState lms)
-            {
+            public void Update(GameTime gt, MouseState ms, MouseState lms) {
+                aimed = false;
                 if (Visible) {
                     if (parent_.Mopusehook == false && lms.X >= Locate.Left && lms.Y >= Locate.Top &&
                         lms.X <= Locate.Right && lms.Y <= Locate.Bottom) {
+                        aimed = true;
                         parent_.Mopusehook = true;
 
                         if (lms.LeftButton == ButtonState.Pressed || ms.RightButton == ButtonState.Pressed) {
@@ -284,6 +287,8 @@ namespace rglikeworknamelib
                     }
                 }
             }
+
+            protected bool aimed;
 
             public Vector2 GetLocation()
             {
@@ -310,8 +315,8 @@ namespace rglikeworknamelib
 
         public class ListContainer : IGameWindowComponent {
              private Rectangle location_;
-             private List<IGameWindowComponent> Items = new List<IGameWindowComponent>();
-             private int fromI_;
+             public List<IGameWindowComponent> Items = new List<IGameWindowComponent>();
+             public int fromI_;
              private readonly Texture2D whitepixel_;
              private readonly SpriteFont font1_;
              private Window parent_;
@@ -320,6 +325,7 @@ namespace rglikeworknamelib
              public object Tag { get; set; }
 
              private Button buttonUp_, buttonDown_;
+            private VerticalProgressBar progress_;
 
              public ListContainer(Rectangle loc, Texture2D wp, SpriteFont sf, Window win) {
                  location_ = loc;
@@ -330,20 +336,27 @@ namespace rglikeworknamelib
 
                  Visible = true;
 
-                 buttonUp_ = new Button(new Vector2(location_.Width - 30 + loc.X, 2 +loc.Y), "^", wp, sf, win);
+                 buttonUp_ = new Button(new Vector2(location_.Width - 30 + loc.X, 2 + loc.Y - 20), "^", wp, sf, win);
                  buttonUp_.onPressed += buttonUp__onPressed;
-                 buttonDown_ = new Button(new Vector2(location_.Width - 30 + loc.X, location_.Height - 25 + loc.Y), "v", wp, sf, win);
+                 buttonDown_ = new Button(new Vector2(location_.Width - 30 + loc.X, location_.Height - 25 + loc.Y - 20), "v", wp, sf, win);
                  buttonDown_.onPressed += buttonDown__onPressed;
+                 progress_ = new VerticalProgressBar(new Rectangle((int)buttonUp_.GetPosition().X, (int)buttonUp_.GetPosition().Y + 34, 19, (int)buttonDown_.GetPosition().Y - (int)buttonUp_.GetPosition().Y - 50), "", wp, font1_, win);
              }
 
              void buttonDown__onPressed(object sender, EventArgs e)
              {
                  ListDown();
+
+                 progress_.Max = Items.Count;
+                 progress_.Progress = fromI_ + ToShow();
              }
 
              void buttonUp__onPressed(object sender, EventArgs e)
              {
                  ListUp();
+
+                 progress_.Max = Items.Count;
+                 progress_.Progress = fromI_ + ToShow();
              }
 
              public List<IGameWindowComponent> GetItems() {
@@ -352,12 +365,18 @@ namespace rglikeworknamelib
 
              public void AddItem(IGameWindowComponent it) {
                  Items.Add(it);
+
+                 progress_.Max = Items.Count;
+                 progress_.Progress = fromI_ + ToShow();
              }
              
              public void RemoveItem(IGameWindowComponent it) {
                  if(Items.Contains(it)) {
                      Items.Remove(it);
                  }
+
+                 progress_.Max = Items.Count;
+                 progress_.Progress = fromI_ + ToShow();
              }
 
             public void Clear() {
@@ -366,15 +385,15 @@ namespace rglikeworknamelib
                     parent_.Components.Remove(item);
                 }
                 Items.Clear();
+
+                progress_.Max = Items.Count;
+                progress_.Progress = fromI_ + ToShow();
             }
 
              public void Draw(SpriteBatch sb) {
                  var ts = ToShow();
 
                  var l = GetPosition();
-
-                 buttonUp_.SetPosition(new Vector2(location_.Width - 40 + l.X, 0 + l.Y));
-                 buttonDown_.SetPosition(new Vector2(location_.Width - 40 + l.X, location_.Height - 40 + l.Y));
 
                  foreach (var item in Items) {
                      item.Visible = false;
@@ -403,7 +422,7 @@ namespace rglikeworknamelib
                  }
              }
 
-            private int ToShow()
+            public int ToShow()
              {
                  int toshow = location_.Height / 30;
                  return toshow = toshow > Items.Count - 1 ? Items.Count - 1 : toshow;
@@ -444,6 +463,15 @@ namespace rglikeworknamelib
             public int GetTag()
             {
                 return 0;
+            }
+
+            public void ScrollBottom() {
+                var a = ToShow();
+                fromI_ = Items.Count - a;
+                if (fromI_ + a > Items.Count - 1) fromI_ = Items.Count - 1 - a;
+
+                progress_.Max = Items.Count;
+                progress_.Progress = fromI_ + ToShow();
             }
         }
 
@@ -694,8 +722,8 @@ namespace rglikeworknamelib
             public void Draw(SpriteBatch sb) {
                 Vector2 realpos = Parent.GetLocation() + GetPosition();
 
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, realpos, null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, realpos, null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
                 sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
 
@@ -717,6 +745,69 @@ namespace rglikeworknamelib
             }
 
             public float Width() {
+                return locate_.Width;
+            }
+        }
+
+        public class VerticalProgressBar : IGameWindowComponent
+        {
+            private Rectangle locate_;
+            public String Text;
+            private Window Parent;
+
+            public bool Visible { get; set; }
+
+            public object Tag { get; set; }
+
+            private readonly Texture2D whitepixel_;
+            private readonly SpriteFont font1_;
+
+            private Color c1 = Color.Blue;
+            private Color c2 = Color.Red;
+
+            public int Progress = 0, Max = 100;
+
+            public VerticalProgressBar(Rectangle r, string s, Texture2D whi, SpriteFont sf, Window pa)
+            {
+                locate_ = r;
+                Text = s;
+                whitepixel_ = whi;
+                font1_ = sf;
+                Parent = pa;
+                Parent.AddComponent(this);
+                Visible = true;
+            }
+
+            public void Draw(SpriteBatch sb)
+            {
+                Vector2 realpos = Parent.GetLocation() + GetPosition();
+
+                sb.Draw(whitepixel_, realpos, null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, realpos, null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
+                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
+
+                sb.Draw(whitepixel_, new Vector2(locate_.X + 3, locate_.Y + 3) + Parent.GetLocation(), null, Settings.HudСolor, 0, Vector2.Zero, new Vector2((locate_.Width - 4), (locate_.Height - 4) * ((float)Progress / Max)), SpriteEffects.None, 0);
+            }
+
+            public void Update(GameTime gt, MouseState ms, MouseState lms)
+            {
+
+            }
+
+            public Vector2 GetPosition()
+            {
+                return new Vector2(locate_.X, locate_.Y);
+            }
+
+            public void SetPosition(Vector2 pos)
+            {
+                locate_.X = (int)pos.X;
+                locate_.Y = (int)pos.Y;
+            }
+
+            public float Width()
+            {
                 return locate_.Width;
             }
         }

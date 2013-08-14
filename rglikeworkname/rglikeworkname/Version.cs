@@ -8,9 +8,9 @@ namespace jarg
     public static class Version {
         public static int release = 0;
         public static int Major = 1;
-        public static int Cores = 10;
+        public static int Cores = 12;
         public static int Minor = 1;
-        public static int Commit = 22;
+        public static int Commit = 26;
 
         public static string GetShort() {
             return string.Format("v{3}.{0}.{1}.{2}",Major,Cores,Minor,release);

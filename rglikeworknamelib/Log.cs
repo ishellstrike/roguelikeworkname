@@ -1,23 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon;
 
 namespace rglikeworknamelib
 {
     public static class Log
     {
-        public static string[] log = new string[100];
+        public static List<string> log = new List<string>();
 
         public static void Init() {
-            for (int i = 0; i < log.Length; i++) {
-                log[i] = "";
-            }
         }
 
         public static void AddString(string s) {
-            for (int i = 1; i < log.Length; i++) {
-                log[i-1] = log[i];
-            }
-            log[99] = s;
+            log.Add(s);
         }
 
         public static void LogError(string s) {
@@ -36,5 +33,48 @@ namespace rglikeworknamelib
             }
             sw.Close();
         }
+    }
+
+    public static class EventLog
+    {
+        public static List<string> log = new List<string>();
+        public static List<Color> cols = new List<Color>();
+
+        public static void Add(string a) {
+            log.Add(a);
+
+            if(log.Count > 100) log.RemoveAt(0);
+
+            UpdateEvent();
+        }
+
+        public static void Add(string s, DateTime t, Color c)
+        {
+            log.Add(GlobalWorldLogic.GetTimeString(t) + " " + s);
+            cols.Add(c);
+
+            if (log.Count > 100) { 
+                log.RemoveAt(0);
+                cols.RemoveAt(0);
+            }
+
+            UpdateEvent();
+        }
+
+        public static void Add(string s, DateTime t) {
+            log.Add(string.Format("{0}:{1:00}:{2:00}",t.Hour,t.Minute,t.Second)+" "+s);
+
+            if (log.Count > 100) log.RemoveAt(0);
+
+            UpdateEvent();
+        }
+
+        private static void UpdateEvent() {
+            if (onLogUpdate != null) {
+                    onLogUpdate(null, null);
+                }
+        }
+
+        public static event EventHandler onLogUpdate;
     }
 }

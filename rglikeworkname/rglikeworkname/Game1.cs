@@ -112,6 +112,8 @@ namespace jarg
         private Button ButtonHudColor3;
         private Button ButtonHudColor4;
         private Button ButtonHudColor5;
+        private Label LabelTimeType;
+        private Button Button12h, Button24h;
 
         private Window WindowIngameMenu;
         private Label LabelIngameMenu1;
@@ -136,12 +138,15 @@ namespace jarg
         private Button InventorySortAll;
         private Button InventorySortMedicine;
         private Button InventorySortFood;
+
+        private Window WindowEventLog;
+        private ListContainer ContainerEventLog;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
             Random rnd = new Random();
 
-            WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws);
+            WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws) { Visible = false };
             StatsHeat = new ProgressBar(new Rectangle(50,50,100,20), "", wp, sf, WindowStats);
             StatsJajda = new ProgressBar(new Rectangle(50, 50 + 30, 100, 20), "", wp, sf, WindowStats);
             StatsHunger = new ProgressBar(new Rectangle(50, 50 + 30*2, 100, 20), "", wp, sf, WindowStats);
@@ -170,6 +175,11 @@ namespace jarg
             ButtonHudColor4.onPressed += ButtonHudColor4_onPressed;
             ButtonHudColor5 = new Button(new Vector2(10 + 50 + 40 * 5, 10), "5", wp, sf, WindowSettings);
             ButtonHudColor5.onPressed += ButtonHudColor5_onPressed;
+            LabelHudColor = new Label(new Vector2(10, 10 + 40 * 1), "Time format", wp, sf, WindowSettings);
+            Button12h = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 1), "12h", wp, sf, WindowSettings);
+            Button12h.onPressed += new EventHandler(Button12h_onPressed);
+            Button24h = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 1), "24h", wp, sf, WindowSettings);
+            Button24h.onPressed += new EventHandler(Button24h_onPressed);      
 
             WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) {Visible = false};
             ButtonIngameMenuSettings = new Button(new Vector2(20,100), "Settings", wp, sf, WindowIngameMenu);
@@ -204,7 +214,7 @@ namespace jarg
             ButtonCaracterCancel = new Button(new Vector2(0, Settings.Resolution.Y / 2 - 20), "Cancel", wp, sf, WindowCaracterCration);
             ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
 
-            WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y/10), "Inventory", true, wp, sf, ws);
+            WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
             ContainerInventoryItems = new ListContainer(new Rectangle(10, 30, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
             InventoryMoreInfo = new Label(new Vector2(WindowInventory.Locate.Width - 200, 40), "", wp, sf, WindowInventory);
             InventorySortAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All", wp, sf, WindowInventory);
@@ -213,6 +223,29 @@ namespace jarg
             InventorySortMedicine.onPressed += new EventHandler(InventorySortMedicine_onPressed);
             InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2), "Food", wp, sf, WindowInventory);
             InventorySortFood.onPressed += new EventHandler(InventorySortFood_onPressed);
+
+            WindowEventLog = new Window(new Vector2(Settings.Resolution.X / 3, Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false};
+            ContainerEventLog = new ListContainer( new Rectangle(0,20,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/4-20), wp, sf, WindowEventLog);
+            EventLog.onLogUpdate += EventLog_onLogUpdate;
+        }
+
+        void Button24h_onPressed(object sender, EventArgs e) {
+            Settings.IsAMDM = false;
+        }
+
+        void Button12h_onPressed(object sender, EventArgs e) {
+            Settings.IsAMDM = true;
+        }
+
+        void EventLog_onLogUpdate(object sender, EventArgs e)
+        {
+            ContainerEventLog.Clear();
+            int i = 0;
+            foreach (var ss in EventLog.log) {
+                ContainerEventLog.AddItem(new Label(Vector2.Zero, ss, whitepixel, font1_, EventLog.cols[i], WindowEventLog));
+                i++;
+            }
+            ContainerEventLog.ScrollBottom();
         }
 
         void InventorySortFood_onPressed(object sender, EventArgs e)
@@ -505,7 +538,16 @@ namespace jarg
                 if (WindowInventory.Visible) {
                     WindowInventory.OnTop();
                 }
-           }
+            }
+
+            if (ks_[Keys.L] == KeyState.Down && lks_[Keys.L] == KeyState.Up)
+            {
+                WindowEventLog.Visible = !WindowEventLog.Visible;
+                if (WindowEventLog.Visible)
+                {
+                    WindowEventLog.OnTop();
+                }
+            }
 
             pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200) / 2, player_.Position.Y - Settings.Resolution.Y / 2);
 

@@ -112,7 +112,6 @@ namespace rglikeworknamelib.Dungeon
             return new TimeSpan();
         }
 
-
         public static TimeSpan GetSunsetTime(DateTime cur)
         {
             switch (cur.Month) {
@@ -142,6 +141,17 @@ namespace rglikeworknamelib.Dungeon
                     return new TimeSpan(17, 3, 0);
             }
             return new TimeSpan();
+        }
+
+        public static string GetTimeString(DateTime t) {
+            if (Settings.IsAMDM)
+            {
+                if (t.Hour == 0) return string.Format("PM {0}:{1:00}:{2:00}", 12, t.Minute, t.Second);
+                return t.Hour <= 12 ? string.Format("AM {0}:{1:00}:{2:00}", t.Hour, t.Minute, t.Second) : string.Format("PM {0}:{1:00}:{2:00}", t.Hour - 12, t.Minute, t.Second);
+            }
+            else {
+                return string.Format("{0}:{1:00}:{2:00}", t.Hour, t.Minute, t.Second);
+            }
         }
     }
 }
