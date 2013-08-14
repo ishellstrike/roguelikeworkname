@@ -187,7 +187,7 @@ namespace jarg
 
             WindowMainMenu = new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y/2), "MAIN MENU",
                                         false, wp, sf, ws) {NoBorder = true, Moveable = false};
-            LabelMainMenu = new Label(new Vector2(10, 10), @"     __                     
+            LabelMainMenu = new Label(new Vector2(10, 10), @"     __                      
     |__|____ _______  ____  
     |  \__  \\_  __ \/ ___\ 
     |  |/ __ \|  | \/ /_/  >
