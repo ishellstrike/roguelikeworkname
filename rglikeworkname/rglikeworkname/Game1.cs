@@ -134,7 +134,7 @@ namespace jarg
 
         private Window WindowInventory;
         private ListContainer ContainerInventoryItems;
-        private Label InventoryMoreInfo;
+        private LabelFixed InventoryMoreInfo;
         private Button InventorySortAll;
         private Button InventorySortMedicine;
         private Button InventorySortFood;
@@ -177,9 +177,9 @@ namespace jarg
             ButtonHudColor5.onPressed += ButtonHudColor5_onPressed;
             LabelHudColor = new Label(new Vector2(10, 10 + 40 * 1), "Time format", wp, sf, WindowSettings);
             Button12h = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 1), "12h", wp, sf, WindowSettings);
-            Button12h.onPressed += new EventHandler(Button12h_onPressed);
+            Button12h.onPressed += Button12h_onPressed;
             Button24h = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 1), "24h", wp, sf, WindowSettings);
-            Button24h.onPressed += new EventHandler(Button24h_onPressed);      
+            Button24h.onPressed += Button24h_onPressed;      
 
             WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) {Visible = false};
             ButtonIngameMenuSettings = new Button(new Vector2(20,100), "Settings", wp, sf, WindowIngameMenu);
@@ -216,7 +216,7 @@ namespace jarg
 
             WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
             ContainerInventoryItems = new ListContainer(new Rectangle(10, 30, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
-            InventoryMoreInfo = new Label(new Vector2(WindowInventory.Locate.Width - 200, 40), "", wp, sf, WindowInventory);
+            InventoryMoreInfo = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowInventory);
             InventorySortAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All", wp, sf, WindowInventory);
             InventorySortAll.onPressed += new EventHandler(InventorySortAll_onPressed);
             InventorySortMedicine = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30), "Medicine", wp, sf, WindowInventory);
@@ -242,7 +242,7 @@ namespace jarg
             ContainerEventLog.Clear();
             int i = 0;
             foreach (var ss in EventLog.log) {
-                ContainerEventLog.AddItem(new Label(Vector2.Zero, ss, whitepixel, font1_, EventLog.cols[i], WindowEventLog));
+                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss, whitepixel, font1_, EventLog.cols[i], 35, WindowEventLog));
                 i++;
             }
             ContainerEventLog.ScrollBottom();
@@ -276,8 +276,7 @@ namespace jarg
 
             int cou = 0;
             foreach (var item in a) {
-                var i = new Label(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count),
-                                  whitepixel, font1_, WindowInventory);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count), 22, whitepixel, font1_, WindowInventory);
                 i.Tag = cou;
                 i.onPressed += PressInInventory;
                 cou++;
@@ -629,7 +628,7 @@ namespace jarg
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
                                   (int)Settings.Resolution.Y);
             spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6}", PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.temperature, GlobalWorldLogic.currentTime, currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated), new Vector2(500, 10), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6}", PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime, currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated), new Vector2(500, 10), Color.White);
 
             int nx = (int)((ms_.X + camera_.X) / 32.0);
             int ny = (int)((ms_.Y + camera_.Y) / 32.0);

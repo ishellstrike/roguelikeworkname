@@ -561,10 +561,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             var a = GetBlock(x, y);
             if(blockDataBase.Data[a.Id].SmartAction == SmartAction.ActionOpenClose) {
                 if (blockDataBase.Data[a.Id].IsWalkable) {
-                    EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.currentTime, Color.Gray);
+                    EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.CurrentTime, Color.Gray);
                 }
                 else {
-                    EventLog.Add("Вы открыли дверь", GlobalWorldLogic.currentTime, Color.LightGray);
+                    EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray);
                 }
                 SetBlock(x, y, blockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);               
             }

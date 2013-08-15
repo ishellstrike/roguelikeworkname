@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -70,8 +71,14 @@ namespace rglikeworknamelib
                
             }
 
-            public float Width() {
-                return 0;
+            public float Width
+            {
+                get { return 0; }
+            }
+
+            public float Height
+            {
+                get { return 0; }
             }
 
             internal void ToTop(Window win)
@@ -199,14 +206,14 @@ namespace rglikeworknamelib
 
             public void CenterComponentHor(IGameWindowComponent a) {
                 var p = a.GetPosition();
-                a.SetPosition(new Vector2((Locate.Width / 2 - a.Width()/2), p.Y));
+                a.SetPosition(new Vector2((Locate.Width / 2 - a.Width/2), p.Y));
             }
 
             [Obsolete]
             public void CenterComponentVert(IGameWindowComponent a)
             {
                 var p = a.GetPosition();
-                a.SetPosition(new Vector2(p.X, (Locate.Height / 2 + a.Width()) / 2));
+                a.SetPosition(new Vector2(p.X, (Locate.Height / 2 + a.Width) / 2));
             }
 
             void closeButton__onPressed(object sender, EventArgs e)
@@ -304,8 +311,14 @@ namespace rglikeworknamelib
                 Locate.Y = (int) pos.Y;
             }
 
-            public float Width() {
-                return Locate.Width;
+            public float Width
+            {
+                get { return Locate.Width; }
+            }
+
+            public float Height
+            {
+                get { return Locate.Height; }
             }
 
             public void OnTop() {
@@ -399,9 +412,22 @@ namespace rglikeworknamelib
                      item.Visible = false;
                  }
 
-                 for (int i = fromI_; i < fromI_ + ts; i++) {
-                     Items[i].Visible = true;
-                     Items[i].SetPosition(new Vector2(l.X + 10, (i - fromI_)*30 + l.Y));
+                 float curBottom = 0;
+                 int fromNow = fromI_;
+                 if (fromNow < Items.Count) {
+                     while (true) {
+                         if (curBottom + Items[fromNow].Height + 10 > location_.Bottom) {
+                             break;
+                         }
+                         Items[fromNow].Visible = true;
+                         Items[fromNow].SetPosition(new Vector2(l.X + 10, curBottom));
+
+                         curBottom += Items[fromNow].Height + 10;
+                         fromNow++;
+                         if (fromNow > Items.Count - 1) {
+                             break;
+                         } 
+                     }
                  }
 
                  if (Visible) {
@@ -452,8 +478,14 @@ namespace rglikeworknamelib
                  location_.Y = (int)pos.Y;
              }
 
-             public float Width() {
-                 return location_.Width;
+             public float Width
+             {
+                 get { return location_.Width; }
+             }
+
+             public float Height
+             {
+                 get { return location_.Height; }
              }
 
             public void SetVisible(bool vis) {
@@ -478,7 +510,6 @@ namespace rglikeworknamelib
         public class Label : IGameWindowComponent
         {
             protected Vector2 pos_;
-            public String Text;
             protected Color col_;
             protected Window Parent;
             protected bool isHudColored;
@@ -490,6 +521,21 @@ namespace rglikeworknamelib
             private bool aimed_;
 
             protected readonly SpriteFont font1_;
+
+            private float calcHeight, calcWidth;
+
+            private string text_;
+            public virtual string Text {
+                get { return text_; }
+                set {
+                    text_ = value;
+                    text_ = text_.Trim('\n');
+                    var a = font1_.MeasureString(text_);
+                    calcHeight = a.Y;
+                    calcWidth = a.X;
+                    
+                }
+            }
 
             public void SetPos(Vector2 pos) {
                 pos_ = pos;
@@ -580,8 +626,14 @@ namespace rglikeworknamelib
                 pos_ = pos;
             }
 
-            public virtual float Width() {
-                return font1_.MeasureString(Text).X;
+            public virtual float Width
+            {
+                get { return calcWidth; }
+            }
+
+            public float Height
+            {
+                get { return calcHeight; }
             }
 
             public void SetVisible(bool vis) {
@@ -594,7 +646,41 @@ namespace rglikeworknamelib
             }
         }
 
-        public class RunningLabel : Label {
+    public class LabelFixed : Label {
+            private int fixLength;
+
+            public override sealed string Text
+            {
+                get
+                {
+                    return base.Text;
+                }
+                set
+                {
+                    base.Text = NormString(value, fixLength);
+                }
+            }
+
+            private static string NormString(string s, int fixLength) {
+                string result = "";
+                Regex regular = new Regex(string.Format(".{{0,{0}}}(?=\\s|$)", fixLength), RegexOptions.Singleline);
+                MatchCollection matches = regular.Matches(s);
+                foreach (Match match in matches) result += match.Value.Trim() + "\n";
+                return result;
+            }
+
+            public LabelFixed(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, int fixl, Window win) : base(p, s, wp, wf, c, win) {
+                fixLength = fixl;
+                Text = s;
+            }
+
+            public LabelFixed(Vector2 p, string s, int fixl, Texture2D wp, SpriteFont wf, Window win) : base(p, s, wp, wf, win) {
+                fixLength = fixl;
+                Text = s;
+            }
+    }
+
+    public class RunningLabel : Label {
             private float runStep;
             private int Size;
             public RunningLabel(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, int size, Window win) : base(p, s, wp, wf, c, win) {
@@ -633,9 +719,13 @@ namespace rglikeworknamelib
  	            base.Update(gt, ms, lms);
             }
 
-            public override float Width() {
-                var ss = Size > Text.Length - 1 ? Text.Length - 1 : Size;
-                return font1_.MeasureString("f").X * ss;
+            public override float Width
+            {
+                get 
+                {
+                    var ss = Size > Text.Length - 1 ? Text.Length - 1 : Size;
+                    return font1_.MeasureString("f").X*ss;
+                }
             }
         }
 
@@ -687,8 +777,12 @@ namespace rglikeworknamelib
                 pos_ = pos;
             }
 
-            public float Width() {
-                return image.Width;
+            public float Width {
+                get { return image.Width; }
+            }
+
+            public float Height {
+                get { return image.Height; }
             }
         }
 
@@ -744,8 +838,12 @@ namespace rglikeworknamelib
                 locate_.Y = (int) pos.Y;
             }
 
-            public float Width() {
-                return locate_.Width;
+            public float Width {
+                get { return locate_.Width; }
+            }
+
+            public float Height {
+                get { return locate_.Height; }
             }
         }
 
@@ -806,9 +904,12 @@ namespace rglikeworknamelib
                 locate_.Y = (int)pos.Y;
             }
 
-            public float Width()
-            {
-                return locate_.Width;
+            public float Width {
+                get { return locate_.Width; }
+            }
+
+            public float Height {
+                get { return locate_.Height; }
             }
         }
 
@@ -927,8 +1028,12 @@ namespace rglikeworknamelib
                 locate_.Y = (int)pos.Y;
             }
 
-            public float Width() {
-                return locate_.Width;
+            public float Width {
+                get { return locate_.Width; }
+            }
+
+            public float Height {
+                get { return locate_.Height; }
             }
         }
 
@@ -949,7 +1054,8 @@ namespace rglikeworknamelib
 
             Vector2 GetPosition();
             void SetPosition(Vector2 pos);
-            float Width();
+            float Width { get; }
+            float Height { get; }
             bool Visible { get; set; }
             object Tag { get; set; }
         }

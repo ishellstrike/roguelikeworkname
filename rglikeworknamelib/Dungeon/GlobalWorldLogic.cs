@@ -6,17 +6,105 @@ using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon
 {
+    enum Seasons {
+        Winter,
+        Summer,
+        Vesna,
+        Osen
+    }
+
+    enum DayPart {
+        Day,
+        Morning,
+        Vecher,
+        Night
+    }
+
     public static class GlobalWorldLogic
     {
-        static Random rnd = new Random();
-        public static DateTime currentTime = new DateTime(2020, rnd.Next(1, 13), 1);
-        public static float temperature = 10;
+        public static DateTime CurrentTime = new DateTime(2020, 6, 1, 12, 0, 0);
+        public static float Temperature = 10;
+        private static Seasons currentSeason_ = Seasons.Summer;
+        private static DayPart dayPart_  = DayPart.Day;
+        private static readonly long Hour3 = new TimeSpan(0,3,0,0).Ticks;
 
         public static void Update(GameTime gt) {
-            currentTime += TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds);
-            temperature -= temperature * (float)gt.ElapsedGameTime.TotalMinutes;
-            temperature += GetNormalTemp(currentTime) * (float)gt.ElapsedGameTime.TotalMinutes;
+            CurrentTime += TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds);
+            Temperature -= Temperature * (float)gt.ElapsedGameTime.TotalMinutes;
+            Temperature += GetNormalTemp(CurrentTime) * (float)gt.ElapsedGameTime.TotalMinutes;
+
+            switch (dayPart_) {
+                case DayPart.Day:
+                    if (CurrentTime.TimeOfDay.Ticks > GetSunsetTime(CurrentTime).Ticks - Hour3) {
+                        dayPart_ = DayPart.Vecher;
+                        if(onVecherBegins != null) {
+                            onVecherBegins(null, null);
+                        }
+                    }
+                    break;
+                case DayPart.Morning:
+                    if (CurrentTime.TimeOfDay.Ticks > GetSunriseTime(CurrentTime).Ticks + Hour3) {
+                        dayPart_ = DayPart.Day;
+                        if(onDayBegins != null) {
+                            onDayBegins(null, null);
+                        }
+                    }
+                    break;
+                case DayPart.Night:
+                    if(CurrentTime.TimeOfDay.Ticks > GetSunriseTime(CurrentTime).Ticks) {
+                        dayPart_ = DayPart.Morning;
+                        if(onMorningBegins != null) {
+                            onMorningBegins(null, null);
+                        }
+                    }
+                    break;
+                case DayPart.Vecher:
+                    if(CurrentTime.TimeOfDay.Ticks > GetSunsetTime(CurrentTime).Ticks) {
+                        dayPart_ = DayPart.Night;
+                        if(onNightBegins != null) {
+                            onNightBegins(null, null);
+                        }
+                    }
+                    break;
+            }
+
+            switch (currentSeason_) {
+                case Seasons.Osen:
+                    if (CurrentTime.Month >= 11) {
+                        currentSeason_ = Seasons.Winter;
+                        if (onWinterBegins != null) onWinterBegins(null, null);
+                    }
+                    break;
+                case Seasons.Winter:
+                    if (CurrentTime.Month > 3) {
+                        currentSeason_ = Seasons.Vesna;
+                        if (onVesnaBegins != null) onVesnaBegins(null, null);
+                    }
+                    break;
+                case Seasons.Vesna:
+                    if (CurrentTime.Month >= 11) {
+                        currentSeason_ = Seasons.Summer;
+                        if (onSummerBegins != null) onSummerBegins(null, null);
+                    }
+                    break;
+                case Seasons.Summer:
+                    if (CurrentTime.Month > 3) {
+                        currentSeason_ = Seasons.Osen;
+                        if (onOsenBegins != null) onOsenBegins(null, null);
+                    }
+                    break;
+            }
         }
+
+        private static event EventHandler onNightBegins;
+        private static event EventHandler onDayBegins;
+        private static event EventHandler onMorningBegins;
+        private static event EventHandler onVecherBegins;
+
+        private static event EventHandler onWinterBegins;
+        private static event EventHandler onSummerBegins;
+        private static event EventHandler onOsenBegins;
+        private static event EventHandler onVesnaBegins;
 
         public static float GetNormalTemp(DateTime cur)
         {
@@ -67,17 +155,17 @@ namespace rglikeworknamelib.Dungeon
 
         public static bool IsWinter(DateTime cur)
         {
-            return cur.Month >= 11 || cur.Month <= 3;
+            return currentSeason_ == Seasons.Winter;
         }
 
         public static bool IsNight(DateTime cur)
         {
-            return cur.TimeOfDay <= GetSunriseTime(cur) || cur.TimeOfDay >= GetSunsetTime(cur);
+            return dayPart_ == DayPart.Night;
         }
 
         public static bool IsDay(DateTime cur)
         {
-            return !IsNight(cur);
+            return dayPart_ == DayPart.Day ;
         }
 
         public static TimeSpan GetSunriseTime(DateTime cur)

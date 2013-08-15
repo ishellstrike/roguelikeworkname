@@ -60,7 +60,7 @@ namespace rglikeworknamelib.Creatures {
             }  else {
                 int a = IsWarmCloth() ? 10 : 1;
                 heat_ -= heat_ * (float)gt.ElapsedGameTime.TotalMinutes / 10 / a;
-                heat_ += GlobalWorldLogic.temperature * (float)gt.ElapsedGameTime.TotalMinutes / 10 / a;
+                heat_ += GlobalWorldLogic.Temperature * (float)gt.ElapsedGameTime.TotalMinutes / 10 / a;
             }
         }
 
