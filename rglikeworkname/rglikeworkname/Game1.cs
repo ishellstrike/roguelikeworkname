@@ -15,6 +15,7 @@ using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Dungeon.Particles;
+using rglikeworknamelib.Window;
 using Settings = rglikeworknamelib.Settings;
 
 namespace jarg

@@ -101,7 +101,18 @@
     <Compile Include="Creatures\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Window.cs" />
+    <Compile Include="Window\Button.cs" />
+    <Compile Include="Window\IGameWindowComponent.cs" />
+    <Compile Include="Window\Image.cs" />
+    <Compile Include="Window\ImageButton.cs" />
+    <Compile Include="Window\Label.cs" />
+    <Compile Include="Window\LabelFixed.cs" />
+    <Compile Include="Window\ListContainer.cs" />
+    <Compile Include="Window\ProgressBar.cs" />
+    <Compile Include="Window\RunningLabel.cs" />
+    <Compile Include="Window\VerticalProgressBar.cs" />
+    <Compile Include="Window\Window.cs" />
+    <Compile Include="Window\WindowSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="obj\x86\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
