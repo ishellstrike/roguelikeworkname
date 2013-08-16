@@ -13,7 +13,7 @@ namespace rglikeworknamelib.Window {
         public Rectangle Locate;
         private readonly Color backtransparent_;
 
-        private Button closeButton_;
+        private readonly Button closeButton_;
 
         public bool Readytoclose;
 

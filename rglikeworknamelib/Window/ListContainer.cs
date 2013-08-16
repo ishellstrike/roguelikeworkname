@@ -33,22 +33,56 @@ namespace rglikeworknamelib.Window {
             buttonDown_ = new Button(new Vector2(location_.Width - 30 + loc.X, location_.Height - 25 + loc.Y - 20), "v", wp, sf, win);
             buttonDown_.onPressed += buttonDown__onPressed;
             progress_ = new VerticalProgressBar(new Rectangle((int)buttonUp_.GetPosition().X, (int)buttonUp_.GetPosition().Y + 34, 19, (int)buttonDown_.GetPosition().Y - (int)buttonUp_.GetPosition().Y - 50), "", wp, font1_, win);
+        
+            RecalcContainer();
         }
 
         void buttonDown__onPressed(object sender, EventArgs e)
         {
             ListDown();
 
-            progress_.Max = Items.Count;
-            progress_.Progress = fromI_ + ToShow();
+            RecalcContainer();
         }
 
         void buttonUp__onPressed(object sender, EventArgs e)
         {
             ListUp();
 
+            RecalcContainer();
+        }
+
+        private void RecalcContainer() {
             progress_.Max = Items.Count;
             progress_.Progress = fromI_ + ToShow();
+
+            var l = GetPosition();
+
+            foreach (var item in Items)
+            {
+                item.Visible = false;
+            }
+
+            float curBottom = 0;
+            int fromNow = fromI_;
+            if (fromNow < Items.Count)
+            {
+                while (true)
+                {
+                    if (curBottom + Items[fromNow].Height + 10 > location_.Bottom)
+                    {
+                        break;
+                    }
+                    Items[fromNow].Visible = true;
+                    Items[fromNow].SetPosition(new Vector2(l.X + 10, curBottom));
+
+                    curBottom += Items[fromNow].Height + 10;
+                    fromNow++;
+                    if (fromNow > Items.Count - 1)
+                    {
+                        break;
+                    }
+                }
+            }
         }
 
         public List<IGameWindowComponent> GetItems() {
@@ -58,8 +92,7 @@ namespace rglikeworknamelib.Window {
         public void AddItem(IGameWindowComponent it) {
             Items.Add(it);
 
-            progress_.Max = Items.Count;
-            progress_.Progress = fromI_ + ToShow();
+            RecalcContainer();
         }
              
         public void RemoveItem(IGameWindowComponent it) {
@@ -67,8 +100,7 @@ namespace rglikeworknamelib.Window {
                 Items.Remove(it);
             }
 
-            progress_.Max = Items.Count;
-            progress_.Progress = fromI_ + ToShow();
+            RecalcContainer();
         }
 
         public void Clear() {
@@ -78,36 +110,10 @@ namespace rglikeworknamelib.Window {
             }
             Items.Clear();
 
-            progress_.Max = Items.Count;
-            progress_.Progress = fromI_ + ToShow();
+            RecalcContainer();
         }
 
         public void Draw(SpriteBatch sb) {
-            var ts = ToShow();
-
-            var l = GetPosition();
-
-            foreach (var item in Items) {
-                item.Visible = false;
-            }
-
-            float curBottom = 0;
-            int fromNow = fromI_;
-            if (fromNow < Items.Count) {
-                while (true) {
-                    if (curBottom + Items[fromNow].Height + 10 > location_.Bottom) {
-                        break;
-                    }
-                    Items[fromNow].Visible = true;
-                    Items[fromNow].SetPosition(new Vector2(l.X + 10, curBottom));
-
-                    curBottom += Items[fromNow].Height + 10;
-                    fromNow++;
-                    if (fromNow > Items.Count - 1) {
-                        break;
-                    } 
-                }
-            }
 
             if (Visible) {
                 var a = GetPosition() + parent_.GetPosition();
@@ -141,11 +147,15 @@ namespace rglikeworknamelib.Window {
             fromI_ ++;
             var a = ToShow();
             if (fromI_ + a > Items.Count - 1) fromI_ = Items.Count - 1 - a;
+
+            RecalcContainer();
         }
 
         public void ListUp() {
             fromI_--;
             if (fromI_ < 0) fromI_ = 0;
+
+            RecalcContainer();
         }
 
         public Vector2 GetPosition() {
@@ -181,8 +191,7 @@ namespace rglikeworknamelib.Window {
             fromI_ = Items.Count - a;
             if (fromI_ + a > Items.Count - 1) fromI_ = Items.Count - 1 - a;
 
-            progress_.Max = Items.Count;
-            progress_.Progress = fromI_ + ToShow();
+            RecalcContainer();
         }
     }
 }
