@@ -3,10 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public interface IGameWindowComponent
+    public interface IGameComponent
     {
         void Draw(SpriteBatch sb);
-        void Update(GameTime gt, MouseState ms, MouseState lms);
+        void Update(GameTime gt, MouseState ms, MouseState lms, bool mh);
 
         Vector2 GetPosition();
         void SetPosition(Vector2 pos);

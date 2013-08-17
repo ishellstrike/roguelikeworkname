@@ -23,11 +23,11 @@ namespace rglikeworknamelib.Window {
 
             if (isHudColored)
             {
-                sb.DrawString(font1_, line, Parent.GetLocation() + pos_, Settings.Hud—olor);
+                sb.DrawString(font1_, line, Parent.GetPosition() + pos_, Settings.Hud—olor);
             }
             else
             {
-                sb.DrawString(font1_, line, Parent.GetLocation() + pos_, col_);
+                sb.DrawString(font1_, line, Parent.GetPosition() + pos_, col_);
             }
                 
         }
@@ -37,9 +37,9 @@ namespace rglikeworknamelib.Window {
             return (text.Remove(0, offset) + text.Remove(offset)).Substring(0,ss);
         }
 
-        public override void Update(GameTime gt, MouseState ms, MouseState lms) {
+        public override void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
             runStep += 5*(float)gt.ElapsedGameTime.TotalSeconds;
-            base.Update(gt, ms, lms);
+            base.Update(gt, ms, lms, h);
         }
 
         public override float Width

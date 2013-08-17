@@ -28,7 +28,7 @@ namespace jarg
         private SchemesDataBase sdb_;
         private ItemDataBase idb_;
 
-        private WindowSystem ws_;
+        private rglikeworknamelib.Window.WindowSystem ws_;
         private ParticleSystem ps_;
         private BulletSystem bs_;
         private MonsterSystem monsterSystem_;
@@ -144,7 +144,7 @@ namespace jarg
         private ListContainer ContainerEventLog;
 #endregion
 
-        private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
+        private void CreateWindows(Texture2D wp, SpriteFont sf, rglikeworknamelib.Window.WindowSystem ws) {
             Random rnd = new Random();
 
             WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws) { Visible = false };
@@ -162,9 +162,8 @@ namespace jarg
             ImageMinimap = new Image(new Vector2(10,10), new Texture2D(GraphicsDevice, 88, 88), Color.White, WindowMinimap);
 
             WindowSettings =
-                new Window(
-                    new Rectangle(100, 100, (int) Settings.Resolution.X - 200, (int) Settings.Resolution.Y - 200),
-                    "Settings", true, wp, sf, ws) {Visible = false};
+                new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y),
+                    "Settings", true, wp, sf, ws) {Visible = false, Moveable = false};
             LabelHudColor = new Label(new Vector2(10,10), "HUD color", wp, sf, WindowSettings);
             ButtonHudColor1 = new Button(new Vector2(10 + 50 + 40 * 1, 10), "1", wp, sf, WindowSettings);
             ButtonHudColor1.onPressed += ButtonHudColor1_onPressed;
@@ -186,7 +185,7 @@ namespace jarg
             ButtonIngameMenuSettings = new Button(new Vector2(20,100), "Settings", wp, sf, WindowIngameMenu);
             ButtonIngameMenuSettings.onPressed += ButtonIngameMenuSettings_onPressed;
 
-            WindowMainMenu = new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y/2), "MAIN MENU",
+            WindowMainMenu = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y), "MAIN MENU",
                                         false, wp, sf, ws) {NoBorder = true, Moveable = false};
             LabelMainMenu = new Label(new Vector2(10, 10), @"     __                      
     |__|____ _______  ____  
@@ -208,7 +207,7 @@ namespace jarg
             ButtonOpenGit.onPressed += ButtonOpenGit_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonOpenGit);
 
-            WindowCaracterCration = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y / 2), "CARACTER CREATION",
+            WindowCaracterCration = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y), "CARACTER CREATION",
                                         false, wp, sf, ws) { NoBorder = true, Moveable = false,Visible = false};
             ButtonCaracterConfirm = new Button(new Vector2(Settings.Resolution.X / 4*2, Settings.Resolution.Y / 2 - 20), "Continue", wp, sf, WindowCaracterCration);
             ButtonCaracterConfirm.onPressed += ButtonCaracterConfirm_onPressed;
@@ -216,7 +215,7 @@ namespace jarg
             ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
 
             WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
-            ContainerInventoryItems = new ListContainer(new Rectangle(10, 30, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
+            ContainerInventoryItems = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
             InventoryMoreInfo = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowInventory);
             InventorySortAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All", wp, sf, WindowInventory);
             InventorySortAll.onPressed += new EventHandler(InventorySortAll_onPressed);
@@ -228,6 +227,17 @@ namespace jarg
             WindowEventLog = new Window(new Vector2(Settings.Resolution.X / 3, Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false};
             ContainerEventLog = new ListContainer( new Rectangle(0,20,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/4-20), wp, sf, WindowEventLog);
             EventLog.onLogUpdate += EventLog_onLogUpdate;
+
+            Window testw = new Window(new Vector2(500,500), "LoL", true, wp, sf, ws_);
+            ListContainer lc = new ListContainer(new Rectangle(50,50,400,400), wp, sf, testw);
+            ListContainer[] lcc = new ListContainer[10];
+            for (int i = 0; i < 10; i++) {
+                lcc[i] = new ListContainer(new Rectangle(0,0,100,200), wp, font1_, lc);
+                lc.AddItem(lcc[i]);
+                for (int j = 0; j < 10; j++) {
+                    lcc[i].AddItem(new Label(Vector2.Zero, j + "qwe", whitepixel, font1_, lcc[i]));
+                }
+            }
         }
 
         void Button24h_onPressed(object sender, EventArgs e) {
@@ -277,7 +287,7 @@ namespace jarg
 
             int cou = 0;
             foreach (var item in a) {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count), 22, whitepixel, font1_, WindowInventory);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerInventoryItems);
                 i.Tag = cou;
                 i.onPressed += PressInInventory;
                 cou++;
@@ -287,7 +297,7 @@ namespace jarg
 
         void PressInInventory(object sender, EventArgs e) {
             var a = (int) (sender as Label).Tag;
-            InventoryMoreInfo.Text = idb_.GetItemFullDescription(inInv[a].Id);
+            InventoryMoreInfo.Text = idb_.GetItemFullDescription(inInv[a]);
         }
 
         void ButtonCaracterCancel_onPressed(object sender, EventArgs e)
@@ -382,7 +392,7 @@ namespace jarg
             mdb_ = new MonsterDataBase();
             sdb_ = new SchemesDataBase();
             idb_ = new ItemDataBase(/*ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetItemDataDirectory() + @"/textureloadorder.ord", Content))*/);
-            ws_ = new WindowSystem(whitepixel, font1_);
+            ws_ = new rglikeworknamelib.Window.WindowSystem(whitepixel, font1_);
 
             ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
 
@@ -414,7 +424,7 @@ namespace jarg
             for (int i = 0; i < 1000; i++) {
                 int aa = rnd.Next(1, 100);
                 if (idb_.data.ContainsKey(aa)) {
-                    inventory_.items.Add(new Item() {Count = rnd.Next(1,10), Id = aa});
+                    inventory_.items.Add(new Item(aa, rnd.Next(1,10)));
                 }
             }
             
@@ -448,7 +458,7 @@ namespace jarg
             }
 
             WindowsUpdate(gameTime);
-            ws_.Update(gameTime, ms_, lms_);
+            ws_.Update(gameTime, ms_, lms_, false);
             PlayerSeeAngle = (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
         }
 

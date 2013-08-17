@@ -143,10 +143,7 @@ namespace rglikeworknamelib.Generation
 
             foreach (var storageBlock in storageBlocks) {
                 for (int i = 0; i < 10; i++) {
-                    storageBlock.StoredItems.Add(new Item {
-                        Count = 3,
-                        Id = rnd.Next(1,19)
-                    });
+                    storageBlock.StoredItems.Add(new Item (rnd.Next(1,19),3));
                 }
                 
             }

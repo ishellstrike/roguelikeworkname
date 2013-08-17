@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class ProgressBar : IGameWindowComponent {
+    public class ProgressBar : IGameComponent {
         private Rectangle locate_;
         public String Text;
         private Window Parent;
@@ -43,7 +43,7 @@ namespace rglikeworknamelib.Window {
             sb.DrawString(font1_, string.Format("{0}/{1}", Progress, Max), realpos + new Vector2(5, 0), Settings.Hud—olor);
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms) {
+        public void Update(GameTime gt, MouseState ms, MouseState lms,bool h) {
                 
         }
 

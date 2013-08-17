@@ -5,13 +5,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class ListContainer : IGameWindowComponent {
+    public class ListContainer : IGameComponent, IGameContainer {
         private Rectangle location_;
-        public List<IGameWindowComponent> Items = new List<IGameWindowComponent>();
+        public List<IGameComponent> Items = new List<IGameComponent>();
+        private List<IGameComponent> Components = new List<IGameComponent>(); 
         public int fromI_;
         private readonly Texture2D whitepixel_;
         private readonly SpriteFont font1_;
-        private Window parent_;
+        private IGameContainer parent_;
         public bool Visible { get; set; }
 
         public object Tag { get; set; }
@@ -19,7 +20,8 @@ namespace rglikeworknamelib.Window {
         private Button buttonUp_, buttonDown_;
         private VerticalProgressBar progress_;
 
-        public ListContainer(Rectangle loc, Texture2D wp, SpriteFont sf, Window win) {
+        public ListContainer(Rectangle loc, Texture2D wp, SpriteFont sf, IGameContainer win)
+        {
             location_ = loc;
             whitepixel_ = wp;
             font1_ = sf;
@@ -28,11 +30,19 @@ namespace rglikeworknamelib.Window {
 
             Visible = true;
 
-            buttonUp_ = new Button(new Vector2(location_.Width - 30 + loc.X, 2 + loc.Y - 20), "^", wp, sf, win);
+
+
+            buttonUp_ = new Button(Vector2.Zero, "^", wp, sf, this);
+            Vector2 bup = new Vector2(Width - buttonUp_.Width, 0);
+            buttonUp_.SetPosition(bup);
             buttonUp_.onPressed += buttonUp__onPressed;
-            buttonDown_ = new Button(new Vector2(location_.Width - 30 + loc.X, location_.Height - 25 + loc.Y - 20), "v", wp, sf, win);
+
+            buttonDown_ = new Button(Vector2.Zero, "v", wp, sf, this);
+            Vector2 bdow = new Vector2(Width - buttonDown_.Width, location_.Height - buttonDown_.Height);
+            buttonDown_.SetPosition(bdow);
             buttonDown_.onPressed += buttonDown__onPressed;
-            progress_ = new VerticalProgressBar(new Rectangle((int)buttonUp_.GetPosition().X, (int)buttonUp_.GetPosition().Y + 34, 19, (int)buttonDown_.GetPosition().Y - (int)buttonUp_.GetPosition().Y - 50), "", wp, font1_, win);
+
+            progress_ = new VerticalProgressBar(new Rectangle((int)bup.X, (int)(bup.Y + buttonUp_.Height), (int)buttonUp_.Width, (int)(bdow.Y - bup.Y)), "", wp, font1_, this);
         
             RecalcContainer();
         }
@@ -55,7 +65,7 @@ namespace rglikeworknamelib.Window {
             progress_.Max = Items.Count;
             progress_.Progress = fromI_ + ToShow();
 
-            var l = GetPosition();
+            var l = Vector2.Zero;
 
             foreach (var item in Items)
             {
@@ -85,17 +95,17 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public List<IGameWindowComponent> GetItems() {
+        public List<IGameComponent> GetItems() {
             return Items;
         }
 
-        public void AddItem(IGameWindowComponent it) {
+        public void AddItem(IGameComponent it) {
             Items.Add(it);
 
             RecalcContainer();
         }
              
-        public void RemoveItem(IGameWindowComponent it) {
+        public void RemoveItem(IGameComponent it) {
             if(Items.Contains(it)) {
                 Items.Remove(it);
             }
@@ -105,10 +115,12 @@ namespace rglikeworknamelib.Window {
 
         public void Clear() {
             fromI_ = 0;
-            foreach (var item in Items) {
-                parent_.Components.Remove(item);
-            }
+
             Items.Clear();
+            Components.Clear();
+            Components.Add(buttonUp_);
+            Components.Add(buttonDown_);
+            Components.Add(progress_);
 
             RecalcContainer();
         }
@@ -116,7 +128,7 @@ namespace rglikeworknamelib.Window {
         public void Draw(SpriteBatch sb) {
 
             if (Visible) {
-                var a = GetPosition() + parent_.GetPosition();
+                var a = GetPosition();
                 var b = new Rectangle((int) a.X, (int) a.Y, location_.Width, location_.Height);
                 sb.Draw(whitepixel_, new Vector2(b.X, b.Y), null, Settings.HudÑolor, 0, Vector2.Zero,
                         new Vector2(b.Width, 2), SpriteEffects.None, 0);
@@ -129,6 +141,10 @@ namespace rglikeworknamelib.Window {
                 sb.Draw(whitepixel_, new Vector2(b.X, b.Bottom), null, Settings.HudÑolor, 0,
                         Vector2.Zero,
                         new Vector2(b.Width + 2, 2), SpriteEffects.None, 0);
+
+                foreach (var item in Components) {
+                    item.Draw(sb);
+                }
                      
             }
         }
@@ -136,11 +152,15 @@ namespace rglikeworknamelib.Window {
         public int ToShow()
         {
             int toshow = location_.Height / 30;
-            return toshow = toshow > Items.Count - 1 ? Items.Count - 1 : toshow;
+            return toshow > Items.Count - 1 ? Items.Count - 1 : toshow;
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms) {
-                
+        public void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
+            if (Visible) {
+                foreach (var item in Components) {
+                    item.Update(gt, ms, lms, h);
+                }
+            }
         }
 
         public void ListDown() {
@@ -159,7 +179,7 @@ namespace rglikeworknamelib.Window {
         }
 
         public Vector2 GetPosition() {
-            return new Vector2(location_.X, location_.Y);
+            return new Vector2(location_.X, location_.Y) + parent_.GetPosition();
         }
 
         public void SetPosition(Vector2 pos) {
@@ -193,5 +213,19 @@ namespace rglikeworknamelib.Window {
 
             RecalcContainer();
         }
+
+        public void CenterComponentHor(IGameComponent a) {
+           
+        }
+
+        public void CenterComponentVert(IGameComponent a) {
+           
+        }
+
+        public void AddComponent(IGameComponent component) {
+            Components.Add(component);
+        }
+
+        public bool MouseClickCatched { get; set; }
     }
 }

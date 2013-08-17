@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class Button : IGameWindowComponent
+    public class Button : IGameComponent
     {
         private Rectangle locate_;
         public String Text;
         private bool aimed_;
-        private Window Parent;
+        private IGameContainer Parent;
 
         private readonly Texture2D whitepixel_;
         private readonly SpriteFont font1_;
@@ -28,7 +28,7 @@ namespace rglikeworknamelib.Window {
             set;
         }
 
-        public Button(Vector2 p, string s, Texture2D wp, SpriteFont wf, Window pa)
+        public Button(Vector2 p, string s, Texture2D wp, SpriteFont wf, IGameContainer pa)
         {
             whitepixel_ = wp;
             font1_ = wf;
@@ -53,32 +53,32 @@ namespace rglikeworknamelib.Window {
         public void Draw(SpriteBatch sb)
         {
             if (Visible) {
-                Vector2 realpos = Parent.GetLocation() + GetPosition();
+                Vector2 realpos = GetPosition();
 
                 Color col = !aimed_ ? Settings.HudÑolor : Color.White;
 
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, col, 0,
+                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetPosition(), null, col, 0,
                         Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetLocation(), null, col, 0,
+                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetPosition(), null, col, 0,
                         Vector2.Zero, new Vector2(2, locate_.Height), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + Parent.GetLocation(), null, col, 0,
+                sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + Parent.GetPosition(), null, col, 0,
                         Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
-                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + Parent.GetLocation(), null, col, 0,
+                sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + Parent.GetPosition(), null, col, 0,
                         Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
 
                 sb.DrawString(font1_, Text, realpos + new Vector2(5, 0), col);
             }
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, bool mh)
         {
             if (Visible) {
-                Vector2 realpos = Parent.GetLocation() + GetPosition();
+                Vector2 realpos = GetPosition();
                 Vector2 realdl = realpos;
                 realdl.X += locate_.Width;
                 realdl.Y += locate_.Height;
 
-                if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y)
+                if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y && mh)
                 {
                     aimed_ = true;
                     if (firstPress) {
@@ -110,7 +110,7 @@ namespace rglikeworknamelib.Window {
 
         public Vector2 GetPosition()
         {
-            return new Vector2(locate_.X, locate_.Y);
+            return new Vector2(locate_.X, locate_.Y) + Parent.GetPosition();
         }
 
         public void SetPosition(Vector2 pos)

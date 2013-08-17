@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class Label : IGameWindowComponent
+    public class Label : IGameComponent
     {
         protected Vector2 pos_;
         protected Color col_;
-        protected Window Parent;
+        protected IGameContainer Parent;
         protected bool isHudColored;
         public bool Visible { get; set; }
 
@@ -38,7 +38,7 @@ namespace rglikeworknamelib.Window {
             pos_ = pos;
         }
 
-        public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, Window win)
+        public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, IGameContainer win)
         {
             font1_ = wf;
             pos_ = p;
@@ -49,7 +49,7 @@ namespace rglikeworknamelib.Window {
             Visible = true;
         }
 
-        public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, Window win)
+        public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, IGameContainer win)
         {
             font1_ = wf;
             pos_ = p;
@@ -65,29 +65,29 @@ namespace rglikeworknamelib.Window {
             if (Text != null && Visible) {
                 if (!aimed_ || onPressed == null) {
                     if (isHudColored) {
-                        sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, Settings.HudÑolor);
+                        sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Settings.HudÑolor);
                     }
                     else {
-                        sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, col_);
+                        sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, col_);
                     }
                 }
                 else {
-                    sb.DrawString(font1_, Text, Parent.GetLocation() + pos_, Color.White);
+                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Color.White);
                 }
             }
         }
 
-        public virtual void Update(GameTime gt, MouseState ms, MouseState lms) {
+        public virtual void Update(GameTime gt, MouseState ms, MouseState lms, bool mh) {
             if (Text != null) {
                 var locate_ = new Rectangle((int) pos_.X, (int) pos_.Y, (int) font1_.MeasureString(Text).X,
                                             (int) font1_.MeasureString(Text).Y);
                 if (Visible) {
-                    Vector2 realpos = Parent.GetLocation() + GetPosition();
+                    Vector2 realpos = GetPosition();
                     Vector2 realdl = realpos;
                     realdl.X += locate_.Width;
                     realdl.Y += locate_.Height;
 
-                    if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
+                    if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y && mh) {
                         aimed_ = true;
                         if ((lms.LeftButton == ButtonState.Released || lastPressed.TotalMilliseconds - gt.TotalGameTime.TotalMilliseconds > 500) && ms.LeftButton == ButtonState.Pressed) {
                             PressButton();
@@ -110,13 +110,8 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public Vector2 GetLocation()
-        {
-            return pos_;
-        }
-
         public Vector2 GetPosition() {
-            return pos_;
+            return pos_ + Parent.GetPosition();
         }
 
         public void SetPosition(Vector2 pos) {

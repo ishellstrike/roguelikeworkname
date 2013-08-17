@@ -25,18 +25,19 @@ namespace rglikeworknamelib.Dungeon.Item {
             }
         }
 
-        public string GetItemDescription(int id) {
-            return data[id].description;
+        public string GetItemDescription(Item i)
+        {
+            return data[i.Id].description;
         }
 
-        public string GetItemFullDescription(int id) {
-            var item = data[id];
+        public string GetItemFullDescription(Item i) {
+            var item = data[i.Id];
             StringBuilder sb = new StringBuilder();
-            sb.Append(GetItemDescription(id));
+            sb.Append(GetItemDescription(i));
             sb.Append(Environment.NewLine+string.Format("{0} г", item.weight));
             sb.Append(Environment.NewLine+string.Format("{0} места", item.volume));
             if(Settings.DebugInfo) {
-                sb.Append(Environment.NewLine + string.Format("id{0}", id));
+                sb.Append(Environment.NewLine + string.Format("id {0} uid {1}", i.Id, i.Uid));
             }
 
             if (item.afteruseId != 0) {

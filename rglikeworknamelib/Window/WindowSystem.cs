@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class WindowSystem : IGameWindowComponent
+    public class WindowSystem
     {
         private static readonly List<Window> Windows = new List<Window>();
         public bool Mopusehook, Keyboardhook;
@@ -33,23 +33,17 @@ namespace rglikeworknamelib.Window {
             sb.End();
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, bool mh)
         {
             Mopusehook = false;
             Keyboardhook = false;
 
-            if (Windows.Count != 0)
-                for (int i = Windows.Count - 1; i >= 0; i--) {
-                    if (Windows.Count > i) {
-                        var component = Windows[i];
-                        if (component.Readytoclose) {
-                            component.Visible = false;
-                            Windows.Remove(component);
-                            continue;
-                        }
-                        component.Update(gt, ms, lms);
-                    }
-                }
+            if(Windows.Count > 0)
+            for (int index = Windows.Count-1; index >= 0; index--)
+            {
+                var component = Windows[index];
+                component.Update(gt, ms, lms, Mopusehook);
+            }
         }
 
         public Vector2 GetLocation()

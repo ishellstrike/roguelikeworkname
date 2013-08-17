@@ -5,8 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class Window : IGameWindowComponent {
-        internal List<IGameWindowComponent> Components = new List<IGameWindowComponent>();
+    public class Window : IGameComponent, IGameContainer {
+        internal List<IGameComponent> Components = new List<IGameComponent>();
 
         private readonly WindowSystem parent_;
 
@@ -14,8 +14,6 @@ namespace rglikeworknamelib.Window {
         private readonly Color backtransparent_;
 
         private readonly Button closeButton_;
-
-        public bool Readytoclose;
 
         private bool closable_ = true;
 
@@ -65,7 +63,7 @@ namespace rglikeworknamelib.Window {
             backtransparent_.A = 220;
             Closable = closeable;
 
-            closeButton_ = new Button(new Vector2(Locate.Width - 22, -22), "x", whitepixel_, font1_, this);
+            closeButton_ = new Button(new Vector2(Locate.Width - 19, 0), "x", whitepixel_, font1_, this);
             closeButton_.onPressed += closeButton__onPressed;
             if (!Closable) {
                 closeButton_.Visible = false;
@@ -97,7 +95,7 @@ namespace rglikeworknamelib.Window {
 
             Visible = true;
 
-            closeButton_ = new Button(new Vector2(Locate.Width - 22, -22), "x", whitepixel_, font1_, this);
+            closeButton_ = new Button(new Vector2(Locate.Width - 19, -20), "x", whitepixel_, font1_, this);
             closeButton_.onPressed += closeButton__onPressed;
             if (!Closable) {
                 closeButton_.Visible = false;
@@ -106,13 +104,13 @@ namespace rglikeworknamelib.Window {
             parent.AddWindow(this);
         }
 
-        public void CenterComponentHor(IGameWindowComponent a) {
+        public void CenterComponentHor(IGameComponent a) {
             var p = a.GetPosition();
             a.SetPosition(new Vector2((Locate.Width/2 - a.Width/2), p.Y));
         }
 
         [Obsolete]
-        public void CenterComponentVert(IGameWindowComponent a) {
+        public void CenterComponentVert(IGameComponent a) {
             var p = a.GetPosition();
             a.SetPosition(new Vector2(p.X, (Locate.Height/2 + a.Width)/2));
         }
@@ -121,9 +119,11 @@ namespace rglikeworknamelib.Window {
             Close();
         }
 
-        public void AddComponent(IGameWindowComponent component) {
+        public void AddComponent(IGameComponent component) {
             Components.Add(component);
         }
+
+        public bool MouseClickCatched { get; set; }
 
         public void Close() {
             Visible = false;
@@ -165,13 +165,14 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms) {
+        public void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
             aimed = false;
             if (Visible) {
-                if (parent_.Mopusehook == false && lms.X >= Locate.Left && lms.Y >= Locate.Top &&
+                if (!parent_.Mopusehook && lms.X >= Locate.Left && lms.Y >= Locate.Top &&
                     lms.X <= Locate.Right && lms.Y <= Locate.Bottom) {
-                    aimed = true;
+                    h = true;
                     parent_.Mopusehook = true;
+                    aimed = true;
 
                     if (lms.LeftButton == ButtonState.Pressed || ms.RightButton == ButtonState.Pressed) {
 
@@ -179,13 +180,13 @@ namespace rglikeworknamelib.Window {
                     }
 
                     if (Moveable && lms.LeftButton == ButtonState.Pressed && lms.Y <= Locate.Top + 20) {
-                        Locate.X += (int) (ms.X - lms.X);
-                        Locate.Y += (int) (ms.Y - lms.Y);
+                        Locate.X += (ms.X - lms.X);
+                        Locate.Y += (ms.Y - lms.Y);
                     }
                 }
                 for (int i = Components.Count - 1; i >= 0; i--) {
                     var component = Components[i];
-                    component.Update(gt, ms, lms);
+                    component.Update(gt, ms, lms, h);
                 }
             }
         }
@@ -197,7 +198,7 @@ namespace rglikeworknamelib.Window {
         }
 
         public Vector2 GetPosition() {
-            return new Vector2(Locate.X, Locate.Y);
+            return new Vector2(Locate.X, Locate.Y + 20);
         }
 
         public void SetPosition(Vector2 pos) {
