@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
@@ -23,6 +26,40 @@ namespace rglikeworknamelib.Dungeon.Item {
             foreach (var pair in a) {
                 data.Add(pair.Key, (ItemData)pair.Value);
             }
+        }
+
+        private static void JsonEyeCandy(List<KeyValuePair<int, object>> a) {
+            MemoryStream sw = new MemoryStream();
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof (ItemData));
+            foreach (var pair in a) {
+                ser.WriteObject(sw, pair.Value as ItemData);
+            }
+
+            sw.Position = 0;
+            StreamReader re = new StreamReader(sw);
+            string jdata = re.ReadToEnd();
+
+            jdata = jdata.Insert(1, Environment.NewLine);
+            jdata = jdata.Replace("}{", Environment.NewLine + "}" + Environment.NewLine + "{" + Environment.NewLine);
+            jdata = jdata.Replace(":", " : ");
+
+            Regex reg1 = new Regex("({\n)?\"[a-zA-Z]+\".+?(},|,|\n}|})");
+            var mac = reg1.Matches(jdata);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var vari in mac) {
+                sb.Append(" " + vari + Environment.NewLine);
+            }
+
+            StreamWriter writer =
+                new StreamWriter(Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory() + @"/items.json",
+                                 false);
+            writer.Write(sb);
+            writer.Flush();
+            writer.Close();
+            sw.Close();
+            re.Close();
         }
 
         public string GetItemDescription(Item i)

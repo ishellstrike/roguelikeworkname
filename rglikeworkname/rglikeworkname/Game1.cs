@@ -411,7 +411,8 @@ namespace jarg
                                                       font1_,
                                                       bdb_, 
                                                       fdb_, 
-                                                      sdb_
+                                                      sdb_,
+                                                      GraphicsDevice
                                                      );
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
@@ -626,11 +627,14 @@ namespace jarg
 
         private void GameDraw(GameTime gameTime) {
             spriteBatch_.Begin();
-            currentFloor_.Draw(gameTime, camera_);
-            currentFloor_.Draw2(gameTime, camera_);
-            player_.Draw(gameTime, camera_);
-            ps_.Draw(gameTime, camera_);
-            bs_.Draw(gameTime, camera_);
+                currentFloor_.Draw(gameTime, camera_);
+                bs_.Draw(gameTime, camera_);
+                ps_.Draw(gameTime, camera_);
+            spriteBatch_.End();
+            currentFloor_.ShadowRender();
+            spriteBatch_.Begin();
+                currentFloor_.Draw2(gameTime, camera_, player_);
+                player_.Draw(gameTime, camera_);
             spriteBatch_.End();
         }
 
@@ -638,8 +642,13 @@ namespace jarg
         {
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
                                   (int)Settings.Resolution.Y);
+
+            string ss =
+                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSVert {7}",
+                              PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
+                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount());
             spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6}", PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime, currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated), new Vector2(500, 10), Color.White);
+            spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 
             int nx = (int)((ms_.X + camera_.X) / 32.0);
             int ny = (int)((ms_.Y + camera_.Y) / 32.0);

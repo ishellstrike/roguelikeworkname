@@ -1,30 +1,30 @@
 namespace rglikeworknamelib.Dungeon.Item {
     public enum ItemType
     {
-        Nothing,
+        Nothing = 0,
 
-        Hat,
-        Glaces,
-        Helmet,
+        Hat = 1,
+        Glaces = 2,
+        Helmet = 3,
 
-        Chest,
-        Shirt,
+        Chest = 4,
+        Shirt = 5,
 
-        Pants,
+        Pants = 6,
 
-        Gloves,
+        Gloves = 7,
 
-        Boots,
+        Boots = 8,
 
-        Ammo,
+        Ammo = 9,
 
-        Bag,
+        Bag = 10,
 
-        Food,
-        Medicine,
+        Food = 11,
+        Medicine = 12,
 
-        Craft,
+        Craft = 13,
 
-        Currency
+        Currency = 14
     }
 }

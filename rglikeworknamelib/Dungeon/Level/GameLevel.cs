@@ -299,6 +299,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
         private readonly SpriteBatch spriteBatch_;
+        private readonly GraphicsDevice gd_;
         private readonly SpriteFont font_;
         public BlockDataBase blockDataBase;
         public FloorDataBase floorDataBase;
@@ -586,7 +587,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, SpriteFont sf, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb) {
+        Effect be_;
+        private Plane upPlane, downPlane, leftPlane, rightPlane;
+        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, SpriteFont sf, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, GraphicsDevice gd) {
             MapGenerators.seed = MapSeed;
             whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             var data = new uint[1];
@@ -609,7 +612,17 @@ namespace rglikeworknamelib.Dungeon.Level {
             flatlas_ = flatlas;
             spriteBatch_ = spriteBatch;
             font_ = sf;
-         
+            gd_ = gd;
+            be_ = new BasicEffect(gd_);
+            (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
+
+            Vector3[] cor = new[] {new Vector3(-1,-1,0), new Vector3(1,-1,0), new Vector3(1,1,0), new Vector3(-1,1,0)};
+            Vector3 upv = new Vector3(0,0,1);
+
+            upPlane = new Plane(cor[0], cor[1], cor[1] + upv);
+            downPlane = new Plane(cor[2], cor[3], cor[3] + upv);
+            leftPlane = new Plane(cor[0], cor[3], cor[3] + upv);
+            rightPlane = new Plane(cor[1], cor[2], cor[2] + upv);
         }
 
         public GameLevel()
@@ -789,14 +802,14 @@ namespace rglikeworknamelib.Dungeon.Level {
                                               MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX,
                                               j * Settings.FloorSpriteSize.Y - (int)camera.Y +
                                               MapSector.Ry * Settings.FloorSpriteSize.Y * sector.SectorOffsetY),
-                                          null, sector.Blocks[a].Lightness);
+                                          null, Color.White);
                     }
                 }
             }
         }
 
-        public void Draw2(GameTime gameTime, Vector2 camera)
-        {
+        public void Draw2(GameTime gameTime, Vector2 camera, Creature per) {
+            points.Clear();
             foreach (MapSector sector in sectors_) {
                 if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
                 if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
@@ -807,13 +820,22 @@ namespace rglikeworknamelib.Dungeon.Level {
                             sector.SectorOffsetX*MapSector.Rx + i < max.X &&
                             sector.SectorOffsetY*MapSector.Ry + j < max.Y) {
                             int a = i*MapSector.Ry + j;
-                            spriteBatch_.Draw(atlas_[sector.Blocks[a].Mtex],
-                                              new Vector2(
-                                                  i*(Settings.FloorSpriteSize.X) - (int) camera.X +
-                                                  MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX,
-                                                  j*(Settings.FloorSpriteSize.Y) - (int) camera.Y +
-                                                  MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY),
-                                              null, sector.Blocks[a].Lightness);
+
+                            var block = sector.Blocks[a];
+
+                            var xpos = i*(Settings.FloorSpriteSize.X) - (int) camera.X +
+                                       MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX;
+
+                            var ypos = j*(Settings.FloorSpriteSize.Y) - (int) camera.Y +
+                                       MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY;
+
+                            spriteBatch_.Draw(atlas_[block.Mtex], new Vector2(xpos, ypos), null, block.Lightness);
+
+                            
+
+                            if(!blockDataBase.Data[sector.Blocks[a].Id].IsTransparent) {
+                                AddShadowpointForBlock(camera, per, xpos, ypos);
+                            }
                         }
                 }
 
@@ -830,6 +852,166 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
         
+        }
+
+        private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos) {
+            var po = GetAtBlockPoints(xpos, ypos, per, camera);
+
+            for (int k = 0; k < po.Length; k++) {
+                po[k] = XyToVector3(po[k]);
+            }
+            Vector3 car = new Vector3(per.Position.X - (int)camera.X, per.Position.Y - (int)camera.Y, 0);
+            car = XyToVector3(car);
+
+            Ray r1 = new Ray(car, Vector3.Normalize(po[0]-car));
+            Ray r2 = new Ray(car, Vector3.Normalize(po[1]-car));
+            Ray r3 = new Ray(car, Vector3.Normalize(po[2]-car));
+
+            Vector3 po2_1 = Vector3.Zero, po2_2 = Vector3.Zero, po2_3 = Vector3.Zero;
+
+            // Calculating ray to borders intersect points
+            po2_1 = GetBorderIntersection(r1);
+            po2_2 = GetBorderIntersection(r2);
+            po2_3 = GetBorderIntersection(r3);
+
+
+            //Making shadow polys
+            points.Add(new VertexPositionColor(po2_1, Color.Black));
+            points.Add(new VertexPositionColor(po[0], Color.Black));
+            points.Add(new VertexPositionColor(po2_2, Color.Black));
+
+            points.Add(new VertexPositionColor(po2_2, Color.Black));
+            points.Add(new VertexPositionColor(po[0], Color.Black));
+            points.Add(new VertexPositionColor(po[1], Color.Black));
+
+            points.Add(new VertexPositionColor(po2_2, Color.Black));
+            points.Add(new VertexPositionColor(po[1], Color.Black));
+            points.Add(new VertexPositionColor(po[2], Color.Black));
+
+            points.Add(new VertexPositionColor(po2_3, Color.Black));
+            points.Add(new VertexPositionColor(po[2], Color.Black));
+            points.Add(new VertexPositionColor(po2_2, Color.Black));
+
+            //points.Add(new VertexPositionColor(po2_1, Color.Black));
+            //points.Add(new VertexPositionColor(po[0], Color.Black));
+            //points.Add(new VertexPositionColor(po2_3, Color.Black));
+            //points.Add(new VertexPositionColor(po[1], Color.Black));
+            //points.Add(new VertexPositionColor(po[0], Color.Black));
+            //points.Add(new VertexPositionColor(po2_3, Color.Black));
+
+            //points.Add(new VertexPositionColor(car, Color.Black));
+            //points.Add(new VertexPositionColor(po2_1, Color.Black));
+            //points.Add(new VertexPositionColor(po2_1 + new Vector3(0, -0.05f, 0), Color.Black));
+            //points.Add(new VertexPositionColor(car, Color.Black));
+            //points.Add(new VertexPositionColor(po2_3, Color.Black));
+            //points.Add(new VertexPositionColor(po2_3 + new Vector3(0, -0.05f, 0), Color.Black));
+            //points.Add(new VertexPositionColor(car, Color.Black));
+            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+            //points.Add(new VertexPositionColor(po2_2 + new Vector3(0, -0.05f, 0), Color.Black));
+
+
+
+            //points.Add(new VertexPositionColor(car, Color.Black));
+            //points.Add(new VertexPositionColor(PlaneRayIntersection(upPlane, r1), Color.Black));
+            //points.Add(new VertexPositionColor(PlaneRayIntersection(upPlane, r2) + new Vector3(0, -0.05f, 0), Color.Black));
+        }
+
+        /// <summary>
+        /// »спользует неприведенные координаты
+        /// </summary>
+        /// <param name="xpos"></param>
+        /// <param name="ypos"></param>
+        /// <param name="c"></param>
+        /// <param name="cam"></param>
+        /// <returns></returns>
+        private static Vector3[] GetAtBlockPoints(float xpos, float ypos, Creature c, Vector2 cam) {
+            bool isRight = xpos >= c.Position.X - cam.X;
+            bool isDown = ypos >= c.Position.Y - cam.Y;
+
+            Vector3 p1 = new Vector3(xpos, ypos, 0);
+            Vector3 p2 = new Vector3(xpos + 32, ypos, 0);
+            Vector3 p3 = new Vector3(xpos + 32, ypos + 32, 0);
+            Vector3 p4 = new Vector3(xpos, ypos + 32, 0);
+
+            Vector3[] po = isRight
+                               ? (isDown ? new[] {p2, p3, p4} : new[] {p1, p2, p3})
+                               : (isDown ? new[] {p1, p3, p4} : new[] {p1, p2, p4});
+            return po;
+        }
+
+
+        /// <summary>
+        /// »спользует приведенные координаты
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        private Vector3 GetBorderIntersection(Ray r)
+        {
+            return GetSlosestIntersectionPoint(r, upPlane, downPlane, leftPlane, rightPlane);
+        }
+
+        /// <summary>
+        /// »спользует приведенные координаты
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private static Vector3 GetSlosestIntersectionPoint(Ray r, params Plane[] p)
+        {
+            var a = (p.Select(r.Intersects).Where(t => t.HasValue && !float.IsNaN(t.Value)).Select(t => t.Value)).ToList();
+            if(a.Count > 0) {
+                return r.Position + r.Direction*a.Min();
+            }
+            return Vector3.Zero;
+            //throw new Exception("No intersection plane");
+        }
+
+        /// <summary>
+        /// »спользует приведенные координаты
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        private static Vector3 PlaneRayIntersection(Plane a, Ray b)
+        {
+            float? f = b.Intersects(a);
+
+            if (f.HasValue) {
+                return b.Position + b.Direction * f.Value;
+            }
+            return Vector3.Zero;
+        }
+
+        public int GetShadowrenderCount() {
+            return points.Count;
+        }
+
+        List<VertexPositionColor> points = new List<VertexPositionColor>();
+        public void ShadowRender() {
+
+            gd_.RasterizerState = RasterizerState.CullNone;
+            gd_.DepthStencilState = DepthStencilState.Default;
+            gd_.BlendState = BlendState.AlphaBlend;
+
+            foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
+                pass.Apply();
+
+                if (points.Count != 0) {
+                    gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count/3);
+                }
+            }
+        }
+
+        /// <summary>
+        /// ѕриводит координаты из [0,resolution] к [-1,1] представлению
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        private Vector3 XyToVector3(Vector3 vec)
+        {
+            var nx = (vec.X / Settings.Resolution.X) * 2 - 1;
+            var ny = -(vec.Y / Settings.Resolution.Y) * 2 + 1;
+            return new Vector3(nx, ny,0);
         }
 
         public bool IsCreatureMeele(int nx, int ny, Player player) {

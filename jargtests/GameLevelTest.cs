@@ -220,5 +220,77 @@ namespace jargtests
         //    target.SetFloor(0, 0, id);
         //    Assert.AreEqual(target.floors_[0].ID, 1);
         //}
+
+        /// <summary>
+        ///Тест для GetAtBlockPoints
+        ///</summary>
+        [TestMethod()]
+        [DeploymentItem("rglikeworknamelib.dll")]
+        public void GetAtBlockPointsTest1()
+        {
+            float xpos = 10; 
+            float ypos = 10;
+            Creature c = new Creature(){Position = new Vector2(100, 100)};
+            Vector3[] expected = new[] { new Vector3(10, 10, 0), new Vector3(10, 42, 0), new Vector3(42, 10, 0), }; 
+            Vector3[] actual;
+            actual = GameLevel_Accessor.GetAtBlockPoints(xpos, ypos, c, Vector2.Zero);
+            CollectionAssert.AreEqual(expected, actual);
+            Assert.Inconclusive("Проверьте правильность этого метода теста.");
+        }
+
+        [TestMethod()]
+        public void GetAtBlockPointsTest2()
+        {
+            float xpos = 800;
+            float ypos = 10;
+            Creature c = new Creature() { Position = new Vector2(100, 100) };
+            Vector3[] expected = new[] { new Vector3(10, 800, 0), new Vector3(10, 832, 0), new Vector3(42, 832, 0), };
+            Vector3[] actual;
+            actual = GameLevel_Accessor.GetAtBlockPoints(xpos, ypos, c, Vector2.Zero);
+            CollectionAssert.AreEqual(expected, actual);
+            Assert.Inconclusive("Проверьте правильность этого метода теста.");
+        }
+
+        [TestMethod()]
+        public void GetAtBlockPointsTest3()
+        {
+            float xpos = 10;
+            float ypos = 10;
+            Creature c = new Creature() { Position = new Vector2(100, 100) };
+            Vector3[] expected = new[] { new Vector3(10, 10, 0), new Vector3(10, 42, 0), new Vector3(42, 10, 0), };
+            Vector3[] actual;
+            actual = GameLevel_Accessor.GetAtBlockPoints(xpos, ypos, c, Vector2.Zero);
+            CollectionAssert.AreEqual(expected, actual);
+            Assert.Inconclusive("Проверьте правильность этого метода теста.");
+        }
+
+        [TestMethod()]
+        public void GetAtBlockPointsTest4()
+        {
+            float xpos = 10;
+            float ypos = 10;
+            Creature c = new Creature() { Position = new Vector2(100, 100) };
+            Vector3[] expected = new[] { new Vector3(10, 10, 0), new Vector3(10, 42, 0), new Vector3(42, 10, 0), };
+            Vector3[] actual;
+            actual = GameLevel_Accessor.GetAtBlockPoints(xpos, ypos, c, Vector2.Zero);
+            CollectionAssert.AreEqual(expected, actual);
+            Assert.Inconclusive("Проверьте правильность этого метода теста.");
+        }
+
+
+        /// <summary>
+        ///Тест для PlaneRayIntersection
+        ///</summary>
+        [TestMethod()]
+        public void PlaneRayIntersectionTest()
+        {
+            Plane a = new Plane(); // TODO: инициализация подходящего значения
+            Ray b = new Ray(); // TODO: инициализация подходящего значения
+            Nullable<Vector3> expected = new Nullable<Vector3>(); // TODO: инициализация подходящего значения
+            Nullable<Vector3> actual;
+            actual = GameLevel_Accessor.PlaneRayIntersection(a, b);
+            Assert.AreEqual(expected, actual);
+            Assert.Inconclusive("Проверьте правильность этого метода теста.");
+        }
     }
 }
