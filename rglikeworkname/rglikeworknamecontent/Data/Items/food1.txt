@@ -1,7 +1,7 @@
 ~0,0
 name="blank item"
 
-~1,2
+~colacan,2
 name="Кола"
 nameret="Банка"
 nuth2o=500
@@ -10,27 +10,27 @@ nutcal=50
 afteruse=8
 stype="Food"
 
-~2,0
+~fishcan1,0
 name="Банка сардин"
 nameret="Банка с едой"
 afteruse=8
 stype="Food"
 
-~3,0
+~lapsha1,0
 name="Пакет лапши"
 weight=100
 nutcal=80
 nameret="Пакет с едой"
 stype="Food"
 
-~4,0
+~cookie1,0
 name="Коробка галет"
 weight=300
 nutcal=100
 nameret="Коробка с едой"
 stype="Food"
 
-~5,0
+~meatcan1,0
 name="Банка тушеной говядины"
 nameret="Банка с едой"
 weight=300
@@ -38,7 +38,7 @@ nutcal=200
 afteruse=8
 stype="Food"
 
-~6,0
+~meatcan2,0
 name="Банка паштета"
 nameret="Банка с едой"
 weight=300
@@ -46,14 +46,14 @@ nutcal=200
 afteruse=8
 stype="Food"
 
-~7,0
+~milk1,0
 name="Пакет молока"
 weight=1000
 afteruse=13
 stype="Food"
 
 
-~8,0
+~emptycan,0
 name="Пустая банка"
 weight=30
 
@@ -72,7 +72,7 @@ nutcal=500
 afteruse=13
 stype="Food"
 
-~11,0
+~watercons,0
 name="Вода консервированая"
 nameret="Странный пакет"
 nuth2o=500

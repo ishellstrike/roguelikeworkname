@@ -9,9 +9,9 @@ namespace rglikeworknamelib.Parser
 {
     internal class ItemParser
     {
-        public static List<KeyValuePair<int, object>> Parser(string s)
+        public static List<KeyValuePair<string, object>> Parser(string s)
         {
-            var temp = new List<KeyValuePair<int, object>>();
+            var temp = new List<KeyValuePair<string, object>>();
 
             s = s.Remove(0, s.IndexOf('~'));
 
@@ -24,8 +24,8 @@ namespace rglikeworknamelib.Parser
                     string[] lines = Regex.Split(block, "\n");
                     string[] header = lines[0].Split(',');
 
-                    temp.Add(new KeyValuePair<int, object>(Convert.ToInt32(header[0]), new ItemData()));
-                    KeyValuePair<int, object> cur = temp.Last();
+                    temp.Add(new KeyValuePair<string, object>(header[0], new ItemData()));
+                    KeyValuePair<string, object> cur = temp.Last();
                     //switch (header[0])
                     //{
                     //    default:
@@ -72,7 +72,7 @@ namespace rglikeworknamelib.Parser
                         } if (lines[i].StartsWith("afteruse=")) {
                             string extractedstring =
                                 ParsersCore.intextractor.Match(lines[i]).ToString();
-                            ((ItemData)cur.Value).afteruseId = Convert.ToInt32(extractedstring);
+                            ((ItemData)cur.Value).afteruseId = extractedstring;
                         }
                     }
                 }

@@ -5,14 +5,31 @@ namespace rglikeworknamelib.Dungeon.Item
     [Serializable]
     public class Item
     {
-        public int Id;
+        public string Id;
         public int Count;
-        public long Uid;
+        public int Uid;
 
-        public Item(int i, int co) {
+        public Item(string i, int co) {
             Id = i;
             Count = co;
             Uid = UniqueIds.GetNewItemId();
         }
+
+        public Item(Item item) {
+            Id = item.Id;
+            Count = item.Count;
+            Uid = item.Uid;
+        }
+
+        //public static bool operator == (Item a, Item b) {
+        //    if (a == null || b == null) {
+        //        return false;
+        //    }
+        //    return a.Uid == b.Uid;
+        //}
+
+        //public static bool operator !=(Item a, Item b) {
+        //    return !(a == b);
+        //}
     }
 }

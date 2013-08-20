@@ -40,14 +40,6 @@ namespace rglikeworknamelib
         public static List<string> log = new List<string>();
         public static List<Color> cols = new List<Color>();
 
-        public static void Add(string a) {
-            log.Add(a);
-
-            if(log.Count > 100) log.RemoveAt(0);
-
-            UpdateEvent();
-        }
-
         public static void Add(string s, DateTime t, Color c)
         {
             log.Add(GlobalWorldLogic.GetTimeString(t) + " " + s);

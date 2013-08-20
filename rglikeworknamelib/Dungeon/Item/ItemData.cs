@@ -4,7 +4,7 @@ namespace rglikeworknamelib.Dungeon.Item {
         public int stackNo;
 
         public int weight;
-        public int afteruseId;
+        public string afteruseId;
 
         public int hasHealth; //if has health, count became health
 

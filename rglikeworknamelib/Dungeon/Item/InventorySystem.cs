@@ -24,5 +24,37 @@ namespace rglikeworknamelib.Dungeon.Item
 
             return a;
         }
+
+        public void StackSimilar() {
+            var a = TakeDistinctItems();
+
+            foreach (var item in items) {
+                FindById(a, item.Id).Count += item.Count;
+            }
+
+            items = a;
+        }
+
+        private Item FindById(List<Item> list, string id) {
+            foreach (var item in list) {
+                if (item.Id == id) return item;
+            }
+            return null;
+        }
+
+        private List<Item> TakeDistinctItems() {
+            List<Item> a = new List<Item>();
+
+            foreach (var item in items) {
+                Item item1 = item;
+                if(a.Select(x => x.Id == item1.Id).All(y => y == false)) a.Add(new Item(item));
+            }
+
+            foreach (var item in a) {
+                item.Count = 0;
+            }
+
+            return a;
+        }
     }
 }

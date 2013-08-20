@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Generation;
 using rglikeworknamelib.Creatures;
 
@@ -38,6 +39,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public BlockDataBase BlockDataBase;
         public FloorDataBase FloorDataBase;
         public SchemesDataBase SchemesDataBase;
+        private ItemDataBase ItemDataBase;
         public GameLevel Parent;
         private BackgroundWorker bw;
 
@@ -67,12 +69,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             initialNodes = new List<Vector2>();
         }
 
-        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, GameLevel parent, int sectorOffsetX, int sectorOffsetY) {
+        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, ItemDataBase idb, GameLevel parent, int sectorOffsetX, int sectorOffsetY)
+        {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
             BlockDataBase = bdb;
             FloorDataBase = fdb;
             SchemesDataBase = sdb;
+            ItemDataBase = idb;
             Parent = parent;
 
             Blocks = new Block[Rx * Ry];
@@ -96,13 +100,14 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="sectorOffsetY"></param>
         /// <param name="blocksArray"></param>
         /// <param name="floorsArray"></param>
-        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object initialn, object obiom)
+        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, ItemDataBase idb, GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object initialn, object obiom)
         {
             SectorOffsetX = (int)sectorOffsetX;
             SectorOffsetY = (int)sectorOffsetY;
             BlockDataBase = bdb;
             FloorDataBase = fdb;
             SchemesDataBase = sdb;
+            ItemDataBase = idb;
             Parent = parent;
 
             Blocks = blocksArray as Block[];
@@ -193,6 +198,14 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             for (int i = 0; i < 1; i++) {
                 MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0,Rx-1),rand.Next(0,Ry-1), rand);
+            }
+
+            var sb = GetStorageBlocks();
+
+            foreach (var block in sb) {
+                for (int i = 0; i < rand.Next(0,3); i++) {
+                    block.StoredItems.Add(new Item.Item(ItemDataBase.data.ElementAt(rand.Next(0, ItemDataBase.data.Count)).Key, rand.Next(1,2)));
+                }
             }
 
             Parent.generated++;
@@ -303,7 +316,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly SpriteFont font_;
         public BlockDataBase blockDataBase;
         public FloorDataBase floorDataBase;
-        public SchemesDataBase schemesDataBase; 
+        public SchemesDataBase schemesDataBase;
+        private ItemDataBase itemDataBase;
 
         private readonly Texture2D minimap_;
 
@@ -413,7 +427,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 sectors_.Add(last);
                 return last;}
 
-            var temp = new MapSector(blockDataBase, floorDataBase, schemesDataBase, this, sectorOffsetX, sectorOffsetY);
+            var temp = new MapSector(blockDataBase, floorDataBase, schemesDataBase, itemDataBase, this, sectorOffsetX, sectorOffsetY);
             sectors_.Add(temp);
             temp.Rebuild(MapSeed);
             if (temp.ready) return temp;
@@ -439,7 +453,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var q6 = binaryFormatter_.Deserialize(gZipStream_);
                 gZipStream_.Close();
                 fileStream_.Close();
-                return new MapSector(blockDataBase, floorDataBase, schemesDataBase, this, q1, q2, q3, q4, q5, q6);
+                return new MapSector(blockDataBase, floorDataBase, schemesDataBase, itemDataBase, this, q1, q2, q3, q4, q5, q6);
             }
             return null;
         }
@@ -589,7 +603,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         Effect be_;
         private Plane upPlane, downPlane, leftPlane, rightPlane;
-        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, SpriteFont sf, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, GraphicsDevice gd) {
+        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, SpriteFont sf, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, ItemDataBase idb, GraphicsDevice gd) {
             MapGenerators.seed = MapSeed;
             whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             var data = new uint[1];
@@ -599,12 +613,13 @@ namespace rglikeworknamelib.Dungeon.Level {
             blockDataBase = bdb;
             floorDataBase = fdb;
             schemesDataBase = sdb;
+            itemDataBase = idb;
 
             if (spriteBatch != null) {
                 minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
             }
 
-            sectors_ = new List<MapSector> { new MapSector(bdb, fdb, sdb, this, 0, 0) };
+            sectors_ = new List<MapSector> { new MapSector(bdb, fdb, sdb, idb, this, 0, 0) };
 
             sectors_[0].Rebuild(MapSeed);
 
@@ -712,10 +727,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             //    GetValue(start, end4);
             //}
 
+            Block temp2;
             for (int i = -20; i < 20; i++) {
                 for (int j = -20; j < 20; j++) {
-                    if(PathClear(a, new Vector2(a.X + i, a.Y + j))) {
-                        var temp2 = GetBlock((int)a.X + i, (int)a.Y + j);
+                    temp2 = GetBlock((int) a.X + i, (int) a.Y + j);
+                    if(temp2.Id != 0 && PathClear(a, new Vector2(a.X + i, a.Y + j))) {
                         temp2.Lightness = Color.White;
                         temp2.Explored = true;
                     }
@@ -834,7 +850,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                             
 
                             if(!blockDataBase.Data[sector.Blocks[a].Id].IsTransparent) {
-                                AddShadowpointForBlock(camera, per, xpos, ypos);
+                                AddShadowpointForBlock(camera, per, xpos, ypos, i + sector.SectorOffsetX * MapSector.Rx, j + sector.SectorOffsetY * MapSector.Ry);
                             }
                         }
                 }
@@ -854,8 +870,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         
         }
 
-        private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos) {
-            var po = GetAtBlockPoints(xpos, ypos, per, camera);
+        private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos, int blockx, int blocky) {
+
+            var po = GetAtBlockPoints(xpos, ypos, 32,32);
 
             for (int k = 0; k < po.Length; k++) {
                 po[k] = XyToVector3(po[k]);
@@ -870,71 +887,84 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Vector3[] po2 = new[] { GetBorderIntersection(r1), GetBorderIntersection(r2), GetBorderIntersection(r3), GetBorderIntersection(r4) };
 
+            int[] spoints;
 
-            var farest = GetFarestPoints(po2[0], po2[1], po2[2], po2[3]);
+            float playerPosX = per.Position.X - camera.X;
+            float plauerPosY = per.Position.Y - camera.Y;
 
 
+            if (playerPosX <= xpos)
+            { //left column
+                spoints = plauerPosY <= ypos ? new[] {1, 3} : (plauerPosY <= ypos + 32 ? new[] {0, 3} : new[] {0, 2});
+            }
+            else
+            if (playerPosX <= xpos + 32)
+            { //middle column
+                spoints = plauerPosY <= ypos ? new[] {1, 0} : (plauerPosY <= ypos + 32 ? new[] {0, 0} : new[] {3, 2});
+            }
+            else
+            { //right column
+                spoints = plauerPosY <= ypos ? new[] {2, 0} : (plauerPosY <= ypos + 32 ? new[] {2, 1} : new[] {3, 1});
+            }
 
             //Making shadow polys
-            //points.Add(new VertexPositionColor(po2_1, Color.Black));
-            //points.Add(new VertexPositionColor(po[0], Color.Black));
-            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+            points.Add(new VertexPositionColor(po2[spoints[0]], Color.Black));
+            points.Add(new VertexPositionColor(po[spoints[0]], Color.Black));
+            points.Add(new VertexPositionColor(po2[spoints[1]], Color.Black));
+            points.Add(new VertexPositionColor(po[spoints[0]], Color.Black));
+            points.Add(new VertexPositionColor(po[spoints[1]], Color.Black));
+            points.Add(new VertexPositionColor(po2[spoints[1]], Color.Black));
 
-            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+            //points.Add(new VertexPositionColor(po2[0], Color.Black));
+            //points.Add(new VertexPositionColor(po[0], Color.Black));
+            //points.Add(new VertexPositionColor(po2[1], Color.Black));
             //points.Add(new VertexPositionColor(po[0], Color.Black));
             //points.Add(new VertexPositionColor(po[1], Color.Black));
+            //points.Add(new VertexPositionColor(po2[1], Color.Black));
 
-            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+            //points.Add(new VertexPositionColor(po2[1], Color.Black));
+            //points.Add(new VertexPositionColor(po[1], Color.Black));
+            //points.Add(new VertexPositionColor(po2[2], Color.Black));
             //points.Add(new VertexPositionColor(po[1], Color.Black));
             //points.Add(new VertexPositionColor(po[2], Color.Black));
+            //points.Add(new VertexPositionColor(po2[2], Color.Black));
 
-            //points.Add(new VertexPositionColor(po2_3, Color.Black));
+            //points.Add(new VertexPositionColor(po2[2], Color.Black));
             //points.Add(new VertexPositionColor(po[2], Color.Black));
-            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+            //points.Add(new VertexPositionColor(po2[3], Color.Black));
+            //points.Add(new VertexPositionColor(po[2], Color.Black));
+            //points.Add(new VertexPositionColor(po[3], Color.Black));
+            //points.Add(new VertexPositionColor(po2[3], Color.Black));
 
-            points.Add(new VertexPositionColor(po2[0], Color.Black));
-            points.Add(new VertexPositionColor(po[0], Color.Black));
-            points.Add(new VertexPositionColor(po2[1], Color.Black));
-            points.Add(new VertexPositionColor(po[0], Color.Black));
-            points.Add(new VertexPositionColor(po[1], Color.Black));
-            points.Add(new VertexPositionColor(po2[1], Color.Black));
+            //points.Add(new VertexPositionColor(po2[3], Color.Black));
+            //points.Add(new VertexPositionColor(po[3], Color.Black));
+            //points.Add(new VertexPositionColor(po2[0], Color.Black));
+            //points.Add(new VertexPositionColor(po[3], Color.Black));
+            //points.Add(new VertexPositionColor(po[0], Color.Black));
+            //points.Add(new VertexPositionColor(po2[0], Color.Black));
+        }
 
-            points.Add(new VertexPositionColor(po2[1], Color.Black));
-            points.Add(new VertexPositionColor(po[1], Color.Black));
-            points.Add(new VertexPositionColor(po2[2], Color.Black));
-            points.Add(new VertexPositionColor(po[1], Color.Black));
-            points.Add(new VertexPositionColor(po[2], Color.Black));
-            points.Add(new VertexPositionColor(po2[2], Color.Black));
+        private int[] GetShadowBlockSize(int blockx, int blocky) {
+            int[] reses = new[] {32, 32};
 
-            points.Add(new VertexPositionColor(po2[2], Color.Black));
-            points.Add(new VertexPositionColor(po[2], Color.Black));
-            points.Add(new VertexPositionColor(po2[3], Color.Black));
-            points.Add(new VertexPositionColor(po[2], Color.Black));
-            points.Add(new VertexPositionColor(po[3], Color.Black));
-            points.Add(new VertexPositionColor(po2[3], Color.Black));
+            int startx = blockx, starty = blocky;
+            while (true) {
+                bool xstop = false;
+                startx++;
+                if (!blockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
+                    reses[0] += 32;
+                } else xstop = true;
 
-            points.Add(new VertexPositionColor(po2[3], Color.Black));
-            points.Add(new VertexPositionColor(po[3], Color.Black));
-            points.Add(new VertexPositionColor(po2[0], Color.Black));
-            points.Add(new VertexPositionColor(po[3], Color.Black));
-            points.Add(new VertexPositionColor(po[0], Color.Black));
-            points.Add(new VertexPositionColor(po2[0], Color.Black));
+                starty++;
+                if(!blockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
+                    reses[1] += 32;
+                }
+                else {
+                    if (xstop) break;
+                }
+            }
 
-            //points.Add(new VertexPositionColor(car, Color.Black));
-            //points.Add(new VertexPositionColor(po2_1, Color.Black));
-            //points.Add(new VertexPositionColor(po2_1 + new Vector3(0, -0.05f, 0), Color.Black));
-            //points.Add(new VertexPositionColor(car, Color.Black));
-            //points.Add(new VertexPositionColor(po2_3, Color.Black));
-            //points.Add(new VertexPositionColor(po2_3 + new Vector3(0, -0.05f, 0), Color.Black));
-            //points.Add(new VertexPositionColor(car, Color.Black));
-            //points.Add(new VertexPositionColor(po2_2, Color.Black));
-            //points.Add(new VertexPositionColor(po2_2 + new Vector3(0, -0.05f, 0), Color.Black));
-
-
-
-            //points.Add(new VertexPositionColor(car, Color.Black));
-            //points.Add(new VertexPositionColor(PlaneRayIntersection(upPlane, r1), Color.Black));
-            //points.Add(new VertexPositionColor(PlaneRayIntersection(upPlane, r2) + new Vector3(0, -0.05f, 0), Color.Black));
+            return reses;
         }
 
         /// <summary>
@@ -945,12 +975,12 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="c"></param>
         /// <param name="cam"></param>
         /// <returns></returns>
-        private static Vector3[] GetAtBlockPoints(float xpos, float ypos, Creature c, Vector2 cam) {
+        private static Vector3[] GetAtBlockPoints(float xpos, float ypos, int resx, int resy) {
 
             Vector3 p1 = new Vector3(xpos, ypos, 0);
-            Vector3 p2 = new Vector3(xpos + 32, ypos, 0);
-            Vector3 p3 = new Vector3(xpos + 32, ypos + 32, 0);
-            Vector3 p4 = new Vector3(xpos, ypos + 32, 0);
+            Vector3 p2 = new Vector3(xpos + resx, ypos, 0);
+            Vector3 p3 = new Vector3(xpos + resx, ypos + resy, 0);
+            Vector3 p4 = new Vector3(xpos, ypos + resy, 0);
 
             return new[] {p1, p2, p3, p4};
         }
@@ -973,58 +1003,40 @@ namespace rglikeworknamelib.Dungeon.Level {
         private Vector3 GetBorderIntersection(Ray r)
         {
             //return GetSlosestIntersectionPoint(r, upPlane, downPlane, leftPlane, rightPlane);
-            return r.Position + r.Direction*3;
-        }
-
-        /// <summary>
-        /// Использует приведенные координаты
-        /// </summary>
-        /// <param name="r"></param>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        private static Vector3 GetSlosestIntersectionPoint(Ray r, params Plane[] p)
-        {
-            var a = (p.Select(r.Intersects).Where(t => t.HasValue && !float.IsNaN(t.Value)).Select(t => t.Value)).ToList();
-            if(a.Count > 0) {
-                return r.Position + r.Direction*a.Min();
-            }
-            return Vector3.Zero;
-            //throw new Exception("No intersection plane");
-        }
-
-        /// <summary>
-        /// Использует приведенные координаты
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        private static Vector3 PlaneRayIntersection(Plane a, Ray b)
-        {
-            float? f = b.Intersects(a);
-
-            if (f.HasValue) {
-                return b.Position + b.Direction * f.Value;
-            }
-            return Vector3.Zero;
-        }
-
-        public int GetShadowrenderCount() {
-            return points.Count;
+            return r.Position + r.Direction*5;
         }
 
         List<VertexPositionColor> points = new List<VertexPositionColor>();
+
         public void ShadowRender() {
 
-            gd_.RasterizerState = RasterizerState.CullNone;
+            gd_.RasterizerState = new RasterizerState() {CullMode = CullMode.None, FillMode = FillMode.Solid};
             gd_.DepthStencilState = DepthStencilState.Default;
             gd_.BlendState = BlendState.AlphaBlend;
+            (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
 
             foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
                 pass.Apply();
 
-                (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
                 if (points.Count != 0) {
                     gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count/3);
+                }
+            }
+
+            if(Settings.DebugInfo) {
+                gd_.RasterizerState = new RasterizerState() { CullMode = CullMode.None, FillMode = FillMode.WireFrame };
+                gd_.DepthStencilState = DepthStencilState.Default;
+                gd_.BlendState = BlendState.AlphaBlend;
+                (be_ as BasicEffect).DiffuseColor = Color.White.ToVector3();
+
+                foreach (EffectPass pass in be_.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+
+                    if (points.Count != 0)
+                    {
+                        gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count / 3);
+                    }
                 }
             }
         }
@@ -1058,6 +1070,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             foreach (var sector in sectors_) {
                 SaveSector(sector);
             }
+        }
+
+        public int GetShadowrenderCount() {
+            return points.Count;
         }
     }
 }

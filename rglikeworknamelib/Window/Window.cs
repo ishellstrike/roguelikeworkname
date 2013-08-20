@@ -29,6 +29,7 @@ namespace rglikeworknamelib.Window {
 
         public bool Moveable = true;
         public bool NoBorder;
+        public bool NoBody;
 
         public bool hides;
 
@@ -131,10 +132,15 @@ namespace rglikeworknamelib.Window {
 
         public void Draw(SpriteBatch sb) {
             if (Visible) {
-                if (!NoBorder && (!hides || (hides && aimed))) {
-                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, backtransparent_, 0, Vector2.Zero,
-                            new Vector2(Locate.Width, Locate.Height), SpriteEffects.None, 0);
+                if(!NoBody) {
+                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y + 20), null, backtransparent_, 0, Vector2.Zero,
+                            new Vector2(Locate.Width, Locate.Height - 20), SpriteEffects.None, 0);
+                }
 
+                if (!NoBorder && (!hides || (hides && aimed))) {
+
+                    sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, backtransparent_, 0, Vector2.Zero,
+                            new Vector2(Locate.Width, 20), SpriteEffects.None, 0);
 
                     sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero,
                             new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
@@ -182,6 +188,11 @@ namespace rglikeworknamelib.Window {
                     if (Moveable && lms.LeftButton == ButtonState.Pressed && lms.Y <= Locate.Top + 20) {
                         Locate.X += (ms.X - lms.X);
                         Locate.Y += (ms.Y - lms.Y);
+
+                        if (Locate.X < 0) Locate.X = 0;
+                        if (Locate.Y < 0) Locate.Y = 0;
+                        if (Locate.X > Settings.Resolution.X - 20) Locate.X = (int)Settings.Resolution.X - 20;
+                        if (Locate.Y > Settings.Resolution.Y - 20) Locate.X = (int)Settings.Resolution.Y - 20;
                     }
                 }
                 for (int i = Components.Count - 1; i >= 0; i--) {

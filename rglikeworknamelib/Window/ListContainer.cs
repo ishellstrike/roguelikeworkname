@@ -118,6 +118,7 @@ namespace rglikeworknamelib.Window {
 
             Items.Clear();
             Components.Clear();
+
             Components.Add(buttonUp_);
             Components.Add(buttonDown_);
             Components.Add(progress_);

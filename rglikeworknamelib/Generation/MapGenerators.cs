@@ -128,27 +128,6 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        internal static void AddTestScheme(GameLevel gl, SchemesDataBase sch, int rx, int ry, Random rnd)
-        {
-            Vector2 start = new Vector2(0, 0);
-            Schemes scheme = sch.Data[0];
-
-            for (int i = 0; i < scheme.x; i++) {
-                for (int j = 0; j < scheme.y; j++) {
-                    gl.SetBlock((int)start.X + i, (int)start.Y + j, scheme.data[i * scheme.y + j]);
-                }
-            }
-
-            List<StorageBlock> storageBlocks = gl.GetStorageBlocks();
-
-            foreach (var storageBlock in storageBlocks) {
-                for (int i = 0; i < 10; i++) {
-                    storageBlock.StoredItems.Add(new Item (rnd.Next(1,19),3));
-                }
-                
-            }
-        }
-
         public static void ClearBlocks(MapSector gameLevel) {
             for (int i = 0; i < MapSector.Rx * MapSector.Ry; i++) {
                 gameLevel.SetBlock(i, 0);

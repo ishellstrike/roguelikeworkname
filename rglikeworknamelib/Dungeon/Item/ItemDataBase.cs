@@ -13,7 +13,9 @@ using rglikeworknamelib.Parser;
 namespace rglikeworknamelib.Dungeon.Item {
     public class ItemDataBase
     {
-        public Dictionary<int, ItemData> data;
+        public Dictionary<string, ItemData> data;
+        public Dictionary<string, ItemData> dataMedicineItems;
+        public Dictionary<string, ItemData> dataFoodItems;
        // public Collection<Texture2D> texatlas;
 
         /// <summary>
@@ -21,10 +23,14 @@ namespace rglikeworknamelib.Dungeon.Item {
         /// </summary>
         public ItemDataBase() {
             //texatlas = texatlas_;
-            data = new Dictionary<int, ItemData>();
-            var a = ParsersCore.ParseDirectory<KeyValuePair<int, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory(), ItemParser.Parser);
+            data = new Dictionary<string, ItemData>();
+            dataFoodItems = new Dictionary<string, ItemData>();
+            dataMedicineItems = new Dictionary<string, ItemData>();
+            var a = ParsersCore.ParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory(), ItemParser.Parser);
             foreach (var pair in a) {
                 data.Add(pair.Key, (ItemData)pair.Value);
+                if (((ItemData)pair.Value).stype == ItemType.Medicine) dataMedicineItems.Add(pair.Key, (ItemData)pair.Value);
+                if (((ItemData)pair.Value).stype == ItemType.Food) dataFoodItems.Add(pair.Key, (ItemData)pair.Value);
             }
         }
 
@@ -62,6 +68,19 @@ namespace rglikeworknamelib.Dungeon.Item {
             re.Close();
         }
 
+        public Dictionary<string, ItemData> GetItemByItemDatasType(ItemType it) {
+            switch (it) {
+                case ItemType.Nothing:
+                    return data;
+                case ItemType.Medicine:
+                    return dataMedicineItems;
+                case ItemType.Food:
+                    return dataFoodItems;
+                default:
+                    return null;
+            }
+        }
+
         public string GetItemDescription(Item i)
         {
             return data[i.Id].description;
@@ -77,7 +96,7 @@ namespace rglikeworknamelib.Dungeon.Item {
                 sb.Append(Environment.NewLine + string.Format("id {0} uid {1}", i.Id, i.Uid));
             }
 
-            if (item.afteruseId != 0) {
+            if (item.afteruseId != null) {
                 sb.Append(Environment.NewLine + string.Format("оставляет {0}", data[item.afteruseId].name));
             }
             //switch (item.stype) {

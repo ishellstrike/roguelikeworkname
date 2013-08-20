@@ -140,8 +140,16 @@ namespace jarg
         private Button InventorySortMedicine;
         private Button InventorySortFood;
 
+        private Window WindowContainer;
+        private ListContainer ContainerContainer;
+        private LabelFixed LabelContainer;
+        private Button ButtonContainerTakeAll;
+
         private Window WindowEventLog;
         private ListContainer ContainerEventLog;
+
+        private Window WindowIngameHint;
+        private Label LabelIngameHint;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, rglikeworknamelib.Window.WindowSystem ws) {
@@ -157,8 +165,8 @@ namespace jarg
             for (int i = 1; i < 20; i++ )
                 contaiter1.AddItem(new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), wp, sf, WindowStats));
 
-            WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 100, 100), "minimap", true,
-                                       wp, sf, ws) {NoBorder = true, Closable = false, Moveable = false};
+            WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40), "minimap", true,
+                                       wp, sf, ws) {Closable = false, hides = true};
             ImageMinimap = new Image(new Vector2(10,10), new Texture2D(GraphicsDevice, 88, 88), Color.White, WindowMinimap);
 
             WindowSettings =
@@ -224,20 +232,28 @@ namespace jarg
             InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2), "Food", wp, sf, WindowInventory);
             InventorySortFood.onPressed += new EventHandler(InventorySortFood_onPressed);
 
-            WindowEventLog = new Window(new Vector2(Settings.Resolution.X / 3, Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false};
-            ContainerEventLog = new ListContainer( new Rectangle(0,20,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/4-20), wp, sf, WindowEventLog);
+            WindowContainer = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
+            WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
+            ContainerContainer = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowContainer);
+            LabelContainer = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowContainer);
+            ButtonContainerTakeAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30 * 2), "- Take All -", wp, sf, WindowContainer);
+            ButtonContainerTakeAll.onPressed += new EventHandler(ButtonContainerTakeAll_onPressed);
+
+            WindowEventLog = new Window(new Vector2(Settings.Resolution.X / 3, Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false, Closable = false, hides = true};
+            ContainerEventLog = new ListContainer( new Rectangle(0,0,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/4-20), wp, sf, WindowEventLog);
             EventLog.onLogUpdate += EventLog_onLogUpdate;
 
-            Window testw = new Window(new Vector2(500,500), "LoL", true, wp, sf, ws_);
-            ListContainer lc = new ListContainer(new Rectangle(50,50,400,400), wp, sf, testw);
-            ListContainer[] lcc = new ListContainer[10];
-            for (int i = 0; i < 10; i++) {
-                lcc[i] = new ListContainer(new Rectangle(0,0,100,200), wp, font1_, lc);
-                lc.AddItem(lcc[i]);
-                for (int j = 0; j < 10; j++) {
-                    lcc[i].AddItem(new Label(Vector2.Zero, j + "qwe", whitepixel, font1_, lcc[i]));
-                }
-            }
+            WindowIngameHint = new Window(new Vector2(50, 30), "HINT", false, wp, sf, ws) {NoBorder = true};
+            LabelIngameHint = new Label(new Vector2(10,-17), "a-ha", wp, sf, WindowIngameHint);
+        }
+
+        void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
+        {
+            inventory_.items.AddRange(inContainer_);
+            inContainer_.Clear();
+            inventory_.StackSimilar();
+            UpdateContainerContainer(inContainer_);
+            UpdateInventoryContainer();
         }
 
         void Button24h_onPressed(object sender, EventArgs e) {
@@ -256,7 +272,7 @@ namespace jarg
                 ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss, whitepixel, font1_, EventLog.cols[i], 35, WindowEventLog));
                 i++;
             }
-            ContainerEventLog.ScrollBottom();
+            //ContainerEventLog.ScrollBottom();
         }
 
         void InventorySortFood_onPressed(object sender, EventArgs e)
@@ -278,10 +294,10 @@ namespace jarg
         }
 
         private ItemType nowSort_ = ItemType.Nothing;
-        private List<Item> inInv = new List<Item>(); 
+        private List<Item> inInv_ = new List<Item>(); 
         void UpdateInventoryContainer() {
             var a = inventory_.FilterByType(nowSort_);
-            inInv = a;
+            inInv_ = a;
 
             ContainerInventoryItems.Clear();
 
@@ -295,9 +311,36 @@ namespace jarg
             }
         }
 
+        private ItemType nowSortContainer_ = ItemType.Nothing;
+        private List<Item> inContainer_ = new List<Item>(); 
+        void UpdateContainerContainer(List<Item> a)
+        {
+            inContainer_ = a;
+
+            ContainerContainer.Clear();
+
+            int cou = 0;
+            foreach (var item in a)
+            {
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerContainer);
+                i.Tag = cou;
+                i.onPressed += PressInContainer;
+                cou++;
+                ContainerContainer.AddItem(i);
+            }
+        }
+
         void PressInInventory(object sender, EventArgs e) {
             var a = (int) (sender as Label).Tag;
-            InventoryMoreInfo.Text = idb_.GetItemFullDescription(inInv[a]);
+            InventoryMoreInfo.Text = idb_.GetItemFullDescription(inInv_[a]);
+        }
+
+        void PressInContainer(object sender, EventArgs e)
+        {
+            var a = (int)(sender as Label).Tag;
+            if (inInv_.Count > a) {
+                LabelContainer.Text = idb_.GetItemFullDescription(inInv_[a]);
+            }
         }
 
         void ButtonCaracterCancel_onPressed(object sender, EventArgs e)
@@ -412,6 +455,7 @@ namespace jarg
                                                       bdb_, 
                                                       fdb_, 
                                                       sdb_,
+                                                      idb_,
                                                       GraphicsDevice
                                                      );
 
@@ -420,14 +464,6 @@ namespace jarg
             inventory_ = new InventorySystem(idb_);
 
             CreateWindows(whitepixel, font1_, ws_);
-
-            Random rnd = new Random();
-            for (int i = 0; i < 1000; i++) {
-                int aa = rnd.Next(1, 100);
-                if (idb_.data.ContainsKey(aa)) {
-                    inventory_.items.Add(new Item(aa, rnd.Next(1,10)));
-                }
-            }
             
             UpdateInventoryContainer();
         }
@@ -500,7 +536,7 @@ namespace jarg
             bs_.Update(gameTime);
             GlobalWorldLogic.Update(gameTime);
 
-            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*2);
+            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
         }
 
         private void KeyboardUpdate(GameTime gameTime)
@@ -548,6 +584,7 @@ namespace jarg
                     WindowInventory.Visible = !WindowInventory.Visible;
                 if (WindowInventory.Visible) {
                     WindowInventory.OnTop();
+                    WindowInventory.SetPosition(new Vector2(0, 0));
                 }
             }
 
@@ -573,28 +610,43 @@ namespace jarg
                 bs_.AddBullet(player_, 5, PlayerSeeAngle);
             }
 
-            //if (aa >= 0 && currentFloor_.GetId(aa) != 0 )// currentFloor_.IsExplored(aa))
+            int nx = (ms_.X + (int)camera_.X) / 32;
+            int ny = (ms_.Y + (int)camera_.Y) / 32;
+
+            if (ms_.X + camera_.X < 0) nx--;
+            if (ms_.Y + camera_.Y < 0) ny--;
+
+            WindowIngameHint.Visible = false;
+
+            if (currentFloor_.GetBlock(nx, ny).Lightness == Color.White)// currentFloor_.IsExplored(aa))
             {
-                int nx = (ms_.X + (int)camera_.X) / 32;
-                int ny = (ms_.Y + (int)camera_.Y) / 32;
-
-                if (ms_.X + camera_.X < 0) nx--;
-                if (ms_.Y + camera_.Y < 0) ny--;
-
                 var a = currentFloor_.GetBlock(nx, ny);
                 if (a != null) {
                     var b = bdb_.Data[a.Id];
                     string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
                     if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
 
+                    if (WindowIngameHint.Visible = a.Id != 0) {
+                        LabelIngameHint.Text = s;
+                        WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
+                        WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
+                    }
+
                     if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released &&
                         currentFloor_.IsCreatureMeele(nx, ny, player_)) {
                         var undermouseblock = bdb_.Data[a.Id];
-                        if (undermouseblock.SmartAction == SmartAction.ActionOpenContainer) {
-                        }
-
-                        if (undermouseblock.SmartAction == SmartAction.ActionOpenClose) {
-                            currentFloor_.OpenCloseDoor(nx, ny);
+                        switch (undermouseblock.SmartAction) {
+                            case SmartAction.ActionSee:
+                                EventLog.Add("Вы видите "+undermouseblock.Name, GlobalWorldLogic.CurrentTime, Color.Gray);
+                                break;
+                            case SmartAction.ActionOpenContainer:
+                                WindowContainer.Visible = true;
+                                WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
+                                UpdateContainerContainer((a as StorageBlock).StoredItems);
+                                break;
+                            case SmartAction.ActionOpenClose:
+                                currentFloor_.OpenCloseDoor(nx, ny);
+                                break;
                         }
                     }
                 }
