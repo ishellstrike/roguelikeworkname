@@ -863,41 +863,62 @@ namespace rglikeworknamelib.Dungeon.Level {
             Vector3 car = new Vector3(per.Position.X - (int)camera.X, per.Position.Y - (int)camera.Y, 0);
             car = XyToVector3(car);
 
-            Ray r1 = new Ray(car, Vector3.Normalize(po[0]-car));
-            Ray r2 = new Ray(car, Vector3.Normalize(po[1]-car));
-            Ray r3 = new Ray(car, Vector3.Normalize(po[2]-car));
+            Ray r1 = new Ray(car, Vector3.Normalize(po[0] - car));
+            Ray r2 = new Ray(car, Vector3.Normalize(po[1] - car));
+            Ray r3 = new Ray(car, Vector3.Normalize(po[2] - car));
+            Ray r4 = new Ray(car, Vector3.Normalize(po[3] - car));
 
-            Vector3 po2_1 = Vector3.Zero, po2_2 = Vector3.Zero, po2_3 = Vector3.Zero;
+            Vector3[] po2 = new[] { GetBorderIntersection(r1), GetBorderIntersection(r2), GetBorderIntersection(r3), GetBorderIntersection(r4) };
 
-            // Calculating ray to borders intersect points
-            po2_1 = GetBorderIntersection(r1);
-            po2_2 = GetBorderIntersection(r2);
-            po2_3 = GetBorderIntersection(r3);
+
+            var farest = GetFarestPoints(po2[0], po2[1], po2[2], po2[3]);
+
 
 
             //Making shadow polys
-            points.Add(new VertexPositionColor(po2_1, Color.Black));
-            points.Add(new VertexPositionColor(po[0], Color.Black));
-            points.Add(new VertexPositionColor(po2_2, Color.Black));
-
-            points.Add(new VertexPositionColor(po2_2, Color.Black));
-            points.Add(new VertexPositionColor(po[0], Color.Black));
-            points.Add(new VertexPositionColor(po[1], Color.Black));
-
-            points.Add(new VertexPositionColor(po2_2, Color.Black));
-            points.Add(new VertexPositionColor(po[1], Color.Black));
-            points.Add(new VertexPositionColor(po[2], Color.Black));
-
-            points.Add(new VertexPositionColor(po2_3, Color.Black));
-            points.Add(new VertexPositionColor(po[2], Color.Black));
-            points.Add(new VertexPositionColor(po2_2, Color.Black));
-
             //points.Add(new VertexPositionColor(po2_1, Color.Black));
             //points.Add(new VertexPositionColor(po[0], Color.Black));
-            //points.Add(new VertexPositionColor(po2_3, Color.Black));
-            //points.Add(new VertexPositionColor(po[1], Color.Black));
+            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+
+            //points.Add(new VertexPositionColor(po2_2, Color.Black));
             //points.Add(new VertexPositionColor(po[0], Color.Black));
+            //points.Add(new VertexPositionColor(po[1], Color.Black));
+
+            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+            //points.Add(new VertexPositionColor(po[1], Color.Black));
+            //points.Add(new VertexPositionColor(po[2], Color.Black));
+
             //points.Add(new VertexPositionColor(po2_3, Color.Black));
+            //points.Add(new VertexPositionColor(po[2], Color.Black));
+            //points.Add(new VertexPositionColor(po2_2, Color.Black));
+
+            points.Add(new VertexPositionColor(po2[0], Color.Black));
+            points.Add(new VertexPositionColor(po[0], Color.Black));
+            points.Add(new VertexPositionColor(po2[1], Color.Black));
+            points.Add(new VertexPositionColor(po[0], Color.Black));
+            points.Add(new VertexPositionColor(po[1], Color.Black));
+            points.Add(new VertexPositionColor(po2[1], Color.Black));
+
+            points.Add(new VertexPositionColor(po2[1], Color.Black));
+            points.Add(new VertexPositionColor(po[1], Color.Black));
+            points.Add(new VertexPositionColor(po2[2], Color.Black));
+            points.Add(new VertexPositionColor(po[1], Color.Black));
+            points.Add(new VertexPositionColor(po[2], Color.Black));
+            points.Add(new VertexPositionColor(po2[2], Color.Black));
+
+            points.Add(new VertexPositionColor(po2[2], Color.Black));
+            points.Add(new VertexPositionColor(po[2], Color.Black));
+            points.Add(new VertexPositionColor(po2[3], Color.Black));
+            points.Add(new VertexPositionColor(po[2], Color.Black));
+            points.Add(new VertexPositionColor(po[3], Color.Black));
+            points.Add(new VertexPositionColor(po2[3], Color.Black));
+
+            points.Add(new VertexPositionColor(po2[3], Color.Black));
+            points.Add(new VertexPositionColor(po[3], Color.Black));
+            points.Add(new VertexPositionColor(po2[0], Color.Black));
+            points.Add(new VertexPositionColor(po[3], Color.Black));
+            points.Add(new VertexPositionColor(po[0], Color.Black));
+            points.Add(new VertexPositionColor(po2[0], Color.Black));
 
             //points.Add(new VertexPositionColor(car, Color.Black));
             //points.Add(new VertexPositionColor(po2_1, Color.Black));
@@ -925,20 +946,24 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="cam"></param>
         /// <returns></returns>
         private static Vector3[] GetAtBlockPoints(float xpos, float ypos, Creature c, Vector2 cam) {
-            bool isRight = xpos >= c.Position.X - cam.X;
-            bool isDown = ypos >= c.Position.Y - cam.Y;
 
             Vector3 p1 = new Vector3(xpos, ypos, 0);
             Vector3 p2 = new Vector3(xpos + 32, ypos, 0);
             Vector3 p3 = new Vector3(xpos + 32, ypos + 32, 0);
             Vector3 p4 = new Vector3(xpos, ypos + 32, 0);
 
-            Vector3[] po = isRight
-                               ? (isDown ? new[] {p2, p3, p4} : new[] {p1, p2, p3})
-                               : (isDown ? new[] {p1, p3, p4} : new[] {p1, p2, p4});
-            return po;
+            return new[] {p1, p2, p3, p4};
         }
 
+        private static int[] GetFarestPoints(params Vector3[] points) {
+            Vector3 a = Vector3.Zero;
+            List<float> dist = points.Select(x => Vector3.Distance(a, x)).ToList();
+            var mins = new[] {dist.Max(), dist.Min()};
+            var firstn = dist.IndexOf(mins[0]);
+            var secondn = dist.IndexOf(mins[1]);
+
+            return new[] { firstn, secondn };
+        }
 
         /// <summary>
         /// Использует приведенные координаты
@@ -947,7 +972,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <returns></returns>
         private Vector3 GetBorderIntersection(Ray r)
         {
-            return GetSlosestIntersectionPoint(r, upPlane, downPlane, leftPlane, rightPlane);
+            //return GetSlosestIntersectionPoint(r, upPlane, downPlane, leftPlane, rightPlane);
+            return r.Position + r.Direction*3;
         }
 
         /// <summary>
@@ -996,6 +1022,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
                 pass.Apply();
 
+                (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
                 if (points.Count != 0) {
                     gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count/3);
                 }

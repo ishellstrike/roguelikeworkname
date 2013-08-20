@@ -15,7 +15,9 @@ namespace rglikeworknamelib.Dungeon.Item {
         Gloves = 7,
 
         Boots = 8,
-
+        
+        Gun,
+        Meele,
         Ammo = 9,
 
         Bag = 10,
@@ -26,5 +28,12 @@ namespace rglikeworknamelib.Dungeon.Item {
         Craft = 13,
 
         Currency = 14
+    }
+
+    public enum UpgradeType {
+        Rifle,
+        SniperRifle,
+        Pistol,
+        Revolver
     }
 }

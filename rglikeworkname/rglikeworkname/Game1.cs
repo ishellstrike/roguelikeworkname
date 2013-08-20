@@ -644,9 +644,9 @@ namespace jarg
                                   (int)Settings.Resolution.Y);
 
             string ss =
-                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSVert {7}",
+                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7}",
                               PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
-                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount());
+                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount()/3);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 
