@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork;
 using System;
-using rglikeworknamelib;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Item;
@@ -16,6 +18,12 @@ using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Window;
+using Button = rglikeworknamelib.Window.Button;
+using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
+using EventLog = rglikeworknamelib.EventLog;
+using Keys = Microsoft.Xna.Framework.Input.Keys;
+using Label = rglikeworknamelib.Window.Label;
+using ProgressBar = rglikeworknamelib.Window.ProgressBar;
 using Settings = rglikeworknamelib.Settings;
 
 namespace jarg
@@ -60,8 +68,17 @@ namespace jarg
             testgame
         }
 
-        public Game1()
-        {
+        public Game1() {
+#if DEBUG
+
+            Process myProcess = new Process();
+            myProcess.StartInfo.FileName = "cmd.exe";
+            myProcess.StartInfo.Arguments = @"/C cd " + Application.StartupPath + " & VersionGetter.cmd";
+            myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            myProcess.StartInfo.CreateNoWindow = true;
+            myProcess.Start();
+            myProcess.WaitForExit(3000);
+#endif
 
             if (File.Exists("PreviousErrorLog.txt")) {
                 File.Delete("PreviousErrorLog.txt");
@@ -207,13 +224,15 @@ namespace jarg
     |  \__  \\_  __ \/ ___\ 
     |  |/ __ \|  | \/ /_/  >
 /\__|  (____  /__|  \___  / 
-\______|    \/     /_____/  " + " " + Version.GetLong(), wp, sf, WindowMainMenu);
+\______|    \/     /_____/", wp, sf, WindowMainMenu);
+            LabelMainVer = new Label(new Vector2(10, LabelMainMenu.Height + 10), Version.GetLong(), wp, sf, Color.Gray, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(LabelMainMenu);
-            ButtonNewGame = new Button(new Vector2(10,100 + 40*1), "New game", wp, sf, WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(LabelMainVer);
+            ButtonNewGame = new Button(new Vector2(10,120 + 40*1), "New game", wp, sf, WindowMainMenu);
             ButtonNewGame.onPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
 
-            ButtonSettings = new Button(new Vector2(10, 100 + 40 * 5), "Settings", wp, sf, WindowMainMenu);
+            ButtonSettings = new Button(new Vector2(10, 120 + 40 * 5), "Settings", wp, sf, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ButtonSettings);
             ButtonSettings.onPressed += ButtonIngameMenuSettings_onPressed;
             RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y / 2 - 50), "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.", 50, wp, sf, WindowMainMenu);
@@ -661,7 +680,9 @@ namespace jarg
         }
 
 
-        private Action<GameTime> DrawAction = x => { };  
+        private Action<GameTime> DrawAction = x => { };
+        private Label LabelMainVer;
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>

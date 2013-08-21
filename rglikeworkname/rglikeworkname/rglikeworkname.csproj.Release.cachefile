@@ -83,6 +83,9 @@ Content\Effects\resolveShadowsEffect.xnb
 Content\Textures\Dungeon\Objects\tree2.xnb
 Content\Textures\Dungeon\Objects\glass_hor.xnb
 Content\Textures\Dungeon\Objects\glass_ver.xnb
+Content\Textures\Dungeon\Objects\table_hor_left.xnb
+Content\Textures\Dungeon\Objects\table_hor_mid.xnb
+Content\Textures\Dungeon\Objects\table_hor_right.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Floor\textureloadorder.ord
@@ -102,4 +105,8 @@ Content\Data\Items\crafting1.txt
 Content\Data\Items\medicine1.txt
 Content\Data\Items\Spawnlists\house.txt
 Content\Data\Items\misc1.txt
+Content\Data\Items\weapon_guns1.txt
+Content\Data\Items\weapon_ammo.txt
 Content\Textures\Particles\textureloadorder.ord
+VersionGet.cmd
+NLog.config
