@@ -7,7 +7,7 @@ namespace rglikeworknamelib.Window {
         public ImageButton(Vector2 p, string s, Texture2D wp, Texture2D im, SpriteFont wf, Window ow) : base(p, s, wp, wf, ow) {
             Im = im;
         }
-        public virtual void Draw(SpriteBatch sb) {
+        public new virtual void Draw(SpriteBatch sb) {
             base.Draw(sb);
         }
     }

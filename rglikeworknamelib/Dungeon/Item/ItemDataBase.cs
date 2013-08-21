@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
+using NLog;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
 
@@ -16,6 +17,7 @@ namespace rglikeworknamelib.Dungeon.Item {
         public Dictionary<string, ItemData> data;
         public Dictionary<string, ItemData> dataMedicineItems;
         public Dictionary<string, ItemData> dataFoodItems;
+        private Logger logger = LogManager.GetCurrentClassLogger();
        // public Collection<Texture2D> texatlas;
 
         /// <summary>

@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using NLog;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Parser
 {
-    internal class ItemParser
-    {
+    internal class ItemParser {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         public static List<KeyValuePair<string, object>> Parser(string s)
         {
             var temp = new List<KeyValuePair<string, object>>();
@@ -43,7 +44,7 @@ namespace rglikeworknamelib.Parser
                                     finfo.SetValue(cur.Value, converted);
                                 }
                             } else {
-                                Log.LogError(cur.Value.GetType().Name+" didnt contains field \""+sstart+"\", \""+extracted+"\" didn't assigned to ID "+header[0]);
+                                logger.Error(cur.Value.GetType().Name+" didnt contains field \""+sstart+"\", \""+extracted+"\" didn't assigned to ID "+header[0]);
                             }
                         }
                     }

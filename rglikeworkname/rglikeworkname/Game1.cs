@@ -62,6 +62,11 @@ namespace jarg
 
         public Game1()
         {
+            if (File.Exists("LastErrorLog.txt"))
+            {
+                File.Move("LastErrorLog.txt", "PreviousErrorLog.txt");
+            }
+
             graphics_ = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             if (!Directory.Exists(Settings.GetWorldsDirectory())) {
@@ -75,8 +80,6 @@ namespace jarg
         }
         protected override void Initialize()
         {
-            Log.Init();
-
             Window.Title = Version.GetLong();
 
             Settings.Resolution = new Vector2(1024, 768);
@@ -90,7 +93,6 @@ namespace jarg
             graphics_.ApplyChanges();
 
             base.Initialize();
-
         }
 
 #region Window Designer

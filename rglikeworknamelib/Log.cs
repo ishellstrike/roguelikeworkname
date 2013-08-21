@@ -1,43 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.Authentication;
 using Microsoft.Xna.Framework;
+using NLog.Config;
 using rglikeworknamelib.Dungeon;
+using NLog;
 
 namespace rglikeworknamelib
 {
-    public static class Log
-    {
-        public static List<string> log = new List<string>();
-
-        public static Random rnd = new Random();
-        public static int session;
-
-        public static void Init() {
-            session = rnd.Next(0, int.MaxValue);
-        }
-
-        public static void AddString(string s) {
-            log.Add(s);
-        }
-
-        public static void LogError(string s) {
-            Directory.CreateDirectory("Errors\\");
-            StreamWriter sw = new StreamWriter(string.Format("Errors\\{0}-{1}-{2}_{3}--error.txt", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year, session), true);
-            sw.WriteLine(s);
-            sw.Close();
-        }
-
-        public static void SaveLog() {
-            StreamWriter sw = new StreamWriter(string.Format("{0}-{1}-{2}_{3}-{4}-{5}--log.txt",DateTime.Now.Day,DateTime.Now.Month,DateTime.Now.Year,DateTime.Now.Hour,DateTime.Now.Minute,DateTime.Now.Second));
-            foreach (var a in log) {
-                if(a != "")
-                sw.WriteLine(a);
-            }
-            sw.Close();
-        }
-    }
-
     public static class EventLog
     {
         public static List<string> log = new List<string>();

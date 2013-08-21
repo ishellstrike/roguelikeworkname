@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NLog;
 
 namespace rglikeworknamelib.Parser
 {
@@ -14,6 +15,7 @@ namespace rglikeworknamelib.Parser
     {
         public static Regex stringExtractor = new Regex("\".*\"");
         public static Regex intextractor = new Regex("[0-9]+");
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public static List<T> ParseFile<T>(string patch, Func<string, List<T>> parser)
         {
@@ -93,7 +95,7 @@ namespace rglikeworknamelib.Parser
             }
             catch (DirectoryNotFoundException e)
             {
-                Log.LogError(e.StackTrace + " --- " + e.Message);
+                logger.Error(e.StackTrace + " --- " + e.Message);
                 return new List<T>();
             }
         }
