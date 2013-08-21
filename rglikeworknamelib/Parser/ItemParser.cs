@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
@@ -26,53 +28,23 @@ namespace rglikeworknamelib.Parser
 
                     temp.Add(new KeyValuePair<string, object>(header[0], new ItemData()));
                     KeyValuePair<string, object> cur = temp.Last();
-                    //switch (header[0])
-                    //{
-                    //    default:
-                    //        ((FloorInfo)cur.Value).MnodePrototype = typeof(MNode);
-                    //        break;
-                    //}
 
                     for (int i = 1; i < lines.Length; i++) {
-                        if (lines[i].StartsWith("name=")) {
-                            string extractedstring =
-                                ParsersCore.stringExtractor.Match(lines[i]).ToString();
-                            ((ItemData)cur.Value).name = extractedstring.Substring(1, extractedstring.Length - 2);
-                        }
-                        if (lines[i].StartsWith("description=")) {
-                            string extractedstring =
-                                ParsersCore.stringExtractor.Match(lines[i]).ToString();
-                            ((ItemData)cur.Value).description = extractedstring.Substring(1,
-                                                                                            extractedstring.Length - 2);
-                        }
-                        if (lines[i].StartsWith("mmcol=")) {
-                            ((ItemData)cur.Value).mmcol = ParsersCore.ParseStringToColor(lines[i]);
-                        }
-                        if (lines[i].StartsWith("stype=")) {
-                            string extractedstring =
-                                ParsersCore.stringExtractor.Match(lines[i]).ToString();
-                            ItemType a;
+                        if (lines[i].Contains('=')) {
+                            string sstart = lines[i].Substring(0, lines[i].IndexOf('='));
+                            var finfo = typeof (ItemData).GetField(sstart);
+                            var extracted = lines[i].Substring(lines[i].IndexOf('=') + 1,
+                                                               lines[i].Length - (lines[i].IndexOf('=') + 1) - 1).Replace("\"","");
 
-                            if (ItemType.TryParse(extractedstring.Substring(1, extractedstring.Length - 2),out a)) {
-                                ((ItemData) cur.Value).stype = a;
+                            if (finfo != null) {
+                                var converter = TypeDescriptor.GetConverter(finfo.FieldType);
+                                if (converter != null) {
+                                    var converted = converter.ConvertFromString(extracted);
+                                    finfo.SetValue(cur.Value, converted);
+                                }
                             } else {
-                                ((ItemData) cur.Value).stype = ItemType.Nothing;
+                                Log.LogError(cur.Value.GetType().Name+" didnt contains field \""+sstart+"\", \""+extracted+"\" didn't assigned to ID "+header[0]);
                             }
-
-                        }
-                        if (lines[i].StartsWith("weight=")) {
-                            string extractedstring =
-                                ParsersCore.intextractor.Match(lines[i]).ToString();
-                            ((ItemData)cur.Value).weight = Convert.ToInt32(extractedstring);
-                        }
-                        if (lines[i].StartsWith("volume=")) {
-                            string extractedstring =
-                                ParsersCore.intextractor.Match(lines[i]).ToString();
-                            ((ItemData)cur.Value).volume = Convert.ToInt32(extractedstring);
-                        } if (lines[i].StartsWith("afteruse=")) {
-                            string extractedstring =
-                                ParsersCore.intextractor.Match(lines[i]).ToString();
-                            ((ItemData)cur.Value).afteruseId = extractedstring;
                         }
                     }
                 }

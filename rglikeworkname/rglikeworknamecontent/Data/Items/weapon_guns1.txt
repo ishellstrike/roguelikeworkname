@@ -5,6 +5,8 @@ name="SA80"
 description="Made in UK"
 stype="Gun"
 uptype="Rifle"
+some="some some"
+some2="some some2"
 
 
 ~12001,0
@@ -63,7 +65,7 @@ magazine=30
 description="Made in Russia"
 ammo="a223"
 
-~12008,0
+~12010,0
 name="AK-47"
 stype="Gun"
 uptype="AssaultRifle"

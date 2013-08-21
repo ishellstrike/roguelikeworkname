@@ -10,7 +10,11 @@ namespace rglikeworknamelib
     {
         public static List<string> log = new List<string>();
 
+        public static Random rnd = new Random();
+        public static int session;
+
         public static void Init() {
+            session = rnd.Next(0, int.MaxValue);
         }
 
         public static void AddString(string s) {
@@ -19,10 +23,9 @@ namespace rglikeworknamelib
 
         public static void LogError(string s) {
             Directory.CreateDirectory("Errors\\");
-            StreamWriter sw = new StreamWriter(string.Format("Errors\\{0}-{1}-{2}_{3}-{4}-{5}--error.txt", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second));
+            StreamWriter sw = new StreamWriter(string.Format("Errors\\{0}-{1}-{2}_{3}--error.txt", DateTime.Now.Day, DateTime.Now.Month, DateTime.Now.Year, session), true);
             sw.WriteLine(s);
             sw.Close();
-            throw new Exception("logged error");
         }
 
         public static void SaveLog() {
