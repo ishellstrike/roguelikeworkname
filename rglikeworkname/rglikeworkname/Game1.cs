@@ -62,10 +62,15 @@ namespace jarg
 
         public Game1()
         {
-            if (File.Exists("LastErrorLog.txt"))
-            {
+
+            if (File.Exists("PreviousErrorLog.txt")) {
+                File.Delete("PreviousErrorLog.txt");
+            }
+            if (File.Exists("LastErrorLog.txt")) {
                 File.Move("LastErrorLog.txt", "PreviousErrorLog.txt");
             }
+
+            Version.Init();
 
             graphics_ = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
