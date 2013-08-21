@@ -80,11 +80,13 @@ namespace jarg
             myProcess.WaitForExit(3000);
 #endif
 
-            if (File.Exists("PreviousErrorLog.txt")) {
-                File.Delete("PreviousErrorLog.txt");
+            if (File.Exists("JARGErrorLog_1.txt"))
+            {
+                File.Delete("JARGErrorLog_1.txt");
             }
-            if (File.Exists("LastErrorLog.txt")) {
-                File.Move("LastErrorLog.txt", "PreviousErrorLog.txt");
+            if (File.Exists("JARGErrorLog.txt"))
+            {
+                File.Move("JARGErrorLog.txt", "JARGErrorLog_1.txt");
             }
 
             Version.Init();
@@ -232,7 +234,7 @@ namespace jarg
             ButtonNewGame.onPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
 
-            ButtonSettings = new Button(new Vector2(10, 120 + 40 * 5), "Settings", wp, sf, WindowMainMenu);
+            ButtonSettings = new Button(new Vector2(10, 100 + 40 * 5), "Settings", wp, sf, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ButtonSettings);
             ButtonSettings.onPressed += ButtonIngameMenuSettings_onPressed;
             RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y / 2 - 50), "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.", 50, wp, sf, WindowMainMenu);
