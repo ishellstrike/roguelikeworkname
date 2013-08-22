@@ -264,10 +264,10 @@ namespace jarg
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
             ContainerContainer = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowContainer);
             LabelContainer = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowContainer);
-            ButtonContainerTakeAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30 * 2), "- Take All -", wp, sf, WindowContainer);
+            ButtonContainerTakeAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30 * 2), "Take All (R)", wp, sf, WindowContainer);
             ButtonContainerTakeAll.onPressed += new EventHandler(ButtonContainerTakeAll_onPressed);
 
-            WindowEventLog = new Window(new Vector2(Settings.Resolution.X / 3, Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false, Closable = false, hides = true};
+            WindowEventLog = new Window(new Rectangle(3,570,(int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false, Closable = false, hides = true};
             ContainerEventLog = new ListContainer( new Rectangle(0,0,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/4-20), wp, sf, WindowEventLog);
             EventLog.onLogUpdate += EventLog_onLogUpdate;
 
@@ -297,10 +297,10 @@ namespace jarg
             ContainerEventLog.Clear();
             int i = 0;
             foreach (var ss in EventLog.log) {
-                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss, whitepixel, font1_, EventLog.cols[i], 35, WindowEventLog));
+                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss, whitepixel, font1_, EventLog.cols[i], 35, ContainerEventLog));
                 i++;
             }
-            //ContainerEventLog.ScrollBottom();
+            ContainerEventLog.ScrollBottom();
         }
 
         void InventorySortFood_onPressed(object sender, EventArgs e)
@@ -340,7 +340,8 @@ namespace jarg
         }
 
         private ItemType nowSortContainer_ = ItemType.Nothing;
-        private List<Item> inContainer_ = new List<Item>(); 
+        private List<Item> inContainer_ = new List<Item>();
+        private Vector2 containerOn = new Vector2();
         void UpdateContainerContainer(List<Item> a)
         {
             inContainer_ = a;
@@ -625,6 +626,11 @@ namespace jarg
                 }
             }
 
+            if (WindowContainer.Visible && ks_[Keys.R] == KeyState.Down && lks_[Keys.R] == KeyState.Up)
+            {
+                ButtonContainerTakeAll_onPressed(null, null);
+            }
+
             pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200) / 2, player_.Position.Y - Settings.Resolution.Y / 2);
 
         }
@@ -646,36 +652,55 @@ namespace jarg
 
             WindowIngameHint.Visible = false;
 
+            if(!currentFloor_.IsCreatureMeele((int)containerOn.X, (int)containerOn.Y, player_)) {
+                WindowContainer.Visible = false;
+            }
+
             if (currentFloor_.GetBlock(nx, ny).Lightness == Color.White)// currentFloor_.IsExplored(aa))
             {
                 var a = currentFloor_.GetBlock(nx, ny);
-                if (a != null) {
+                if (a != null)
+                {
                     var b = bdb_.Data[a.Id];
                     string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
-                    if (rglikeworknamelib.Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
+                    if (Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
 
-                    if (WindowIngameHint.Visible = a.Id != 0) {
-                        LabelIngameHint.Text = s;
-                        WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
-                        WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
+                    if (currentFloor_.IsCreatureMeele(nx, ny, player_))
+                    {
+                        if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released)
+                        {
+                            var undermouseblock = bdb_.Data[a.Id];
+                            switch (undermouseblock.SmartAction)
+                            {
+                                case SmartAction.ActionSee:
+                                    EventLog.Add("Вы видите " + undermouseblock.Name, GlobalWorldLogic.CurrentTime,
+                                                 Color.Gray);
+                                    break;
+                                case SmartAction.ActionOpenContainer:
+                                    WindowContainer.Visible = true;
+                                    WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
+                                    UpdateContainerContainer((a as StorageBlock).StoredItems);
+                                    containerOn = new Vector2(nx, ny);
+                                    break;
+                                case SmartAction.ActionOpenClose:
+                                    currentFloor_.OpenCloseDoor(nx, ny);
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        s += " (далеко)";
+                        if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                            WindowContainer.Visible = false;
+                        }
                     }
 
-                    if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released &&
-                        currentFloor_.IsCreatureMeele(nx, ny, player_)) {
-                        var undermouseblock = bdb_.Data[a.Id];
-                        switch (undermouseblock.SmartAction) {
-                            case SmartAction.ActionSee:
-                                EventLog.Add("Вы видите "+undermouseblock.Name, GlobalWorldLogic.CurrentTime, Color.Gray);
-                                break;
-                            case SmartAction.ActionOpenContainer:
-                                WindowContainer.Visible = true;
-                                WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
-                                UpdateContainerContainer((a as StorageBlock).StoredItems);
-                                break;
-                            case SmartAction.ActionOpenClose:
-                                currentFloor_.OpenCloseDoor(nx, ny);
-                                break;
-                        }
+                    if (WindowIngameHint.Visible = a.Id != 0)
+                    {
+                        LabelIngameHint.Text = s;
+                        WindowIngameHint.Locate.Width = (int)LabelIngameHint.Width + 40;
+                        WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
                     }
                 }
             }

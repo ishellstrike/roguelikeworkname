@@ -28,14 +28,6 @@ namespace rglikeworknamelib
             UpdateEvent();
         }
 
-        public static void Add(string s, DateTime t) {
-            log.Add(string.Format("{0}:{1:00}:{2:00}",t.Hour,t.Minute,t.Second)+" "+s);
-
-            if (log.Count > 100) log.RemoveAt(0);
-
-            UpdateEvent();
-        }
-
         private static void UpdateEvent() {
             if (onLogUpdate != null) {
                     onLogUpdate(null, null);

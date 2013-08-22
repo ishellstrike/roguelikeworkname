@@ -151,7 +151,13 @@ namespace rglikeworknamelib.Window {
                     Vector2 textpos = new Vector2(Locate.X + Locate.Width/2 - 11 - font1_.MeasureString(Name).X/2,
                                                   Locate.Y);
 
-                    sb.DrawString(font1_, Name, textpos, Settings.HudСolor);
+                    string compose = Name;
+
+                    if(Settings.DebugInfo) {
+                        compose = Locate.ToString()+Environment.NewLine+compose;
+                    }
+
+                    sb.DrawString(font1_, compose, textpos, Settings.HudСolor);
 
 
                     sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, Settings.HudСolor, 0, Vector2.Zero,

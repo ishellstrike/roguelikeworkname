@@ -9,7 +9,7 @@ namespace rglikeworknamelib.Window {
         private Rectangle location_;
         public List<IGameComponent> Items = new List<IGameComponent>();
         private List<IGameComponent> Components = new List<IGameComponent>(); 
-        public int fromI_;
+        public int FromI;
         private readonly Texture2D whitepixel_;
         private readonly SpriteFont font1_;
         private IGameContainer parent_;
@@ -63,7 +63,6 @@ namespace rglikeworknamelib.Window {
 
         private void RecalcContainer() {
             progress_.Max = Items.Count;
-            progress_.Progress = fromI_ + ToShow();
 
             var l = Vector2.Zero;
 
@@ -73,7 +72,8 @@ namespace rglikeworknamelib.Window {
             }
 
             float curBottom = 0;
-            int fromNow = fromI_;
+            int count = 0;
+            int fromNow = FromI;
             if (fromNow < Items.Count)
             {
                 while (true)
@@ -84,6 +84,7 @@ namespace rglikeworknamelib.Window {
                     }
                     Items[fromNow].Visible = true;
                     Items[fromNow].SetPosition(new Vector2(l.X + 10, curBottom));
+                    count++;
 
                     curBottom += Items[fromNow].Height + 10;
                     fromNow++;
@@ -93,6 +94,8 @@ namespace rglikeworknamelib.Window {
                     }
                 }
             }
+
+            progress_.Progress = FromI + count;
         }
 
         public List<IGameComponent> GetItems() {
@@ -114,7 +117,7 @@ namespace rglikeworknamelib.Window {
         }
 
         public void Clear() {
-            fromI_ = 0;
+            FromI = 0;
 
             Items.Clear();
             Components.Clear();
@@ -152,8 +155,19 @@ namespace rglikeworknamelib.Window {
 
         public int ToShow()
         {
-            int toshow = location_.Height / 30;
-            return toshow > Items.Count - 1 ? Items.Count - 1 : toshow;
+            float cur = location_.Top;
+            int lastN = 0;
+            for (int i = FromI; i < Items.Count; i++)
+            {
+                cur += Items[i].Height + 10;
+                if (cur > location_.Bottom)
+                {
+                    break;
+                }
+                lastN = i;
+            }
+
+            return lastN - FromI;
         }
 
         public void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
@@ -165,16 +179,28 @@ namespace rglikeworknamelib.Window {
         }
 
         public void ListDown() {
-            fromI_ ++;
-            var a = ToShow();
-            if (fromI_ + a > Items.Count - 1) fromI_ = Items.Count - 1 - a;
+            FromI ++;
+
+            float cur = location_.Bottom;
+            int lastN = 0;
+            for (int i = Items.Count - 1; i >= 0; i--)
+            {
+                cur -= Items[i].Height + 10;
+                if (cur < location_.Top)
+                {
+                    break;
+                }
+                lastN = i;
+            }
+            if (FromI > lastN) FromI = lastN;
 
             RecalcContainer();
         }
 
         public void ListUp() {
-            fromI_--;
-            if (fromI_ < 0) fromI_ = 0;
+            FromI--;
+
+            if (FromI < 0) FromI = 0;
 
             RecalcContainer();
         }
@@ -208,9 +234,16 @@ namespace rglikeworknamelib.Window {
         }
 
         public void ScrollBottom() {
-            var a = ToShow();
-            fromI_ = Items.Count - a;
-            if (fromI_ + a > Items.Count - 1) fromI_ = Items.Count - 1 - a;
+            float cur = location_.Bottom;
+            int lastN = 0;
+            for (int i = Items.Count - 1; i >= 0; i--) {
+                cur -= Items[i].Height+10;
+                if(cur < location_.Top) {
+                    break;
+                }
+                lastN = i;
+            }
+            FromI = lastN;
 
             RecalcContainer();
         }

@@ -47,7 +47,7 @@ namespace rglikeworknamelib {
         }
 
         public static float GetMeeleActionRange() {
-            return 50;
+            return 64;
         }
 
         public static Vector2 FloorSpriteSize = new Vector2(32, 32);

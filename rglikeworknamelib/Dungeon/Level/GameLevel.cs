@@ -845,7 +845,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                             var ypos = j*(Settings.FloorSpriteSize.Y) - (int) camera.Y +
                                        MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY;
 
-                            spriteBatch_.Draw(atlas_[block.Mtex], new Vector2(xpos, ypos), null, block.Lightness);
+                            Color light = block.Lightness;
+                            if(block.Explored && light == Color.Black) light = new Color(40,40,40);
+
+                            spriteBatch_.Draw(atlas_[block.Mtex], new Vector2(xpos, ypos), null, light);
 
                             
 
