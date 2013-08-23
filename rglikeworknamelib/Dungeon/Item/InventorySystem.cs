@@ -8,10 +8,7 @@ namespace rglikeworknamelib.Dungeon.Item
     public class InventorySystem {
         public List<Item> items = new List<Item>();
 
-        private ItemDataBase idb;
-
-        public InventorySystem(ItemDataBase itemDataBase) {
-            idb = itemDataBase;
+        public InventorySystem() {
         }
 
         public List<Item> FilterByType(ItemType it) {
@@ -19,7 +16,7 @@ namespace rglikeworknamelib.Dungeon.Item
             var a = new List<Item>();
 
             foreach (var item in items) {
-                if(idb.data[item.Id].stype == it) a.Add(item);
+                if(ItemDataBase.data[item.Id].stype == it) a.Add(item);
             }
 
             return a;

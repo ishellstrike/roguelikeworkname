@@ -5,14 +5,16 @@ using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Creatures {
     public class MonsterDataBase {
-        public Dictionary<int, CreatureData> data;
+        public static Dictionary<string, CreatureData> Data;
 
-        public MonsterDataBase() {
-            data = new Dictionary<int, CreatureData>();
-            //var a = ParsersCore.ParseDirectory<KeyValuePair<int, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetObjectDataDirectory(), BlockParser.Parser);
-            //foreach (var pair in a) {
-            //    data.Add(pair.Key, (CreatureData)pair.Value);
-            //}
+        public MonsterDataBase()
+        {
+            Data = new Dictionary<string, CreatureData>();
+            var a = ParsersCore.ParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetCreatureDataDirectory(), UnitParser.Parser);
+            foreach (var pair in a)
+            {
+                Data.Add(pair.Key, (CreatureData)pair.Value);
+            }
         }
     }
 }

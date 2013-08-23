@@ -24,7 +24,7 @@ namespace rglikeworknamelib.Parser
                     var cur = new Schemes();
                     cur.x = Convert.ToInt32(header[0]);
                     cur.y = Convert.ToInt32(header[1]);
-                    cur.data = new int[cur.x * cur.y];
+                    cur.data = new string[cur.x * cur.y];
                     switch (header[2])
                     {
                         case "house":
@@ -42,7 +42,7 @@ namespace rglikeworknamelib.Parser
                             int counter = 0;
                             var aa = lines[i].Split(' ');
                             foreach (var a in aa) {
-                                    cur.data[counter] = Convert.ToInt32(a);
+                                    cur.data[counter] = a.Trim('\r');
                                     counter++;
                             }
                             temp.Add(cur);

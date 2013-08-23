@@ -4,7 +4,7 @@ using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class FloorDataBase {
-        public Dictionary<int, FloorData> Data;
+        public static Dictionary<int, FloorData> Data;
 
         /// <summary>
         /// WARNING! Also loading all data from standart patch
@@ -16,11 +16,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             {
                 Data.Add(pair.Key, (FloorData)pair.Value);
             }
-        }
-
-        public FloorDataBase(Dictionary<int, FloorData> t)
-        {
-            Data = t;
         }
     }
 }

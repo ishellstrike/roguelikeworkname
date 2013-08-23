@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork;
 using System;
+using rglikeworknamelib;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Item;
@@ -30,12 +31,6 @@ namespace jarg
 {
     public class Game1 : Game
     {
-        private BlockDataBase bdb_;
-        private FloorDataBase fdb_;
-        private MonsterDataBase mdb_;
-        private SchemesDataBase sdb_;
-        private ItemDataBase idb_;
-
         private rglikeworknamelib.Window.WindowSystem ws_;
         private ParticleSystem ps_;
         private BulletSystem bs_;
@@ -227,7 +222,7 @@ namespace jarg
     |  |/ __ \|  | \/ /_/  >
 /\__|  (____  /__|  \___  / 
 \______|    \/     /_____/", wp, sf, WindowMainMenu);
-            LabelMainVer = new Label(new Vector2(10, LabelMainMenu.Height + 10), Version.GetLong(), wp, sf, Color.Gray, WindowMainMenu);
+            LabelMainVer = new Label(new Vector2(10, LabelMainMenu.Height + 10), Version.GetShort(), wp, sf, Color.Gray, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(LabelMainMenu);
             WindowMainMenu.CenterComponentHor(LabelMainVer);
             ButtonNewGame = new Button(new Vector2(10,120 + 40*1), "New game", wp, sf, WindowMainMenu);
@@ -254,18 +249,18 @@ namespace jarg
             ContainerInventoryItems = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
             InventoryMoreInfo = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowInventory);
             InventorySortAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All", wp, sf, WindowInventory);
-            InventorySortAll.onPressed += new EventHandler(InventorySortAll_onPressed);
+            InventorySortAll.onPressed += InventorySortAll_onPressed;
             InventorySortMedicine = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30), "Medicine", wp, sf, WindowInventory);
-            InventorySortMedicine.onPressed += new EventHandler(InventorySortMedicine_onPressed);
+            InventorySortMedicine.onPressed += InventorySortMedicine_onPressed;
             InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2), "Food", wp, sf, WindowInventory);
-            InventorySortFood.onPressed += new EventHandler(InventorySortFood_onPressed);
+            InventorySortFood.onPressed += InventorySortFood_onPressed;
 
             WindowContainer = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
             ContainerContainer = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowContainer);
             LabelContainer = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowContainer);
             ButtonContainerTakeAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30 * 2), "Take All (R)", wp, sf, WindowContainer);
-            ButtonContainerTakeAll.onPressed += new EventHandler(ButtonContainerTakeAll_onPressed);
+            ButtonContainerTakeAll.onPressed += ButtonContainerTakeAll_onPressed;
 
             WindowEventLog = new Window(new Rectangle(3,570,(int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false, Closable = false, hides = true};
             ContainerEventLog = new ListContainer( new Rectangle(0,0,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/4-20), wp, sf, WindowEventLog);
@@ -331,7 +326,7 @@ namespace jarg
 
             int cou = 0;
             foreach (var item in a) {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerInventoryItems);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerInventoryItems);
                 i.Tag = cou;
                 i.onPressed += PressInInventory;
                 cou++;
@@ -351,7 +346,7 @@ namespace jarg
             int cou = 0;
             foreach (var item in a)
             {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", idb_.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerContainer);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerContainer);
                 i.Tag = cou;
                 i.onPressed += PressInContainer;
                 cou++;
@@ -361,14 +356,14 @@ namespace jarg
 
         void PressInInventory(object sender, EventArgs e) {
             var a = (int) (sender as Label).Tag;
-            InventoryMoreInfo.Text = idb_.GetItemFullDescription(inInv_[a]);
+            InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
         }
 
         void PressInContainer(object sender, EventArgs e)
         {
             var a = (int)(sender as Label).Tag;
             if (inInv_.Count > a) {
-                LabelContainer.Text = idb_.GetItemFullDescription(inInv_[a]);
+                LabelContainer.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
             }
         }
 
@@ -450,47 +445,37 @@ namespace jarg
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
 
+            Atlases a = new Atlases(Content);
+
             whitepixel = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             var data = new uint[1];
             data[0] = 0xffffffff;
             whitepixel.SetData(data);
 
+            MonsterDataBase mdb = new MonsterDataBase();
+            BlockDataBase bdb = new BlockDataBase();
+            FloorDataBase fdb = new FloorDataBase();
+            ItemDataBase idb = new ItemDataBase();
+            SchemesDataBase sdb = new SchemesDataBase();
+
             itemSelectTex_ = Content.Load<Texture2D>(@"Textures/Dungeon/Items/itemselect");
             transparentPixel_ = Content.Load<Texture2D>(@"Textures/transparent_pixel");
             font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
 
-            bdb_ = new BlockDataBase();
-            fdb_ = new FloorDataBase();
-            mdb_ = new MonsterDataBase();
-            sdb_ = new SchemesDataBase();
-            idb_ = new ItemDataBase(/*ParsersCore.LoadTexturesInOrder(rglikeworknamelib.Settings.GetItemDataDirectory() + @"/textureloadorder.ord", Content))*/);
-            ws_ = new rglikeworknamelib.Window.WindowSystem(whitepixel, font1_);
+            ws_ = new WindowSystem(whitepixel, font1_);
 
             ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
 
             bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), ps_);
 
-            var tex = new Collection<Texture2D> {
-                                           Content.Load<Texture2D>(@"Textures/transparent_pixel"),
-                                           Content.Load<Texture2D>(@"Textures/Units/car")
-                                        };
-            monsterSystem_ = new MonsterSystem(spriteBatch_, tex);
+            monsterSystem_ = new MonsterSystem(spriteBatch_, ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"/textureloadorder.ord", Content));
 
 
-            currentFloor_ = new GameLevel(spriteBatch_, 
-                                                      ParsersCore.LoadTexturesInOrder(Settings.GetFloorDataDirectory() + @"/textureloadorder.ord", Content),
-                                                      ParsersCore.LoadTexturesInOrder(Settings.GetObjectDataDirectory() + @"/textureloadorder.ord", Content), 
-                                                      font1_,
-                                                      bdb_, 
-                                                      fdb_, 
-                                                      sdb_,
-                                                      idb_,
-                                                      GraphicsDevice
-                                                     );
+            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice);
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
-            inventory_ = new InventorySystem(idb_);
+            inventory_ = new InventorySystem();
 
             CreateWindows(whitepixel, font1_, ws_);
             
@@ -559,11 +544,13 @@ namespace jarg
                                      (float)
                                      Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X),
                                      seeAngleDeg);
-            player_.Update(gameTime, currentFloor_, bdb_);
+            player_.Update(gameTime, currentFloor_);
             currentFloor_.KillFarSectors(player_);
             ps_.Update(gameTime);
             bs_.Update(gameTime);
             GlobalWorldLogic.Update(gameTime);
+
+            currentFloor_.UpdateCreatures(gameTime);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
         }
@@ -656,12 +643,13 @@ namespace jarg
                 WindowContainer.Visible = false;
             }
 
-            if (currentFloor_.GetBlock(nx, ny).Lightness == Color.White)// currentFloor_.IsExplored(aa))
+            var nxny = currentFloor_.GetBlock(nx, ny);
+            if (nxny != null && nxny.Lightness == Color.White)// currentFloor_.IsExplored(aa))
             {
                 var a = currentFloor_.GetBlock(nx, ny);
                 if (a != null)
                 {
-                    var b = bdb_.Data[a.Id];
+                    var b = BlockDataBase.Data[a.Id];
                     string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
                     if (Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
 
@@ -669,7 +657,7 @@ namespace jarg
                     {
                         if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released)
                         {
-                            var undermouseblock = bdb_.Data[a.Id];
+                            var undermouseblock = BlockDataBase.Data[a.Id];
                             switch (undermouseblock.SmartAction)
                             {
                                 case SmartAction.ActionSee:
@@ -696,7 +684,7 @@ namespace jarg
                         }
                     }
 
-                    if (WindowIngameHint.Visible = a.Id != 0)
+                    if (WindowIngameHint.Visible = a.Id != "0")
                     {
                         LabelIngameHint.Text = s;
                         WindowIngameHint.Locate.Width = (int)LabelIngameHint.Width + 40;
@@ -734,13 +722,14 @@ namespace jarg
 
         private void GameDraw(GameTime gameTime) {
             spriteBatch_.Begin();
-                currentFloor_.Draw(gameTime, camera_);
+                currentFloor_.DrawFloors(gameTime, camera_);
                 bs_.Draw(gameTime, camera_);
                 ps_.Draw(gameTime, camera_);
             spriteBatch_.End();
             currentFloor_.ShadowRender();
             spriteBatch_.Begin();
-                currentFloor_.Draw2(gameTime, camera_, player_);
+                currentFloor_.DrawBlocks(gameTime, camera_, player_);
+                currentFloor_.DrawCreatures(gameTime, camera_);
                 player_.Draw(gameTime, camera_);
             spriteBatch_.End();
         }

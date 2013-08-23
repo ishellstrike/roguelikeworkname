@@ -7,9 +7,9 @@ namespace rglikeworknamelib.Dungeon.Level
 {
     public class SchemesDataBase
     {
-        public List<Schemes> Data;
-        public List<Schemes> Houses;
-        public List<Schemes> Storages;
+        public static List<Schemes> Data;
+        public static List<Schemes> Houses;
+        public static List<Schemes> Storages;
 
         /// <summary>
         /// WARNING! Also loading all data from standart patch
@@ -25,11 +25,6 @@ namespace rglikeworknamelib.Dungeon.Level
 
             Houses = Data.Where(x => x.type == SchemesType.house).ToList();
             Storages = Data.Where(x => x.type == SchemesType.storage).ToList();
-        }
-
-        public SchemesDataBase(List<Schemes> t)
-        {
-            Data = t;
         }
     }
 }

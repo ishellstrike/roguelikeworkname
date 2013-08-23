@@ -100,7 +100,7 @@ namespace rglikeworknamelib.Generation
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
                    
-                        if (scheme.data[i * scheme.y + j] != 0) {
+                        if (scheme.data[i * scheme.y + j] != "0") {
                             level.SetBlock(x + i + gl.SectorOffsetX * MapSector.Rx, y + j + gl.SectorOffsetY * MapSector.Ry, scheme.data[i * scheme.y + j]);
                         }
                     
@@ -113,11 +113,11 @@ namespace rglikeworknamelib.Generation
             List<Schemes> a;
             switch (schemeType) {
                 case SchemesType.house:
-                    a = mapSector.SchemesDataBase.Houses;
+                    a = SchemesDataBase.Houses;
                     break;
 
                 default:
-                    a = mapSector.SchemesDataBase.Data.Where(x => x.type == schemeType).ToList();
+                    a = SchemesDataBase.Data.Where(x => x.type == schemeType).ToList();
                     break;;
             }
 
@@ -130,24 +130,24 @@ namespace rglikeworknamelib.Generation
 
         public static void ClearBlocks(MapSector gameLevel) {
             for (int i = 0; i < MapSector.Rx * MapSector.Ry; i++) {
-                gameLevel.SetBlock(i, 0);
+                gameLevel.SetBlock(i, "0");
             }
         }
 
         public static int[] GetInnerFloorArrayWithId(Schemes a, int id) {
             int[] visited = new int[a.data.Length];
             Queue<int> todo = new Queue<int>();
-            if (a.data[0] == 0) todo.Enqueue(0); // угол 0,0
-            if (a.data[(a.x - 1) * a.y] == 0) todo.Enqueue((a.x - 1) * a.y); //угол х,0
-            if (a.data[a.y - 1] == 0) todo.Enqueue(a.y - 1); //угол 0,у
-            if (a.data[(a.x - 1) * a.y + a.y - 1] == 0) todo.Enqueue((a.x - 1) *a.y + a.y - 1); //угол х,у
+            if (a.data[0] == "0") todo.Enqueue(0); // угол 0,0
+            if (a.data[(a.x - 1) * a.y] == "0") todo.Enqueue((a.x - 1) * a.y); //угол х,0
+            if (a.data[a.y - 1] == "0") todo.Enqueue(a.y - 1); //угол 0,у
+            if (a.data[(a.x - 1) * a.y + a.y - 1] == "0") todo.Enqueue((a.x - 1) *a.y + a.y - 1); //угол х,у
 
             var dd = Math.Max(a.y, a.x);
 
             while (todo.Count > 0) {
                 int t = todo.Dequeue();
 
-                if(visited[t] == 0 && a.data[t] == 0) {
+                if(visited[t] == 0 && a.data[t] == "0") {
                     visited[t] = 1;
                     if (t % dd < a.x - 1) todo.Enqueue(t + 1);
                     if (t % dd > 0) todo.Enqueue(t - 1);

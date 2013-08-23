@@ -79,7 +79,15 @@ namespace rglikeworknamelib {
         }
 
         public static string GetParticleTextureDirectory() {
-            return @"Content/Textures/Particles";
+            return GetTextureDirectory() + @"/Particles";
+        }
+
+        public static string GetUnitTextureDirectory() {
+            return GetTextureDirectory() + @"/Units";
+        }
+
+        public static string GetCreatureDataDirectory() {
+            return GetDataDirectory() + @"/Units";
         }
     }
 }

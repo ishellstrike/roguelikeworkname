@@ -81,6 +81,21 @@ namespace rglikeworknamelib.Parser
         return temp;
         }
 
+        public static Dictionary<string, Texture2D> LoadTexturesTagged(string s, ContentManager content)
+        {
+            Dictionary<string, Texture2D> temp = new Dictionary<string, Texture2D>();
+
+            StreamReader sr = new StreamReader(s, Encoding.Default);
+            while (true)
+            {
+                string t = sr.ReadLine();
+                if (t == null || t.Length < 3) break;
+                temp.Add(t.Substring(t.IndexOf(' ') + 1, t.Length - (t.IndexOf(' ') + 1)), content.Load<Texture2D>(t.Substring(0, t.IndexOf(' '))));
+            }
+
+            return temp;
+        }
+
         public static List<T> ParseDirectory<T>(string patch, Func<string, List<T>> parser)
         {
             try
@@ -95,8 +110,8 @@ namespace rglikeworknamelib.Parser
             }
             catch (DirectoryNotFoundException e)
             {
-                logger.Error(e.StackTrace + " --- " + e.Message);
-                return new List<T>();
+                logger.ErrorException(e.StackTrace + " --- " + e.Message, e);
+                throw;
             }
         }
 

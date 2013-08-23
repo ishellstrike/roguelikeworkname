@@ -3,7 +3,7 @@
     public class Schemes
     {
         public int x, y;
-        public int[] data;
+        public string[] data;
         public SchemesType type;
     }
 }

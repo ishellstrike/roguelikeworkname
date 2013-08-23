@@ -36,10 +36,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public bool ready;
 
-        public BlockDataBase BlockDataBase;
-        public FloorDataBase FloorDataBase;
-        public SchemesDataBase SchemesDataBase;
-        private ItemDataBase ItemDataBase;
         public GameLevel Parent;
         private BackgroundWorker bw;
 
@@ -47,6 +43,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         internal Block[] Blocks;
         internal Floor[] Floors;
+        internal List<Creature> Creatures;
         internal List<Vector2> initialNodes;
         internal SectorBiom biom;
 
@@ -56,6 +53,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = new Block[Rx * Ry];
             Floors = new Floor[Rx * Ry];
+            Creatures = new List<Creature>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
@@ -63,24 +61,18 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Blocks[i] = new Block();
             }
 
-            BlockDataBase = new BlockDataBase(new Dictionary<int, BlockData>());
-            FloorDataBase = new FloorDataBase(new Dictionary<int, FloorData>());
-            SchemesDataBase = new SchemesDataBase(new List<Schemes>());
             initialNodes = new List<Vector2>();
         }
 
-        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, ItemDataBase idb, GameLevel parent, int sectorOffsetX, int sectorOffsetY)
+        public MapSector(GameLevel parent, int sectorOffsetX, int sectorOffsetY)
         {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
-            BlockDataBase = bdb;
-            FloorDataBase = fdb;
-            SchemesDataBase = sdb;
-            ItemDataBase = idb;
             Parent = parent;
 
             Blocks = new Block[Rx * Ry];
             Floors = new Floor[Rx * Ry];
+            Creatures = new List<Creature>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
@@ -100,20 +92,17 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="sectorOffsetY"></param>
         /// <param name="blocksArray"></param>
         /// <param name="floorsArray"></param>
-        public MapSector(BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, ItemDataBase idb, GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object initialn, object obiom)
+        public MapSector(GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object initialn, object obiom)
         {
             SectorOffsetX = (int)sectorOffsetX;
             SectorOffsetY = (int)sectorOffsetY;
-            BlockDataBase = bdb;
-            FloorDataBase = fdb;
-            SchemesDataBase = sdb;
-            ItemDataBase = idb;
             Parent = parent;
 
             Blocks = blocksArray as Block[];
             Floors = floorsArray as Floor[];
             initialNodes = initialn as List<Vector2>;
             biom = (SectorBiom)obiom;
+            Creatures = new List<Creature>();
         }
 
         public List<StorageBlock> GetStorageBlocks()
@@ -137,8 +126,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="mapseed">глобальный сид карты</param>
         public void Rebuild(int mapseed) {
             Action<int> a = AsyncGeneration;
-            AsyncGeneration(mapseed);
-            if(SectorOffsetX == 0 && SectorOffsetY == 0) initialNodes.Add(new Vector2(10,0));
+            //a.BeginInvoke(mapseed, null, null);
+            a(mapseed);
         }
 
         /// <summary>
@@ -188,11 +177,11 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             switch (biom) {
                     case SectorBiom.Bushland:
-                    for (int i = 0; i < rand.Next(14, 40); i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), 16);
+                    for (int i = 0; i < rand.Next(14, 40); i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "16");
                         break;
 
                     case SectorBiom.Forest:
-                        for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), 17);
+                        for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
                         break;
             }
 
@@ -204,12 +193,25 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             foreach (var block in sb) {
                 for (int i = 0; i < rand.Next(0,3); i++) {
-                    block.StoredItems.Add(new Item.Item(ItemDataBase.data.ElementAt(rand.Next(0, ItemDataBase.data.Count)).Key, rand.Next(1,2)));
+                    block.StoredItems.Add(new Item.Item(ItemDataBase.data.ElementAt(rand.Next(0, ItemDataBase.data.Count)).Key, rand.Next(1, 2)));
                 }
             }
 
-            Parent.generated++;
+            for (int i = 1; i< rand.Next(0, 4); i++ ) {
+                Spawn("biskup", rand);
+            }
+
+                Parent.generated++;
             ready = true;
+        }
+
+        private void Spawn(string i, Random rnd) {
+            Spawn(i, rnd.Next(0, Rx), rnd.Next(0, Ry));
+        }
+
+        private void Spawn(string i, int x, int y)
+        {
+            Creatures.Add(new Creature(){Position = new Vector2(x*Rx,y*Ry), ID = i});
         }
 
         public Block GetBlock(int x, int y)
@@ -238,24 +240,26 @@ namespace rglikeworknamelib.Dungeon.Level {
             Floors[x * Ry + y].Mtex = FloorDataBase.Data[id].RandomMtexFromAlters();
         }
 
-        public int GetId(int x, int y)
+        public string GetId(int x, int y)
         {
             return Blocks[x * Ry + y].Id;
         }
 
-        public int GetId(int a)
+        public string GetId(int a)
         {
             return Blocks[a].Id;
         }
 
-        public void SetBlock(int oneDimCoord, int id)
+        public void SetBlock(int oneDimCoord, string id)
         {
-            if (BlockDataBase.Data[id].BlockPrototype == typeof(Block)) {
+            if (BlockDataBase.Data[id].BlockPrototype == typeof(Block))
+            {
                 Blocks[oneDimCoord] = new Block {
                     Id = id
                 };
             }
-            if (BlockDataBase.Data[id].BlockPrototype == typeof(StorageBlock)) {
+            if (BlockDataBase.Data[id].BlockPrototype == typeof(StorageBlock))
+            {
                 Blocks[oneDimCoord] = new StorageBlock {
                     StoredItems = new List<Item.Item>(),
                     Id = id
@@ -263,19 +267,20 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public void SetBlock(int posX, int posY, int id)
+        public void SetBlock(int posX, int posY, string id)
         {
             SetBlock(posX * Ry + posY, id);
         }
 
-        public void SetBlock(Vector2 pos, int id)
+        public void SetBlock(Vector2 pos, string id)
         {
             SetBlock((int)pos.X, (int)pos.Y, id);
         }
 
         public void OpenCloseDoor(int x, int y)
         {
-            if (BlockDataBase.Data[Blocks[x * Rx + y].Id].SmartAction == SmartAction.ActionOpenClose) {
+            if (BlockDataBase.Data[Blocks[x * Rx + y].Id].SmartAction == SmartAction.ActionOpenClose)
+            {
                 SetBlock(x, y, BlockDataBase.Data[Blocks[x * Ry + y].Id].AfterDeathId);
             }
         }
@@ -284,7 +289,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             initialNodes.Add(new Vector2(p0, p1));
         }
 
-        public void CreateAllMapFromArray(int[] arr)
+        public void CreateAllMapFromArray(string[] arr)
         {
             for (int i = 0; i < MapSector.Rx; i++)
             {
@@ -295,7 +300,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public int GetMtex(int i, int i1) {
+        public string GetMtex(int i, int i1) {
             return Blocks[i*Rx + i1].Mtex;
         }
     }
@@ -304,7 +309,6 @@ namespace rglikeworknamelib.Dungeon.Level {
     {
         public int MapSeed = 23142455;
 
-        private readonly Collection<Texture2D> atlas_, flatlas_;
         private Texture2D whitepixel;
 
         private List<MapSector> sectors_;
@@ -314,10 +318,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly SpriteBatch spriteBatch_;
         private readonly GraphicsDevice gd_;
         private readonly SpriteFont font_;
-        public BlockDataBase blockDataBase;
-        public FloorDataBase floorDataBase;
-        public SchemesDataBase schemesDataBase;
-        private ItemDataBase itemDataBase;
 
         private readonly Texture2D minimap_;
 
@@ -397,10 +397,10 @@ namespace rglikeworknamelib.Dungeon.Level {
 
          public MapSector GetRightN(int sectorOffsetX, int sectorOffsetY)
          {
-             foreach (var sector in sectors_)
-             {
-                 if (sector != null && sector.SectorOffsetX == sectorOffsetX + 1 && sector.SectorOffsetY == sectorOffsetY)
-                 {
+             for (int i = 0; i < sectors_.Count; i++) {
+                 var sector = sectors_[i];
+                 if (sector != null && sector.SectorOffsetX == sectorOffsetX + 1 &&
+                     sector.SectorOffsetY == sectorOffsetY) {
                      return sector;
                  }
              }
@@ -418,16 +418,18 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var sector = sectors_[i];
                 if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY)
                 {
+                    if (!sector.ready) return null;
                     return sector;
                 }
             }
 
-            MapSector last = LoadSector(sectorOffsetX, sectorOffsetY);
+            var last = LoadSector(sectorOffsetX, sectorOffsetY);
             if(last != null) {
                 sectors_.Add(last);
-                return last;}
+                return last;
+            }
 
-            var temp = new MapSector(blockDataBase, floorDataBase, schemesDataBase, itemDataBase, this, sectorOffsetX, sectorOffsetY);
+            var temp = new MapSector(this, sectorOffsetX, sectorOffsetY);
             sectors_.Add(temp);
             temp.Rebuild(MapSeed);
             if (temp.ready) return temp;
@@ -453,7 +455,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var q6 = binaryFormatter_.Deserialize(gZipStream_);
                 gZipStream_.Close();
                 fileStream_.Close();
-                return new MapSector(blockDataBase, floorDataBase, schemesDataBase, itemDataBase, this, q1, q2, q3, q4, q5, q6);
+                var t = new MapSector(this, q1, q2, q3, q4, q5, q6);
+                t.ready = true;
+                return t;
             }
             return null;
         }
@@ -519,7 +523,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
-            return blockDataBase.Data[sect.Blocks[(x-divx*MapSector.Rx) * MapSector.Ry + y-divy*MapSector.Ry].Id].IsWalkable;
+            return BlockDataBase.Data[sect.Blocks[(x-divx*MapSector.Rx) * MapSector.Ry + y-divy*MapSector.Ry].Id].IsWalkable;
         }
 
         public void SetFloor(int x, int y, int id)
@@ -531,32 +535,32 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (sect != null) {
                 sect.Floors[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Id = id;
                 sect.Floors[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Mtex =
-                    floorDataBase.Data[id].RandomMtexFromAlters();
+                    FloorDataBase.Data[id].RandomMtexFromAlters();
             }
         }
 
-        public int GetId(int x, int y) {
+        public string GetId(int x, int y) {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
             return sect.Blocks[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Id;
         }
 
-        public void SetBlock(int x, int y, int id)
+        public void SetBlock(int x, int y, string id)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
             if (sect != null)
             {
-                if (blockDataBase.Data[id].BlockPrototype == typeof(Block))
+                if (BlockDataBase.Data[id].BlockPrototype == typeof(Block))
                 {
                     sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry] = new Block
                     {
                         Id = id
                     };
                 }
-                if (blockDataBase.Data[id].BlockPrototype == typeof(StorageBlock))
+                if (BlockDataBase.Data[id].BlockPrototype == typeof(StorageBlock))
                 {
                     sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry] = new StorageBlock
                     {
@@ -564,7 +568,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     };
                 }
                 sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry].Mtex =
-                    blockDataBase.Data[id].RandomMtexFromAlters();
+                    BlockDataBase.Data[id].RandomMtexFromAlters();
             }
         }
 
@@ -574,14 +578,14 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void OpenCloseDoor(int x, int y) {
             var a = GetBlock(x, y);
-            if(blockDataBase.Data[a.Id].SmartAction == SmartAction.ActionOpenClose) {
-                if (blockDataBase.Data[a.Id].IsWalkable) {
+            if(BlockDataBase.Data[a.Id].SmartAction == SmartAction.ActionOpenClose) {
+                if (BlockDataBase.Data[a.Id].IsWalkable) {
                     EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.CurrentTime, Color.Gray);
                 }
                 else {
                     EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray);
                 }
-                SetBlock(x, y, blockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);               
+                SetBlock(x, y, BlockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);               
             }
         }
 
@@ -603,28 +607,21 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         Effect be_;
         private Plane upPlane, downPlane, leftPlane, rightPlane;
-        public GameLevel(SpriteBatch spriteBatch, Collection<Texture2D> flatlas, Collection<Texture2D> atlas, SpriteFont sf, BlockDataBase bdb, FloorDataBase fdb, SchemesDataBase sdb, ItemDataBase idb, GraphicsDevice gd) {
+        public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd) {
             MapGenerators.seed = MapSeed;
             whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             var data = new uint[1];
             data[0] = 0xffffffff;
             whitepixel.SetData(data);
 
-            blockDataBase = bdb;
-            floorDataBase = fdb;
-            schemesDataBase = sdb;
-            itemDataBase = idb;
-
             if (spriteBatch != null) {
                 minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
             }
 
-            sectors_ = new List<MapSector> { new MapSector(bdb, fdb, sdb, idb, this, 0, 0) };
+            sectors_ = new List<MapSector> { new MapSector(this, 0, 0) };
 
             sectors_[0].Rebuild(MapSeed);
 
-            atlas_ = atlas;
-            flatlas_ = flatlas;
             spriteBatch_ = spriteBatch;
             font_ = sf;
             gd_ = gd;
@@ -642,12 +639,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public GameLevel()
         {
-            flatlas_ = new Collection<Texture2D>();
-            atlas_ = new Collection<Texture2D>();
-            blockDataBase = new BlockDataBase(new Dictionary<int, BlockData>());
-            floorDataBase = new FloorDataBase(new Dictionary<int, FloorData>());
-            schemesDataBase = new SchemesDataBase(new List<Schemes>());
-
             sectors_ = new List<MapSector> {new MapSector(0, 0)};
         }
 
@@ -709,8 +700,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             //            bb.SetLight(new Color(tt, tt, tt));
             //            bb.Explored = true;
             //        }
-                    GetBlock((int)a.X + i, (int)a.Y + j).SetLight(Color.Black);
-               }
+                    var t = GetBlock((int)a.X + i, (int)a.Y + j);
+                    if(t!=null) {
+                    t.SetLight(Color.Black);
+                    }
+                }
             }
 
             //for (int i = -20; i < 20; i++)
@@ -731,7 +725,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int i = -20; i < 20; i++) {
                 for (int j = -20; j < 20; j++) {
                     temp2 = GetBlock((int) a.X + i, (int) a.Y + j);
-                    if(temp2.Id != 0 && PathClear(a, new Vector2(a.X + i, a.Y + j))) {
+                    if(temp2 != null && PathClear(a, new Vector2(a.X + i, a.Y + j))) {
                         temp2.Lightness = Color.White;
                         temp2.Explored = true;
                     }
@@ -761,7 +755,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     for (int x = 1; x <= Math.Abs(xDelta); x++) {
                         checkPoint.X = start.X + (int) Math.Round(x*unitX, 2);
                         checkPoint.Y = start.Y + (int) Math.Round(x*uintY, 2);
-                        if (!blockDataBase.Data[GetBlock((int) checkPoint.X, (int) checkPoint.Y).Id].IsTransparent) {
+                        if (!BlockDataBase.Data[GetBlock((int) checkPoint.X, (int) checkPoint.Y).Id].IsTransparent) {
                             GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
                             return false;
                         }
@@ -779,7 +773,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                         checkPoint.X = start.X + (int) Math.Round(x*unitX, 2);
                         checkPoint.Y = start.Y + (int) Math.Round(x*uintY, 2);
 
-                        if (!blockDataBase.Data[GetBlock((int) checkPoint.X, (int) checkPoint.Y).Id].IsTransparent) {
+                        var t = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
+
+                        if (t!= null && !BlockDataBase.Data[t.Id].IsTransparent) {
                             GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
                             return false;
                         }
@@ -794,83 +790,143 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private Vector2 min, max;
-        public void Draw(GameTime gameTime, Vector2 camera) {
+        public void DrawFloors(GameTime gameTime, Vector2 camera) {
+            var fatlas = Atlases.FloorAtlas; // Make field's non-static
+            var fdb = FloorDataBase.Data;
+            var rx = MapSector.Rx;
+            var ry = MapSector.Ry;
+            var ssx = Settings.FloorSpriteSize.X;
+            var ssy = Settings.FloorSpriteSize.Y;
+
             GetBlock((int)(camera.X / 32), (int)(camera.Y / 32));
             GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
             GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y) / 32));
             GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
 
-            min = new Vector2((camera.X) / Settings.FloorSpriteSize.X - 1, (camera.Y) / Settings.FloorSpriteSize.Y - 1);
-            max = new Vector2((camera.X + Settings.Resolution.X) / Settings.FloorSpriteSize.X,
-                                  (camera.Y + Settings.Resolution.Y) / Settings.FloorSpriteSize.Y);
+            min = new Vector2((camera.X) / ssx - 1, (camera.Y) / ssy - 1);
+            max = new Vector2((camera.X + Settings.Resolution.X) / ssx,
+                                  (camera.Y + Settings.Resolution.Y) / ssy);
 
-            foreach (MapSector sector in sectors_) {
-                if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
-                if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
-                for (int i = 0; i < MapSector.Rx; i++) {
-                    for (int j = 0; j < MapSector.Ry; j++)
-                        if (sector.SectorOffsetX * MapSector.Rx + i > min.X && sector.SectorOffsetY * MapSector.Ry + j > min.Y && sector.SectorOffsetX * MapSector.Rx + i < max.X && sector.SectorOffsetY * MapSector.Ry + j < max.Y)    
-                    {
-                        int a = i*MapSector.Ry + j;
-                        spriteBatch_.Draw(flatlas_[sector.Floors[a].Mtex],
-                                          new Vector2(
-                                              i*Settings.FloorSpriteSize.X - (int) camera.X +
-                                              MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX,
-                                              j * Settings.FloorSpriteSize.Y - (int)camera.Y +
-                                              MapSector.Ry * Settings.FloorSpriteSize.Y * sector.SectorOffsetY),
-                                          null, Color.White);
+            for (int k = 0; k < sectors_.Count; k++) {
+                MapSector sector = sectors_[k];
+                if (sector.SectorOffsetX*rx + rx < min.X &&
+                    sector.SectorOffsetY*ry + ry < min.Y) {
+                    continue;
+                }
+                if (sector.SectorOffsetX*rx > max.X && sector.SectorOffsetY*ry > max.Y) {
+                    continue;
+                }
+                for (int i = 0; i < rx; i++) {
+                    for (int j = 0; j < ry; j++) {
+                        if (sector.SectorOffsetX*rx + i > min.X &&
+                            sector.SectorOffsetY*ry + j > min.Y &&
+                            sector.SectorOffsetX*rx + i < max.X &&
+                            sector.SectorOffsetY*ry + j < max.Y) {
+                            int a = i*ry + j;
+                            spriteBatch_.Draw(fatlas[sector.Floors[a].Mtex],
+                                              new Vector2(
+                                                  i*ssx - (int) camera.X +
+                                                  rx*ssx*sector.SectorOffsetX,
+                                                  j*ssy - (int) camera.Y +
+                                                  ry*ssy*sector.SectorOffsetY),
+                                              null, Color.White);
+                        }
                     }
                 }
             }
         }
 
-        public void Draw2(GameTime gameTime, Vector2 camera, Creature per) {
+        public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per) {
+            var batlas = Atlases.BlockAtlas; // Make field's non-static
+            var bdb = BlockDataBase.Data;
+            var rx = MapSector.Rx;
+            var ry = MapSector.Ry;
+            var ssx = Settings.FloorSpriteSize.X;
+            var ssy = Settings.FloorSpriteSize.Y;
+
             points.Clear();
-            foreach (MapSector sector in sectors_) {
-                if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
-                if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
-                for (int i = 0; i < MapSector.Rx; i++) {
-                    for (int j = 0; j < MapSector.Ry; j++)
-                        if (sector.SectorOffsetX*MapSector.Rx + i > min.X &&
-                            sector.SectorOffsetY*MapSector.Ry + j > min.Y &&
-                            sector.SectorOffsetX*MapSector.Rx + i < max.X &&
-                            sector.SectorOffsetY*MapSector.Ry + j < max.Y) {
-                            int a = i*MapSector.Ry + j;
+            for (int k = 0; k < sectors_.Count; k++) {
+                MapSector sector = sectors_[k];
+                if (sector.SectorOffsetX*rx + rx < min.X &&
+                    sector.SectorOffsetY*ry + ry < min.Y) {
+                    continue;
+                }
+                if (sector.SectorOffsetX*rx > max.X && sector.SectorOffsetY*ry > max.Y) {
+                    continue;
+                }
+                for (int i = 0; i < rx; i++) {
+                    for (int j = 0; j < ry; j++) {
+                        if (sector.SectorOffsetX*rx + i > min.X &&
+                            sector.SectorOffsetY*ry + j > min.Y &&
+                            sector.SectorOffsetX*rx + i < max.X &&
+                            sector.SectorOffsetY*ry + j < max.Y) {
+                            int a = i*ry + j;
 
                             var block = sector.Blocks[a];
 
-                            var xpos = i*(Settings.FloorSpriteSize.X) - (int) camera.X +
-                                       MapSector.Rx*Settings.FloorSpriteSize.X*sector.SectorOffsetX;
+                            var xpos = i*(ssx) - (int) camera.X +
+                                       rx*ssx*sector.SectorOffsetX;
 
-                            var ypos = j*(Settings.FloorSpriteSize.Y) - (int) camera.Y +
-                                       MapSector.Ry*Settings.FloorSpriteSize.Y*sector.SectorOffsetY;
+                            var ypos = j*(ssy) - (int) camera.Y +
+                                       ry*ssy*sector.SectorOffsetY;
 
                             Color light = block.Lightness;
-                            if(block.Explored && light == Color.Black) light = new Color(40,40,40);
+                            if (block.Explored && light == Color.Black) {
+                                light = new Color(40, 40, 40);
+                            }
 
-                            spriteBatch_.Draw(atlas_[block.Mtex], new Vector2(xpos, ypos), null, light);
+                            spriteBatch_.Draw(batlas[block.Mtex], new Vector2(xpos, ypos), null, light);
 
-                            
 
-                            if(!blockDataBase.Data[sector.Blocks[a].Id].IsTransparent) {
-                                AddShadowpointForBlock(camera, per, xpos, ypos, i + sector.SectorOffsetX * MapSector.Rx, j + sector.SectorOffsetY * MapSector.Ry);
+                            if (!bdb[sector.Blocks[a].Id].IsTransparent) {
+                                AddShadowpointForBlock(camera, per, xpos, ypos, i + sector.SectorOffsetX*rx,
+                                                       j + sector.SectorOffsetY*ry);
                             }
                         }
+                    }
                 }
 
                 if (Settings.DebugInfo) {
                     Vector2 ff = new Vector2(-(int) camera.X +
-                                         MapSector.Rx*Settings.FloorSpriteSize.X*
-                                         sector.SectorOffsetX, - (int) camera.Y +
-                                                               MapSector.Ry*Settings.FloorSpriteSize.Y*
-                                                               sector.SectorOffsetY);
+                                             MapSector.Rx*ssx*
+                                             sector.SectorOffsetX, - (int) camera.Y +
+                                                                   MapSector.Ry*ssy*
+                                                                   sector.SectorOffsetY);
 
-                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1,1024), SpriteEffects.None, 0);
-                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1024,1), SpriteEffects.None, 0);
-                    spriteBatch_.DrawString(font_, sector.biom.ToString(), new Vector2(20,20)+ff, Color.White);
+                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1024),
+                                      SpriteEffects.None, 0);
+                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1024, 1),
+                                      SpriteEffects.None, 0);
+                    spriteBatch_.DrawString(font_, sector.biom.ToString(), new Vector2(20, 20) + ff, Color.White);
                 }
             }
-        
+        }
+
+        public void DrawCreatures(GameTime gameTime, Vector2 camera) {
+            for (int k = 0; k < sectors_.Count; k++) {
+                var sector = sectors_[k];
+//if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
+                //if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
+
+                for (int m = 0; m < sector.Creatures.Count; m++) {
+                    var crea = sector.Creatures[m];
+                    crea.Draw(spriteBatch_, camera, sector);
+                }
+            }
+        }
+
+        public void UpdateCreatures(GameTime gt) {
+            for (int k = 0; k < sectors_.Count; k++) {
+                var sector = sectors_[k];
+                for (int m = 0; m < sector.Creatures.Count; m++) {
+                    var crea = sector.Creatures[m];
+                    crea.Update(gt, sector);
+                }
+            }
+        }
+
+        public void UpdateBlocks(GameTime gt) {
+            
         }
 
         private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos, int blockx, int blocky) {
@@ -954,12 +1010,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             while (true) {
                 bool xstop = false;
                 startx++;
-                if (!blockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
+                if (!BlockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
                     reses[0] += 32;
                 } else xstop = true;
 
                 starty++;
-                if(!blockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
+                if(!BlockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
                     reses[1] += 32;
                 }
                 else {

@@ -25,8 +25,8 @@ namespace rglikeworknamelib.Creatures {
             Velocity += ac;
         }
 
-        public void Update(GameTime gt, GameLevel gl, BlockDataBase bdb) {
-            base.Update(gt);
+        public void Update(GameTime gt, GameLevel gl) {
+            base.Update(gt, null);
 
             var time = (float) gt.ElapsedGameTime.TotalSeconds;
 
@@ -48,14 +48,14 @@ namespace rglikeworknamelib.Creatures {
 
             if (!gl.IsWalkable(a, b)) {
                 Velocity.X = 0;
-                if(bdb.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
+                if(BlockDataBase.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
                     gl.OpenCloseDoor(a,b);
                 }
             }
             if (!gl.IsWalkable(c, d))
             {
                 Velocity.Y = 0;
-                if (bdb.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
+                if (BlockDataBase.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
                 {
                     gl.OpenCloseDoor(c, d);
                 }

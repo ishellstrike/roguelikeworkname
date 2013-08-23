@@ -5,7 +5,7 @@ using System.Text;
 
 namespace rglikeworknamelib.Creatures
 {
-    public class CreatureData
-    {
+    public class CreatureData {
+        public string MTex;
     }
 }

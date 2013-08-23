@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework;
 namespace rglikeworknamelib.Dungeon.Level {
     [Serializable]
     public class Block {
-        public int Id;
+        public string Id;
         public Color Lightness;
         public bool Explored;
 
-        public int Mtex;
+        public string Mtex = "0";
 
         public static string GetSmartActionName(SmartAction smartAction)
         {

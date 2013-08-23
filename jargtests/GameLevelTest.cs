@@ -36,22 +36,8 @@ namespace jargtests
             }
         }
 
-        private static BlockDataBase blockDataBase;
-        private static FloorDataBase floorDataBase;
-
         [ClassInitialize]
         public static void MyClassInitialize(TestContext testContext) {
-            var Data = new Dictionary<int, BlockData> {
-                                                           {1, new BlockData {BlockPrototype = typeof (Block), IsWalkable = false}},
-                                                           {0, new BlockData {BlockPrototype = typeof (Block)}}
-                                                      };
-            blockDataBase = new BlockDataBase(Data);
-
-            var Data2 = new Dictionary<int, FloorData> {
-                                                           {1, new FloorData {Walkable = false}},
-                                                           {0, new FloorData {Walkable = true}}
-                                                       };
-            floorDataBase = new FloorDataBase(Data2);
         }
 
         /// <summary>

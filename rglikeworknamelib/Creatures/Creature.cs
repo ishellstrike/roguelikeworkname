@@ -1,11 +1,12 @@
+using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Creatures {
     public class Creature {
-        public int ID;
-        public int Mtex;
+        public string ID;
 
         private Vector2 lastpos_;
 
@@ -53,7 +54,7 @@ namespace rglikeworknamelib.Creatures {
             set { lastpos_ = value; }
         }
 
-        public void Update(GameTime gt) {
+        public void Update(GameTime gt, MapSector ms) {
             
             if (hunger_ > 0) {
                 hunger_ -= (float) gt.ElapsedGameTime.TotalDays*60f;
@@ -68,5 +69,11 @@ namespace rglikeworknamelib.Creatures {
         public Vector2 ShootPoint { get; set; }
 
         public Vector2 Velocity;
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
+            var a = GetPositionInBlocks();
+
+            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[ID].MTex], Position - camera, ms.GetBlock((int)a.X, (int)a.Y).Lightness);
+        }
     }
 }

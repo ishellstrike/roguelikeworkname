@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 namespace rglikeworknamelib.Dungeon.Level {
     public class BlockData 
     {
-        public int AfterDeathId;
+        public string AfterDeathId;
 
         public float Damage;
         public string Description;
@@ -14,7 +14,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public SmartAction SmartAction;
 
         public float Hp;
-        public int MTex;
+        public string MTex;
         public string Name;
 
         public Color MMCol;
@@ -24,9 +24,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public int StorageSlots;
 
-        public int[] AlterMtex;
+        public string[] AlterMtex;
 
-        public int RandomMtexFromAlters()
+        public string RandomMtexFromAlters()
         {
             if (AlterMtex == null || AlterMtex.Length == 0) {
                 return MTex;
@@ -34,7 +34,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
         }
 
-        public BlockData(int mtex) {
+        public BlockData(string mtex) {
             MTex = mtex;
         }
         public BlockData() {

@@ -8,9 +8,9 @@ namespace rglikeworknamelib.Parser
 {
     internal class BlockParser
     {
-        public static List<KeyValuePair<int, object>> Parser(string s)
+        public static List<KeyValuePair<string, object>> Parser(string s)
         {
-            var temp = new List<KeyValuePair<int, object>>();
+            var temp = new List<KeyValuePair<string, object>>();
 
             s = s.Remove(0, s.IndexOf('~'));
 
@@ -23,8 +23,8 @@ namespace rglikeworknamelib.Parser
                     string[] lines = Regex.Split(block, "\n");
                     string[] header = lines[0].Split(',');
 
-                    temp.Add(new KeyValuePair<int, object>(Convert.ToInt32(header[1]), new BlockData(Convert.ToInt32(header[2]))));
-                    KeyValuePair<int, object> cur = temp.Last();
+                    temp.Add(new KeyValuePair<string, object>(header[1], new BlockData(header[2].Trim('\r'))));
+                    KeyValuePair<string, object> cur = temp.Last();
                     switch (header[0]) {
                         case "StorageBlock":
                             ((BlockData)cur.Value).BlockPrototype = typeof(StorageBlock);
@@ -43,7 +43,7 @@ namespace rglikeworknamelib.Parser
                         if (lines[i].StartsWith("afterid=")) {
                             string extractedstring =
                                 ParsersCore.intextractor.Match(lines[i]).ToString();
-                            ((BlockData)cur.Value).AfterDeathId = Convert.ToInt32(extractedstring);
+                            ((BlockData)cur.Value).AfterDeathId = extractedstring;
                         }
                         if (lines[i].StartsWith("description=")) {
                             string extractedstring =
@@ -77,12 +77,9 @@ namespace rglikeworknamelib.Parser
                         if (lines[i].StartsWith("altermtex=")) {
                             string sub = lines[i].Substring(10);
                             string[] subsub = sub.Replace(" ", "").Split(',');
-                            List<int> mt = new List<int>();
+                            List<string> mt = new List<string>();
                             foreach (var s1 in subsub) {
-                                int a;
-                                if (int.TryParse(s1, out a)) {
-                                    mt.Add(a);
-                                }
+                                mt.Add(s1.Trim('\r'));
                             }
                             ((BlockData)cur.Value).AlterMtex = mt.ToArray();
                         }

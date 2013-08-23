@@ -1,0 +1,6 @@
+//sdfsdfsdf
+~0,0
+name=""
+
+~biskup,biskup
+name="biskup"

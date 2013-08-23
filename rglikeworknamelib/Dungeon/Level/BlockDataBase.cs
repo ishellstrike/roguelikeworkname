@@ -4,22 +4,17 @@ using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class BlockDataBase {
-        public Dictionary<int, BlockData> Data;
+        public static Dictionary<string, BlockData> Data;
 
         /// <summary>
         /// WARNING! Also loading all data from standart patch
         /// </summary>
         public BlockDataBase() {
-            Data = new Dictionary<int, BlockData>();
-            var a = ParsersCore.ParseDirectory<KeyValuePair<int, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetObjectDataDirectory(), BlockParser.Parser);
+            Data = new Dictionary<string, BlockData>();
+            var a = ParsersCore.ParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetObjectDataDirectory(), BlockParser.Parser);
             foreach (var pair in a) {
                 Data.Add(pair.Key, (BlockData)pair.Value);
             }
-        }
-
-        public BlockDataBase(Dictionary<int, BlockData> t)
-        {
-            Data = t;
         }
     }
 }

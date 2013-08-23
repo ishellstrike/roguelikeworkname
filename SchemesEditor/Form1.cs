@@ -21,16 +21,10 @@ namespace SchemesEditor
         {
             InitializeComponent();
 
-            bdb = new BlockDataBase();
-            fdb = new FloorDataBase();
-            sdb = new SchemesDataBase();
             //gl =new GameLevel(20, 20);
         }
 
         private PictureBox[] map;
-        private BlockDataBase bdb;
-        private SchemesDataBase sdb;
-        private FloorDataBase fdb;
         private SchemesMap gl;
         SpriteBatch sb;
 
@@ -54,9 +48,6 @@ namespace SchemesEditor
             openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory()+@"\Content\Data\Schemes";
             saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory() + @"\Content\Data\Schemes";
 
-            bdb = new BlockDataBase();
-            sdb = new SchemesDataBase();
-            fdb = new FloorDataBase();
             gl = new SchemesMap(20, 20);
 
             imageList1.Images.Clear();
@@ -64,7 +55,7 @@ namespace SchemesEditor
 
 
             listBox1.Items.Clear();
-            foreach (var a in bdb.Data)
+            foreach (var a in BlockDataBase.Data)
             {
                 listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.MTex + " -- " + a.Value.Name);
             }
@@ -85,7 +76,7 @@ namespace SchemesEditor
             for (int i = 0; i < 30; i++) {
                 for (int j = 0; j < 30; j++) {
                     if (i - camx < gl.rx && j - camy < gl.ry && i - camx >= 0 && j - camy >= 0)
-                        map[i * 30 + j].Image = gl.block[i - camx, j - camy].Id == 0 ? imageList1.Images[0] : imageList1.Images[gl.block[i - camx, j - camy].Mtex];
+                        map[i * 30 + j].Image = gl.block[i - camx, j - camy].Id == "0" ? imageList1.Images[0] : imageList1.Images[gl.block[i - camx, j - camy].Mtex];
                     else map[i*30 + j].Image = imageList2.Images[2];
                 }
             }
@@ -105,9 +96,8 @@ namespace SchemesEditor
            // gl = new GameLevel(x, y);
             char[] sep = {' '};
             String[] b = sw.ReadToEnd().Split(sep);
-            int[] a = b.Select(int.Parse).ToArray();
             gl = new SchemesMap(x,y);
-            gl.CreateAllMapFromArray(a,bdb);
+            gl.CreateAllMapFromArray(b);
             sw.Close();
 
             numericUpDown1.Value = x;
@@ -138,8 +128,8 @@ namespace SchemesEditor
 
             for (int index0 = 0; index0 < gl.block.GetUpperBound(0); index0++) {
                 for (int index1 = 0; index1 < gl.block.GetUpperBound(1); index1++) {
-                    gl.block[index0, index1].Id = 0;
-                    gl.block[index0, index1].Mtex = 0;
+                    gl.block[index0, index1].Id = "0";
+                    gl.block[index0, index1].Mtex = "0";
                 }
             }
         }
@@ -173,13 +163,12 @@ namespace SchemesEditor
                 if (x < gl.rx && y < gl.ry && x >= 0 && y >= 0) {
 
                     gl.block[x, y].Id =
-                        int.Parse(
                             listBox1.Items[listBox1.SelectedIndex].ToString().Substring(0,
                                                                                         listBox1.Items[
                                                                                             listBox1.SelectedIndex].
                                                                                             ToString().IndexOf(" ")).
-                                Substring(2));
-                    gl.block[x, y].Mtex = bdb.Data[gl.block[x, y].Id].MTex;
+                                Substring(2);
+                    gl.block[x, y].Mtex = BlockDataBase.Data[gl.block[x, y].Id].MTex;
                 }
             }
         }
@@ -212,10 +201,10 @@ namespace SchemesEditor
              }
          }
 
-        public void CreateAllMapFromArray(int[] ints, BlockDataBase bdb) {
+        public void CreateAllMapFromArray(string[] ints) {
             for (int i = 0; i < ints.Length; i++) {
                 block[i/ry, i%ry].Id = ints[i];
-                block[i/ry, i%ry].Mtex = bdb.Data[ints[i]].MTex;
+                block[i/ry, i%ry].Mtex = BlockDataBase.Data[ints[i]].MTex;
             }
         }
     }

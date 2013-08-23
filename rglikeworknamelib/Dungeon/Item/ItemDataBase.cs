@@ -14,10 +14,10 @@ using rglikeworknamelib.Parser;
 namespace rglikeworknamelib.Dungeon.Item {
     public class ItemDataBase
     {
-        public Dictionary<string, ItemData> data;
-        public Dictionary<string, ItemData> dataMedicineItems;
-        public Dictionary<string, ItemData> dataFoodItems;
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        public static Dictionary<string, ItemData> data;
+        public static Dictionary<string, ItemData> dataMedicineItems;
+        public static Dictionary<string, ItemData> dataFoodItems;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
        // public Collection<Texture2D> texatlas;
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace rglikeworknamelib.Dungeon.Item {
             re.Close();
         }
 
-        public Dictionary<string, ItemData> GetItemByItemDatasType(ItemType it) {
+        public static Dictionary<string, ItemData> GetItemByItemDatasType(ItemType it) {
             switch (it) {
                 case ItemType.Nothing:
                     return data;
@@ -83,12 +83,12 @@ namespace rglikeworknamelib.Dungeon.Item {
             }
         }
 
-        public string GetItemDescription(Item i)
+        public static string GetItemDescription(Item i)
         {
             return data[i.Id].description;
         }
 
-        public string GetItemFullDescription(Item i) {
+        public static string GetItemFullDescription(Item i) {
             var item = data[i.Id];
             StringBuilder sb = new StringBuilder();
             sb.Append(GetItemDescription(i));

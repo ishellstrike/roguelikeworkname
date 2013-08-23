@@ -13,24 +13,16 @@ using rglikeworknamelib.Dungeon.Level;
 namespace DataEditor
 {
     public partial class Form1 : Form {
-        private ItemDataBase idb;
-        private BlockDataBase bdb;
 
         public Form1()
         {
             InitializeComponent();
-            ReloadDb();
             RebuildDb();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
-        }
-
-        void ReloadDb() {
-            idb = new ItemDataBase();
-            bdb = new BlockDataBase();
         }
 
         void RebuildDb() {
@@ -85,7 +77,7 @@ namespace DataEditor
             dgc.SortMode = DataGridViewColumnSortMode.Automatic;
             dataGridView1.Columns.Add(dgc);
 
-            foreach (var a in idb.data) {   
+            foreach (var a in ItemDataBase.data) {   
                 var bb = new DataGridViewRow();
                 bb.Cells.AddRange(new DataGridViewTextBoxCell() {
                                                                     Value = a.Key
@@ -116,7 +108,6 @@ namespace DataEditor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ReloadDb();
             RebuildDb();
         }
     }
