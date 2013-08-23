@@ -173,7 +173,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             MapGenerators.GenerateStreetGrid(this, initialNodes.ToArray(), rand);
 
-            biom = (SectorBiom)rand.Next(1, 5);
+            biom = (SectorBiom)rand.Next(0, 5);
 
             switch (biom) {
                     case SectorBiom.Bushland:
@@ -182,6 +182,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                     case SectorBiom.Forest:
                         for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
+                        for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
+                        for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
                         break;
             }
 
@@ -219,6 +221,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             return Blocks[x * Ry + y];
         }
 
+        public Block GetBlock(int a)
+        {
+            return Blocks[a];
+        }
+
         public bool IsExplored(int x, int y)
         {
             return Blocks[x * Ry + y].Explored;
@@ -250,6 +257,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             return Blocks[a].Id;
         }
 
+        /// <summary>
+        /// Base standart block setter
+        /// </summary>
+        /// <param name="oneDimCoord"></param>
+        /// <param name="id"></param>
         public void SetBlock(int oneDimCoord, string id)
         {
             if (BlockDataBase.Data[id].BlockPrototype == typeof(Block))
@@ -265,6 +277,20 @@ namespace rglikeworknamelib.Dungeon.Level {
                     Id = id
                 };
             }
+
+            Blocks[oneDimCoord].Mtex = BlockDataBase.Data[id].RandomMtexFromAlters();
+        }
+
+        /// <summary>
+        /// Base advansed block setter
+        /// </summary>
+        /// <param name="oneDimCoord"></param>
+        /// <param name="id"></param>
+        public void SetBlock(int oneDimCoord, Block bl)
+        {
+            Blocks[oneDimCoord] = bl;
+           
+            Blocks[oneDimCoord].Mtex = BlockDataBase.Data[bl.Id].RandomMtexFromAlters();
         }
 
         public void SetBlock(int posX, int posY, string id)
@@ -318,6 +344,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly SpriteBatch spriteBatch_;
         private readonly GraphicsDevice gd_;
         private readonly SpriteFont font_;
+
+        public bool MapJustUpdated;
 
         private readonly Texture2D minimap_;
 
@@ -516,14 +544,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             int divy = y < 0 ? (y + 1)/MapSector.Ry - 1 : y/MapSector.Ry;
 
             var sect = GetSector(divx, divy);
-            return sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry].Explored;
+            return sect.GetBlock(x - divx * MapSector.Rx, y - divy * MapSector.Ry).Explored;
         }
 
         public bool IsWalkable(int x, int y) {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
-            return BlockDataBase.Data[sect.Blocks[(x-divx*MapSector.Rx) * MapSector.Ry + y-divy*MapSector.Ry].Id].IsWalkable;
+            return BlockDataBase.Data[sect.GetBlock(x-divx*MapSector.Rx, y-divy*MapSector.Ry).Id].IsWalkable;
         }
 
         public void SetFloor(int x, int y, int id)
@@ -533,9 +561,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             var sect = GetSector(divx, divy);
 
             if (sect != null) {
-                sect.Floors[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Id = id;
-                sect.Floors[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Mtex =
-                    FloorDataBase.Data[id].RandomMtexFromAlters();
+                sect.SetFloor(x - divx*MapSector.Rx, y - divy*MapSector.Ry, id);
             }
         }
 
@@ -543,7 +569,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
-            return sect.Blocks[(x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry].Id;
+            return sect.GetBlock(x - divx*MapSector.Rx, y - divy*MapSector.Ry).Id;
         }
 
         public void SetBlock(int x, int y, string id)
@@ -553,22 +579,20 @@ namespace rglikeworknamelib.Dungeon.Level {
             var sect = GetSector(divx, divy);
             if (sect != null)
             {
+                var braw = (x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry;
                 if (BlockDataBase.Data[id].BlockPrototype == typeof(Block))
                 {
-                    sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry] = new Block
-                    {
-                        Id = id
-                    };
+
+                    sect.SetBlock(braw, new Block{Id = id});
                 }
                 if (BlockDataBase.Data[id].BlockPrototype == typeof(StorageBlock))
                 {
-                    sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry] = new StorageBlock
+                    sect.SetBlock(braw, new StorageBlock
                     {
                         StoredItems=new List<Item.Item>(),Id=id
-                    };
+                    });
                 }
-                sect.Blocks[(x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry].Mtex =
-                    BlockDataBase.Data[id].RandomMtexFromAlters();
+                MapJustUpdated = true;
             }
         }
 
@@ -585,7 +609,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                 else {
                     EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray);
                 }
-                SetBlock(x, y, BlockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);               
+                SetBlock(x, y, BlockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);
+                MapJustUpdated = true;
             }
         }
 
@@ -681,60 +706,64 @@ namespace rglikeworknamelib.Dungeon.Level {
             minimap_.SetData(data);
         }
 
+        private Vector2 pre_pos_vis;
         public void CalcWision(Creature who, float dirAngle, float seeAngleDeg) {
             var a = who.GetPositionInBlocks();
-            for (int i = -20; i < 20; i++)
-            {
-                for (int j = -20; j < 20; j++)
-                {
-            //        var tt = 1 -
-            //                 (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f) * 32, (a.Y + j + 0.5f) * 32))) /
-            //                 500.0f;
-            //        tt *= 255;
 
-            //        if (tt > 255) tt = 255;
-            //        if (tt < 0) tt = 0;
-            //        var bb = GetBlock((int)a.X + i, (int)a.Y + j);
-            //        if (bb != null)
-            //        {
-            //            bb.SetLight(new Color(tt, tt, tt));
-            //            bb.Explored = true;
-            //        }
-                    var t = GetBlock((int)a.X + i, (int)a.Y + j);
-                    if(t!=null) {
-                    t.SetLight(Color.Black);
+            if (Vector2.Distance(pre_pos_vis, a) > 0 || MapJustUpdated) {
+
+                for (int i = -20; i < 20; i++) {
+                    for (int j = -20; j < 20; j++) {
+                        //        var tt = 1 -
+                        //                 (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f) * 32, (a.Y + j + 0.5f) * 32))) /
+                        //                 500.0f;
+                        //        tt *= 255;
+
+                        //        if (tt > 255) tt = 255;
+                        //        if (tt < 0) tt = 0;
+                        //        var bb = GetBlock((int)a.X + i, (int)a.Y + j);
+                        //        if (bb != null)
+                        //        {
+                        //            bb.SetLight(new Color(tt, tt, tt));
+                        //            bb.Explored = true;
+                        //        }
+                        var t = GetBlock((int) a.X + i, (int) a.Y + j);
+                        if (t != null) {
+                            t.SetLight(Color.Black);
+                        }
                     }
                 }
-            }
 
-            //for (int i = -20; i < 20; i++)
-            //{
-            //    Vector2 start = who.Position;
-            //    Vector2 end1 = new Vector2((a.X + i + 0.5f) * 32, (-20 + 0.5f) * 32);
-            //    Vector2 end2 = new Vector2((a.X + i + 0.5f) * 32, (20 + 0.5f) * 32);
-            //    Vector2 end3 = new Vector2((-20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
-            //    Vector2 end4 = new Vector2((20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
+                //for (int i = -20; i < 20; i++)
+                //{
+                //    Vector2 start = who.Position;
+                //    Vector2 end1 = new Vector2((a.X + i + 0.5f) * 32, (-20 + 0.5f) * 32);
+                //    Vector2 end2 = new Vector2((a.X + i + 0.5f) * 32, (20 + 0.5f) * 32);
+                //    Vector2 end3 = new Vector2((-20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
+                //    Vector2 end4 = new Vector2((20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
 
-            //    GetValue(start, end1);
-            //    GetValue(start, end2);
-            //    GetValue(start, end3);
-            //    GetValue(start, end4);
-            //}
+                //    GetValue(start, end1);
+                //    GetValue(start, end2);
+                //    GetValue(start, end3);
+                //    GetValue(start, end4);
+                //}
 
-            Block temp2;
-            for (int i = -20; i < 20; i++) {
-                for (int j = -20; j < 20; j++) {
-                    temp2 = GetBlock((int) a.X + i, (int) a.Y + j);
-                    if(temp2 != null && PathClear(a, new Vector2(a.X + i, a.Y + j))) {
-                        temp2.Lightness = Color.White;
-                        temp2.Explored = true;
+                Block temp2;
+                for (int i = -20; i < 20; i++) {
+                    for (int j = -20; j < 20; j++) {
+                        temp2 = GetBlock((int) a.X + i, (int) a.Y + j);
+                        if (temp2 != null && PathClear(a, new Vector2(a.X + i, a.Y + j))) {
+                            temp2.Lightness = Color.White;
+                            temp2.Explored = true;
+                        }
                     }
                 }
-            }
 
-            var temp = GetBlock((int)a.X, (int)a.Y);
-            temp.Lightness = Color.White;
-            temp.Explored = true;
+                var temp = GetBlock((int) a.X, (int) a.Y);
+                temp.Lightness = Color.White;
+                temp.Explored = true;
+            }
+            pre_pos_vis = a;
         }
 
         bool PathClear(Vector2 start, Vector2 end)
@@ -836,6 +865,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
+        private Vector2 per_prew;
         public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per) {
             var batlas = Atlases.BlockAtlas; // Make field's non-static
             var bdb = BlockDataBase.Data;
@@ -844,7 +874,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             var ssx = Settings.FloorSpriteSize.X;
             var ssy = Settings.FloorSpriteSize.Y;
 
-            points.Clear();
+            bool shad = Vector2.Distance(camera, per_prew) > 2;
+
+            if (shad || MapJustUpdated) {
+                points.Clear();
+            }
+
             for (int k = 0; k < sectors_.Count; k++) {
                 MapSector sector = sectors_[k];
                 if (sector.SectorOffsetX*rx + rx < min.X &&
@@ -862,7 +897,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                             sector.SectorOffsetY*ry + j < max.Y) {
                             int a = i*ry + j;
 
-                            var block = sector.Blocks[a];
+                            var block = sector.GetBlock(a);
 
                             var xpos = i*(ssx) - (int) camera.X +
                                        rx*ssx*sector.SectorOffsetX;
@@ -878,13 +913,15 @@ namespace rglikeworknamelib.Dungeon.Level {
                             spriteBatch_.Draw(batlas[block.Mtex], new Vector2(xpos, ypos), null, light);
 
 
-                            if (!bdb[sector.Blocks[a].Id].IsTransparent) {
-                                AddShadowpointForBlock(camera, per, xpos, ypos, i + sector.SectorOffsetX*rx,
-                                                       j + sector.SectorOffsetY*ry);
+                            if ((shad || MapJustUpdated) && !bdb[sector.GetBlock(a).Id].IsTransparent)
+                            {
+                                AddShadowpointForBlock(camera, per, xpos, ypos, bdb[block.Id].swide);
                             }
                         }
                     }
                 }
+
+                per_prew = per.Position;
 
                 if (Settings.DebugInfo) {
                     Vector2 ff = new Vector2(-(int) camera.X +
@@ -929,78 +966,100 @@ namespace rglikeworknamelib.Dungeon.Level {
             
         }
 
-        private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos, int blockx, int blocky) {
+        private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos, int wide) {
+            var permincam = per.Position - camera;
 
-            var po = GetAtBlockPoints(xpos, ypos, 32,32);
+            if(true) {
 
-            for (int k = 0; k < po.Length; k++) {
-                po[k] = XyToVector3(po[k]);
+                var po = GetAtBlockPoints(xpos, ypos, wide, wide);
+
+                for (int k = 0; k < po.Length; k++) {
+                    po[k] = XyToVector3(po[k]);
+                }
+                Vector3 car = new Vector3(per.Position.X - (int) camera.X, per.Position.Y - (int) camera.Y, 0);
+                car = XyToVector3(car);
+
+                Ray r1 = new Ray(car, Vector3.Normalize(po[0] - car));
+                Ray r2 = new Ray(car, Vector3.Normalize(po[1] - car));
+                Ray r3 = new Ray(car, Vector3.Normalize(po[2] - car));
+                Ray r4 = new Ray(car, Vector3.Normalize(po[3] - car));
+
+                Vector3[] po2 = new[] {
+                                          GetBorderIntersection(r1), GetBorderIntersection(r2), GetBorderIntersection(r3),
+                                          GetBorderIntersection(r4)
+                                      };
+
+                int[] spoints;
+
+                float playerPosX = per.Position.X - camera.X;
+                float plauerPosY = per.Position.Y - camera.Y;
+
+
+                if (playerPosX <= xpos) {
+                    //left column
+                    spoints = plauerPosY <= ypos
+                                  ? new[] {1, 3}
+                                  : (plauerPosY <= ypos + 32 ? new[] {0, 3} : new[] {0, 2});
+                }
+                else if (playerPosX <= xpos + 32) {
+                    //middle column
+                    spoints = plauerPosY <= ypos
+                                  ? new[] {1, 0}
+                                  : (plauerPosY <= ypos + 32 ? new[] {0, 0} : new[] {3, 2});
+                }
+                else {
+                    //right column
+                    spoints = plauerPosY <= ypos
+                                  ? new[] {2, 0}
+                                  : (plauerPosY <= ypos + 32 ? new[] {2, 1} : new[] {3, 1});
+                }
+
+                //Making shadow polys
+                points.Add(new VertexPositionColor(po2[spoints[0]], Color.Black));
+                points.Add(new VertexPositionColor(po[spoints[0]], Color.Black));
+                points.Add(new VertexPositionColor(po2[spoints[1]], Color.Black));
+                points.Add(new VertexPositionColor(po[spoints[0]], Color.Black));
+                points.Add(new VertexPositionColor(po[spoints[1]], Color.Black));
+                points.Add(new VertexPositionColor(po2[spoints[1]], Color.Black));
+
+                //points.Add(new VertexPositionColor(po2[0], Color.Black));
+                //points.Add(new VertexPositionColor(po[0], Color.Black));
+                //points.Add(new VertexPositionColor(po2[1], Color.Black));
+                //points.Add(new VertexPositionColor(po[0], Color.Black));
+                //points.Add(new VertexPositionColor(po[1], Color.Black));
+                //points.Add(new VertexPositionColor(po2[1], Color.Black));
+
+                //points.Add(new VertexPositionColor(po2[1], Color.Black));
+                //points.Add(new VertexPositionColor(po[1], Color.Black));
+                //points.Add(new VertexPositionColor(po2[2], Color.Black));
+                //points.Add(new VertexPositionColor(po[1], Color.Black));
+                //points.Add(new VertexPositionColor(po[2], Color.Black));
+                //points.Add(new VertexPositionColor(po2[2], Color.Black));
+
+                //points.Add(new VertexPositionColor(po2[2], Color.Black));
+                //points.Add(new VertexPositionColor(po[2], Color.Black));
+                //points.Add(new VertexPositionColor(po2[3], Color.Black));
+                //points.Add(new VertexPositionColor(po[2], Color.Black));
+                //points.Add(new VertexPositionColor(po[3], Color.Black));
+                //points.Add(new VertexPositionColor(po2[3], Color.Black));
+
+                //points.Add(new VertexPositionColor(po2[3], Color.Black));
+                //points.Add(new VertexPositionColor(po[3], Color.Black));
+                //points.Add(new VertexPositionColor(po2[0], Color.Black));
+                //points.Add(new VertexPositionColor(po[3], Color.Black));
+                //points.Add(new VertexPositionColor(po[0], Color.Black));
+                //points.Add(new VertexPositionColor(po2[0], Color.Black));
             }
-            Vector3 car = new Vector3(per.Position.X - (int)camera.X, per.Position.Y - (int)camera.Y, 0);
-            car = XyToVector3(car);
+            else {
+                points.Add(new VertexPositionColor(new Vector3(-1, -1, 0), Color.Black));
+                points.Add(new VertexPositionColor(new Vector3(1, -1, 0), Color.Black));
+                points.Add(new VertexPositionColor(new Vector3(-1, 1, 0), Color.Black));
 
-            Ray r1 = new Ray(car, Vector3.Normalize(po[0] - car));
-            Ray r2 = new Ray(car, Vector3.Normalize(po[1] - car));
-            Ray r3 = new Ray(car, Vector3.Normalize(po[2] - car));
-            Ray r4 = new Ray(car, Vector3.Normalize(po[3] - car));
-
-            Vector3[] po2 = new[] { GetBorderIntersection(r1), GetBorderIntersection(r2), GetBorderIntersection(r3), GetBorderIntersection(r4) };
-
-            int[] spoints;
-
-            float playerPosX = per.Position.X - camera.X;
-            float plauerPosY = per.Position.Y - camera.Y;
-
-
-            if (playerPosX <= xpos)
-            { //left column
-                spoints = plauerPosY <= ypos ? new[] {1, 3} : (plauerPosY <= ypos + 32 ? new[] {0, 3} : new[] {0, 2});
-            }
-            else
-            if (playerPosX <= xpos + 32)
-            { //middle column
-                spoints = plauerPosY <= ypos ? new[] {1, 0} : (plauerPosY <= ypos + 32 ? new[] {0, 0} : new[] {3, 2});
-            }
-            else
-            { //right column
-                spoints = plauerPosY <= ypos ? new[] {2, 0} : (plauerPosY <= ypos + 32 ? new[] {2, 1} : new[] {3, 1});
+                points.Add(new VertexPositionColor(new Vector3(1, -1, 0), Color.Black));
+                points.Add(new VertexPositionColor(new Vector3(1, 1, 0), Color.Black));
+                points.Add(new VertexPositionColor(new Vector3(-1, 1, 0), Color.Black));
             }
 
-            //Making shadow polys
-            points.Add(new VertexPositionColor(po2[spoints[0]], Color.Black));
-            points.Add(new VertexPositionColor(po[spoints[0]], Color.Black));
-            points.Add(new VertexPositionColor(po2[spoints[1]], Color.Black));
-            points.Add(new VertexPositionColor(po[spoints[0]], Color.Black));
-            points.Add(new VertexPositionColor(po[spoints[1]], Color.Black));
-            points.Add(new VertexPositionColor(po2[spoints[1]], Color.Black));
-
-            //points.Add(new VertexPositionColor(po2[0], Color.Black));
-            //points.Add(new VertexPositionColor(po[0], Color.Black));
-            //points.Add(new VertexPositionColor(po2[1], Color.Black));
-            //points.Add(new VertexPositionColor(po[0], Color.Black));
-            //points.Add(new VertexPositionColor(po[1], Color.Black));
-            //points.Add(new VertexPositionColor(po2[1], Color.Black));
-
-            //points.Add(new VertexPositionColor(po2[1], Color.Black));
-            //points.Add(new VertexPositionColor(po[1], Color.Black));
-            //points.Add(new VertexPositionColor(po2[2], Color.Black));
-            //points.Add(new VertexPositionColor(po[1], Color.Black));
-            //points.Add(new VertexPositionColor(po[2], Color.Black));
-            //points.Add(new VertexPositionColor(po2[2], Color.Black));
-
-            //points.Add(new VertexPositionColor(po2[2], Color.Black));
-            //points.Add(new VertexPositionColor(po[2], Color.Black));
-            //points.Add(new VertexPositionColor(po2[3], Color.Black));
-            //points.Add(new VertexPositionColor(po[2], Color.Black));
-            //points.Add(new VertexPositionColor(po[3], Color.Black));
-            //points.Add(new VertexPositionColor(po2[3], Color.Black));
-
-            //points.Add(new VertexPositionColor(po2[3], Color.Black));
-            //points.Add(new VertexPositionColor(po[3], Color.Black));
-            //points.Add(new VertexPositionColor(po2[0], Color.Black));
-            //points.Add(new VertexPositionColor(po[3], Color.Black));
-            //points.Add(new VertexPositionColor(po[0], Color.Black));
-            //points.Add(new VertexPositionColor(po2[0], Color.Black));
         }
 
         private int[] GetShadowBlockSize(int blockx, int blocky) {
@@ -1031,15 +1090,18 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// </summary>
         /// <param name="xpos"></param>
         /// <param name="ypos"></param>
-        /// <param name="c"></param>
-        /// <param name="cam"></param>
+        /// <param name="resx">Размер квадрата, кастующего тень</param>
+        /// <param name="resy">Размер квадрата, кастующего тень</param>
         /// <returns></returns>
         private static Vector3[] GetAtBlockPoints(float xpos, float ypos, int resx, int resy) {
 
-            Vector3 p1 = new Vector3(xpos, ypos, 0);
-            Vector3 p2 = new Vector3(xpos + resx, ypos, 0);
-            Vector3 p3 = new Vector3(xpos + resx, ypos + resy, 0);
-            Vector3 p4 = new Vector3(xpos, ypos + resy, 0);
+            var vix = (32 - resx)/2;
+            var viy = (32 - resy)/2;
+
+            Vector3 p1 = new Vector3(xpos+vix, ypos+vix, 0);
+            Vector3 p2 = new Vector3(xpos + resx + vix, ypos + viy, 0);
+            Vector3 p3 = new Vector3(xpos + resx + vix, ypos + resy + viy, 0);
+            Vector3 p4 = new Vector3(xpos+vix, ypos + resy+viy, 0);
 
             return new[] {p1, p2, p3, p4};
         }

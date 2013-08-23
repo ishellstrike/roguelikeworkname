@@ -12,6 +12,7 @@ mmcol="brown"
 name="Шкаф"
 mmcol="yellow"
 actionopencontainer
+swide=28
 
 ~Block,3,3
 name="Деревянная дверь (закрыта)"
@@ -64,24 +65,29 @@ anim=9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
 name="Кровать"
 mmcol="red"
 altermtex=28,39,30,31
+transparent
 
 ~StorageBlock,15,32
 name="Ящик"
 mmcol="yellow"
 actionopencontainer
 altermtex=33,34
+transparent
 
 ~Block,16,36
 name="Дерево"
 mmcol="darkgreen"
+swide=16
 
 ~Block,18,38
 name="Небольшое дерево"
 mmcol="darkgreen"
+swide=16
 
 ~Block,17,37
 name="Куст"
 mmcol="darkgreen"
+swide=16
 
 
 ~Block,19,38
@@ -99,11 +105,27 @@ transparent
 name="Прилавок"
 mmcol="brown"
 transparent
+
 ~Block,22,41
 name="Прилавок"
 mmcol="brown"
 transparent
+
 ~Block,23,42
 name="Прилавок"
 mmcol="blue"
 transparent
+
+~Block,kustsmall,palka
+name="Молодой кустарник"
+mmcol="green"
+transparent
+walkable
+swide=16
+
+
+~Block,kustbig,bush
+name="Густой кустарник"
+mmcol="green"
+walkable
+swide=16

@@ -22,6 +22,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public bool IsWalkable;
         public bool IsTransparent;
 
+        public int swide = 32;
+
         public int StorageSlots;
 
         public string[] AlterMtex;

@@ -129,8 +129,11 @@ namespace rglikeworknamelib.Generation
         }
 
         public static void ClearBlocks(MapSector gameLevel) {
-            for (int i = 0; i < MapSector.Rx * MapSector.Ry; i++) {
-                gameLevel.SetBlock(i, "0");
+            for (int i = 0; i < MapSector.Rx; i++) {
+                for (int j = 0; j < MapSector.Rx; j++)
+                {
+                    gameLevel.SetBlock(i,j,"0");
+                }
             }
         }
 

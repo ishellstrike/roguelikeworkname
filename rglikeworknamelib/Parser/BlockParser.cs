@@ -45,6 +45,12 @@ namespace rglikeworknamelib.Parser
                                 ParsersCore.intextractor.Match(lines[i]).ToString();
                             ((BlockData)cur.Value).AfterDeathId = extractedstring;
                         }
+                        if (lines[i].StartsWith("swide="))
+                        {
+                            string extractedstring =
+                                ParsersCore.intextractor.Match(lines[i]).ToString();
+                            ((BlockData)cur.Value).swide = int.Parse(extractedstring);
+                        }
                         if (lines[i].StartsWith("description=")) {
                             string extractedstring =
                                 ParsersCore.stringExtractor.Match(lines[i]).ToString();
