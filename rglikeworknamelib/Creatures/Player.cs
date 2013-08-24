@@ -26,8 +26,6 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public void Update(GameTime gt, GameLevel gl) {
-            base.Update(gt, null);
-
             var time = (float) gt.ElapsedGameTime.TotalSeconds;
 
             var tpos = Position; 

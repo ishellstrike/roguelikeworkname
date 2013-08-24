@@ -416,20 +416,20 @@ namespace jarg
         }
 
         void CloseAllTestButton_onPressed(object sender, EventArgs e) {
-            player_.hunger_--;
+            player_.Hunger.Current--;
         }
 
         private void WindowsUpdate(GameTime gt) {
 
             if (WindowStats.Visible) {
-                StatsHeat.Max = (int) player_.maxHeat_;
-                StatsHeat.Progress = (int) player_.heat_;
+                StatsHeat.Max = (int) player_.Heat.Max;
+                StatsHeat.Progress = (int) player_.Heat.Current;
 
-                StatsJajda.Max = (int) player_.maxThirst_;
-                StatsJajda.Progress = (int) player_.thirst_;
+                StatsJajda.Max = (int) player_.Thirst.Max;
+                StatsJajda.Progress = (int) player_.Thirst.Current;
 
-                StatsHunger.Max = (int) player_.maxHunger_;
-                StatsHunger.Progress = (int) player_.hunger_;
+                StatsHunger.Max = (int) player_.Hunger.Max;
+                StatsHunger.Progress = (int) player_.Heat.Current;
             }
 
             if(WindowMinimap.Visible) {
@@ -438,9 +438,6 @@ namespace jarg
         }
 #endregion
 
-        private Texture2D itemSelectTex_;
-        private Texture2D transparentPixel_;
-        private ProgressBar fff;
         protected override void LoadContent()
         {
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
@@ -459,20 +456,18 @@ namespace jarg
             ItemDataBase idb = new ItemDataBase();
             SchemesDataBase sdb = new SchemesDataBase();
 
-            itemSelectTex_ = Content.Load<Texture2D>(@"Textures/Dungeon/Items/itemselect");
-            transparentPixel_ = Content.Load<Texture2D>(@"Textures/transparent_pixel");
             font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
+            Settings.Font = font1_;
+
+            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice);
 
             ws_ = new WindowSystem(whitepixel, font1_);
 
             ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
 
-            bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), ps_);
+            bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), currentFloor_, font1_, lineBatch_);
 
             monsterSystem_ = new MonsterSystem(spriteBatch_, ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"/textureloadorder.ord", Content));
-
-
-            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice);
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
@@ -566,7 +561,7 @@ namespace jarg
             currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
 
-            currentFloor_.UpdateCreatures(gameTime);
+            currentFloor_.UpdateCreatures(gameTime, player_);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
         }
@@ -644,7 +639,7 @@ namespace jarg
             ms_ = Mouse.GetState();
 
             if(ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
-                bs_.AddBullet(player_, 5, PlayerSeeAngle);
+                bs_.AddBullet(player_, 50, PlayerSeeAngle);
             }
 
             int nx = (ms_.X + (int)camera_.X) / 32;

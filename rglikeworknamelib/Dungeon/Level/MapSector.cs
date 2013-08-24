@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level.Blocks;
+using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Generation;
 
 namespace rglikeworknamelib.Dungeon.Level {
@@ -30,7 +31,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         internal List<IBlock> Blocks;
         internal Floor[] Floors;
-        internal List<Creature> Creatures;
+        internal List<Creature> creatures;
+        internal List<Particle> decals;
         internal List<Vector2> initialNodes;
         internal SectorBiom biom;
 
@@ -40,7 +42,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
-            Creatures = new List<Creature>();
+            creatures = new List<Creature>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
@@ -59,7 +61,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
-            Creatures = new List<Creature>();
+            creatures = new List<Creature>();
+            decals = new List<Particle>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
@@ -89,7 +92,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             Floors = floorsArray as Floor[];
             initialNodes = initialn as List<Vector2>;
             biom = (SectorBiom)obiom;
-            Creatures = new List<Creature>();
+            creatures = new List<Creature>();
+            decals = new List<Particle>();
         }
 
         public List<StorageBlock> GetStorageBlocks()
@@ -200,7 +204,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private void Spawn(string i, int x, int y)
         {
-            Creatures.Add(new Creature(){Position = new Vector2(x*Rx,y*Ry), ID = i});
+            creatures.Add(new Creature(){Position = new Vector2(x*32,y*32), ID = i, parent = this});
         }
 
         public IBlock GetBlock(int x, int y)

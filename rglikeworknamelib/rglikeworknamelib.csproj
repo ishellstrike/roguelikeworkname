@@ -96,6 +96,7 @@
     <Compile Include="Dungeon\Level\StreetOld__.cs" />
     <Compile Include="Dungeon\Particles\Particles.cs" />
     <Compile Include="Generation\MapGenerators.cs" />
+    <Compile Include="LineBatch.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Creatures\AIStyle.cs" />
     <Compile Include="Creatures\Creature.cs" />

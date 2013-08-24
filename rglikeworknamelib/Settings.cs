@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace rglikeworknamelib {
     public static class Settings {
@@ -72,6 +73,7 @@ namespace rglikeworknamelib {
 
         private static Color hcol_ = Color.LightGray;
         public static bool IsAMDM;
+        public static SpriteFont Font;
 
         public static Color HudСolor {
             get { return hcol_; }

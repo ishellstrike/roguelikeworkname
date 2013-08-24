@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Generation;
-using rglikeworknamelib.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class GameLevel
@@ -29,122 +27,38 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public bool MapJustUpdated;
 
+        private RenderTarget2D minimap;
         private Texture2D minimap_;
 
-        public MapSector[] GetNeibours(MapSector ms) {
-            return GetNeibours(ms.SectorOffsetX, ms.SectorOffsetY);
+        #region Constructor
+        Effect be_;
+        public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd)
+        {
+            MapGenerators.seed = MapSeed;
+            whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            var data = new uint[1];
+            data[0] = 0xffffffff;
+            whitepixel.SetData(data);
+
+            minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
+            minimap = new RenderTarget2D(spriteBatch.GraphicsDevice, 128, 128);
+
+            sectors_ = new List<MapSector> { new MapSector(this, 0, 0) };
+
+            sectors_[0].Rebuild(MapSeed);
+
+            spriteBatch_ = spriteBatch;
+            font_ = sf;
+            gd_ = gd;
+            be_ = new BasicEffect(gd_);
+            (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
         }
 
-        public MapSector[] GetNeibours(int sectorOffsetX, int sectorOffsetY) {
-            List<MapSector> arrr = new List<MapSector>();
-
-            MapSector a = GetRightN(sectorOffsetX, sectorOffsetY), b = GetLeftN(sectorOffsetX, sectorOffsetY), c = GetUpN(sectorOffsetX, sectorOffsetY), d = GetDownN(sectorOffsetX, sectorOffsetY);
-
-            if (a != null) arrr.Add(a);
-            if (b != null) arrr.Add(b);
-            if (c != null) arrr.Add(c);
-            if (d != null) arrr.Add(d);
-
-            return arrr.ToArray();
+        public GameLevel()
+        {
+            sectors_ = new List<MapSector> { new MapSector(0, 0) };
         }
-
-         public MapSector GetDownN(int sectorOffsetX, int sectorOffsetY) {
-             foreach (var sector in sectors_) {
-                 if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY + 1) {
-                     return sector;
-                 }
-             }
-
-             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY + 1)))
-             {
-                 var temp = LoadSector(sectorOffsetX, sectorOffsetY + 1);
-                 sectors_.Add(temp);
-                 return temp;
-             }
-
-             return null;
-         }
-
-         public MapSector GetUpN(int sectorOffsetX, int sectorOffsetY)
-         {
-             foreach (var sector in sectors_)
-             {
-                 if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY - 1)
-                 {
-                     return sector;
-                 }
-             }
-
-             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY - 1)))
-             {
-                 var temp = LoadSector(sectorOffsetX, sectorOffsetY - 1);
-                 sectors_.Add(temp);
-                 return temp;
-             }
-
-             return null;
-         }
-
-         public MapSector GetLeftN(int sectorOffsetX, int sectorOffsetY)
-         {
-             foreach (var sector in sectors_)
-             {
-                 if (sector != null && sector.SectorOffsetX == sectorOffsetX - 1 && sector.SectorOffsetY == sectorOffsetY)
-                 {
-                     return sector;
-                 }
-             }
-
-             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX - 1, sectorOffsetY)))
-             {
-                 var temp = LoadSector(sectorOffsetX - 1, sectorOffsetY);
-                 sectors_.Add(temp);
-                 return temp;
-             }
-
-             return null;
-         }
-
-         public MapSector GetRightN(int sectorOffsetX, int sectorOffsetY)
-         {
-             for (int i = 0; i < sectors_.Count; i++) {
-                 var sector = sectors_[i];
-                 if (sector != null && sector.SectorOffsetX == sectorOffsetX + 1 &&
-                     sector.SectorOffsetY == sectorOffsetY) {
-                     return sector;
-                 }
-             }
-
-             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX + 1, sectorOffsetY)))
-             {
-                 return LoadSector(sectorOffsetX + 1, sectorOffsetY);
-             }
-
-             return null;
-         }
-
-        public MapSector GetSector(int sectorOffsetX, int sectorOffsetY) {
-            for (int i = 0; i < sectors_.Count; i++) {
-                var sector = sectors_[i];
-                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY)
-                {
-                    if (!sector.ready) return null;
-                    return sector;
-                }
-            }
-
-            var last = LoadSector(sectorOffsetX, sectorOffsetY);
-            if(last != null) {
-                sectors_.Add(last);
-                return last;
-            }
-
-            var temp = new MapSector(this, sectorOffsetX, sectorOffsetY);
-            sectors_.Add(temp);
-            temp.Rebuild(MapSeed);
-            if (temp.ready) return temp;
-            return null;
-        }
+        #endregion
 
         private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY) {
             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY))) {
@@ -192,6 +106,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             fileStream_.Close();
         }
 
+        /// <summary>
+        /// Explore all active sector
+        /// </summary>
+        [Obsolete]
         public void ExploreAllMap()
         {
             foreach (var mapSector in sectors_) {
@@ -210,6 +128,131 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         //------------------
 
+        public MapSector[] GetNeibours(MapSector ms)
+        {
+            return GetNeibours(ms.SectorOffsetX, ms.SectorOffsetY);
+        }
+
+        public MapSector[] GetNeibours(int sectorOffsetX, int sectorOffsetY)
+        {
+            List<MapSector> arrr = new List<MapSector>();
+
+            MapSector a = GetRightN(sectorOffsetX, sectorOffsetY), b = GetLeftN(sectorOffsetX, sectorOffsetY), c = GetUpN(sectorOffsetX, sectorOffsetY), d = GetDownN(sectorOffsetX, sectorOffsetY);
+
+            if (a != null) arrr.Add(a);
+            if (b != null) arrr.Add(b);
+            if (c != null) arrr.Add(c);
+            if (d != null) arrr.Add(d);
+
+            return arrr.ToArray();
+        }
+
+        public MapSector GetDownN(int sectorOffsetX, int sectorOffsetY)
+        {
+            foreach (var sector in sectors_)
+            {
+                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY + 1)
+                {
+                    return sector;
+                }
+            }
+
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY + 1)))
+            {
+                var temp = LoadSector(sectorOffsetX, sectorOffsetY + 1);
+                sectors_.Add(temp);
+                return temp;
+            }
+
+            return null;
+        }
+
+        public MapSector GetUpN(int sectorOffsetX, int sectorOffsetY)
+        {
+            foreach (var sector in sectors_)
+            {
+                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY - 1)
+                {
+                    return sector;
+                }
+            }
+
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY - 1)))
+            {
+                var temp = LoadSector(sectorOffsetX, sectorOffsetY - 1);
+                sectors_.Add(temp);
+                return temp;
+            }
+
+            return null;
+        }
+
+        public MapSector GetLeftN(int sectorOffsetX, int sectorOffsetY)
+        {
+            foreach (var sector in sectors_)
+            {
+                if (sector != null && sector.SectorOffsetX == sectorOffsetX - 1 && sector.SectorOffsetY == sectorOffsetY)
+                {
+                    return sector;
+                }
+            }
+
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX - 1, sectorOffsetY)))
+            {
+                var temp = LoadSector(sectorOffsetX - 1, sectorOffsetY);
+                sectors_.Add(temp);
+                return temp;
+            }
+
+            return null;
+        }
+
+        public MapSector GetRightN(int sectorOffsetX, int sectorOffsetY)
+        {
+            for (int i = 0; i < sectors_.Count; i++)
+            {
+                var sector = sectors_[i];
+                if (sector != null && sector.SectorOffsetX == sectorOffsetX + 1 &&
+                    sector.SectorOffsetY == sectorOffsetY)
+                {
+                    return sector;
+                }
+            }
+
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX + 1, sectorOffsetY)))
+            {
+                return LoadSector(sectorOffsetX + 1, sectorOffsetY);
+            }
+
+            return null;
+        }
+
+        public MapSector GetSector(int sectorOffsetX, int sectorOffsetY)
+        {
+            for (int i = 0; i < sectors_.Count; i++)
+            {
+                var sector = sectors_[i];
+                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY)
+                {
+                    if (!sector.ready) return null;
+                    return sector;
+                }
+            }
+
+            var last = LoadSector(sectorOffsetX, sectorOffsetY);
+            if (last != null)
+            {
+                sectors_.Add(last);
+                return last;
+            }
+
+            var temp = new MapSector(this, sectorOffsetX, sectorOffsetY);
+            sectors_.Add(temp);
+            temp.Rebuild(MapSeed);
+            if (temp.ready) return temp;
+            return null;
+        }
+
         public IBlock GetBlock(int x, int y)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
@@ -219,6 +262,53 @@ namespace rglikeworknamelib.Dungeon.Level {
                 return sect.GetBlock(x - divx * MapSector.Rx, y - divy * MapSector.Ry);//blocks_[x * ry + y];
 
             return null;
+        }
+
+        public Creature GetCreatureAtCoord(Vector2 pos, Vector2 start) {
+            var p = GetInSectorPosition(GetPositionInBlocks(pos));
+            MapSector sect = null;
+            foreach(var se in sectors_) {
+                if (se.SectorOffsetX == (int)p.X && se.SectorOffsetY == (int)p.Y) sect = se;
+            }
+
+            if (sect == null) return null;
+
+            var adder = new Vector2(sect.SectorOffsetX * MapSector.Rx * 32, sect.SectorOffsetY * MapSector.Ry * 32);
+
+            foreach (var crea in sect.creatures) {
+                if (Intersects(start, pos, new Vector2(crea.Position.X - 16, crea.Position.Y - 32) + adder, new Vector2(crea.Position.X - 16, crea.Position.Y) + adder))
+                    return crea;
+                if (Intersects(start, pos, new Vector2(crea.Position.X - 16, crea.Position.Y - 32) + adder, new Vector2(crea.Position.X + 16, crea.Position.Y-32) + adder))
+                    return crea;
+                if (Intersects(start, pos, new Vector2(crea.Position.X + 16, crea.Position.Y) + adder, new Vector2(crea.Position.X + 16, crea.Position.Y-32) + adder))
+                    return crea;
+                if (Intersects(start, pos, new Vector2(crea.Position.X + 16, crea.Position.Y) + adder, new Vector2(crea.Position.X - 16, crea.Position.Y) + adder))
+                    return crea;
+            }
+            //return sect.creatures.FirstOrDefault(crea => crea.Position.X >= pos.X - 16 && crea.Position.Y >= pos.Y - 32 && crea.Position.X <= pos.X + 16 && crea.Position.Y <= pos.Y);
+            return null;
+        }
+
+        static bool Intersects(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2)
+        {
+            Vector2 b = a2 - a1;
+            Vector2 d = b2 - b1;
+            float bDotDPerp = b.X * d.Y - b.Y * d.X;
+
+            // if b dot d == 0, it means the lines are parallel so have infinite intersection points
+            if (bDotDPerp == 0)
+                return false;
+
+            Vector2 c = b1 - a1;
+            float t = (c.X * d.Y - c.Y * d.X) / bDotDPerp;
+            if (t < 0 || t > 1)
+                return false;
+
+            float u = (c.X * b.Y - c.Y * b.X) / bDotDPerp;
+            if (u < 0 || u > 1)
+                return false;
+
+            return true;
         }
 
         public bool IsExplored(int x, int y) {
@@ -236,6 +326,13 @@ namespace rglikeworknamelib.Dungeon.Level {
             return BlockDataBase.Data[sect.GetBlock(x-divx*MapSector.Rx, y-divy*MapSector.Ry).Id].IsWalkable;
         }
 
+        public string GetId(int x, int y) {
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
+            var sect = GetSector(divx, divy);
+            return sect.GetBlock(x - divx*MapSector.Rx, y - divy*MapSector.Ry).Id;
+        }
+
         public void SetFloor(int x, int y, int id)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
@@ -245,13 +342,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (sect != null) {
                 sect.SetFloor(x - divx*MapSector.Rx, y - divy*MapSector.Ry, id);
             }
-        }
-
-        public string GetId(int x, int y) {
-            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
-            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
-            var sect = GetSector(divx, divy);
-            return sect.GetBlock(x - divx*MapSector.Rx, y - divy*MapSector.Ry).Id;
         }
 
         public void SetBlock(int x, int y, string id)
@@ -278,8 +368,23 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
+        /// <summary>
+        /// Sector position from block position
+        /// </summary>
+        /// <param name="Pos">position on blocks</param>
+        /// <returns>position in sectors</returns>
         public Vector2 GetInSectorPosition(Vector2 Pos) {
             return new Vector2(Pos.X < 0 ? (Pos.X + 1) / MapSector.Rx - 1 : Pos.X / MapSector.Rx, Pos.Y < 0 ? (Pos.Y + 1) / MapSector.Ry - 1 : Pos.Y / MapSector.Ry);
+        }
+        /// <summary>
+        /// Get position in blocks
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetPositionInBlocks(Vector2 po)
+        {
+            po.X = po.X < 0 ? po.X / 32 - 1 : po.X / 32;
+            po.Y = po.Y < 0 ? po.Y / 32 - 1 : po.Y / 32;
+            return po;
         }
 
         public void OpenCloseDoor(int x, int y) {
@@ -306,44 +411,16 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
+        /// <summary>
+        /// Rebuild all active sectors
+        /// </summary>
+        [Obsolete]
         public void Rebuild() {
             for (int i = 0; i < sectors_.Count; i++) {
                 sectors_[i] .Rebuild(MapSeed);
             }
         }
 
-        Effect be_;
-        public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd) {
-            MapGenerators.seed = MapSeed;
-            whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            var data = new uint[1];
-            data[0] = 0xffffffff;
-            whitepixel.SetData(data);
-
-            minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
-            minimap = new RenderTarget2D(spriteBatch.GraphicsDevice, 128, 128);
-
-            sectors_ = new List<MapSector> { new MapSector(this, 0, 0) };
-
-            sectors_[0].Rebuild(MapSeed);
-
-            spriteBatch_ = spriteBatch;
-            font_ = sf;
-            gd_ = gd;
-            be_ = new BasicEffect(gd_);
-            (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
-        }
-
-        public GameLevel()
-        {
-            sectors_ = new List<MapSector> {new MapSector(0, 0)};
-        }
-
-        //public void Update(GameTime gt, MouseState ms, MouseState lms) {
-
-        //}
-
-        private RenderTarget2D minimap;
         public void GenerateMinimap(GraphicsDevice gd, SpriteBatch sb, Creature pl)
         {
             //var data = new Color[128 * 128];
@@ -457,7 +534,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             pre_pos_vis = a;
         }
 
-        bool PathClear(Vector2 start, Vector2 end)
+        public bool PathClear(Vector2 start, Vector2 end)
         {
             if (Vector2.Distance(start, end) > 1) {
                 float xDelta = (end.X - start.X);
@@ -509,150 +586,25 @@ namespace rglikeworknamelib.Dungeon.Level {
             return true;
         }
 
-        private Vector2 min, max;
-        public void DrawFloors(GameTime gameTime, Vector2 camera) {
-            var fatlas = Atlases.FloorAtlas; // Make field's non-static
-            var fdb = FloorDataBase.Data;
-            var rx = MapSector.Rx;
-            var ry = MapSector.Ry;
-            var ssx = Settings.FloorSpriteSize.X;
-            var ssy = Settings.FloorSpriteSize.Y;
-
-            GetBlock((int)(camera.X / 32), (int)(camera.Y / 32));
-            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
-            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y) / 32));
-            GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
-
-            min = new Vector2((camera.X) / ssx - 1, (camera.Y) / ssy - 1);
-            max = new Vector2((camera.X + Settings.Resolution.X) / ssx,
-                                  (camera.Y + Settings.Resolution.Y) / ssy);
-
-            for (int k = 0; k < sectors_.Count; k++) {
-                MapSector sector = sectors_[k];
-                if (sector.SectorOffsetX*rx + rx < min.X &&
-                    sector.SectorOffsetY*ry + ry < min.Y) {
-                    continue;
-                }
-                if (sector.SectorOffsetX*rx > max.X && sector.SectorOffsetY*ry > max.Y) {
-                    continue;
-                }
-                for (int i = 0; i < rx; i++) {
-                    for (int j = 0; j < ry; j++) {
-                        if (sector.SectorOffsetX*rx + i > min.X &&
-                            sector.SectorOffsetY*ry + j > min.Y &&
-                            sector.SectorOffsetX*rx + i < max.X &&
-                            sector.SectorOffsetY*ry + j < max.Y) {
-                            int a = i*ry + j;
-                            spriteBatch_.Draw(fatlas[sector.Floors[a].Mtex],
-                                              new Vector2(
-                                                  i*ssx - (int) camera.X +
-                                                  rx*ssx*sector.SectorOffsetX,
-                                                  j*ssy - (int) camera.Y +
-                                                  ry*ssy*sector.SectorOffsetY),
-                                              null, Color.White);
-                        }
-                    }
-                }
-            }
-        }
-
-        private Vector2 per_prew;
-        public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per) {
-            var batlas = Atlases.BlockAtlas; // Make field's non-static
-            var bdb = BlockDataBase.Data;
-            var rx = MapSector.Rx;
-            var ry = MapSector.Ry;
-            var ssx = Settings.FloorSpriteSize.X;
-            var ssy = Settings.FloorSpriteSize.Y;
-
-
-            bool shad = Vector2.Distance(camera, per_prew) > 2;
-
-            if (shad || MapJustUpdated) {
-                points.Clear();
-            }
-
-            for (int k = 0; k < sectors_.Count; k++) {
-                MapSector sector = sectors_[k];
-                if (sector.SectorOffsetX*rx + rx < min.X &&
-                    sector.SectorOffsetY*ry + ry < min.Y) {
-                    continue;
-                }
-                if (sector.SectorOffsetX*rx > max.X && sector.SectorOffsetY*ry > max.Y) {
-                    continue;
-                }
-                for (int i = 0; i < rx; i++) {
-                    for (int j = 0; j < ry; j++) {
-
-                        var xpos = i*(ssx) - (int) camera.X +
-                                       rx*ssx*sector.SectorOffsetX;
-
-                            var ypos = j*(ssy) - (int) camera.Y +
-                                       ry*ssy*sector.SectorOffsetY;
-
-                            int a = i * ry + j;
-                            var block = sector.GetBlock(a);
-
-                        if (sector.SectorOffsetX*rx + i > min.X &&
-                            sector.SectorOffsetY*ry + j > min.Y &&
-                            sector.SectorOffsetX*rx + i < max.X &&
-                            sector.SectorOffsetY*ry + j < max.Y) {
-                            
-
-                            block.Draw(spriteBatch_, batlas, new Vector2(xpos, ypos));
-                            
-
-                            if ((shad || MapJustUpdated) && !bdb[sector.GetBlock(a).Id].IsTransparent)
-                            {
-                                AddShadowpointForBlock(camera, per, xpos, ypos, bdb[block.Id].swide);
-                            }
-                        }
-
-                        block.Update(gameTime.ElapsedGameTime, new Vector2(xpos+camera.X, ypos+camera.Y));
-                    }
-                }
-
-                per_prew = per.Position;
-
-                if (Settings.DebugInfo) {
-                    Vector2 ff = new Vector2(-(int) camera.X +
-                                             MapSector.Rx*ssx*
-                                             sector.SectorOffsetX, - (int) camera.Y +
-                                                                   MapSector.Ry*ssy*
-                                                                   sector.SectorOffsetY);
-
-                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1024),
-                                      SpriteEffects.None, 0);
-                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1024, 1),
-                                      SpriteEffects.None, 0);
-                    spriteBatch_.DrawString(font_, sector.biom.ToString(), new Vector2(20, 20) + ff, Color.White);
-                }
-            }
-        }
-
-        public void DrawCreatures(GameTime gameTime, Vector2 camera) {
+        /// <summary>
+        /// Main loop creature update
+        /// </summary>
+        /// <param name="gt"></param>
+        public void UpdateCreatures(GameTime gt, Creature hero) {
             for (int k = 0; k < sectors_.Count; k++) {
                 var sector = sectors_[k];
-//if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
-                //if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
-
-                for (int m = 0; m < sector.Creatures.Count; m++) {
-                    var crea = sector.Creatures[m];
-                    crea.Draw(spriteBatch_, camera, sector);
-                }
-            }
-        }
-
-        public void UpdateCreatures(GameTime gt) {
-            for (int k = 0; k < sectors_.Count; k++) {
-                var sector = sectors_[k];
-                for (int m = 0; m < sector.Creatures.Count; m++) {
-                    var crea = sector.Creatures[m];
+                for (int m = 0; m < sector.creatures.Count; m++) {
+                    var crea = sector.creatures[m];
                     crea.Update(gt, sector);
                 }
             }
         }
 
+        /// <summary>
+        /// Main loop blocks update
+        /// </summary>
+        /// <param name="gt"></param>
+        /// <param name="camera"></param>
         public void UpdateBlocks(GameTime gt, Vector2 camera) {
         }
 
@@ -752,29 +704,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         }
 
-        private int[] GetShadowBlockSize(int blockx, int blocky) {
-            int[] reses = new[] {32, 32};
-
-            int startx = blockx, starty = blocky;
-            while (true) {
-                bool xstop = false;
-                startx++;
-                if (!BlockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
-                    reses[0] += 32;
-                } else xstop = true;
-
-                starty++;
-                if(!BlockDataBase.Data[GetBlock(startx, starty).Id].IsTransparent) {
-                    reses[1] += 32;
-                }
-                else {
-                    if (xstop) break;
-                }
-            }
-
-            return reses;
-        }
-
         /// <summary>
         /// Использует неприведенные координаты
         /// </summary>
@@ -794,16 +723,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             Vector3 p4 = new Vector3(xpos+vix, ypos + resy+viy, 0);
 
             return new[] {p1, p2, p3, p4};
-        }
-
-        private static int[] GetFarestPoints(params Vector3[] points) {
-            Vector3 a = Vector3.Zero;
-            List<float> dist = points.Select(x => Vector3.Distance(a, x)).ToList();
-            var mins = new[] {dist.Max(), dist.Min()};
-            var firstn = dist.IndexOf(mins[0]);
-            var secondn = dist.IndexOf(mins[1]);
-
-            return new[] { firstn, secondn };
         }
 
         /// <summary>
@@ -889,6 +808,165 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         // Shadow casting region
 
+        #region Drawes
+        private Vector2 min, max;
+        public void DrawFloors(GameTime gameTime, Vector2 camera)
+        {
+            var fatlas = Atlases.FloorAtlas; // Make field's non-static
+            var fdb = FloorDataBase.Data;
+            var rx = MapSector.Rx;
+            var ry = MapSector.Ry;
+            var ssx = Settings.FloorSpriteSize.X;
+            var ssy = Settings.FloorSpriteSize.Y;
 
+            GetBlock((int)(camera.X / 32), (int)(camera.Y / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y) / 32));
+            GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+
+            min = new Vector2((camera.X) / ssx - 1, (camera.Y) / ssy - 1);
+            max = new Vector2((camera.X + Settings.Resolution.X) / ssx,
+                                  (camera.Y + Settings.Resolution.Y) / ssy);
+
+            for (int k = 0; k < sectors_.Count; k++)
+            {
+                MapSector sector = sectors_[k];
+                if (sector.SectorOffsetX * rx + rx < min.X &&
+                    sector.SectorOffsetY * ry + ry < min.Y)
+                {
+                    continue;
+                }
+                if (sector.SectorOffsetX * rx > max.X && sector.SectorOffsetY * ry > max.Y)
+                {
+                    continue;
+                }
+                for (int i = 0; i < rx; i++)
+                {
+                    for (int j = 0; j < ry; j++)
+                    {
+                        if (sector.SectorOffsetX * rx + i > min.X &&
+                            sector.SectorOffsetY * ry + j > min.Y &&
+                            sector.SectorOffsetX * rx + i < max.X &&
+                            sector.SectorOffsetY * ry + j < max.Y)
+                        {
+                            int a = i * ry + j;
+                            spriteBatch_.Draw(fatlas[sector.Floors[a].Mtex],
+                                              new Vector2(
+                                                  i * ssx - (int)camera.X +
+                                                  rx * ssx * sector.SectorOffsetX,
+                                                  j * ssy - (int)camera.Y +
+                                                  ry * ssy * sector.SectorOffsetY),
+                                              null, Color.White);
+                        }
+                    }
+                    foreach (var dec in sector.decals) {
+                        spriteBatch_.Draw(Atlases.ParticleAtlas[dec.MTex],
+                                          dec.Pos - camera,
+                                          null, dec.Color, dec.Rotation, new Vector2(Atlases.ParticleAtlas[dec.MTex].Height / 2, Atlases.ParticleAtlas[dec.MTex].Width / 2), dec.Scale, SpriteEffects.None, 0);
+                    }
+                }
+            }
+        }
+
+        private Vector2 per_prew;
+        public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per)
+        {
+            var batlas = Atlases.BlockAtlas; // Make field's non-static
+            var bdb = BlockDataBase.Data;
+            var rx = MapSector.Rx;
+            var ry = MapSector.Ry;
+            var ssx = Settings.FloorSpriteSize.X;
+            var ssy = Settings.FloorSpriteSize.Y;
+
+
+            bool shad = Vector2.Distance(camera, per_prew) > 2;
+
+            if (shad || MapJustUpdated)
+            {
+                points.Clear();
+            }
+
+            for (int k = 0; k < sectors_.Count; k++)
+            {
+                MapSector sector = sectors_[k];
+                if (sector.SectorOffsetX * rx + rx < min.X &&
+                    sector.SectorOffsetY * ry + ry < min.Y)
+                {
+                    continue;
+                }
+                if (sector.SectorOffsetX * rx > max.X && sector.SectorOffsetY * ry > max.Y)
+                {
+                    continue;
+                }
+                for (int i = 0; i < rx; i++)
+                {
+                    for (int j = 0; j < ry; j++)
+                    {
+
+                        var xpos = i * (ssx) - (int)camera.X +
+                                       rx * ssx * sector.SectorOffsetX;
+
+                        var ypos = j * (ssy) - (int)camera.Y +
+                                   ry * ssy * sector.SectorOffsetY;
+
+                        int a = i * ry + j;
+                        var block = sector.GetBlock(a);
+
+                        if (sector.SectorOffsetX * rx + i > min.X &&
+                            sector.SectorOffsetY * ry + j > min.Y &&
+                            sector.SectorOffsetX * rx + i < max.X &&
+                            sector.SectorOffsetY * ry + j < max.Y)
+                        {
+
+
+                            block.Draw(spriteBatch_, batlas, new Vector2(xpos, ypos));
+
+
+                            if ((shad || MapJustUpdated) && !bdb[sector.GetBlock(a).Id].IsTransparent)
+                            {
+                                AddShadowpointForBlock(camera, per, xpos, ypos, bdb[block.Id].swide);
+                            }
+                        }
+
+                        block.Update(gameTime.ElapsedGameTime, new Vector2(xpos + camera.X, ypos + camera.Y));
+                    }
+                }
+
+                per_prew = per.Position;
+
+                if (Settings.DebugInfo)
+                {
+                    Vector2 ff = new Vector2(-(int)camera.X +
+                                             MapSector.Rx * ssx *
+                                             sector.SectorOffsetX, -(int)camera.Y +
+                                                                   MapSector.Ry * ssy *
+                                                                   sector.SectorOffsetY);
+
+                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1024),
+                                      SpriteEffects.None, 0);
+                    spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1024, 1),
+                                      SpriteEffects.None, 0);
+                    spriteBatch_.DrawString(font_, sector.biom.ToString(), new Vector2(20, 20) + ff, Color.White);
+                }
+            }
+        }
+
+        public void DrawCreatures(GameTime gameTime, Vector2 camera)
+        {
+            bool b = Settings.DebugInfo;
+            for (int k = 0; k < sectors_.Count; k++)
+            {
+                var sector = sectors_[k];
+                if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
+                if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
+
+                for (int m = 0; m < sector.creatures.Count; m++)
+                {
+                    var crea = sector.creatures[m];
+                    crea.Draw(spriteBatch_, camera, sector);
+                }
+            }
+        }
+#endregion
     } 
 }

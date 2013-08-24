@@ -1,36 +1,68 @@
+using System;
 using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
-    public class Creature {
+    public struct Stat {
+        public float Current, Max;
+
+        public Stat(float a, float b) {
+            Current = a;
+            Max = b;
+        }
+
+        public Stat(float a)
+        {
+            Current = a;
+            Max = a;
+        }
+    }
+    public interface ICreature {
+        Rectangle Location { get; set; }
+        Stat Hp { get; set; }
+        bool isDead { get; }
+        void Kill();
+        void GiveDamage(float value, DamageType type);
+    }
+    public class Creature : ICreature {
         public string ID;
 
         private Vector2 lastpos_;
+        public MapSector parent;
 
         public bool IsWarmCloth() {
             return true;
         }
 
-        public float hunger_ = 100;
-        public float maxHunger_ = 100;
+        public Rectangle Location { get; set; }
 
-        public float thirst_ = 100;
-        public float maxThirst_ = 100;
+        public Stat Hunger  = new Stat(100);
 
-        public float heat_ = 36;
-        public float maxHeat_ = 36;
+        public Stat Thirst = new Stat(100);
+
+        public Stat Heat = new Stat(36);
 
         private Vector2 position_;
         public Vector2 Position  {
             get { return position_; }
             set {
                 lastpos_ = position_; 
+                Location = new Rectangle((int)position_.X-16,(int)position_.Y-32,32,32);
                 position_ = value;
             }
         }
+
+        private Stat hp_;
+        public Stat Hp {
+            get { return hp_; }
+            set { hp_ = value; }
+        }
+
+        public bool isDead { get; private set; }
 
         public void SetPositionInBlocks(int x, int y)
         {
@@ -55,14 +87,15 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public void Update(GameTime gt, MapSector ms) {
-            
-            if (hunger_ > 0) {
-                hunger_ -= (float) gt.ElapsedGameTime.TotalDays*60f;
+            if (Hunger.Current > 0) {
+                Hunger.Current -= (float) gt.ElapsedGameTime.TotalDays*60f;
             }  else {
                 int a = IsWarmCloth() ? 10 : 1;
-                heat_ -= heat_ * (float)gt.ElapsedGameTime.TotalMinutes / 10 / a;
-                heat_ += GlobalWorldLogic.Temperature * (float)gt.ElapsedGameTime.TotalMinutes / 10 / a;
+                Heat.Current -= Heat.Current * (float)gt.ElapsedGameTime.TotalMinutes / 10 / a;
+                Heat.Current += GlobalWorldLogic.Temperature * (float)gt.ElapsedGameTime.TotalMinutes / 10 / a;
             }
+
+            Position = new Vector2(position_.X+(float)Settings.rnd.NextDouble() - 0.5f, position_.Y+(float)Settings.rnd.NextDouble() - 0.5f);
         }
 
 
@@ -72,8 +105,40 @@ namespace rglikeworknamelib.Creatures {
 
         public void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
             var a = GetPositionInBlocks();
-
-            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[ID].MTex], Position - camera, ms.GetBlock((int)a.X, (int)a.Y).Lightness);
+            var p = WorldPosition() - camera;
+            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[ID].MTex], p, ms.GetBlock((int)a.X, (int)a.Y).Lightness);
+            if (Settings.DebugInfo) {
+                spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
+            }
         }
+
+        private Vector2 WorldPosition() {
+            return Position + new Vector2(-16, -32) +
+                   new Vector2(parent.SectorOffsetX*MapSector.Rx*32, parent.SectorOffsetY*MapSector.Ry*32);
+        }
+
+        public void Kill() {
+            Hp = new Stat(0,0);
+            isDead = true;
+        }
+
+        public void GiveDamage(float value, DamageType type) {
+
+            hp_.Current -= value;
+            if(Hp.Current <= 0 ) {
+                Kill();
+            }
+            Vector2 adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
+            parent.decals.Add(new Particle(WorldPosition() + adder, 3) { Rotation = Settings.rnd.Next() % 360, Life = new TimeSpan(0, 0, 1, 0) });
+        }
+
+        public void GiveDamage(float value)
+        {
+            GiveDamage(value, DamageType.Default);
+        }
+    }
+
+    public enum DamageType {
+        Default
     }
 }

@@ -57,9 +57,9 @@ namespace rglikeworknamelib.Dungeon.Particles
             partatlas_ = pa;
         }
 
-        public void CreateParticle(Vector2 pos, float vel, float an, float asp, int texn, int lifeInSeconds)
+        public static void CreateParticle(Vector2 pos, float vel, float an, float asp, int texn, int lifeInSeconds)
         {
-            particles_.Add(new Particle(pos, vel, an, asp, texn, new TimeSpan(0, 0, lifeInSeconds)));
+            particles_.Add(new Particle(pos, vel, an, asp, texn, TimeSpan.FromMilliseconds(lifeInSeconds)));
         }
 
         public static void AddParticle(Particle p) {
