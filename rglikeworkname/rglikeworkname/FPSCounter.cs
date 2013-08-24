@@ -18,7 +18,7 @@ namespace Mork
         private static int frameCounter_;
         private static int frameRate_;
         private static readonly Vector2 position_ = new Vector2(10, 50);
-        private static readonly Vector2 ofs = new Vector2(0, 12);
+        private static readonly Vector2 ofs = new Vector2(0, 15);
         private static long memo;
         private static readonly int[] graph = new int[MAX_GR];
         private static int curent_;
@@ -55,11 +55,14 @@ namespace Mork
             }
         }
 
-        public static void Draw(GameTime gameTime, SpriteFont fnt, SpriteBatch sb, LineBatch lb, int resx, int resy) {
+        private static double sr_up;
+        private static double sr_draw;
+
+        public static void Draw(GameTime gameTime, SpriteFont fnt, SpriteBatch sb, LineBatch lb, int resx, int resy, Stopwatch draw, Stopwatch update) {
             frameCounter_++;
 
             string fps = string.Format("{0}x{1} {2} fps", resx, resy, insec.Sum());
-            string mem = string.Format("{0} MiB", memo);
+            string mem = string.Format("{0} MiB {1}U+D={2:0.00}ms", memo,Environment.NewLine,draw.Elapsed.TotalMilliseconds+update.Elapsed.TotalMilliseconds);
 
             sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp,
                      DepthStencilState.Default, RasterizerState.CullCounterClockwise, null);
@@ -94,6 +97,20 @@ namespace Mork
                 if (a > 0) {
                     lb.AddLine(new Vector2(10 + index, 100) + offset, new Vector2(10 + index, 100 - a) + offset, col, 1);
                 }
+            }
+
+            TimeSpan overal = draw.Elapsed + update.Elapsed;
+
+            var sdraw = (int)(draw.Elapsed.TotalMilliseconds / overal.TotalMilliseconds * 60.0);
+            var supd = (int)(60 - sdraw);
+
+            for (int i = 0; i < sdraw; i++) {
+                lb.AddLine(new Vector2(10 + i, 130) + offset, new Vector2(10 + i, 100) + offset, Color.DarkBlue, 1);
+            }
+
+            for (int i = 0; i < supd; i++)
+            {
+                lb.AddLine(new Vector2(10 + i + sdraw, 130) + offset, new Vector2(10 + i + sdraw, 100) + offset, Color.DarkGreen, 1);
             }
 
             int average = graph.Sum();

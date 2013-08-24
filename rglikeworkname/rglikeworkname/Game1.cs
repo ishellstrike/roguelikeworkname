@@ -267,8 +267,8 @@ namespace jarg
             ContainerEventLog = new ListContainer( new Rectangle(0,0,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/4-20), wp, sf, WindowEventLog);
             EventLog.onLogUpdate += EventLog_onLogUpdate;
 
-            WindowIngameHint = new Window(new Vector2(50, 30), "HINT", false, wp, sf, ws) {NoBorder = true};
-            LabelIngameHint = new Label(new Vector2(10,-17), "a-ha", wp, sf, WindowIngameHint);
+            WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, wp, sf, ws) {NoBorder = true};
+            LabelIngameHint = new Label(new Vector2(10,3), "a-ha", wp, sf, WindowIngameHint);
         }
 
         void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
@@ -488,6 +488,10 @@ namespace jarg
            
         }
 
+        private Stopwatch sw_update = new Stopwatch();
+        private Stopwatch sw_draw = new Stopwatch();
+        private Stopwatch sw_shadows = new Stopwatch();
+
         public static bool ErrorExit;
         public float seeAngleDeg = 60;
         public float PlayerSeeAngle;
@@ -495,6 +499,10 @@ namespace jarg
         public int jji=-2, jjj=-2;
         private Action<GameTime> UpdateAction = x => { };
         protected override void Update(GameTime gameTime) {
+
+            if(Settings.DebugInfo) {
+                sw_update.Restart();
+            }
 
             if (ErrorExit) Exit();
 
@@ -512,14 +520,19 @@ namespace jarg
             WindowsUpdate(gameTime);
             ws_.Update(gameTime, ms_, lms_, false);
             PlayerSeeAngle = (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
+
+            if (Settings.DebugInfo)
+            {
+                sw_update.Stop();
+            }
         }
 
         private void GameUpdate(GameTime gameTime) {
             sec += gameTime.ElapsedGameTime;
             if (sec >= TimeSpan.FromSeconds(0.2)) {
-                sec = TimeSpan.Zero;
+               sec = TimeSpan.Zero;
 
-                currentFloor_.GenerateMinimap(GraphicsDevice, player_);
+               currentFloor_.GenerateMinimap(GraphicsDevice, spriteBatch_, player_);
             }
 
 
@@ -542,9 +555,10 @@ namespace jarg
                 }
             }
             currentFloor_.CalcWision(player_,
-                                     (float)
-                                     Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X),
-                                     seeAngleDeg);
+                                        (float)
+                                        Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y,
+                                                ms_.X - player_.Position.X + camera_.X),
+                                        seeAngleDeg);
             player_.Update(gameTime, currentFloor_);
             currentFloor_.KillFarSectors(player_);
             ps_.Update(gameTime);
@@ -689,7 +703,7 @@ namespace jarg
                     if (WindowIngameHint.Visible = a.Id != "0")
                     {
                         LabelIngameHint.Text = s;
-                        WindowIngameHint.Locate.Width = (int)LabelIngameHint.Width + 40;
+                        WindowIngameHint.Locate.Width = (int)LabelIngameHint.Width + 20;
                         WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
                     }
                 }
@@ -706,6 +720,11 @@ namespace jarg
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if (Settings.DebugInfo)
+            {
+                sw_draw.Restart();
+            }
+
             GraphicsDevice.Clear(Color.Black);
 
             DrawAction(gameTime);
@@ -714,12 +733,18 @@ namespace jarg
 
             base.Draw(gameTime);
 
-            if (Settings.DebugInfo) {
-                DebugInfoDraw(gameTime);
-            }
-
             lineBatch_.Draw();
             lineBatch_.Clear();
+
+            if (Settings.DebugInfo)
+            {
+                sw_draw.Stop();
+            }
+
+            if (Settings.DebugInfo)
+            {
+                DebugInfoDraw(gameTime);
+            }
         }
 
         private void GameDraw(GameTime gameTime) {
@@ -740,7 +765,7 @@ namespace jarg
         private void DebugInfoDraw(GameTime gameTime)
         {
             FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
-                                  (int)Settings.Resolution.Y);
+                                  (int)Settings.Resolution.Y, sw_draw, sw_update);
 
             string ss =
                 string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7}",
