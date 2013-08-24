@@ -8,20 +8,33 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace rglikeworknamelib.Dungeon.Particles
 {
-    internal class Particle {
-        internal Vector2 Pos;
-        internal float Vel;
-        internal float Angle, ASpeed;
-        internal TimeSpan Life;
+    public class Particle
+    {
+        public Vector2 Pos;
+        public float Vel;
+        public float Angle, ASpeed;
+        public TimeSpan Life;
+
+        public float Scale = 1;
+        public float ScaleDelta = 0;
+
+        public float Transparency = 1;
+        public float TransparencyDelta = 0;
+
+        public Color Color = Color.White;
 
         internal int MTex;
+        public float Rotation;
+        public float RotationDelta;
 
-        public Particle(Vector2 pos, int mTex) {
+        public Particle(Vector2 pos, int mTex)
+        {
             Pos = pos;
             MTex = mTex;
         }
 
-        public Particle(Vector2 pos, float vel, float an, float asp, int texn, TimeSpan ts) {
+        public Particle(Vector2 pos, float vel, float an, float asp, int texn, TimeSpan ts)
+        {
             Pos = pos;
             Vel = vel;
             ASpeed = asp;
@@ -31,59 +44,74 @@ namespace rglikeworknamelib.Dungeon.Particles
         }
     }
 
-    public class ParticleSystem {
-        private Random rnd = new Random();
-        private readonly Collection<Particle> particles_ = new Collection<Particle>();
-        private readonly SpriteBatch spriteBatch_;
-        private readonly Collection<Texture2D> partatlas_;
+    public class ParticleSystem
+    {
+        private static Random rnd = new Random();
+        private static Collection<Particle> particles_ = new Collection<Particle>();
+        private static SpriteBatch spriteBatch_;
+        private static Collection<Texture2D> partatlas_;
 
-        public ParticleSystem(SpriteBatch sb, Collection<Texture2D> pa) {
+        public ParticleSystem(SpriteBatch sb, Collection<Texture2D> pa)
+        {
             spriteBatch_ = sb;
             partatlas_ = pa;
         }
 
-        public void CreateParticle(Vector2 pos, float vel, float an, float asp, int texn, int lifeInSeconds) {
+        public void CreateParticle(Vector2 pos, float vel, float an, float asp, int texn, int lifeInSeconds)
+        {
             particles_.Add(new Particle(pos, vel, an, asp, texn, new TimeSpan(0, 0, lifeInSeconds)));
         }
 
-        private float GetRandorization( int rndPercent) {
-            return (100 - rnd.Next(0, rndPercent))/100f;
+        public static void AddParticle(Particle p) {
+            particles_.Add(p);
         }
 
-        public void CreateParticleWithRandomization(Vector2 pos, float vel, float an, float asp, int texn, int lifeInSeconds, int rndPercent)
+        private static float GetRandorization(int rndPercent)
         {
-            particles_.Add(new Particle(pos, vel * GetRandorization(rndPercent), an, asp * GetRandorization(rndPercent), texn, new TimeSpan(0, 0, (int)(lifeInSeconds * GetRandorization(rndPercent)))));
+            return (100 - rnd.Next(0, rndPercent)) / 100f;
         }
 
-        public void Draw(GameTime gameTime, Vector2 camera) {
-            for(int i=0;i<particles_.Count;i++) {
-                    spriteBatch_.Draw(partatlas_[particles_[i].MTex],
-                                      particles_[i].Pos-camera,
-                                      null, Color.White);
-                }
-            
+        public static void CreateParticleWithRandomization(Vector2 pos, float vel, float an, float asp, int texn, int lifeInSeconds, int rndPercent)
+        {
+            particles_.Add(new Particle(pos, vel * GetRandorization(rndPercent), an, asp * GetRandorization(rndPercent), texn, TimeSpan.FromMilliseconds(lifeInSeconds * GetRandorization(rndPercent))));
         }
 
-        public void Update(GameTime gameTime) {
+        public void Draw(GameTime gameTime, Vector2 camera)
+        {
             for (int i = 0; i < particles_.Count; i++) {
-                var a = particles_[i];
-                particles_[i].Pos = new Vector2(a.Pos.X + a.Vel * (float)Math.Cos(a.Angle), particles_[i].Pos.Y + a.Vel * (float)Math.Sin(a.Angle));
-
-                particles_[i].Angle += particles_[i].ASpeed;
-
-                particles_[i].Life -= gameTime.ElapsedGameTime;
-
-                if (particles_[i].Life <= TimeSpan.Zero) {
-                    particles_.Remove(particles_[i]);
-                    continue;
-                }
-
-                particles_[i].Vel /= 1.01f;
-                particles_[i].ASpeed /= 1.01f;
+                var particle = particles_[i];
+                spriteBatch_.Draw(partatlas_[particle.MTex],
+                                  particle.Pos - camera,
+                                  null, particle.Color, particle.Rotation, new Vector2(partatlas_[particle.MTex].Height / 2, partatlas_[particle.MTex].Width/2), particle.Scale, SpriteEffects.None, 0);
             }
         }
 
-        public int Count() {
+        public void Update(GameTime gameTime) {
+            var mul = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            for (int i = 0; i < particles_.Count; i++)
+            {
+                var particle = particles_[i];
+                var a = particle;
+                particle.Pos = new Vector2(a.Pos.X + a.Vel * (float)Math.Cos(a.Angle) * mul, particle.Pos.Y + a.Vel * (float)Math.Sin(a.Angle) * mul);
+
+                particle.Angle += particle.ASpeed * mul;
+
+                particle.Life -= gameTime.ElapsedGameTime;
+
+                particle.Transparency += particle.TransparencyDelta * mul;
+                particle.Scale += particle.ScaleDelta * mul;
+                particle.Rotation += particle.RotationDelta * mul;
+
+                if (particle.Life <= TimeSpan.Zero)
+                {
+                    particles_.Remove(particle);
+                    continue;
+                }
+            }
+        }
+
+        public int Count()
+        {
             return particles_.Count;
         }
     }

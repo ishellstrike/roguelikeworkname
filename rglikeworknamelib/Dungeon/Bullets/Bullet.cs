@@ -25,7 +25,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
 
             ps = p;
 
-            ps.CreateParticleWithRandomization(pos, 1, (float)rnd.NextDouble()*6f, 0, 1, 2, 10);
+            ParticleSystem.CreateParticleWithRandomization(pos, 1, (float)rnd.NextDouble()*6f, 0, 1, 2, 10);
         }
 
         public void Kill() {}
@@ -33,7 +33,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         public void Update(GameTime gameTime) {
 
             if(rnd.Next(1,3) == 1)
-            ps.CreateParticleWithRandomization(Pos, 1, (float)rnd.NextDouble() * 6f, 0, 1, 2, 10);
+                ParticleSystem.CreateParticleWithRandomization(Pos, 1, (float)rnd.NextDouble() * 6f, 0, 1, 2, 10);
         }
     }
 }

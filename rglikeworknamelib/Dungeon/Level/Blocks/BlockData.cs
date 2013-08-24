@@ -39,7 +39,5 @@ namespace rglikeworknamelib.Dungeon.Level {
         public BlockData(string mtex) {
             MTex = mtex;
         }
-        public BlockData() {
-        }
     }
 }

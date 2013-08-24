@@ -33,8 +33,8 @@ namespace rglikeworknamelib.Parser
                     for (int i = 1; i < lines.Length; i++) {
                         if (lines[i].Contains('=')) {
                             string sstart = lines[i].Substring(0, lines[i].IndexOf('='));
-                            var finfo = typeof (ItemData).GetField(sstart);
-                            var extracted = lines[i].Substring(lines[i].IndexOf('=') + 1,
+                            FieldInfo finfo = typeof (ItemData).GetField(sstart);
+                            string extracted = lines[i].Substring(lines[i].IndexOf('=') + 1,
                                                                lines[i].Length - (lines[i].IndexOf('=') + 1) - 1).Replace("\"","");
 
                             if (finfo != null) {

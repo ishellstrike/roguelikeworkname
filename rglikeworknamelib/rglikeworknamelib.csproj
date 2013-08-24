@@ -76,9 +76,9 @@
     <Compile Include="Dungeon\Item\ItemData.cs" />
     <Compile Include="Dungeon\Item\ItemDataBase.cs" />
     <Compile Include="Dungeon\Item\ItemType.cs" />
-    <Compile Include="Dungeon\Level\Block.cs" />
-    <Compile Include="Dungeon\Level\BlockData.cs" />
-    <Compile Include="Dungeon\Level\BlockDataBase.cs" />
+    <Compile Include="Dungeon\Level\Blocks\Block.cs" />
+    <Compile Include="Dungeon\Level\Blocks\BlockData.cs" />
+    <Compile Include="Dungeon\Level\Blocks\BlockDataBase.cs" />
     <Compile Include="Dungeon\Level\Floor.cs" />
     <Compile Include="Dungeon\Level\FloorData.cs" />
     <Compile Include="Dungeon\Level\FloorDataBase.cs" />
@@ -88,7 +88,7 @@
     <Compile Include="Dungeon\Level\SchemesDataBase.cs" />
     <Compile Include="Dungeon\Level\SchemesType.cs" />
     <Compile Include="Dungeon\Level\SmartAction.cs" />
-    <Compile Include="Dungeon\Level\StorageBlock.cs" />
+    <Compile Include="Dungeon\Level\Blocks\StorageBlock.cs" />
     <Compile Include="Dungeon\Level\StreetOld__.cs" />
     <Compile Include="Dungeon\Particles\Particles.cs" />
     <Compile Include="Generation\MapGenerators.cs" />

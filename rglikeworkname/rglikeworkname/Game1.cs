@@ -16,6 +16,7 @@ using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Window;
@@ -548,6 +549,7 @@ namespace jarg
             currentFloor_.KillFarSectors(player_);
             ps_.Update(gameTime);
             bs_.Update(gameTime);
+            currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
 
             currentFloor_.UpdateCreatures(gameTime);
@@ -723,14 +725,15 @@ namespace jarg
         private void GameDraw(GameTime gameTime) {
             spriteBatch_.Begin();
                 currentFloor_.DrawFloors(gameTime, camera_);
-                bs_.Draw(gameTime, camera_);
-                ps_.Draw(gameTime, camera_);
+                
             spriteBatch_.End();
             currentFloor_.ShadowRender();
             spriteBatch_.Begin();
                 currentFloor_.DrawBlocks(gameTime, camera_, player_);
                 currentFloor_.DrawCreatures(gameTime, camera_);
                 player_.Draw(gameTime, camera_);
+                bs_.Draw(gameTime, camera_);
+                ps_.Draw(gameTime, camera_);
             spriteBatch_.End();
         }
 

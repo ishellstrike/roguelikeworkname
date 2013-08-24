@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Generation;
 using rglikeworknamelib.Creatures;
 
@@ -41,7 +42,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public int SectorOffsetX, SectorOffsetY;
 
-        internal Block[] Blocks;
+        internal List<IBlock> Blocks;
         internal Floor[] Floors;
         internal List<Creature> Creatures;
         internal List<Vector2> initialNodes;
@@ -51,7 +52,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
 
-            Blocks = new Block[Rx * Ry];
+            Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
             Creatures = new List<Creature>();
 
@@ -70,14 +71,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetY = sectorOffsetY;
             Parent = parent;
 
-            Blocks = new Block[Rx * Ry];
+            Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
             Creatures = new List<Creature>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
                 Floors[i] = new Floor();
-                Blocks[i] = new Block();
+                Blocks.Add(new Block());
             }
             initialNodes = new List<Vector2>();
         }
@@ -98,7 +99,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetY = (int)sectorOffsetY;
             Parent = parent;
 
-            Blocks = blocksArray as Block[];
+            Blocks = blocksArray as List<IBlock>;
             Floors = floorsArray as Floor[];
             initialNodes = initialn as List<Vector2>;
             biom = (SectorBiom)obiom;
@@ -177,7 +178,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             switch (biom) {
                     case SectorBiom.Bushland:
-                    for (int i = 0; i < rand.Next(14, 40); i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "16");
+                    for (int i = 0; i < rand.Next(14, 40); i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "bbochka");
                         break;
 
                     case SectorBiom.Forest:
@@ -216,12 +217,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             Creatures.Add(new Creature(){Position = new Vector2(x*Rx,y*Ry), ID = i});
         }
 
-        public Block GetBlock(int x, int y)
+        public IBlock GetBlock(int x, int y)
         {
             return Blocks[x * Ry + y];
         }
 
-        public Block GetBlock(int a)
+        public IBlock GetBlock(int a)
         {
             return Blocks[a];
         }
@@ -262,22 +263,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// </summary>
         /// <param name="oneDimCoord"></param>
         /// <param name="id"></param>
-        public void SetBlock(int oneDimCoord, string id)
-        {
-            if (BlockDataBase.Data[id].BlockPrototype == typeof(Block))
-            {
-                Blocks[oneDimCoord] = new Block {
-                    Id = id
-                };
-            }
-            if (BlockDataBase.Data[id].BlockPrototype == typeof(StorageBlock))
-            {
-                Blocks[oneDimCoord] = new StorageBlock {
-                    StoredItems = new List<Item.Item>(),
-                    Id = id
-                };
-            }
-
+        public void SetBlock(int oneDimCoord, string id) {
+            Blocks[oneDimCoord] = (IBlock)Activator.CreateInstance(BlockDataBase.Data[id].BlockPrototype);
+            Blocks[oneDimCoord].Id = id;
             Blocks[oneDimCoord].Mtex = BlockDataBase.Data[id].RandomMtexFromAlters();
         }
 
@@ -286,7 +274,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// </summary>
         /// <param name="oneDimCoord"></param>
         /// <param name="id"></param>
-        public void SetBlock(int oneDimCoord, Block bl)
+        public void SetBlock(int oneDimCoord, IBlock bl)
         {
             Blocks[oneDimCoord] = bl;
            
@@ -528,7 +516,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         //------------------
 
-        public Block GetBlock(int x, int y)
+        public IBlock GetBlock(int x, int y)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
@@ -631,7 +619,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         Effect be_;
-        private Plane upPlane, downPlane, leftPlane, rightPlane;
         public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd) {
             MapGenerators.seed = MapSeed;
             whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
@@ -639,9 +626,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             data[0] = 0xffffffff;
             whitepixel.SetData(data);
 
-            if (spriteBatch != null) {
-                minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
-            }
+            minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
 
             sectors_ = new List<MapSector> { new MapSector(this, 0, 0) };
 
@@ -652,14 +637,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             gd_ = gd;
             be_ = new BasicEffect(gd_);
             (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
-
-            Vector3[] cor = new[] {new Vector3(-1,-1,0), new Vector3(1,-1,0), new Vector3(1,1,0), new Vector3(-1,1,0)};
-            Vector3 upv = new Vector3(0,0,1);
-
-            upPlane = new Plane(cor[0], cor[1], cor[1] + upv);
-            downPlane = new Plane(cor[2], cor[3], cor[3] + upv);
-            leftPlane = new Plane(cor[0], cor[3], cor[3] + upv);
-            rightPlane = new Plane(cor[1], cor[2], cor[2] + upv);
         }
 
         public GameLevel()
@@ -667,9 +644,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             sectors_ = new List<MapSector> {new MapSector(0, 0)};
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms) {
+        //public void Update(GameTime gt, MouseState ms, MouseState lms) {
 
-        }
+        //}
 
         public void GenerateMinimap(GraphicsDevice gd, Creature pl)
         {
@@ -729,7 +706,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         //        }
                         var t = GetBlock((int) a.X + i, (int) a.Y + j);
                         if (t != null) {
-                            t.SetLight(Color.Black);
+                            t.Lightness = Color.Black;
                         }
                     }
                 }
@@ -748,7 +725,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 //    GetValue(start, end4);
                 //}
 
-                Block temp2;
+                IBlock temp2;
                 for (int i = -20; i < 20; i++) {
                     for (int j = -20; j < 20; j++) {
                         temp2 = GetBlock((int) a.X + i, (int) a.Y + j);
@@ -874,6 +851,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             var ssx = Settings.FloorSpriteSize.X;
             var ssy = Settings.FloorSpriteSize.Y;
 
+
             bool shad = Vector2.Distance(camera, per_prew) > 2;
 
             if (shad || MapJustUpdated) {
@@ -891,33 +869,32 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
                 for (int i = 0; i < rx; i++) {
                     for (int j = 0; j < ry; j++) {
-                        if (sector.SectorOffsetX*rx + i > min.X &&
-                            sector.SectorOffsetY*ry + j > min.Y &&
-                            sector.SectorOffsetX*rx + i < max.X &&
-                            sector.SectorOffsetY*ry + j < max.Y) {
-                            int a = i*ry + j;
 
-                            var block = sector.GetBlock(a);
-
-                            var xpos = i*(ssx) - (int) camera.X +
+                        var xpos = i*(ssx) - (int) camera.X +
                                        rx*ssx*sector.SectorOffsetX;
 
                             var ypos = j*(ssy) - (int) camera.Y +
                                        ry*ssy*sector.SectorOffsetY;
 
-                            Color light = block.Lightness;
-                            if (block.Explored && light == Color.Black) {
-                                light = new Color(40, 40, 40);
-                            }
+                            int a = i * ry + j;
+                            var block = sector.GetBlock(a);
 
-                            spriteBatch_.Draw(batlas[block.Mtex], new Vector2(xpos, ypos), null, light);
+                        if (sector.SectorOffsetX*rx + i > min.X &&
+                            sector.SectorOffsetY*ry + j > min.Y &&
+                            sector.SectorOffsetX*rx + i < max.X &&
+                            sector.SectorOffsetY*ry + j < max.Y) {
+                            
 
+                            block.Draw(spriteBatch_, batlas, new Vector2(xpos, ypos));
+                            
 
                             if ((shad || MapJustUpdated) && !bdb[sector.GetBlock(a).Id].IsTransparent)
                             {
                                 AddShadowpointForBlock(camera, per, xpos, ypos, bdb[block.Id].swide);
                             }
                         }
+
+                        block.Update(gameTime.ElapsedGameTime, new Vector2(xpos+camera.X, ypos+camera.Y));
                     }
                 }
 
@@ -962,8 +939,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public void UpdateBlocks(GameTime gt) {
-            
+        public void UpdateBlocks(GameTime gt, Vector2 camera) {
         }
 
         private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos, int wide) {

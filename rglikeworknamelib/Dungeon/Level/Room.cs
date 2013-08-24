@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class Room {

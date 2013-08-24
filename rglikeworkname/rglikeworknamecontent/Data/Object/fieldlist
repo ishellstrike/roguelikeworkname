@@ -1,0 +1,29 @@
+string AfterDeathId
+
+float Damage
+
+string Description
+
+bool IsDestructable
+
+Type BlockPrototype
+
+SmartAction SmartAction
+
+float Hp
+
+string MTex
+
+string Name
+
+Color MMCol
+
+bool IsWalkable
+
+bool IsTransparent
+
+int swide = 32
+
+int StorageSlots
+
+string[] AlterMtex
