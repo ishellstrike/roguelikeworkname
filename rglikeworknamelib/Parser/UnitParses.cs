@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using NLog;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 
 namespace rglikeworknamelib.Parser
 {
@@ -29,10 +31,15 @@ namespace rglikeworknamelib.Parser
                     string[] lines = Regex.Split(block, "\n");
                     string[] header = lines[0].Split(',');
 
-                    temp.Add(new KeyValuePair<string, object>(header[0], new CreatureData()));
+                    Type type = Type.GetType("rglikeworknamelib.Creatures." + header[0]);
+                    temp.Add(new KeyValuePair<string, object>(header[1].Trim('\r'), new CreatureData(header[2].Trim('\r'))));
+                    if (type == null)
+                    {
+                        logger.Error(string.Format("Subclass of Block \"{0}\" for {1} cannot be created", "rglikeworknamelib.Dungeon.Level.Blocks." + header[0], header[1]));
+                        type = typeof(Creature);
+                    }
                     KeyValuePair<string, object> cur = temp.Last();
-
-                    ((CreatureData) cur.Value).MTex = header[1].Trim('\r');
+                    ((CreatureData)cur.Value).BlockPrototype = type;
 
                     for (int i = 1; i < lines.Length; i++) {
                         if (lines[i].Contains('=')) {

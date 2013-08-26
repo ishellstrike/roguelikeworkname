@@ -137,6 +137,10 @@
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Textures\Units\Dress\textureloadorder.ord">
+      <Name>textureloadorder</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Textures\Units\textureloadorder.ord">
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -688,6 +692,52 @@
   <ItemGroup>
     <Compile Include="Textures\Particles\bdec.png">
       <Name>bdec</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Units\Dress\car_haer1.png">
+      <Name>car_haer1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Units\Dress\car_haer2.png">
+      <Name>car_haer2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Units\Dress\car_haer3.png">
+      <Name>car_haer3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Units\Dress\car_haer4.png">
+      <Name>car_haer4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Units\Dress\car_pants1.png">
+      <Name>car_pants1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Units\Dress\car_t-short1.png">
+      <Name>car_t-short1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Units\zombie.png">
+      <Name>zombie</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Particles\zombie_corp.png">
+      <Name>zombie_corp</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

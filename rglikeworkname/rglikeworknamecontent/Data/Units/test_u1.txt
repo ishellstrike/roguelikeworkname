@@ -1,6 +1,6 @@
 //sdfsdfsdf
-~0,0
+~Creature,0,0
 name=""
 
-~biskup,biskup
-name="biskup"
+~CrearureZombie,zombie1,zombie
+Name="Зомби житель"

@@ -10,19 +10,43 @@ using NLog;
 
 namespace rglikeworknamelib
 {
+    public enum LogEntityType {
+        OpenCloseDor,
+        SeeSomething,
+        Damage,
+        Dies,
+        Default,
+        SelfDamage
+    }
+
+    public struct LogEntity {
+        public string message;
+        public Color col;
+        public LogEntityType type;
+
+        public LogEntity(string mes, Color c, LogEntityType t = LogEntityType.Default) {
+            message = mes;
+            col = c;
+            type = t;
+        }
+
+        public LogEntity(string mes, LogEntityType t = LogEntityType.Default)
+        {
+            message = mes;
+            col = Color.White;
+            type = t;
+        }
+    }
     public static class EventLog
     {
-        public static List<string> log = new List<string>();
-        public static List<Color> cols = new List<Color>();
+        public static List<LogEntity> log = new List<LogEntity>();
 
-        public static void Add(string s, DateTime t, Color c)
+        public static void Add(string s, DateTime t, Color c, LogEntityType type)
         {
-            log.Add(GlobalWorldLogic.GetTimeString(t) + " " + s);
-            cols.Add(c);
+            log.Add(new LogEntity(GlobalWorldLogic.GetTimeString(t) + " " + s, c, type));
 
             if (log.Count > 100) { 
                 log.RemoveAt(0);
-                cols.RemoveAt(0);
             }
 
             UpdateEvent();

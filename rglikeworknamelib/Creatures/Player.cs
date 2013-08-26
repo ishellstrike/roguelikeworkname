@@ -1,12 +1,29 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
+
+    [Serializable]
+    public struct Dress {
+        public string id;
+        public Color col;
+        public Dress(string i , Color c) {
+            id = i;
+            col = c;
+        }
+    }
     public class Player : Creature {
         private readonly SpriteBatch sb_;
         public Texture2D Tex;
         public SpriteFont Font;
+
+        public Dress Hat = new Dress("haer1", Color.White);
+        public Dress Tshort = new Dress("t-short1", Color.DarkRed);
+        public Dress Pants = new Dress("pants1", Color.DarkBlue);
 
         public Player(SpriteBatch sb, Texture2D tex, SpriteFont font) {
             sb_ = sb;
@@ -23,6 +40,20 @@ namespace rglikeworknamelib.Creatures {
 
         public void Accelerate(Vector2 ac) {
             Velocity += ac;
+        }
+
+        public void GiveDamage(float value, DamageType type, MapSector ms)
+        {
+
+            Hp = new Stat(Hp.Current-value, Hp.Max);
+            EventLog.Add(string.Format("Вы получаете {0} урона", value), GlobalWorldLogic.CurrentTime, Color.Red, LogEntityType.SelfDamage);
+            if (Hp.Current <= 0 && !isDead)
+            {
+                Kill(ms);
+                EventLog.Add(string.Format("Вы умерли! GAME OVER!"), GlobalWorldLogic.CurrentTime, Color.Red, LogEntityType.Dies);
+            }
+            Vector2 adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
+            ms.AddDecal(new Particle(WorldPosition() + adder, 3) { Rotation = Settings.rnd.Next() % 360, Life = new TimeSpan(0, 0, 1, 0) });
         }
 
         public void Update(GameTime gt, GameLevel gl) {
@@ -67,8 +98,13 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public void Draw(GameTime gt, Vector2 cam) {
-            sb_.Draw(Tex, Position - cam, null, Color.White, 0, new Vector2(Tex.Width / 2, Tex.Height), 1,
+            var position = Position - cam;
+            var origin = new Vector2(Tex.Width / 2, Tex.Height);
+            sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
                      SpriteEffects.None, 1);
+            sb_.Draw(Atlases.DressAtlas[Hat.id], position, null, Hat.col, 0, origin, 1, SpriteEffects.None, 1);
+            sb_.Draw(Atlases.DressAtlas[Pants.id], position, null, Pants.col, 0, origin, 1, SpriteEffects.None, 1);
+            sb_.Draw(Atlases.DressAtlas[Tshort.id], position, null, Tshort.col, 0, origin, 1, SpriteEffects.None, 1);
 
             if (Settings.DebugInfo)
             {

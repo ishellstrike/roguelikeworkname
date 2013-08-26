@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace rglikeworknamelib.Dungeon.Particles
 {
+    [Serializable]
     public class Particle
     {
         public Vector2 Pos;

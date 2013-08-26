@@ -57,9 +57,10 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                 }
                
                 var sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start);
+                var crea = level.GetCreatureSector(bullet.Pos, bullet.Start);
 
                 if (sect != null) {
-                    sect.GiveDamage(100);
+                    sect.GiveDamage(20, DamageType.Default, crea);
                     if (sect.isDead) {
 
                     }

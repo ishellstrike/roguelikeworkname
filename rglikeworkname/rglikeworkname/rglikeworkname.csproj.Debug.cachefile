@@ -92,6 +92,14 @@ Content\Textures\Dungeon\Objects\biskup.xnb
 Content\Textures\Particles\pfire.xnb
 Content\Textures\Dungeon\Objects\bochka.xnb
 Content\Textures\Particles\bdec.xnb
+Content\Textures\Units\Dress\car_haer1.xnb
+Content\Textures\Units\Dress\car_haer2.xnb
+Content\Textures\Units\Dress\car_haer3.xnb
+Content\Textures\Units\Dress\car_haer4.xnb
+Content\Textures\Units\Dress\car_pants1.xnb
+Content\Textures\Units\Dress\car_t-short1.xnb
+Content\Textures\Units\zombie.xnb
+Content\Textures\Particles\zombie_corp.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Floor\textureloadorder.ord
@@ -114,6 +122,7 @@ Content\Data\Items\misc1.txt
 Content\Data\Items\weapon_guns1.txt
 Content\Data\Items\weapon_ammo.txt
 Content\Textures\Particles\textureloadorder.ord
+Content\Textures\Units\Dress\textureloadorder.ord
 Content\Textures\Units\textureloadorder.ord
 Content\Data\Units\test_u1.txt
 NLog.config

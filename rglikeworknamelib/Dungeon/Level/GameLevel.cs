@@ -77,9 +77,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var q4 = binaryFormatter_.Deserialize(gZipStream_);
                 var q5 = binaryFormatter_.Deserialize(gZipStream_);
                 var q6 = binaryFormatter_.Deserialize(gZipStream_);
+                var q7 = binaryFormatter_.Deserialize(gZipStream_);
+                var q8 = binaryFormatter_.Deserialize(gZipStream_);
                 gZipStream_.Close();
                 fileStream_.Close();
-                var t = new MapSector(this, q1, q2, q3, q4, q5, q6);
+                var t = new MapSector(this, q1, q2, q3, q4, q5, q6,q7,q8);
                 t.ready = true;
                 return t;
             }
@@ -102,6 +104,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             binaryFormatter_.Serialize(gZipStream_, a.Floors);
             binaryFormatter_.Serialize(gZipStream_, a.initialNodes);
             binaryFormatter_.Serialize(gZipStream_, a.biom);
+            binaryFormatter_.Serialize(gZipStream_, a.creatures);
+            binaryFormatter_.Serialize(gZipStream_, a.decals);
             gZipStream_.Close();
             fileStream_.Close();
         }
@@ -157,12 +161,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
 
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY + 1)))
-            {
-                var temp = LoadSector(sectorOffsetX, sectorOffsetY + 1);
-                sectors_.Add(temp);
-                return temp;
-            }
+            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY + 1)))
+            //{
+            //    var temp = LoadSector(sectorOffsetX, sectorOffsetY + 1);
+            //    sectors_.Add(temp);
+            //    return temp;
+            //}
 
             return null;
         }
@@ -177,12 +181,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
 
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY - 1)))
-            {
-                var temp = LoadSector(sectorOffsetX, sectorOffsetY - 1);
-                sectors_.Add(temp);
-                return temp;
-            }
+            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY - 1)))
+            //{
+            //    var temp = LoadSector(sectorOffsetX, sectorOffsetY - 1);
+            //    sectors_.Add(temp);
+            //    return temp;
+            //}
 
             return null;
         }
@@ -197,12 +201,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
 
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX - 1, sectorOffsetY)))
-            {
-                var temp = LoadSector(sectorOffsetX - 1, sectorOffsetY);
-                sectors_.Add(temp);
-                return temp;
-            }
+            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX - 1, sectorOffsetY)))
+            //{
+            //    var temp = LoadSector(sectorOffsetX - 1, sectorOffsetY);
+            //    sectors_.Add(temp);
+            //    return temp;
+            //}
 
             return null;
         }
@@ -219,10 +223,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
 
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX + 1, sectorOffsetY)))
-            {
-                return LoadSector(sectorOffsetX + 1, sectorOffsetY);
-            }
+            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX + 1, sectorOffsetY)))
+            //{
+            //    return LoadSector(sectorOffsetX + 1, sectorOffsetY);
+            //}
 
             return null;
         }
@@ -264,7 +268,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             return null;
         }
 
-        public Creature GetCreatureAtCoord(Vector2 pos, Vector2 start) {
+        public ICreature GetCreatureAtCoord(Vector2 pos, Vector2 start) {
             var p = GetInSectorPosition(GetPositionInBlocks(pos));
             MapSector sect = null;
             foreach(var se in sectors_) {
@@ -391,22 +395,29 @@ namespace rglikeworknamelib.Dungeon.Level {
             var a = GetBlock(x, y);
             if(BlockDataBase.Data[a.Id].SmartAction == SmartAction.ActionOpenClose) {
                 if (BlockDataBase.Data[a.Id].IsWalkable) {
-                    EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.CurrentTime, Color.Gray);
+                    EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.CurrentTime, Color.Gray, LogEntityType.OpenCloseDor);
                 }
                 else {
-                    EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray);
+                    EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray, LogEntityType.OpenCloseDor);
                 }
                 SetBlock(x, y, BlockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);
                 MapJustUpdated = true;
             }
         }
 
-        public void KillFarSectors(Creature cara) {
-            for (int i = 0; i < sectors_.Count; i++) {
-                var a = sectors_[i];
-                if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 128 || Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 128) {
-                    SaveSector(a);
-                    sectors_.Remove(a);
+        private TimeSpan sec;
+        public void KillFarSectors(Creature cara, GameTime gt) {
+            sec += gt.ElapsedGameTime;
+            if (sec.TotalSeconds >= 1) {
+                sec = TimeSpan.Zero;
+                for (int i = 0; i < sectors_.Count; i++) {
+                    var a = sectors_[i];
+                    if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 128 ||
+                        Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 128) {
+                        sectors_.Remove(a);
+                        SaveSector(a);
+                        return;
+                    }
                 }
             }
         }
@@ -530,6 +541,20 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var temp = GetBlock((int) a.X, (int) a.Y);
                 temp.Lightness = lightness;
                 temp.Explored = true;
+
+                for (int i = 0; i < sectors_.Count; i++) {
+                    var sector = sectors_[i];
+                    foreach (var crea in sector.creatures) {
+                        if (Vector2.Distance(who.Position, crea.WorldPosition()) < 1000 && PathClear(a,
+                                      new Vector2(crea.GetWorldPositionInBlocks().X, crea.GetWorldPositionInBlocks().Y)))
+                        {
+                            temp2 = GetBlock((int)crea.GetWorldPositionInBlocks().X,
+                                             (int)crea.GetWorldPositionInBlocks().Y);
+                            temp2.Lightness = lightness;
+                            temp2.Explored = true;
+                        }
+                    }
+                }
             }
             pre_pos_vis = a;
         }
@@ -590,12 +615,27 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// Main loop creature update
         /// </summary>
         /// <param name="gt"></param>
-        public void UpdateCreatures(GameTime gt, Creature hero) {
+        public void UpdateCreatures(GameTime gt, Player hero) {
             for (int k = 0; k < sectors_.Count; k++) {
                 var sector = sectors_[k];
                 for (int m = 0; m < sector.creatures.Count; m++) {
+                    sector.creatures[m].Skipp = false;
+                }
+            }
+
+            for (int k = 0; k < sectors_.Count; k++) {
+                var sector = sectors_[k];
+                for (int m = 0; m < sector.creatures.Count; m++)
+                {
                     var crea = sector.creatures[m];
-                    crea.Update(gt, sector);
+
+                    if (crea.isDead)
+                    {
+                        sector.creatures.Remove(crea);
+                        continue; 
+                    }
+
+                    crea.Update(gt, sector, hero);
                 }
             }
         }
@@ -968,5 +1008,19 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 #endregion
+
+        public MapSector GetCreatureSector(Vector2 pos, Vector2 start) {
+            var p = GetInSectorPosition(GetPositionInBlocks(pos));
+            foreach (var se in sectors_)
+            {
+                if (se.SectorOffsetX == (int)p.X && se.SectorOffsetY == (int)p.Y) return se;
+            }
+            return null;
+        }
+
+        public bool IsCreatureMeele(Creature hero, Creature ny) {
+            return (Settings.GetMeeleActionRange() >=
+                    Vector2.Distance(ny.WorldPosition(), hero.Position));
+        }
     } 
 }

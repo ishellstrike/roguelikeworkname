@@ -31,7 +31,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         internal List<IBlock> Blocks;
         internal Floor[] Floors;
-        internal List<Creature> creatures;
+        internal List<ICreature> creatures;
         internal List<Particle> decals;
         internal List<Vector2> initialNodes;
         internal SectorBiom biom;
@@ -42,7 +42,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
-            creatures = new List<Creature>();
+            creatures = new List<ICreature>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
@@ -61,7 +61,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
-            creatures = new List<Creature>();
+            creatures = new List<ICreature>();
             decals = new List<Particle>();
 
             int i = Rx * Ry;
@@ -82,7 +82,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="sectorOffsetY"></param>
         /// <param name="blocksArray"></param>
         /// <param name="floorsArray"></param>
-        public MapSector(GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object initialn, object obiom)
+        public MapSector(GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object initialn, object obiom, object creat, object decal)
         {
             SectorOffsetX = (int)sectorOffsetX;
             SectorOffsetY = (int)sectorOffsetY;
@@ -92,8 +92,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             Floors = floorsArray as Floor[];
             initialNodes = initialn as List<Vector2>;
             biom = (SectorBiom)obiom;
-            creatures = new List<Creature>();
-            decals = new List<Particle>();
+            creatures = (List<ICreature>)creat;
+            decals = (List<Particle>)decal;
         }
 
         public List<StorageBlock> GetStorageBlocks()
@@ -191,7 +191,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             for (int i = 1; i< rand.Next(0, 4); i++ ) {
-                Spawn("biskup", rand);
+                Spawn("zombie1", rand);
             }
 
             Parent.generated++;
@@ -202,9 +202,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             Spawn(i, rnd.Next(0, Rx), rnd.Next(0, Ry));
         }
 
-        private void Spawn(string i, int x, int y)
-        {
-            creatures.Add(new Creature(){Position = new Vector2(x*32,y*32), ID = i, parent = this});
+        private void Spawn(string i, int x, int y) {
+            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[i].BlockPrototype);
+            n.Position = new Vector2(x*32, y*32);
+            n.Id = i;
+            creatures.Add(n);
         }
 
         public IBlock GetBlock(int x, int y)
@@ -306,6 +308,13 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public string GetMtex(int i, int i1) {
             return Blocks[i*Rx + i1].Mtex;
+        }
+
+        public void AddDecal(Particle particle) {
+            decals.Add(particle);
+            if(decals.Count > 256) {
+                decals.RemoveAt(0);
+            }
         }
     }
 }

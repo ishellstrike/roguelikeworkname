@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="AutoVersion.cs" />
     <Compile Include="Atlases.cs" />
+    <Compile Include="Creatures\CrearureZombie.cs" />
     <Compile Include="Dungeon\Bullets\BasicBulletShleif.cs" />
     <Compile Include="Dungeon\Bullets\Bullet.cs" />
     <Compile Include="Dungeon\Bullets\BulletSystem.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="Creatures\Creature.cs" />
     <Compile Include="Creatures\CreatureData.cs" />
     <Compile Include="Creatures\MonsterDataBase.cs" />
-    <Compile Include="Creatures\MonsterSystem.cs" />
     <Compile Include="Parser\BlockParser.cs" />
     <Compile Include="Parser\ChemesParser.cs" />
     <Compile Include="Parser\FloorParser.cs" />

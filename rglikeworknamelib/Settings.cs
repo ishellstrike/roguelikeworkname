@@ -91,5 +91,9 @@ namespace rglikeworknamelib {
         public static string GetCreatureDataDirectory() {
             return GetDataDirectory() + @"/Units";
         }
+
+        public static string GetDressTexturesDirectory() {
+            return GetUnitTextureDirectory() + @"/Dress";
+        }
     }
 }

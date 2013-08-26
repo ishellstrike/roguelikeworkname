@@ -35,7 +35,6 @@ namespace jarg
         private rglikeworknamelib.Window.WindowSystem ws_;
         private ParticleSystem ps_;
         private BulletSystem bs_;
-        private MonsterSystem monsterSystem_;
         private GameLevel currentFloor_;
         private InventorySystem inventory_;
         
@@ -293,7 +292,7 @@ namespace jarg
             ContainerEventLog.Clear();
             int i = 0;
             foreach (var ss in EventLog.log) {
-                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss, whitepixel, font1_, EventLog.cols[i], 35, ContainerEventLog));
+                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss.message, whitepixel, font1_, ss.col, 35, ContainerEventLog));
                 i++;
             }
             ContainerEventLog.ScrollBottom();
@@ -467,8 +466,6 @@ namespace jarg
 
             bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), currentFloor_, font1_, lineBatch_);
 
-            monsterSystem_ = new MonsterSystem(spriteBatch_, ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"/textureloadorder.ord", Content));
-
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
             inventory_ = new InventorySystem();
@@ -555,7 +552,7 @@ namespace jarg
                                                 ms_.X - player_.Position.X + camera_.X),
                                         seeAngleDeg);
             player_.Update(gameTime, currentFloor_);
-            currentFloor_.KillFarSectors(player_);
+            currentFloor_.KillFarSectors(player_, gameTime);
             ps_.Update(gameTime);
             bs_.Update(gameTime);
             currentFloor_.UpdateBlocks(gameTime, camera_);
@@ -633,13 +630,16 @@ namespace jarg
 
         }
 
+        private TimeSpan sec_shoot = TimeSpan.Zero;
         private void MouseUpdate(GameTime gameTime)
         {
             lms_ = ms_;
             ms_ = Mouse.GetState();
+            sec_shoot += gameTime.ElapsedGameTime;
 
-            if(ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+            if(ms_.LeftButton == ButtonState.Pressed && sec_shoot.TotalSeconds > 0.2f) {
                 bs_.AddBullet(player_, 50, PlayerSeeAngle);
+                sec_shoot = TimeSpan.Zero;
             }
 
             int nx = (ms_.X + (int)camera_.X) / 32;
@@ -673,7 +673,7 @@ namespace jarg
                             {
                                 case SmartAction.ActionSee:
                                     EventLog.Add("Вы видите " + undermouseblock.Name, GlobalWorldLogic.CurrentTime,
-                                                 Color.Gray);
+                                                 Color.Gray, LogEntityType.SeeSomething);
                                     break;
                                 case SmartAction.ActionOpenContainer:
                                     WindowContainer.Visible = true;
@@ -724,12 +724,12 @@ namespace jarg
 
             DrawAction(gameTime);
 
-            ws_.Draw(spriteBatch_);
-
             base.Draw(gameTime);
 
             lineBatch_.Draw();
             lineBatch_.Clear();
+
+            ws_.Draw(spriteBatch_);
 
             if (Settings.DebugInfo)
             {
