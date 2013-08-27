@@ -36,6 +36,7 @@ namespace rglikeworknamelib.Creatures {
         void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms);
         Vector2 WorldPosition();
         Vector2 GetWorldPositionInBlocks();
+        event EventHandler onDamageRecieve;
     }
 
     [Serializable]
@@ -102,6 +103,8 @@ namespace rglikeworknamelib.Creatures {
             return po;
         }
 
+        public event EventHandler onDamageRecieve;
+
         public Vector2 LastPos
         {
             get { return lastpos_; }
@@ -131,8 +134,8 @@ namespace rglikeworknamelib.Creatures {
                 if (Position.Y >= 1024) {
                     var t = ms.Parent.GetDownN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove((ICreature)this);
-                        t.creatures.Add((ICreature)this);
+                        ms.creatures.Remove(this);
+                        t.creatures.Add(this);
                         position_.Y = position_.Y - 1024;
                         sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
@@ -143,8 +146,8 @@ namespace rglikeworknamelib.Creatures {
                 else if (Position.Y < 0) {
                     var t = ms.Parent.GetUpN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove((ICreature)this);
-                        t.creatures.Add((ICreature)this); 
+                        ms.creatures.Remove(this);
+                        t.creatures.Add(this); 
                         position_.Y = position_.Y + 1024;
                         sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
@@ -155,8 +158,8 @@ namespace rglikeworknamelib.Creatures {
                 if (Position.X >= 1024) {
                     var t = ms.Parent.GetRightN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove((ICreature)this);
-                        t.creatures.Add((ICreature)this);
+                        ms.creatures.Remove(this);
+                        t.creatures.Add(this);
                         position_.X = position_.X - 1024;
                         sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
@@ -219,6 +222,10 @@ namespace rglikeworknamelib.Creatures {
 
             ms.AddDecal(new Particle(WorldPosition() + adder, 3)
                         {Rotation = Settings.rnd.Next()%360, Life = new TimeSpan(0, 0, 1, 0)});
+
+            if(onDamageRecieve != null) {
+                onDamageRecieve(null, null);
+            }
         }
 
         public void GiveDamage(float value, MapSector ms)

@@ -17,7 +17,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private Texture2D whitepixel;
 
-        private List<MapSector> sectors_;
+        private Dictionary<Point, MapSector> sectors_;
         public int generated;
 
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
@@ -43,9 +43,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
             minimap = new RenderTarget2D(spriteBatch.GraphicsDevice, 128, 128);
 
-            sectors_ = new List<MapSector> { new MapSector(this, 0, 0) };
+            sectors_ = new Dictionary<Point, MapSector>();
+            //{
+            //    new KeyValuePair<Point, MapSector>(Point.Zero, new MapSector(this, 0, 0));
+            //}
 
-            sectors_[0].Rebuild(MapSeed);
+            //sectors_.Last().Value.Rebuild(MapSeed);
 
             spriteBatch_ = spriteBatch;
             font_ = sf;
@@ -56,7 +59,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public GameLevel()
         {
-            sectors_ = new List<MapSector> { new MapSector(0, 0) };
+            sectors_ = new Dictionary<Point, MapSector>();
         }
         #endregion
 
@@ -117,12 +120,12 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void ExploreAllMap()
         {
             foreach (var mapSector in sectors_) {
-                mapSector.ExploreAllSector();
+                mapSector.Value.ExploreAllSector();
             }
         }
 
         public List<StorageBlock> GetStorageBlocks() {
-            var a =  sectors_.Select(x => x.GetStorageBlocks());
+            var a =  sectors_.Select(x => x.Value.GetStorageBlocks());
             var b = new List<StorageBlock>();
             foreach (var some in a) {
                 b.AddRange(some);
@@ -151,107 +154,49 @@ namespace rglikeworknamelib.Dungeon.Level {
             return arrr.ToArray();
         }
 
-        public MapSector GetDownN(int sectorOffsetX, int sectorOffsetY)
-        {
-            foreach (var sector in sectors_)
-            {
-                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY + 1)
-                {
-                    return sector;
-                }
-            }
-
-            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY + 1)))
-            //{
-            //    var temp = LoadSector(sectorOffsetX, sectorOffsetY + 1);
-            //    sectors_.Add(temp);
-            //    return temp;
-            //}
-
-            return null;
+        public MapSector GetDownN(int sectorOffsetX, int sectorOffsetY) {
+            MapSector a;
+            sectors_.TryGetValue(new Point(sectorOffsetX, sectorOffsetY+1), out a);
+            return a;
         }
 
         public MapSector GetUpN(int sectorOffsetX, int sectorOffsetY)
         {
-            foreach (var sector in sectors_)
-            {
-                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY - 1)
-                {
-                    return sector;
-                }
-            }
-
-            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY - 1)))
-            //{
-            //    var temp = LoadSector(sectorOffsetX, sectorOffsetY - 1);
-            //    sectors_.Add(temp);
-            //    return temp;
-            //}
-
-            return null;
+            MapSector a;
+            sectors_.TryGetValue(new Point(sectorOffsetX, sectorOffsetY-1), out a);
+            return a;
         }
 
         public MapSector GetLeftN(int sectorOffsetX, int sectorOffsetY)
         {
-            foreach (var sector in sectors_)
-            {
-                if (sector != null && sector.SectorOffsetX == sectorOffsetX - 1 && sector.SectorOffsetY == sectorOffsetY)
-                {
-                    return sector;
-                }
-            }
-
-            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX - 1, sectorOffsetY)))
-            //{
-            //    var temp = LoadSector(sectorOffsetX - 1, sectorOffsetY);
-            //    sectors_.Add(temp);
-            //    return temp;
-            //}
-
-            return null;
+            MapSector a;
+            sectors_.TryGetValue(new Point(sectorOffsetX-1, sectorOffsetY), out a);
+            return a;
         }
 
         public MapSector GetRightN(int sectorOffsetX, int sectorOffsetY)
         {
-            for (int i = 0; i < sectors_.Count; i++)
-            {
-                var sector = sectors_[i];
-                if (sector != null && sector.SectorOffsetX == sectorOffsetX + 1 &&
-                    sector.SectorOffsetY == sectorOffsetY)
-                {
-                    return sector;
-                }
-            }
-
-            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX + 1, sectorOffsetY)))
-            //{
-            //    return LoadSector(sectorOffsetX + 1, sectorOffsetY);
-            //}
-
-            return null;
+            MapSector a;
+            sectors_.TryGetValue(new Point(sectorOffsetX+1, sectorOffsetY), out a);
+            return a;
         }
 
         public MapSector GetSector(int sectorOffsetX, int sectorOffsetY)
         {
-            for (int i = 0; i < sectors_.Count; i++)
-            {
-                var sector = sectors_[i];
-                if (sector != null && sector.SectorOffsetX == sectorOffsetX && sector.SectorOffsetY == sectorOffsetY)
-                {
-                    if (!sector.ready) return null;
-                    return sector;
-                }
+            MapSector a;
+            if (sectors_.TryGetValue(new Point(sectorOffsetX, sectorOffsetY), out a)) {
+                return a;
             }
 
             var last = LoadSector(sectorOffsetX, sectorOffsetY);
             if (last != null)
             {
-                sectors_.Add(last);
+                sectors_.Add(new Point(sectorOffsetX, sectorOffsetY), last);
                 return last;
             }
 
             var temp = new MapSector(this, sectorOffsetX, sectorOffsetY);
-            sectors_.Add(temp);
+            sectors_.Add(new Point(sectorOffsetX, sectorOffsetY), temp);
             temp.Rebuild(MapSeed);
             if (temp.ready) return temp;
             return null;
@@ -270,10 +215,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public ICreature GetCreatureAtCoord(Vector2 pos, Vector2 start) {
             var p = GetInSectorPosition(GetPositionInBlocks(pos));
-            MapSector sect = null;
-            foreach(var se in sectors_) {
-                if (se.SectorOffsetX == (int)p.X && se.SectorOffsetY == (int)p.Y) sect = se;
-            }
+            MapSector sect;
+
+            sectors_.TryGetValue(new Point((int)p.X, (int)p.Y), out sect);
 
             if (sect == null) return null;
 
@@ -411,11 +355,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (sec.TotalSeconds >= 1) {
                 sec = TimeSpan.Zero;
                 for (int i = 0; i < sectors_.Count; i++) {
-                    var a = sectors_[i];
-                    if (Math.Abs(a.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 128 ||
-                        Math.Abs(a.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 128) {
-                        sectors_.Remove(a);
-                        SaveSector(a);
+                    var a = sectors_.ElementAt(i);
+                    if (Math.Abs(a.Value.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 128 ||
+                        Math.Abs(a.Value.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 128) {
+                        sectors_.Remove(new Point(a.Value.SectorOffsetX,a.Value.SectorOffsetY));
+                        SaveSector(a.Value);
                         return;
                     }
                 }
@@ -428,7 +372,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         [Obsolete]
         public void Rebuild() {
             for (int i = 0; i < sectors_.Count; i++) {
-                sectors_[i] .Rebuild(MapSeed);
+                sectors_.ElementAt(i).Value.Rebuild(MapSeed);
             }
         }
 
@@ -470,10 +414,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             sb.Begin();
             var pos = GetInSectorPosition(pl.GetPositionInBlocks());
             foreach (var sector in sectors_) {
-                if (sector.SectorOffsetX > pos.X - 5 && sector.SectorOffsetX < pos.X + 5 &&
-                    sector.SectorOffsetY > pos.Y - 5 && sector.SectorOffsetY < pos.Y + 5) {
-                    int x = sector.SectorOffsetX - (int) pos.X + 5;
-                    int y = sector.SectorOffsetY - (int) pos.Y + 5;
+                if (sector.Value.SectorOffsetX > pos.X - 5 && sector.Value.SectorOffsetX < pos.X + 5 &&
+                    sector.Value.SectorOffsetY > pos.Y - 5 && sector.Value.SectorOffsetY < pos.Y + 5)
+                {
+                    int x = sector.Value.SectorOffsetX - (int)pos.X + 5;
+                    int y = sector.Value.SectorOffsetY - (int)pos.Y + 5;
                     sb.Draw(whitepixel, new Vector2(x*11,y*11), null, Color.White, 0, Vector2.Zero,11, SpriteEffects.None,1);
                 }
             }
@@ -492,39 +437,12 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 for (int i = -20; i < 20; i++) {
                     for (int j = -20; j < 20; j++) {
-                        //        var tt = 1 -
-                        //                 (Vector2.Distance(who.Position, new Vector2((a.X + i + 0.5f) * 32, (a.Y + j + 0.5f) * 32))) /
-                        //                 500.0f;
-                        //        tt *= 255;
-
-                        //        if (tt > 255) tt = 255;
-                        //        if (tt < 0) tt = 0;
-                        //        var bb = GetBlock((int)a.X + i, (int)a.Y + j);
-                        //        if (bb != null)
-                        //        {
-                        //            bb.SetLight(new Color(tt, tt, tt));
-                        //            bb.Explored = true;
-                        //        }
                         var t = GetBlock((int) a.X + i, (int) a.Y + j);
                         if (t != null) {
                             t.Lightness = colb;
                         }
                     }
                 }
-
-                //for (int i = -20; i < 20; i++)
-                //{
-                //    Vector2 start = who.Position;
-                //    Vector2 end1 = new Vector2((a.X + i + 0.5f) * 32, (-20 + 0.5f) * 32);
-                //    Vector2 end2 = new Vector2((a.X + i + 0.5f) * 32, (20 + 0.5f) * 32);
-                //    Vector2 end3 = new Vector2((-20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
-                //    Vector2 end4 = new Vector2((20 + 0.5f) * 32, (a.Y + i + 0.5f) * 32);
-
-                //    GetValue(start, end1);
-                //    GetValue(start, end2);
-                //    GetValue(start, end3);
-                //    GetValue(start, end4);
-                //}
 
                 IBlock temp2;
                 var lightness = Color.White;
@@ -543,7 +461,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 temp.Explored = true;
 
                 for (int i = 0; i < sectors_.Count; i++) {
-                    var sector = sectors_[i];
+                    var sector = sectors_.ElementAt(i).Value;
                     foreach (var crea in sector.creatures) {
                         if (Vector2.Distance(who.Position, crea.WorldPosition()) < 1000 && PathClear(a,
                                       new Vector2(crea.GetWorldPositionInBlocks().X, crea.GetWorldPositionInBlocks().Y)))
@@ -617,14 +535,14 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="gt"></param>
         public void UpdateCreatures(GameTime gt, Player hero) {
             for (int k = 0; k < sectors_.Count; k++) {
-                var sector = sectors_[k];
+                var sector = sectors_.ElementAt(k).Value;
                 for (int m = 0; m < sector.creatures.Count; m++) {
                     sector.creatures[m].Skipp = false;
                 }
             }
 
             for (int k = 0; k < sectors_.Count; k++) {
-                var sector = sectors_[k];
+                var sector = sectors_.ElementAt(k).Value;
                 for (int m = 0; m < sector.creatures.Count; m++)
                 {
                     var crea = sector.creatures[m];
@@ -838,7 +756,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SaveAll() {
             foreach (var sector in sectors_) {
-                SaveSector(sector);
+                SaveSector(sector.Value);
             }
         }
 
@@ -870,7 +788,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             for (int k = 0; k < sectors_.Count; k++)
             {
-                MapSector sector = sectors_[k];
+                MapSector sector = sectors_.ElementAt(k).Value;
                 if (sector.SectorOffsetX * rx + rx < min.X &&
                     sector.SectorOffsetY * ry + ry < min.Y)
                 {
@@ -928,7 +846,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             for (int k = 0; k < sectors_.Count; k++)
             {
-                MapSector sector = sectors_[k];
+                MapSector sector = sectors_.ElementAt(k).Value;
                 if (sector.SectorOffsetX * rx + rx < min.X &&
                     sector.SectorOffsetY * ry + ry < min.Y)
                 {
@@ -996,7 +914,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             bool b = Settings.DebugInfo;
             for (int k = 0; k < sectors_.Count; k++)
             {
-                var sector = sectors_[k];
+                var sector = sectors_.ElementAt(k).Value;
                 if (sector.SectorOffsetX * MapSector.Rx + MapSector.Rx < min.X && sector.SectorOffsetY * MapSector.Ry + MapSector.Ry < min.Y) continue;
                 if (sector.SectorOffsetX * MapSector.Rx > max.X && sector.SectorOffsetY * MapSector.Ry > max.Y) continue;
 
@@ -1011,11 +929,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public MapSector GetCreatureSector(Vector2 pos, Vector2 start) {
             var p = GetInSectorPosition(GetPositionInBlocks(pos));
-            foreach (var se in sectors_)
-            {
-                if (se.SectorOffsetX == (int)p.X && se.SectorOffsetY == (int)p.Y) return se;
-            }
-            return null;
+            MapSector a;
+            sectors_.TryGetValue(new Point((int)p.X, (int)p.Y), out a);
+            return a;
         }
 
         public bool IsCreatureMeele(Creature hero, Creature ny) {
