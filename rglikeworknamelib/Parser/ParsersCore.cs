@@ -80,7 +80,7 @@ namespace rglikeworknamelib.Parser
 
         return temp;
         }
-
+        
         public static Dictionary<string, Texture2D> LoadTexturesTagged(string s, ContentManager content)
         {
             Dictionary<string, Texture2D> temp = new Dictionary<string, Texture2D>();

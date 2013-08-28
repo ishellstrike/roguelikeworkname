@@ -16,6 +16,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int MapSeed = 23142455;
 
         private Texture2D whitepixel;
+        private Texture2D transparentpixel;
 
         private Dictionary<Point, MapSector> sectors_;
         public int generated;
@@ -27,8 +28,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public bool MapJustUpdated;
 
-        private RenderTarget2D minimap;
-        private Texture2D minimap_;
+        private RenderTarget2D minimap_;
+        private RenderTarget2D map_;
+        private Dictionary<Tuple<int, int>, SectorBiom> globalMap = new Dictionary<Tuple<int, int>, SectorBiom>();
 
         #region Constructor
         Effect be_;
@@ -40,8 +42,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             data[0] = 0xffffffff;
             whitepixel.SetData(data);
 
-            minimap_ = new Texture2D(spriteBatch.GraphicsDevice, 128, 128);
-            minimap = new RenderTarget2D(spriteBatch.GraphicsDevice, 128, 128);
+            transparentpixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            data[0] = 0x0;
+            whitepixel.SetData(data);
+
+            minimap_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 121, 121);
+            map_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 671, 671);
 
             sectors_ = new Dictionary<Point, MapSector>();
             //{
@@ -55,6 +61,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             gd_ = gd;
             be_ = new BasicEffect(gd_);
             (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
+
+            LoadMap();
         }
 
         public GameLevel()
@@ -198,8 +206,16 @@ namespace rglikeworknamelib.Dungeon.Level {
             var temp = new MapSector(this, sectorOffsetX, sectorOffsetY);
             sectors_.Add(new Point(sectorOffsetX, sectorOffsetY), temp);
             temp.Rebuild(MapSeed);
+            GlobalMapAdd(temp);
             if (temp.ready) return temp;
             return null;
+        }
+
+        private void GlobalMapAdd(MapSector temp) {
+            var a = new Tuple<int, int>(temp.SectorOffsetX, temp.SectorOffsetY);
+            if (!globalMap.ContainsKey(a)) {
+                globalMap.Add(a, temp.biom);
+            }
         }
 
         public IBlock GetBlock(int x, int y)
@@ -358,7 +374,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     var a = sectors_.ElementAt(i);
                     if (Math.Abs(a.Value.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 128 ||
                         Math.Abs(a.Value.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 128) {
-                        sectors_.Remove(new Point(a.Value.SectorOffsetX,a.Value.SectorOffsetY));
+                        sectors_.Remove(sectors_.ElementAt(i).Key);
                         SaveSector(a.Value);
                         return;
                     }
@@ -378,55 +394,69 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void GenerateMinimap(GraphicsDevice gd, SpriteBatch sb, Creature pl)
         {
-            //var data = new Color[128 * 128];
-            //for (int i = 0; i < data.Length; i++) {
-            //    data[i] = Color.Black;
-            //}
-
-            //var pos = GetInSectorPosition(pl.GetPositionInBlocks());
-
-            //foreach (var sector in sectors_)
-            //{
-            //    if (sector.SectorOffsetX > pos.X - 5 && sector.SectorOffsetX < pos.X + 5 && sector.SectorOffsetY > pos.Y - 5 && sector.SectorOffsetY < pos.Y + 5)
-            //    {
-            //        int x = sector.SectorOffsetX - (int)pos.X + 5;
-            //        int y = sector.SectorOffsetY - (int)pos.Y + 5;
-
-            //        for (int i = x * 10; i < x * 10 + 11; i++)
-            //        {
-            //            for (int j = y * 10; j < y * 10 + 11; j++)
-            //            {
-            //                data[i + j * 128] = Color.White;
-            //            }
-            //        }
-            //    }
-            //}
-
-            //for (int i = 6* 10; i < 6 * 10 + 11; i++) {
-            //    for (int j = 6*10; j < 6*10 + 11; j++) {
-            //        data[i + j * 128] = Color.Red;
-            //    }
-            //}
-
-            //minimap_.SetData(data);
-
-            gd.SetRenderTarget(minimap);
+            gd.SetRenderTarget(minimap_);
+            gd.Clear(Color.Transparent);
             sb.Begin();
             var pos = GetInSectorPosition(pl.GetPositionInBlocks());
-            foreach (var sector in sectors_) {
-                if (sector.Value.SectorOffsetX > pos.X - 5 && sector.Value.SectorOffsetX < pos.X + 5 &&
-                    sector.Value.SectorOffsetY > pos.Y - 5 && sector.Value.SectorOffsetY < pos.Y + 5)
+            for (int i = (int)pos.X - 5; i < pos.X + 6; i++)
+            {
+                for (int j = (int)pos.Y - 5; j < pos.Y + 6; j++)
                 {
-                    int x = sector.Value.SectorOffsetX - (int)pos.X + 5;
-                    int y = sector.Value.SectorOffsetY - (int)pos.Y + 5;
-                    sb.Draw(whitepixel, new Vector2(x*11,y*11), null, Color.White, 0, Vector2.Zero,11, SpriteEffects.None,1);
+                    var a = new Tuple<int, int>(i, j);
+                    if (globalMap.ContainsKey(a))
+                    {
+                        int x = i - (int)pos.X + 5;
+                        int y = j - (int)pos.Y + 5;
+                        var t = GetMinimapData(globalMap[a]);
+                        sb.Draw(t.Item1, new Vector2(x * 11, y * 11), t.Item2);
+                    }
                 }
             }
+            sb.Draw(Atlases.MinimapAtlas["cross1"], new Vector2(5 * 11, 5 * 11), Color.Red);
             sb.End();
             gd.SetRenderTarget(null);
-
-            minimap_ = minimap;
         }
+
+        public void GenerateMap(GraphicsDevice gd, SpriteBatch sb, Creature pl)
+        {
+            gd.SetRenderTarget(map_);
+            gd.Clear(Color.Transparent);
+            sb.Begin();
+            var pos = GetInSectorPosition(pl.GetPositionInBlocks());
+            for (int i = (int)pos.X - 30; i < pos.X + 31; i++)
+            {
+                for (int j = (int)pos.Y - 30; j < pos.Y + 31; j++)
+                {
+                    var a = new Tuple<int, int>(i, j);
+                    if (globalMap.ContainsKey(a))
+                    {
+                        int x = i - (int)pos.X + 30;
+                        int y = j - (int)pos.Y + 30;
+                        var t = GetMinimapData(globalMap[a]);
+                        sb.Draw(t.Item1, new Vector2(x * 11, y * 11), t.Item2);
+                    }
+                }
+            }
+            sb.Draw(Atlases.MinimapAtlas["cross1"], new Vector2(30 * 11, 30 * 11), Color.Red);
+            sb.End();
+            gd.SetRenderTarget(null);
+        }
+
+        private Tuple<Texture2D, Color> GetMinimapData(SectorBiom bi) {
+            Tuple<Texture2D, Color> a;
+
+            switch (bi) {
+                case SectorBiom.Forest:
+                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["forest1"], Color.Green);
+                    break;
+                default:
+                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["nothing1"], Color.White);
+                    break;
+            }
+
+            return a;
+        }
+
 
         private Vector2 pre_pos_vis;
         public void CalcWision(Creature who, float dirAngle, float seeAngleDeg) {
@@ -750,6 +780,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             return minimap_;
         }
 
+        public Texture2D GetMap() {
+            return map_;
+        }
+
         public int SectorCount() {
             return sectors_.Count;
         }
@@ -757,6 +791,38 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void SaveAll() {
             foreach (var sector in sectors_) {
                 SaveSector(sector.Value);
+            }
+            SaveMap();
+        }
+
+        private void SaveMap() {
+            BinaryFormatter binaryFormatter_ = new BinaryFormatter();
+            FileStream fileStream_;
+            GZipStream gZipStream_;
+
+            fileStream_ =
+                new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"),
+                               FileMode.Create);
+            gZipStream_ = new GZipStream(fileStream_, CompressionMode.Compress);
+            binaryFormatter_.Serialize(gZipStream_, globalMap);
+            gZipStream_.Close();
+            fileStream_.Close();
+        }
+
+        private void LoadMap()
+        {
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("map.rlm"))) {
+                BinaryFormatter binaryFormatter_ = new BinaryFormatter();
+                FileStream fileStream_;
+                GZipStream gZipStream_;
+
+                fileStream_ =
+                    new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"),
+                                   FileMode.Open);
+                gZipStream_ = new GZipStream(fileStream_, CompressionMode.Decompress);
+                globalMap = (Dictionary<Tuple<int, int>, SectorBiom>) binaryFormatter_.Deserialize(gZipStream_);
+                gZipStream_.Close();
+                fileStream_.Close();
             }
         }
 

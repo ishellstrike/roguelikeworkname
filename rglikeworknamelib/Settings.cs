@@ -95,5 +95,17 @@ namespace rglikeworknamelib {
         public static string GetDressTexturesDirectory() {
             return GetUnitTextureDirectory() + @"/Dress";
         }
+
+        public static string GetMinimapTexturesDirectory() {
+            return GetTextureDirectory() + @"/Dungeon/Minimap";
+        }
+
+        public static string GetFloorTextureDirectory() {
+            return GetTextureDirectory() + @"/Dungeon/Floor";
+        }
+
+        public static string GetObjectTextureDirectory() {
+            return GetTextureDirectory() + @"/Dungeon/Objects";
+        }
     }
 }

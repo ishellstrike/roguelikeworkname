@@ -23,7 +23,7 @@ namespace Mork
         private static readonly int[] graph = new int[MAX_GR];
         private static int curent_;
         private static int max_ = 1, min_;
-        private static readonly int[] insec = new int[10];
+        private static readonly int[] insec = new[] {6,6,6,6,6,6,6,6,6,6};
         private static byte curinsec;
 
         public static void Update(GameTime gameTime) 
@@ -46,7 +46,8 @@ namespace Mork
                 }
 
                 max_ = graph.Max();
-                min_ = graph.Min();
+                //min_ = graph.Min();
+                if (max_ - min_ == 0) min_ -= 1;
 
                 frameCounter_ = 0;
                 if (curent_ % 10 == 0) {
@@ -75,20 +76,20 @@ namespace Mork
 
             var offset = new Vector2(150, 15);
             for (int index = 0; index < MAX_GR; index++) {
-                var a = (int) (((float) graph[index]) / (max_) * 100);
-                Color col = Color.Lerp(Color.Blue, Color.Red, (float) graph[index] / (max_));
+                var a = (((float) graph[index]) / (max_) * 100.0f);
+                Color col = Color.Lerp(Color.Blue, Color.Red, (float)(graph[index]) / (max_));
                 if (index == curent_ - 1) {
                     col.G = 255;
                     col.B = 255;
-                }
+                } else
                 if (index == curent_ - 2) {
                     col.G = 200;
                     col.B = 200;
-                }
+                } else
                 if (index == curent_ - 3) {
                     col.G = 150;
                     col.B = 150;
-                }
+                } else
                 if (index == curent_ - 4) {
                     col.G = 75;
                     col.B = 75;

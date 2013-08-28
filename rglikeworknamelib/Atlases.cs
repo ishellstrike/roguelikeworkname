@@ -14,7 +14,8 @@ namespace rglikeworknamelib
         public static Dictionary<string, Texture2D> BlockAtlas, CreatureAtlas; 
         public static ContentManager Content;
         public static Collection<Texture2D> ParticleAtlas;
-        public static Dictionary<string, Texture2D> DressAtlas; 
+        public static Dictionary<string, Texture2D> DressAtlas;
+        public static Dictionary<string, Texture2D> MinimapAtlas;
 
         public Atlases(ContentManager c) {
             Content = c;
@@ -22,11 +23,12 @@ namespace rglikeworknamelib
         }
 
         private void Load() {
-            FloorAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetFloorDataDirectory() + @"/textureloadorder.ord", Content);
-            BlockAtlas = ParsersCore.LoadTexturesTagged(Settings.GetObjectDataDirectory() + @"/textureloadorder.ord", Content);
+            FloorAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetFloorTextureDirectory() + @"/textureloadorder.ord", Content);
+            BlockAtlas = ParsersCore.LoadTexturesTagged(Settings.GetObjectTextureDirectory() + @"/textureloadorder.ord", Content);
             CreatureAtlas = ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"/textureloadorder.ord", Content);
             ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content);
             DressAtlas = ParsersCore.LoadTexturesTagged(Settings.GetDressTexturesDirectory() + @"/textureloadorder.ord", Content);
+            MinimapAtlas = ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"/textureloadorder.ord", Content);
         }
     }
 }

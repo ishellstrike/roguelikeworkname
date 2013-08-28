@@ -140,6 +140,7 @@ namespace jarg
         private Window WindowIngameMenu;
         private Label LabelIngameMenu1;
         private Button ButtonIngameMenuSettings;
+        private Button ButtonIngameExit;
 
         private Window WindowMainMenu;
         private Label LabelMainMenu;
@@ -171,9 +172,12 @@ namespace jarg
 
         private Window WindowIngameHint;
         private Label LabelIngameHint;
+
+        private Window WindowGlobal;
+        private Image ImageGlobal;
 #endregion
 
-        private void CreateWindows(Texture2D wp, SpriteFont sf, rglikeworknamelib.Window.WindowSystem ws) {
+        private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
             Random rnd = new Random();
 
             WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws) { Visible = false };
@@ -186,8 +190,7 @@ namespace jarg
             for (int i = 1; i < 20; i++ )
                 contaiter1.AddItem(new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), wp, sf, WindowStats));
 
-            WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40), "minimap", true,
-                                       wp, sf, ws) {Closable = false, hides = true};
+            WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40), "minimap", true, wp, sf, ws) {Closable = false, hides = true};
             ImageMinimap = new Image(new Vector2(10,10), new Texture2D(GraphicsDevice, 88, 88), Color.White, WindowMinimap);
 
             WindowSettings =
@@ -213,6 +216,8 @@ namespace jarg
             WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) {Visible = false};
             ButtonIngameMenuSettings = new Button(new Vector2(20,100), "Settings", wp, sf, WindowIngameMenu);
             ButtonIngameMenuSettings.onPressed += ButtonIngameMenuSettings_onPressed;
+            ButtonIngameExit = new Button(new Vector2(20, 100 + 30*3), "Exit game", wp, sf, WindowIngameMenu);
+            ButtonIngameExit.onPressed += new EventHandler(ButtonIngameExit_onPressed);
 
             WindowMainMenu = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y), "MAIN MENU",
                                         false, wp, sf, ws) {NoBorder = true, Moveable = false};
@@ -268,6 +273,15 @@ namespace jarg
 
             WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, wp, sf, ws) {NoBorder = true};
             LabelIngameHint = new Label(new Vector2(10,3), "a-ha", wp, sf, WindowIngameHint);
+
+            WindowGlobal = new Window(new Vector2(Settings.Resolution.X - 100, Settings.Resolution.Y - 50), "MAP", true, wp, sf, ws) {Visible = false};
+            ImageGlobal = new Image(new Vector2(10,10), new Texture2D(GraphicsDevice, 10,10), Color.White, WindowGlobal);
+        }
+
+        void ButtonIngameExit_onPressed(object sender, EventArgs e)
+        {
+            currentFloor_.SaveAll();
+            Exit();
         }
 
         void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
@@ -386,7 +400,7 @@ namespace jarg
 
         void ButtonOpenGit_onPressed(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/ishellstrike/roguelikeworkname/issues");
+            Process.Start("https://github.com/ishellstrike/roguelikeworkname/issues");
         }
 
         void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e) {
@@ -521,10 +535,13 @@ namespace jarg
 
         private void GameUpdate(GameTime gameTime) {
             sec += gameTime.ElapsedGameTime;
-            if (sec >= TimeSpan.FromSeconds(0.2)) {
+            if (sec >= TimeSpan.FromSeconds(0.5)) {
                sec = TimeSpan.Zero;
 
                currentFloor_.GenerateMinimap(GraphicsDevice, spriteBatch_, player_);
+                if(WindowGlobal.Visible) {
+                    currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
+                }
             }
 
 
@@ -601,6 +618,14 @@ namespace jarg
             if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up) {
                 if (!ws_.CloseTop()) {
                     WindowIngameMenu.Visible = true;
+                }
+            }
+
+            if (ks_[Keys.M] == KeyState.Down && lks_[Keys.M] == KeyState.Up) {
+                WindowGlobal.Visible = !WindowGlobal.Visible;
+                if(WindowGlobal.Visible) {
+                    currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
+                    ImageGlobal.image = currentFloor_.GetMap();
                 }
             }
 

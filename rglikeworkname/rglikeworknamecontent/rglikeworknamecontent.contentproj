@@ -95,7 +95,7 @@
       <Name>standart1</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Floor\textureloadorder.ord">
+    <None Include="Textures\Dungeon\Floor\textureloadorder.ord">
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -103,7 +103,7 @@
       <Name>example</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\textureloadorder.ord">
+    <None Include="Textures\Dungeon\Items\textureloadorder.ord">
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -117,7 +117,7 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <None Include="Data\Object\textureloadorder.ord">
+    <None Include="Textures\Dungeon\Objects\textureloadorder.ord">
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -132,6 +132,10 @@
     <None Include="Skins\Green.skin">
       <Name>Green</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Textures\Dungeon\Minimap\textureloadorder.ord">
+      <Name>textureloadorder</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Textures\Particles\textureloadorder.ord">
       <Name>textureloadorder</Name>
@@ -738,6 +742,27 @@
   <ItemGroup>
     <Compile Include="Textures\Particles\zombie_corp.png">
       <Name>zombie_corp</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Minimap\forest1.png">
+      <Name>forest1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Minimap\cross1.png">
+      <Name>cross1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Minimap\nothing1.png">
+      <Name>nothing1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -75,22 +75,23 @@ namespace rglikeworknamelib.Creatures {
             if (tpos2.X < 0) c--;
             if (tpos2.Y < 0) d--;
 
-            if (!gl.IsWalkable(a, b)) {
-                Velocity.X = 0;
-                if(BlockDataBase.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
-                    gl.OpenCloseDoor(a,b);
-                }
+            if (!gl.IsWalkable(a, b)) 
+            {
+                //Velocity.X = 0;
+                //if(BlockDataBase.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
+                //    gl.OpenCloseDoor(a,b);
+                //}
             }
             if (!gl.IsWalkable(c, d))
             {
-                Velocity.Y = 0;
-                if (BlockDataBase.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
-                {
-                    gl.OpenCloseDoor(c, d);
-                }
+                //Velocity.Y = 0;
+                //if (BlockDataBase.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
+                //{
+                //    gl.OpenCloseDoor(c, d);
+                //}
             }
 
-            Position += Velocity * time * 20;
+            Position += Velocity * time * 200;/////////
 
             if (time != 0) {
                 Velocity /= Settings.H() / time;

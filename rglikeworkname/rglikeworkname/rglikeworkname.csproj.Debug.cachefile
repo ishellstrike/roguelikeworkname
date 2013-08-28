@@ -78,8 +78,6 @@ Content\Textures\Dungeon\Objects\crates2.xnb
 Content\Textures\Dungeon\Objects\crates3.xnb
 Content\Textures\Dungeon\Objects\bush1.xnb
 Content\Textures\Dungeon\Objects\tree1.xnb
-Content\Effects\reductionEffect.xnb
-Content\Effects\resolveShadowsEffect.xnb
 Content\Textures\Dungeon\Objects\tree2.xnb
 Content\Textures\Dungeon\Objects\glass_hor.xnb
 Content\Textures\Dungeon\Objects\glass_ver.xnb
@@ -100,12 +98,17 @@ Content\Textures\Units\Dress\car_pants1.xnb
 Content\Textures\Units\Dress\car_t-short1.xnb
 Content\Textures\Units\zombie.xnb
 Content\Textures\Particles\zombie_corp.xnb
+Content\Textures\Dungeon\Minimap\forest1.xnb
+Content\Textures\Dungeon\Minimap\cross1.xnb
+Content\Textures\Dungeon\Minimap\nothing1.xnb
+Content\Effects\reductionEffect.xnb
+Content\Effects\resolveShadowsEffect.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
-Content\Data\Floor\textureloadorder.ord
+Content\Textures\Dungeon\Floor\textureloadorder.ord
 Content\Data\Items\example
-Content\Data\Items\textureloadorder.ord
-Content\Data\Object\textureloadorder.ord
+Content\Textures\Dungeon\Items\textureloadorder.ord
+Content\Textures\Dungeon\Objects\textureloadorder.ord
 Content\Skins\Default.skin
 Content\Skins\Extended.skin
 Content\Skins\Green.skin
@@ -121,6 +124,7 @@ Content\Data\Items\Spawnlists\house.txt
 Content\Data\Items\misc1.txt
 Content\Data\Items\weapon_guns1.txt
 Content\Data\Items\weapon_ammo.txt
+Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord
 Content\Textures\Units\textureloadorder.ord
