@@ -15,7 +15,7 @@ namespace rglikeworknamelib.Window {
         private TimeSpan lastPressed;
 
         public object Tag { get; set; }
-        private bool aimed_;
+        protected bool aimed_;
 
         protected readonly SpriteFont font1_;
 
@@ -29,8 +29,7 @@ namespace rglikeworknamelib.Window {
                 text_ = text_.Trim('\n');
                 var a = font1_.MeasureString(text_);
                 calcHeight = a.Y;
-                calcWidth = a.X;
-                    
+                calcWidth = a.X; 
             }
         }
 

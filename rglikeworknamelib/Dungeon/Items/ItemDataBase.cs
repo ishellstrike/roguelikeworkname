@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
 using NLog;
+using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
 
@@ -91,15 +92,41 @@ namespace rglikeworknamelib.Dungeon.Item {
         public static string GetItemFullDescription(Item i) {
             var item = data[i.Id];
             StringBuilder sb = new StringBuilder();
-            sb.Append(GetItemDescription(i));
-            sb.Append(Environment.NewLine+string.Format("{0} г", item.weight));
-            sb.Append(Environment.NewLine+string.Format("{0} места", item.volume));
+            sb.Append(item.Name);
+            if (data[i.Id].description != null) {
+                sb.Append(Environment.NewLine + Environment.NewLine + data[i.Id].description);
+            }
+            sb.Append(Environment.NewLine + string.Format("{0} г", item.weight));
+            sb.Append(Environment.NewLine + string.Format("{0} места", item.volume));
             if(Settings.DebugInfo) {
                 sb.Append(Environment.NewLine + string.Format("id {0} uid {1}", i.Id, i.Uid));
             }
 
             if (item.afteruseId != null) {
-                sb.Append(Environment.NewLine + string.Format("оставл€ет {0}", data[item.afteruseId].name));
+                sb.Append(Environment.NewLine + string.Format("оставл€ет {0}", data[item.afteruseId].Name));
+            }
+
+            if(item.Buff1 != null || item.Buff2 != null||item.Buff3 != null||item.Buff4 != null||item.Buff5 != null) {
+                sb.Append(Environment.NewLine +Environment.NewLine+ string.Format("Ёффекты :"));
+            }
+            if(item.Buff1 != null) {
+                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff1].Name));
+            }
+            if (item.Buff2 != null)
+            {
+                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff2].Name));
+            }
+            if (item.Buff3 != null)
+            {
+                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff3].Name));
+            }
+            if (item.Buff4 != null)
+            {
+                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff4].Name));
+            }
+            if (item.Buff5 != null)
+            {
+                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff5].Name));
             }
             //switch (item.stype) {
             //    case ItemType.Medicine:

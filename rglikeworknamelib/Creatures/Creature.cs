@@ -67,7 +67,7 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        private Stat hp_ = new Stat(200);
+        internal Stat hp_ = new Stat(200);
         public Stat Hp {
             get { return hp_; }
             set { hp_ = value; }

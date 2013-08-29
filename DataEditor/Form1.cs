@@ -89,7 +89,7 @@ namespace DataEditor
                                                                     Value = a.Value.stype
                                                                 },
                                   new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.name
+                                                                    Value = a.Value.Name
                                                                 },
                                   new DataGridViewTextBoxCell() {
                                                                     Value = a.Value.description

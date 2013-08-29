@@ -1,0 +1,6 @@
+~testhat,0
+Name="Тестовая шляпа"
+Buff1=hpup5
+Buff2=hpup2
+weight=100
+volume=300

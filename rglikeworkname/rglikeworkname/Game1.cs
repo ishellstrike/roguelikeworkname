@@ -1,24 +1,23 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Security;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork;
-using System;
 using rglikeworknamelib;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
+using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Level.Blocks;
-using rglikeworknamelib.Parser;
 using rglikeworknamelib.Dungeon.Particles;
+using rglikeworknamelib.Parser;
 using rglikeworknamelib.Window;
 using Button = rglikeworknamelib.Window.Button;
 using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
@@ -32,7 +31,7 @@ namespace jarg
 {
     public class Game1 : Game
     {
-        private rglikeworknamelib.Window.WindowSystem ws_;
+        private WindowSystem ws_;
         private ParticleSystem ps_;
         private BulletSystem bs_;
         private GameLevel currentFloor_;
@@ -44,7 +43,6 @@ namespace jarg
         private Vector2 camera_;
         private SpriteFont font1_;
         private KeyboardState ks_;
-        private Vector2 lastPos_;
         private LineBatch lineBatch_;
         private KeyboardState lks_;
         private MouseState lms_;
@@ -52,25 +50,21 @@ namespace jarg
         private Vector2 pivotpoint_;
         private SpriteBatch spriteBatch_;
 
-        private Texture2D whitepixel;
-
-        //private Manager manager_;
-
-        private GamePhase gamePhase_ = GamePhase.testgame;
-
-        enum GamePhase
-        {
-            testgame
-        }
+        private Texture2D whitepixel_;
 
         public Game1() {
 #if DEBUG
 
-            Process myProcess = new Process();
-            myProcess.StartInfo.FileName = "cmd.exe";
-            myProcess.StartInfo.Arguments = @"/C cd " + Application.StartupPath + " & VersionGetter.cmd";
-            myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            myProcess.StartInfo.CreateNoWindow = true;
+            Process myProcess = new Process {
+                                                StartInfo = {
+                                                                FileName = "cmd.exe",
+                                                                Arguments =
+                                                                    @"/C cd " + Application.StartupPath +
+                                                                    " & VersionGetter.cmd",
+                                                                WindowStyle = ProcessWindowStyle.Hidden,
+                                                                CreateNoWindow = true
+                                                            }
+                                            };
             myProcess.Start();
             myProcess.WaitForExit(3000);
 #endif
@@ -93,10 +87,6 @@ namespace jarg
             }
         }
 
-        private void f_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
-        {
-            currentFloor_.SaveAll();
-        }
         protected override void Initialize()
         {
             Window.Title = Version.GetLong();
@@ -175,6 +165,21 @@ namespace jarg
 
         private Window WindowGlobal;
         private Image ImageGlobal;
+
+        private Window WindowCaracter;
+        private DoubleLabel LabelCaracterHat;
+        private DoubleLabel LabelCaracterGlaces;
+        private DoubleLabel LabelCaracterHelmet;
+        private DoubleLabel LabelCaracterChest;
+        private DoubleLabel LabelCaracterShirt;
+        private DoubleLabel LabelCaracterPants;
+        private DoubleLabel LabelCaracterGloves;
+        private DoubleLabel LabelCaracterBoots;
+        private DoubleLabel LabelCaracterGun;
+        private DoubleLabel LabelCaracterMeele;
+        private DoubleLabel LabelCaracterAmmo;
+        private DoubleLabel LabelCaracterBag;
+
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
@@ -260,7 +265,7 @@ namespace jarg
             InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2), "Food", wp, sf, WindowInventory);
             InventorySortFood.onPressed += InventorySortFood_onPressed;
 
-            WindowContainer = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
+            WindowContainer = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Container", true, wp, sf, ws) { Visible = false };
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
             ContainerContainer = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowContainer);
             LabelContainer = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowContainer);
@@ -276,6 +281,21 @@ namespace jarg
 
             WindowGlobal = new Window(new Vector2(Settings.Resolution.X - 100, Settings.Resolution.Y - 50), "MAP", true, wp, sf, ws) {Visible = false};
             ImageGlobal = new Image(new Vector2(10,10), new Texture2D(GraphicsDevice, 10,10), Color.White, WindowGlobal);
+
+            int ii = 0;
+            WindowCaracter = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Container", true, wp, sf, ws) { Visible = false };
+            LabelCaracterHat = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Hat : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterGlaces = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Glaces : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterHelmet = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Helmet : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterChest = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Chest Armor : ", wp, sf, WindowCaracter);ii++;
+            LabelCaracterShirt = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Shirt : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterPants = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Pants : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterGloves = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Gloves : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterBoots = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Boots : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterGun = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Ranged Weapon : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterMeele = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Meele Weapon : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterAmmo = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Ammo : ", wp, sf, WindowCaracter); ii++;
+            LabelCaracterBag = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Bag : ", wp, sf, WindowCaracter);
         }
 
         void ButtonIngameExit_onPressed(object sender, EventArgs e)
@@ -306,7 +326,7 @@ namespace jarg
             ContainerEventLog.Clear();
             int i = 0;
             foreach (var ss in EventLog.log) {
-                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss.message, whitepixel, font1_, ss.col, 35, ContainerEventLog));
+                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss.message, whitepixel_, font1_, ss.col, 35, ContainerEventLog));
                 i++;
             }
             ContainerEventLog.ScrollBottom();
@@ -340,7 +360,7 @@ namespace jarg
 
             int cou = 0;
             foreach (var item in a) {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerInventoryItems);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerInventoryItems);
                 i.Tag = cou;
                 i.onPressed += PressInInventory;
                 cou++;
@@ -360,7 +380,7 @@ namespace jarg
             int cou = 0;
             foreach (var item in a)
             {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].name, item.Count), 22, whitepixel, font1_, ContainerContainer);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerContainer);
                 i.Tag = cou;
                 i.onPressed += PressInContainer;
                 cou++;
@@ -448,6 +468,16 @@ namespace jarg
             if(WindowMinimap.Visible) {
                 ImageMinimap.image = currentFloor_.GetMinimap();
             }
+
+            if(WindowCaracter.Visible) {
+                if (player_.ItemGun != null) {
+                    LabelCaracterGun.Text2 = ItemDataBase.data[player_.ItemGun.Id].Name;
+                }
+                if (player_.ItemHat != null)
+                {
+                    LabelCaracterHat.Text2 = ItemDataBase.data[player_.ItemHat.Id].Name;
+                }
+            }
         }
 #endregion
 
@@ -458,23 +488,24 @@ namespace jarg
 
             Atlases a = new Atlases(Content);
 
-            whitepixel = new Texture2D(graphics_.GraphicsDevice, 1, 1);
+            whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             var data = new uint[1];
             data[0] = 0xffffffff;
-            whitepixel.SetData(data);
+            whitepixel_.SetData(data);
 
-            MonsterDataBase mdb = new MonsterDataBase();
-            BlockDataBase bdb = new BlockDataBase();
-            FloorDataBase fdb = new FloorDataBase();
-            ItemDataBase idb = new ItemDataBase();
-            SchemesDataBase sdb = new SchemesDataBase();
+            new MonsterDataBase();
+            new BlockDataBase();
+            new FloorDataBase();
+            new ItemDataBase();
+            new SchemesDataBase();
+            new BuffDataBase();
 
             font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
             Settings.Font = font1_;
 
             currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice);
 
-            ws_ = new WindowSystem(whitepixel, font1_);
+            ws_ = new WindowSystem(whitepixel_, font1_);
 
             ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
 
@@ -482,9 +513,11 @@ namespace jarg
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
-            inventory_ = new InventorySystem();
 
-            CreateWindows(whitepixel, font1_, ws_);
+            inventory_ = new InventorySystem();
+            inventory_.items.Add(new Item("testhat", 1));
+
+            CreateWindows(whitepixel_, font1_, ws_);
             
             UpdateInventoryContainer();
         }
@@ -545,7 +578,6 @@ namespace jarg
             }
 
 
-            lastPos_ = player_.Position;
             if ((int) player_.Position.X/3 == (int) player_.LastPos.X/3 &&
                 (int) player_.Position.Y/3 == (int) player_.LastPos.Y/3) {
                 if (seeAngleDeg < 150) {
@@ -627,6 +659,10 @@ namespace jarg
                     currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
                     ImageGlobal.image = currentFloor_.GetMap();
                 }
+            }
+
+            if (ks_[Keys.C] == KeyState.Down && lks_[Keys.C] == KeyState.Up) {
+                WindowCaracter.Visible = !WindowCaracter.Visible;
             }
 
             if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
@@ -803,6 +839,38 @@ namespace jarg
             spriteBatch_.DrawString(font1_,string.Format("       {0} {1}", nx, ny), new Vector2(ms_.X, ms_.Y), Color.White);
 
             spriteBatch_.End();
+        }
+    }
+
+    internal class DoubleLabel : Label {
+        public string Text2;
+
+        public DoubleLabel(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, IGameContainer win) : base(p, s, wp, wf, c, win) {
+        }
+
+        public DoubleLabel(Vector2 p, string s, Texture2D wp, SpriteFont wf, IGameContainer win) : base(p, s, wp, wf, win) {
+        }
+
+        public override void Draw(SpriteBatch sb)
+        {
+            if (Text != null && Visible)
+            {
+                if (isHudColored)
+                {
+                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Settings.HudÑolor);
+                    if (Text2 != null) {
+                        sb.DrawString(font1_, Text2, Parent.GetPosition() + pos_ + new Vector2(Width, 0),
+                                      Color.LightBlue);
+                    }
+                }
+                else
+                {
+                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, col_);
+                    if (Text2 != null) {
+                        sb.DrawString(font1_, Text2, Parent.GetPosition() + pos_ + new Vector2(Width, 0), Color.LightBlue);
+                    }
+                }
+            }
         }
     }
 }

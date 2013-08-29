@@ -1,6 +1,6 @@
 //sdfsdfsdf
 ~Creature,0,0
-name=""
+Name=""
 
 ~CrearureZombie,zombie1,zombie
 Name="Зомби житель"

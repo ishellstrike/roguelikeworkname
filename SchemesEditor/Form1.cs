@@ -28,6 +28,7 @@ namespace SchemesEditor
         private PictureBox[] map;
         private SchemesMap gl;
         SpriteBatch sb;
+        Dictionary<string, Image> imdict = new Dictionary<string, Image>();
 
         private bool mouseleftdown;
         private void Form1_Load(object sender, EventArgs e)
@@ -49,10 +50,12 @@ namespace SchemesEditor
             openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory()+@"\Content\Data\Schemes";
             saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory() + @"\Content\Data\Schemes";
 
+            new BlockDataBase();
+
             gl = new SchemesMap(20, 20);
 
             imageList1.Images.Clear();
-            StreamReader sr = new StreamReader(Settings.GetObjectDataDirectory() + @"\textureloadorder.ord", Encoding.Default);
+            StreamReader sr = new StreamReader(Settings.GetObjectTextureDirectory() + @"\textureloadorder.ord", Encoding.Default);
 
 
             listBox1.Items.Clear();
@@ -63,12 +66,16 @@ namespace SchemesEditor
 
             while (true)
             {
-                string t = sr.ReadLine();
-                if (t == null || t.Length < 3) break;
+                string T = sr.ReadLine();
+                if(T == null) break;
+                string t = T.Substring(0, T.IndexOf(' '));
+                string t2 = T.Substring(T.IndexOf(' ') + 1, T.Length - (T.IndexOf(' ') + 1));
 
-                Image tr = Image.FromFile("Content/"+t + ".png");
-                imageList1.Images.Add(tr);
+                Image tr = Image.FromFile("Content/"+t + ".png").GetThumbnailImage(16,16, null, IntPtr.Zero);
+                imdict.Add(t2, tr);
             }
+
+            button3_Click(null,null);
         }
 
         private int camx, camy;
@@ -77,7 +84,7 @@ namespace SchemesEditor
             for (int i = 0; i < 30; i++) {
                 for (int j = 0; j < 30; j++) {
                     if (i - camx < gl.rx && j - camy < gl.ry && i - camx >= 0 && j - camy >= 0)
-                        map[i * 30 + j].Image = gl.block[i - camx, j - camy].Id == "0" ? imageList1.Images[0] : imageList1.Images[gl.block[i - camx, j - camy].Mtex];
+                        map[i * 30 + j].Image = gl.block[i - camx, j - camy].Mtex == null ? imdict["0"] : imdict[gl.block[i - camx, j - camy].Mtex];
                     else map[i*30 + j].Image = imageList2.Images[2];
                 }
             }
@@ -96,7 +103,7 @@ namespace SchemesEditor
             textBox1.Text = s[2];
            // gl = new GameLevel(x, y);
             char[] sep = {' '};
-            String[] b = sw.ReadToEnd().Split(sep);
+            String[] b = sw.ReadToEnd().Split(sep).Select(r=>r.Trim('\n').Trim('\r')).ToArray();
             gl = new SchemesMap(x,y);
             gl.CreateAllMapFromArray(b);
             sw.Close();
@@ -113,12 +120,12 @@ namespace SchemesEditor
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             StreamWriter sw = new StreamWriter(saveFileDialog1.FileName);
-            sw.Write("~" + gl.rx + "," + gl.ry + "," + textBox1.Text + "\n");
+            sw.Write("~" + gl.rx + "," + gl.ry + "," + textBox1.Text + Environment.NewLine);
             for (int i = 0; i < gl.rx * gl.ry - 1; i++)
             {
-                    sw.Write(gl.block[i/gl.ry,i%gl.ry].Id+" ");
+                    sw.Write(gl.block[i/gl.ry,i%gl.ry].Id.Trim()+" ");
                 }
-            sw.Write(gl.block[gl.rx-1,gl.ry-1].Id);
+            sw.Write(gl.block[gl.rx - 1, gl.ry - 1].Id.Trim());
 
             sw.Write("\n");
             sw.Close();
@@ -127,8 +134,8 @@ namespace SchemesEditor
         private void button3_Click(object sender, EventArgs e) {
             gl = new SchemesMap((int)numericUpDown1.Value,(int)numericUpDown2.Value);
 
-            for (int index0 = 0; index0 < gl.block.GetUpperBound(0); index0++) {
-                for (int index1 = 0; index1 < gl.block.GetUpperBound(1); index1++) {
+            for (int index0 = 0; index0 < gl.rx; index0++) {
+                for (int index1 = 0; index1 < gl.ry; index1++) {
                     gl.block[index0, index1].Id = "0";
                     gl.block[index0, index1].Mtex = "0";
                 }
@@ -164,8 +171,7 @@ namespace SchemesEditor
                 if (x < gl.rx && y < gl.ry && x >= 0 && y >= 0) {
 
                     gl.block[x, y].Id =
-                            listBox1.Items[listBox1.SelectedIndex].ToString().Substring(0,
-                                                                                        listBox1.Items[
+                            listBox1.Items[listBox1.SelectedIndex].ToString().Substring(0, listBox1.Items[
                                                                                             listBox1.SelectedIndex].
                                                                                             ToString().IndexOf(" ")).
                                 Substring(2);

@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
 
@@ -21,9 +22,32 @@ namespace rglikeworknamelib.Creatures {
         public Texture2D Tex;
         public SpriteFont Font;
 
-        public Dress Hat = new Dress("haer1", Color.White);
-        public Dress Tshort = new Dress("t-short1", Color.DarkRed);
-        public Dress Pants = new Dress("pants1", Color.DarkBlue);
+        public Dress DressHat = new Dress("haer1", Color.White);
+        public Dress DressTshort = new Dress("t-short1", Color.DarkRed);
+        public Dress DressPants = new Dress("pants1", Color.DarkBlue);
+
+        public Item ItemHat = new Item("testhat",1);
+        public Item ItemGlaces;
+        public Item ItemHelmet;
+        public Item ItemChest;
+        public Item ItemShirt;
+        public Item ItemPants;
+        public Item ItemGloves;
+        public Item ItemBoots;
+        public Item ItemGun;
+        public Item ItemMeele;
+        public Item ItemAmmo;
+        public Item ItemBag;
+
+        /// <summary>
+        /// Experience for other abilities. From monsters
+        /// </summary>
+        public int XpPool;
+
+        /// <summary>
+        /// Experience for battle abilities. From rest
+        /// </summary>
+        public int RestPool; 
 
         public Player(SpriteBatch sb, Texture2D tex, SpriteFont font) {
             sb_ = sb;
@@ -75,23 +99,24 @@ namespace rglikeworknamelib.Creatures {
             if (tpos2.X < 0) c--;
             if (tpos2.Y < 0) d--;
 
-            if (!gl.IsWalkable(a, b)) 
+            if (!gl.IsWalkable(a, b))
             {
-                //Velocity.X = 0;
-                //if(BlockDataBase.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
-                //    gl.OpenCloseDoor(a,b);
-                //}
+                Velocity.X = 0;
+                if (BlockDataBase.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose)
+                {
+                    gl.OpenCloseDoor(a, b);
+                }
             }
             if (!gl.IsWalkable(c, d))
             {
-                //Velocity.Y = 0;
-                //if (BlockDataBase.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
-                //{
-                //    gl.OpenCloseDoor(c, d);
-                //}
+                Velocity.Y = 0;
+                if (BlockDataBase.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
+                {
+                    gl.OpenCloseDoor(c, d);
+                }
             }
 
-            Position += Velocity * time * 200;/////////
+            Position += Velocity * time * 20;/////////
 
             if (time != 0) {
                 Velocity /= Settings.H() / time;
@@ -103,9 +128,9 @@ namespace rglikeworknamelib.Creatures {
             var origin = new Vector2(Tex.Width / 2, Tex.Height);
             sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
                      SpriteEffects.None, 1);
-            sb_.Draw(Atlases.DressAtlas[Hat.id], position, null, Hat.col, 0, origin, 1, SpriteEffects.None, 1);
-            sb_.Draw(Atlases.DressAtlas[Pants.id], position, null, Pants.col, 0, origin, 1, SpriteEffects.None, 1);
-            sb_.Draw(Atlases.DressAtlas[Tshort.id], position, null, Tshort.col, 0, origin, 1, SpriteEffects.None, 1);
+            sb_.Draw(Atlases.DressAtlas[DressHat.id], position, null, DressHat.col, 0, origin, 1, SpriteEffects.None, 1);
+            sb_.Draw(Atlases.DressAtlas[DressPants.id], position, null, DressPants.col, 0, origin, 1, SpriteEffects.None, 1);
+            sb_.Draw(Atlases.DressAtlas[DressTshort.id], position, null, DressTshort.col, 0, origin, 1, SpriteEffects.None, 1);
 
             if (Settings.DebugInfo)
             {

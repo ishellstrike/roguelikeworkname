@@ -1,0 +1,14 @@
+~EffectHpUp,hpup1
+Name="Повышение здоровья +1"
+Value1=1
+Duration=-1
+
+~EffectHpUp,hpup2
+Name="Повышение здоровья +2"
+Value1=2
+Duration=-1
+
+~EffectHpUp,hpup5
+Name="Повышение здоровья +5"
+Value1=5
+Duration=-1

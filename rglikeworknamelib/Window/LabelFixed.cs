@@ -20,7 +20,7 @@ namespace rglikeworknamelib.Window {
 
         private static string NormString(string s, int fixLength) {
             string result = "";
-            Regex regular = new Regex(string.Format(".{{0,{0}}}(?=\\s|$)", fixLength), RegexOptions.Singleline);
+            Regex regular = new Regex(string.Format(".{{0,{0}}}(?=\\s|$)", fixLength), RegexOptions.Multiline);
             MatchCollection matches = regular.Matches(s);
             foreach (Match match in matches) result += match.Value.Trim() + "\n";
             return result;

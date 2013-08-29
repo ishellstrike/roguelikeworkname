@@ -7,7 +7,7 @@ using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
     [Serializable]
-    public class CrearureZombie : Creature, ICreature {
+    public class CrearureZombie : Creature {
 
         public Dress Hat = new Dress("haer1", new Color(Settings.rnd.Next() % 255, Settings.rnd.Next() % 255, Settings.rnd.Next() % 255));
         public Dress Tshort = new Dress("t-short1", new Color(Settings.rnd.Next() % 255, Settings.rnd.Next() % 255, Settings.rnd.Next() % 255));
@@ -31,9 +31,14 @@ namespace rglikeworknamelib.Creatures {
             spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p, base.col);
 
             var origin = Vector2.Zero;
-            spriteBatch.Draw(Atlases.DressAtlas[Hat.id], WorldPosition() - camera, null, Hat.col, 0, origin, 1, SpriteEffects.None, 1);
-            spriteBatch.Draw(Atlases.DressAtlas[Pants.id], WorldPosition() - camera, null, Pants.col, 0, origin, 1, SpriteEffects.None, 1);
-            spriteBatch.Draw(Atlases.DressAtlas[Tshort.id], WorldPosition() - camera, null, Tshort.col, 0, origin, 1, SpriteEffects.None, 1);
+            if (col != Color.Black) {
+                spriteBatch.Draw(Atlases.DressAtlas[Hat.id], WorldPosition() - camera, null, Hat.col, 0, origin, 1,
+                                 SpriteEffects.None, 1);
+                spriteBatch.Draw(Atlases.DressAtlas[Pants.id], WorldPosition() - camera, null, Pants.col, 0, origin, 1,
+                                 SpriteEffects.None, 1);
+                spriteBatch.Draw(Atlases.DressAtlas[Tshort.id], WorldPosition() - camera, null, Tshort.col, 0, origin, 1,
+                                 SpriteEffects.None, 1);
+            }
 
             if (Settings.DebugInfo)
             {

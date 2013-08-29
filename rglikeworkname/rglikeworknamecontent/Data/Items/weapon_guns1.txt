@@ -1,7 +1,7 @@
 //12000
 
 ~12000,0
-name="SA80"
+Name="SA80"
 description="Made in UK"
 stype="Gun"
 uptype="Rifle"
@@ -10,46 +10,46 @@ some2="some some2"
 
 
 ~12001,0
-name="HK417"
+Name="HK417"
 description="Made in Germany"
 stype="Gun"
 uptype="AssaultRifle"
 
 ~12002,0
-name="TAR-21"
+Name="TAR-21"
 description="Made in Israel"
 stype="Gun"
 uptype="AssaultRifle"
 
 ~12003,0
-name="СВД"
+Name="СВД"
 description="Made in Russia"
 stype="Gun"
 uptype="SniperRifle"
 weight=5000
 
 ~12004,0
-name="Винтовка M14"
+Name="Винтовка M14"
 description="Made in USA"
 stype="Gun"
 uptype="Rifle"
 weight=4000
 
 ~12005,0
-name="Снайперская винтовка М25"
+Name="Снайперская винтовка М25"
 description="Made in USA"
 stype="Gun"
 uptype="SniperRifle"
 weight=5000
 
 ~12006,0
-name="FAMAS"
+Name="FAMAS"
 stype="Gun"
 uptype="AssaultRifle"
 weight=4000
 
 ~12007,0
-name="Barrett M82"
+Name="Barrett M82"
 stype="Gun"
 uptype="SniperRifle"
 weight=14000
@@ -57,7 +57,7 @@ ammo="a50"
 
 
 ~12008,0
-name="AK-12"
+Name="AK-12"
 stype="Gun"
 uptype="AssaultRifle"
 weight=3500
@@ -66,7 +66,7 @@ description="Made in Russia"
 ammo="a223"
 
 ~12010,0
-name="AK-47"
+Name="AK-47"
 stype="Gun"
 uptype="AssaultRifle"
 weight=3500
@@ -74,7 +74,7 @@ magazine=30
 description="Made in Russia"
 
 ~12009,0
-name="AK-12 барабанный магазин"
+Name="AK-12 барабанный магазин"
 stype="Gun"
 uptype="AssaultRifle"
 weight=3800

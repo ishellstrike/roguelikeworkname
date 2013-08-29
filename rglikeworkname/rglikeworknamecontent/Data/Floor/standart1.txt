@@ -1,41 +1,41 @@
 ~0,0
-name="???"
+Name="???"
 mmcol="black"
 
 ~1,1
-name="Земля"
+Name="Земля"
 mmcol="brown"
 walkable
 
 ~2,2
-name="Асфальт"
+Name="Асфальт"
 mmcol="darkgray"
 walkable
 
 ~3,3
-name="Бетон"
+Name="Бетон"
 mmcol="lightgray"
 walkable
 
 ~4,4
-name="Бетон"
+Name="Бетон"
 mmcol="green"
 walkable
 ~5,5
-name="Бетон"
+Name="Бетон"
 mmcol="yellow"
 walkable
 ~6,6
-name="Бетон"
+Name="Бетон"
 mmcol="red"
 walkable
 ~7,7
-name="Бетон"
+Name="Бетон"
 mmcol="blue"
 walkable
 
 ~8,16
-name="Пол Корабля"
+Name="Пол Корабля"
 mmcol="blue"
 walkable
 altermtex=9,10,11,12,13,14,15

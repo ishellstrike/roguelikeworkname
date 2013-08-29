@@ -124,9 +124,12 @@ Content\Data\Items\Spawnlists\house.txt
 Content\Data\Items\misc1.txt
 Content\Data\Items\weapon_guns1.txt
 Content\Data\Items\weapon_ammo.txt
+Content\Data\Schemes\bunker1.txt
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord
 Content\Textures\Units\textureloadorder.ord
 Content\Data\Units\test_u1.txt
+Content\Data\Effects\basic1.txt
+Content\Data\Items\test_items1.txt
 NLog.config

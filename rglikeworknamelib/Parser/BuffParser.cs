@@ -6,13 +6,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NLog;
 using rglikeworknamelib.Creatures;
-using rglikeworknamelib.Dungeon.Item;
-using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Dungeon.Level.Blocks;
+using rglikeworknamelib.Dungeon.Effects;
 
 namespace rglikeworknamelib.Parser
 {
-    public static class CreatureParser
+    class BuffParser
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -32,21 +30,21 @@ namespace rglikeworknamelib.Parser
                     string[] header = lines[0].Split(',');
 
                     Type type = Type.GetType("rglikeworknamelib.Creatures." + header[0]);
-                    temp.Add(new KeyValuePair<string, object>(header[1].Trim('\r'), new CreatureData(header[2].Trim('\r'))));
+                    temp.Add(new KeyValuePair<string, object>(header[1].Trim('\r'), new BuffData()));
                     if (type == null)
                     {
                         logger.Error(string.Format("Subclass of Block \"{0}\" for {1} cannot be created", "rglikeworknamelib.Dungeon.Level.Blocks." + header[0], header[1]));
                         type = typeof(Creature);
                     }
                     KeyValuePair<string, object> cur = temp.Last();
-                    ((CreatureData)cur.Value).CreaturePrototype = type;
+                    ((BuffData)cur.Value).EffectPrototype = type;
 
                     for (int i = 1; i < lines.Length; i++) {
                         if (lines[i].Contains('=')) {
                             string sstart = lines[i].Substring(0, lines[i].IndexOf('='));
-                            var finfo = typeof (CreatureData).GetField(sstart);
+                            var finfo = typeof (BuffData).GetField(sstart);
                             var extracted = lines[i].Substring(lines[i].IndexOf('=') + 1,
-                                                               lines[i].Length - (lines[i].IndexOf('=') + 1) - 1).Replace("\"","");
+                                                               lines[i].Length - (lines[i].IndexOf('=') + 1)).Replace("\"","").Replace("\r","");
 
                             if (finfo != null) {
                                 var converter = TypeDescriptor.GetConverter(finfo.FieldType);

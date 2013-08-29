@@ -107,5 +107,9 @@ namespace rglikeworknamelib {
         public static string GetObjectTextureDirectory() {
             return GetTextureDirectory() + @"/Dungeon/Objects";
         }
+
+        public static string GetEffectDataDirectory() {
+            return GetDataDirectory() + @"/Effects";
+        }
     }
 }

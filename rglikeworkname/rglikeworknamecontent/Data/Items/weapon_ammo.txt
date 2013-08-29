@@ -1,22 +1,22 @@
 //15000
 
 ~a357,0
-name=".357 «Магнум»"
+Name=".357 «Магнум»"
 stype="Ammo"
 weight=20
 
 ~a233,0
-name=".233 ЦМО"
+Name=".233 ЦМО"
 stype="Ammo"
 weight=15
 
 ~a50,0
-name=".50 BMG"
+Name=".50 BMG"
 description="Made in USA. Ужасный 50ый калибр."
 stype="Ammo"
 weight=50
 
 ~a223,0
-name=".223 Remington"
+Name=".223 Remington"
 description="Made in USA. Малоимпульсный промежуточный патрон."
 stype="Ammo"

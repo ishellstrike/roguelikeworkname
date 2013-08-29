@@ -203,7 +203,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private void Spawn(string i, int x, int y) {
-            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[i].BlockPrototype);
+            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[i].CreaturePrototype);
             n.Position = new Vector2(x*32, y*32);
             n.Id = i;
             creatures.Add(n);
