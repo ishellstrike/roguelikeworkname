@@ -8,10 +8,6 @@ namespace rglikeworknamelib.Creatures
     public class CreatureData {
         public string MTex;
         public string Name;
-        public Type CreaturePrototype;
-
-        public CreatureData(string t) {
-            MTex = t;
-        }
+        public Type Prototype;
     }
 }

@@ -20,31 +20,31 @@ namespace rglikeworknamelib.Dungeon.Item
             Buffs = new List<IBuff>();
             if (ItemDataBase.data[i].Buff1 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff1].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff1].Prototype);
                 a.Id = ItemDataBase.data[i].Buff1;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[i].Buff2 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff2].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff2].Prototype);
                 a.Id = ItemDataBase.data[i].Buff2;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[i].Buff3 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff3].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff3].Prototype);
                 a.Id = ItemDataBase.data[i].Buff3;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[i].Buff4 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff4].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff4].Prototype);
                 a.Id = ItemDataBase.data[i].Buff4;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[i].Buff5 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff5].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[i].Buff5].Prototype);
                 a.Id = ItemDataBase.data[i].Buff5;
                 Buffs.Add(a);
             }
@@ -57,31 +57,31 @@ namespace rglikeworknamelib.Dungeon.Item
             Buffs = new List<IBuff>();
             if (ItemDataBase.data[Id].Buff1 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff1].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff1].Prototype);
                 a.Id = ItemDataBase.data[Id].Buff1;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[Id].Buff2 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff2].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff2].Prototype);
                 a.Id = ItemDataBase.data[Id].Buff2;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[Id].Buff3 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff3].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff3].Prototype);
                 a.Id = ItemDataBase.data[Id].Buff3;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[Id].Buff4 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff4].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff4].Prototype);
                 a.Id = ItemDataBase.data[Id].Buff4;
                 Buffs.Add(a);
             }
             if (ItemDataBase.data[Id].Buff5 != null)
             {
-                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff5].EffectPrototype);
+                var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[ItemDataBase.data[Id].Buff5].Prototype);
                 a.Id = ItemDataBase.data[Id].Buff5;
                 Buffs.Add(a);
             }

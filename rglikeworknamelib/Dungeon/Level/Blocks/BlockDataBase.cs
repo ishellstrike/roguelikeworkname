@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Level {
@@ -11,7 +12,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// </summary>
         public BlockDataBase() {
             Data = new Dictionary<string, BlockData>();
-            var a = ParsersCore.ParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetObjectDataDirectory(), BlockParser.Parser);
+            var a = ParsersCore.UniversalParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetObjectDataDirectory(), UniversalParser.Parser<BlockData>, typeof(Block));
             foreach (var pair in a) {
                 Data.Add(pair.Key, (BlockData)pair.Value);
             }

@@ -1,48 +1,48 @@
 //Craftings from 1000
-~1000,0
+~Item,1000,0
 name="Стальная пластина"
 stype="Craft"
 
 
-~1001,0
+~Item,1001,0
 name="Стальной прут"
 stype="Craft"
 
 
-~1002,0
+~Item,1002,0
 name="Доска"
 fire=100
 stype="Craft"
 
 
-~1003,0
+~Item,1003,0
 name="Палка"
 fire=30
 stype="Craft"
 
-~1004,0
+~Item,1004,0
 name="Древесные опилки"
 fire=5
 stype="Craft"
 
 
-~1005,0
+~Item,1005,0
 name="Гвоздь"
 stype="Craft"
 
-~1006,0
+~Item,1006,0
 name="Пакет угля"
 fire=2000
 stype="Craft"
 
-~1007,0
+~Item,1007,0
 name="Бревно"
 fire=500
 stype="Craft"
 
 //Crafting instruments from 2000
-~2000,0
+~Item,2000,0
 name="Молоток"
 stype="Craft"
 
-~2001,0
+~Item,2001,0

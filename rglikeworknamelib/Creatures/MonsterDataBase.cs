@@ -10,7 +10,7 @@ namespace rglikeworknamelib.Creatures {
         public MonsterDataBase()
         {
             Data = new Dictionary<string, CreatureData>();
-            var a = ParsersCore.ParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetCreatureDataDirectory(), CreatureParser.Parser);
+            var a = ParsersCore.UniversalParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetCreatureDataDirectory(), UniversalParser.Parser<CreatureData>, typeof(Creature));
             foreach (var pair in a)
             {
                 Data.Add(pair.Key, (CreatureData)pair.Value);

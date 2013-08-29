@@ -99,7 +99,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public List<StorageBlock> GetStorageBlocks()
         {
             return (from a in Blocks
-                    where BlockDataBase.Data[a.Id].BlockPrototype == typeof(StorageBlock)
+                    where BlockDataBase.Data[a.Id].Prototype == typeof(StorageBlock)
                     select a as StorageBlock).ToList();
         }
 
@@ -128,7 +128,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         private void AsyncGeneration(int mapseed) {
             int s = (int)(MapGenerators.Noise2D(SectorOffsetX,SectorOffsetY)*int.MaxValue);
             Random rand = new Random(s);
-            MapGenerators.FillTest1(this, 1);
+            MapGenerators.FillTest1(this, "1");
             MapGenerators.ClearBlocks(this);
             MapGenerators.FloorPerlin(this);
 
@@ -203,7 +203,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private void Spawn(string i, int x, int y) {
-            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[i].CreaturePrototype);
+            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[i].Prototype);
             n.Position = new Vector2(x*32, y*32);
             n.Id = i;
             creatures.Add(n);
@@ -234,7 +234,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             return BlockDataBase.Data[Blocks[x * Ry + y].Id].IsWalkable;
         }
 
-        public void SetFloor(int x, int y, int id)
+        public void SetFloor(int x, int y, string id)
         {
             Floors[x * Ry + y].Id = id;
             Floors[x * Ry + y].Mtex = FloorDataBase.Data[id].RandomMtexFromAlters();
@@ -256,7 +256,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="oneDimCoord"></param>
         /// <param name="id"></param>
         public void SetBlock(int oneDimCoord, string id) {
-            Blocks[oneDimCoord] = (IBlock)Activator.CreateInstance(BlockDataBase.Data[id].BlockPrototype);
+            Blocks[oneDimCoord] = (IBlock)Activator.CreateInstance(BlockDataBase.Data[id].Prototype);
             Blocks[oneDimCoord].Id = id;
             Blocks[oneDimCoord].Mtex = BlockDataBase.Data[id].RandomMtexFromAlters();
         }

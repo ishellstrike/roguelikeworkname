@@ -14,7 +14,7 @@ namespace rglikeworknamelib.Dungeon.Buffs
         /// </summary>
         public BuffDataBase() {
             Data = new Dictionary<string, BuffData>();
-            var a = ParsersCore.ParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetEffectDataDirectory(), BuffParser.Parser);
+            var a = ParsersCore.UniversalParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetEffectDataDirectory(), UniversalParser.Parser<BuffData>, typeof(Buff));
             foreach (var pair in a)
             {
                 Data.Add(pair.Key, (BuffData)pair.Value);

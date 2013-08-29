@@ -4,14 +4,14 @@ using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class FloorDataBase {
-        public static Dictionary<int, FloorData> Data;
+        public static Dictionary<string, FloorData> Data;
 
         /// <summary>
         /// WARNING! Also loading all data from standart patch
         /// </summary>
         public FloorDataBase() {
-            Data = new Dictionary<int, FloorData>();
-            var a = ParsersCore.ParseDirectory<KeyValuePair<int, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetFloorDataDirectory(), FloorParser.Parser);
+            Data = new Dictionary<string, FloorData>();
+            var a = ParsersCore.UniversalParseDirectory(Settings.GetFloorDataDirectory(), UniversalParser.Parser<FloorData>, typeof(Floor));
             foreach (var pair in a)
             {
                 Data.Add(pair.Key, (FloorData)pair.Value);

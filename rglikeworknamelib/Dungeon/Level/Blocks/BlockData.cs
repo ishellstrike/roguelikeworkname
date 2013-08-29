@@ -10,7 +10,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public string Description;
         public bool IsDestructable;
 
-        public Type BlockPrototype;
+        public Type Prototype;
         public SmartAction SmartAction;
 
         public float Hp;
@@ -34,10 +34,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                 return MTex;
             }
             return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
-        }
-
-        public BlockData(string mtex) {
-            MTex = mtex;
         }
     }
 }

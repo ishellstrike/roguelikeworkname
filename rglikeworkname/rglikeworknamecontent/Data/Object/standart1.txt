@@ -1,25 +1,30 @@
-~Block,0,0
+~Block,0
 Name="???"
 IsWalkable=true
 IsTransparent=true
+MTex=0
 
-~Block,1,1
+~Block,1
 Name="Кирпичная кладка"
+MTex=1
 
-~StorageBlock,2,2
+~StorageBlock,2
 Name="Шкаф"
 SmartAction=ActionOpenContainer
 swide=28
+MTex=2
 
-~Block,3,3
+~Block,3
 Name="Деревянная дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=7
+MTex=3
 
 ~Block,6,6
 Name="Деревянная дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=7
+MTex=6
 
 ~Block,7,7
 Name="Деревянная дверь (открыта)"
@@ -27,6 +32,7 @@ SmartAction=ActionOpenClose
 AfterDeathId=3
 IsWalkable=true
 IsTransparent=true
+MTex=7
 
 
 
@@ -34,11 +40,13 @@ IsTransparent=true
 Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
+MTex=4
 
 ~Block,5,5
 Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
+MTex=5
 
 ~Block,8,8
 Name="Металлическая дверь (открыта)"
@@ -46,68 +54,83 @@ SmartAction=ActionOpenClose
 AfterDeathId=4
 IsWalkable=true
 IsTransparent=true
+MTex=8
 
 ~Block,9,9
 Name="Консоль"
 AlterMtex={"9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26"}
+MTex=9
 
 ~Block,10,27
 Name="Кровать"
 AlterMtex={"28","39","30","31"}
 IsTransparent=true
+MTex=27
 
 ~StorageBlock,15,32
 Name="Ящик"
 SmartAction=ActionOpenContainer
 AlterMtex={"33","34"}
 IsTransparent=true
+MTex=32
 
 ~Block,16,36
 Name="Дерево"
 swide=16
+MTex=36
 
 ~Block,18,38
 Name="Небольшое дерево"
 swide=16
+MTex=38
 
 ~Block,17,37
 Name="Куст"
 swide=16
+MTex=37
 
 
 ~Block,19,38
 Name="Окно"
 IsTransparent=true
+MTex=38
 
 ~Block,20,39
 Name="Окно"
 IsTransparent=true
+MTex=39
 
 
 ~Block,21,40
 Name="Прилавок"
 IsTransparent=true
+MTex=40
 
 ~Block,22,41
 Name="Прилавок"
 IsTransparent=true
+MTex=41
 
 ~Block,23,42
 Name="Прилавок"
 IsTransparent=true
+MTex=42
 
 ~Block,kustsmall,palka
 Name="Молодой кустарник"
 IsTransparent=true
 IsWalkable=true
 swide=16
+MTex=palka
 
 
 ~Block,kustbig,bush
 Name="Густой кустарник"
 IsWalkable=true
 swide=16
+MTex=bush
 
 ~BlockButningBochka,bbochka,bochka
 Name="Горящая бочка"
 IsTransparent=true
+MTex=bochka

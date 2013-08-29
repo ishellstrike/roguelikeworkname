@@ -297,7 +297,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             return sect.GetBlock(x - divx*MapSector.Rx, y - divy*MapSector.Ry).Id;
         }
 
-        public void SetFloor(int x, int y, int id)
+        public void SetFloor(int x, int y, string id)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
@@ -316,12 +316,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (sect != null)
             {
                 var braw = (x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry;
-                if (BlockDataBase.Data[id].BlockPrototype == typeof(Block))
+                if (BlockDataBase.Data[id].Prototype == typeof(Block))
                 {
 
                     sect.SetBlock(braw, new Block{Id = id});
                 }
-                if (BlockDataBase.Data[id].BlockPrototype == typeof(StorageBlock))
+                if (BlockDataBase.Data[id].Prototype == typeof(StorageBlock))
                 {
                     sect.SetBlock(braw, new StorageBlock
                     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -644,7 +645,7 @@ namespace jarg
 
             if (ks_[Keys.F2] == KeyState.Down)
             {
-                currentFloor_.SetFloor(Settings.rnd.Next(-10000, 10000), Settings.rnd.Next(-10000, 10000), 1);
+                currentFloor_.SetFloor(Settings.rnd.Next(-10000, 10000), Settings.rnd.Next(-10000, 10000), "1");
             }
 
             if (ks_[Keys.W] == KeyState.Down) {

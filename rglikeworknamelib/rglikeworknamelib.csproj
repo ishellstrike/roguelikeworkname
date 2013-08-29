@@ -109,15 +109,10 @@
     <Compile Include="Creatures\Creature.cs" />
     <Compile Include="Creatures\CreatureData.cs" />
     <Compile Include="Creatures\MonsterDataBase.cs" />
-    <Compile Include="Parser\BlockParser.cs" />
     <Compile Include="Parser\ChemesParser.cs" />
-    <Compile Include="Parser\BuffParser.cs" />
-    <Compile Include="Parser\FloorParser.cs" />
-    <Compile Include="Parser\ItemParser.cs" />
     <Compile Include="Parser\ParsersCore.cs" />
     <Compile Include="Creatures\Player.cs" />
-    <Compile Include="Parser\UnitParses.cs" />
-    <Compile Include="Parser\DialogParser.cs" />
+    <Compile Include="Parser\UniversalParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UniqueIds.cs" />

@@ -17,22 +17,6 @@ namespace rglikeworknamelib.Parser
         public static Regex intextractor = new Regex("[0-9]+");
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public static List<T> ParseFile<T>(string patch, Func<string, List<T>> parser)
-        {
-            try
-            {
-                var sr = new StreamReader(patch, Encoding.Default);
-                string a = sr.ReadToEnd();
-                sr.Close();
-                sr.Dispose();
-                return parser(a);
-            }
-            catch (FileNotFoundException)
-            {
-                return new List<T>();
-            }
-        }
-
         public static Color ParseStringToColor(string s) {
             string extractedstring = stringExtractor.Match(s).ToString();
             extractedstring = extractedstring.Substring(1, extractedstring.Length - 2);
@@ -112,6 +96,55 @@ namespace rglikeworknamelib.Parser
             {
                 logger.ErrorException(e.StackTrace + " --- " + e.Message, e);
                 throw;
+            }
+        }
+        public static List<T> ParseFile<T>(string patch, Func<string, List<T>> parser)
+        {
+            try
+            {
+                var sr = new StreamReader(patch, Encoding.Default);
+                string a = sr.ReadToEnd();
+                sr.Close();
+                sr.Dispose();
+                return parser(a);
+            }
+            catch (FileNotFoundException)
+            {
+                return new List<T>();
+            }
+        }
+
+        public static List<T> UniversalParseDirectory<T>(string patch, Func<string, Type, List<T>> parser, Type baseType = null)
+        {
+            try
+            {
+                string[] a = Directory.GetFiles(patch, "*.txt");
+                var temp = new List<T>();
+                foreach (string s in a)
+                {
+                    temp.AddRange(UnivarsalParseFile(s, parser, baseType));
+                }
+                return temp;
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                logger.ErrorException(e.StackTrace + " --- " + e.Message, e);
+                throw;
+            }
+        }
+        public static List<T> UnivarsalParseFile<T>(string patch, Func<string, Type, List<T>> parser, Type baseType = null)
+        {
+            try
+            {
+                var sr = new StreamReader(patch, Encoding.Default);
+                string a = sr.ReadToEnd();
+                sr.Close();
+                sr.Dispose();
+                return parser(a, baseType);
+            }
+            catch (FileNotFoundException)
+            {
+                return new List<T>();
             }
         }
 

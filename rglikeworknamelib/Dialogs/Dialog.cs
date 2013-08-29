@@ -16,7 +16,7 @@ namespace rglikeworknamelib.Dialogs
         public DialogDataBase() {
             data = new Dictionary<string, DialogData>();
 
-            var temp = ParsersCore.ParseDirectory(Settings.GetDialogDataDirectory(), DialogParser.Parser);
+            var temp = ParsersCore.UniversalParseDirectory(Settings.GetDialogDataDirectory(), UniversalParser.Parser<DialogData>);
 
             foreach (var pair in temp) {
                 data.Add(pair.Key, (DialogData)pair.Value);

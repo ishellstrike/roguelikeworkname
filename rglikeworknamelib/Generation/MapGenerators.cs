@@ -35,11 +35,11 @@ namespace rglikeworknamelib.Generation
             for (int i = 0; i < initialNodes.Length; i++) {
                 if (gg < 8) {
                     if (initialNodes[i].X == MapSector.Rx - 1 || initialNodes[i].X == 0) {
-                        FillFromTo(ms, new Vector2(MapSector.Rx - 1, initialNodes[i].Y - 1), new Vector2(0, initialNodes[i].Y + 1), 2);
+                        FillFromTo(ms, new Vector2(MapSector.Rx - 1, initialNodes[i].Y - 1), new Vector2(0, initialNodes[i].Y + 1), "2");
                         ms.AddInitialNode(0, initialNodes[i].Y);
                     }
                     if (initialNodes[i].Y == MapSector.Ry - 1 || initialNodes[i].Y == 0) {
-                        FillFromTo(ms, new Vector2(initialNodes[i].X - 1, MapSector.Ry - 1), new Vector2(initialNodes[i].X + 1, 0), 2);
+                        FillFromTo(ms, new Vector2(initialNodes[i].X - 1, MapSector.Ry - 1), new Vector2(initialNodes[i].X + 1, 0), "2");
                         ms.AddInitialNode(initialNodes[i].X, 0);
                     }          
                 } else {
@@ -60,7 +60,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void FillFromTo(MapSector ms, Vector2 from, Vector2 to, int id) {
+        public static void FillFromTo(MapSector ms, Vector2 from, Vector2 to, string id) {
             if (from.X > to.X) {
                 float a = from.X;
                 from.X = to.X;
@@ -81,7 +81,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static void FillTest1(MapSector gl, int id)
+        public static void FillTest1(MapSector gl, string id)
         {
             for (int i = 0; i < MapSector.Rx; i++) {
                 for (int j = 0; j < MapSector.Ry; j++) {
@@ -124,7 +124,7 @@ namespace rglikeworknamelib.Generation
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
                 PlaceScheme(mapSector, mapSector.Parent, a[r], posX, posY);
-                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent,  a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], 8), posX, posY);
+                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent,  a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], "8"), posX, posY);
             }
         }
 
@@ -137,7 +137,7 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static int[] GetInnerFloorArrayWithId(Schemes a, int id) {
+        public static string[] GetInnerFloorArrayWithId(Schemes a, string id) {
             int[] visited = new int[a.data.Length];
             Queue<int> todo = new Queue<int>();
             if (a.data[0] == "0") todo.Enqueue(0); // угол 0,0
@@ -159,16 +159,16 @@ namespace rglikeworknamelib.Generation
                 }
             }
 
-            visited = visited.Select(x => x == 0 ? id : 0).ToArray();
+            string[] converted = visited.Select(x => x == 0 ? id : "0").ToArray();
 
-            return visited;
+            return converted;
         }
 
-        public static void FillFloorFromArrayAndOffset(MapSector gl, GameLevel level, int x, int y, int[] arr, int sx, int sy) {
+        public static void FillFloorFromArrayAndOffset(MapSector gl, GameLevel level, int x, int y, string[] arr, int sx, int sy) {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
                     
-                        if(arr[i*y+j] != 0) {
+                        if(arr[i*y+j] != "0") {
                             level.SetFloor(sx + i + gl.SectorOffsetX * MapSector.Rx, sy + j + gl.SectorOffsetY * MapSector.Ry, arr[i * y + j]);
                         }
                     
@@ -308,12 +308,12 @@ namespace rglikeworknamelib.Generation
                 for (int j = 0; j < MapSector.Ry; j++) {
                     double t = a[i * MapSector.Ry + j];
                     if (t > 0.7) {
-                        mapSector.SetFloor(i, j, 1);
+                        mapSector.SetFloor(i, j, "1");
                     } else {
                         if (t > 0.5) {
-                            mapSector.SetFloor(i, j, 8);
+                            mapSector.SetFloor(i, j, "8");
                         } else {
-                            mapSector.SetFloor(i, j, 3);
+                            mapSector.SetFloor(i, j, "3");
                         }
                     }
                 }

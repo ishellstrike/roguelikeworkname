@@ -1,6 +1,8 @@
 //sdfsdfsdf
-~Creature,0,0
+~Creature,0
 Name=""
+MTex=0
 
-~CrearureZombie,zombie1,zombie
+~CrearureZombie,zombie1
 Name="Зомби житель"
+MTex=zombie

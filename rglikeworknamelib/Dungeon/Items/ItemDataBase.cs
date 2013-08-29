@@ -29,7 +29,7 @@ namespace rglikeworknamelib.Dungeon.Item {
             data = new Dictionary<string, ItemData>();
             dataFoodItems = new Dictionary<string, ItemData>();
             dataMedicineItems = new Dictionary<string, ItemData>();
-            var a = ParsersCore.ParseDirectory<KeyValuePair<string, object>>(Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory(), ItemParser.Parser);
+            var a = ParsersCore.UniversalParseDirectory<KeyValuePair<string, object>>(Settings.GetItemDataDirectory(), UniversalParser.Parser<ItemData>, typeof(Item));
             foreach (var pair in a) {
                 data.Add(pair.Key, (ItemData)pair.Value);
                 if (((ItemData)pair.Value).stype == ItemType.Medicine) dataMedicineItems.Add(pair.Key, (ItemData)pair.Value);

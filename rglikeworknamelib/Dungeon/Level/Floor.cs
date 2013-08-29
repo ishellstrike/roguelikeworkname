@@ -5,7 +5,7 @@ namespace rglikeworknamelib.Dungeon.Level
     [Serializable]
     public class Floor
     {
-        public int Id;
+        public string Id;
         public int Mtex;
     }
 }

@@ -1,41 +1,53 @@
-~0,0
+~Floor,0
 Name="???"
 mmcol="black"
+MTex=0
 
-~1,1
+~Floor,1
 Name="Земля"
 mmcol="brown"
 walkable
+MTex=1
 
-~2,2
+~Floor,2
 Name="Асфальт"
 mmcol="darkgray"
 walkable
+MTex=2
 
-~3,3
+~Floor,3
 Name="Бетон"
 mmcol="lightgray"
 walkable
+MTex=3
 
-~4,4
+~Floor,4
 Name="Бетон"
 mmcol="green"
 walkable
-~5,5
+MTex=4
+
+~Floor,5
 Name="Бетон"
 mmcol="yellow"
 walkable
-~6,6
+MTex=5
+
+~Floor,6
 Name="Бетон"
 mmcol="red"
 walkable
-~7,7
+MTex=6
+
+~Floor,7
 Name="Бетон"
 mmcol="blue"
 walkable
+MTex=7
 
-~8,16
+~Floor,8
 Name="Пол Корабля"
 mmcol="blue"
 walkable
 altermtex=9,10,11,12,13,14,15
+MTex=16

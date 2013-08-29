@@ -7,7 +7,7 @@ namespace rglikeworknamelib.Dungeon.Effects
 {
     public class BuffData
     {
-        public Type EffectPrototype;
+        public Type Prototype;
         public float Value1, Value2, Value3, Value4, Value5;
 
         /// <summary>

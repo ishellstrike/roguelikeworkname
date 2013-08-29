@@ -1,14 +1,14 @@
 ~BuffHpUp,hpup1
-Name="Повышение здоровья +1"
+Name=Повышение здоровья +1
 Value1=1
-Duration=-1
+Duration=0
 
 ~BuffHpUp,hpup2
-Name="Повышение здоровья +2"
+Name=Повышение здоровья +2"
 Value1=2
-Duration=-1
+Duration=0
 
 ~BuffHpUp,hpup5
-Name="Повышение здоровья +5"
+Name=Повышение здоровья +5
 Value1=5
-Duration=-1
+Duration=0
