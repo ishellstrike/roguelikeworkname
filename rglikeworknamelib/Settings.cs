@@ -111,5 +111,9 @@ namespace rglikeworknamelib {
         public static string GetEffectDataDirectory() {
             return GetDataDirectory() + @"/Effects";
         }
+
+        public static string GetDialogDataDirectory() {
+            return GetDataDirectory() + @"/Dialogs";
+        }
     }
 }

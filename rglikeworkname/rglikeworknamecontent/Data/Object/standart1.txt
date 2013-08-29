@@ -49,17 +49,17 @@ IsTransparent=true
 
 ~Block,9,9
 Name=" онсоль"
-AlterMtex=9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+AlterMtex={"9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26"}
 
 ~Block,10,27
 Name=" ровать"
-AlterMtex=28,39,30,31
+AlterMtex={"28","39","30","31"}
 IsTransparent=true
 
 ~StorageBlock,15,32
 Name="ящик"
 SmartAction=ActionOpenContainer
-AlterMtex=33,34
+AlterMtex={"33","34"}
 IsTransparent=true
 
 ~Block,16,36

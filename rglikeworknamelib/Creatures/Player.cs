@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Buffs;
+using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
@@ -26,7 +30,7 @@ namespace rglikeworknamelib.Creatures {
         public Dress DressTshort = new Dress("t-short1", Color.DarkRed);
         public Dress DressPants = new Dress("pants1", Color.DarkBlue);
 
-        public Item ItemHat = new Item("testhat",1);
+        public Item ItemHat;
         public Item ItemGlaces;
         public Item ItemHelmet;
         public Item ItemChest;
@@ -38,6 +42,8 @@ namespace rglikeworknamelib.Creatures {
         public Item ItemMeele;
         public Item ItemAmmo;
         public Item ItemBag;
+
+        public List<IBuff> buffs = new List<IBuff>(); 
 
         /// <summary>
         /// Experience for other abilities. From monsters
@@ -58,6 +64,51 @@ namespace rglikeworknamelib.Creatures {
 
         public Player()
         {
+        }
+
+        public void EquipItem(Item i, InventorySystem ins) {
+            switch (ItemDataBase.data[i.Id].stype) {
+                    case ItemType.Hat:
+                        EquipExact(i, ins, ref ItemHat);
+                    break;
+                    case ItemType.Pants:
+                        EquipExact(i, ins, ref ItemPants);
+                    break;
+                    case ItemType.Shirt:
+                        EquipExact(i, ins, ref ItemShirt);
+                    break;
+                    case ItemType.Gun:
+                        EquipExact(i, ins, ref ItemGun);
+                    break;
+                    case ItemType.Meele:
+                        EquipExact(i, ins, ref ItemMeele);
+                    break;
+            }
+        }
+
+        private void EquipExact(Item i, InventorySystem ins, ref Item ite) {
+            if (i != null) {
+                if (ite != null) {
+                    ins.items.Add(ite);
+                    foreach (var buff in ite.Buffs.Where(buff => buffs.Contains(buff))) {
+                        buffs.Remove(buff);
+                        buff.RemoveFromTarget(this);
+                    }
+                }
+                ite = i;
+                if (ins.items.Contains(i)) {
+                    ins.items.Remove(i);
+                }
+                foreach (var buff in i.Buffs)
+                {
+                    buffs.Add(buff);
+                    buff.ApplyToTarget(this);
+                }
+            }
+        }
+
+        public void UnEquipItem(Item i) {
+            
         }
 
         public Vector2 CurrentActiveRoom { get; set; }

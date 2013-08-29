@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Mork;
 using rglikeworknamelib;
 using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dialogs;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
@@ -151,6 +152,7 @@ namespace jarg
         private Button InventorySortAll;
         private Button InventorySortMedicine;
         private Button InventorySortFood;
+        private Button IntentoryEquip;
 
         private Window WindowContainer;
         private ListContainer ContainerContainer;
@@ -179,6 +181,7 @@ namespace jarg
         private DoubleLabel LabelCaracterMeele;
         private DoubleLabel LabelCaracterAmmo;
         private DoubleLabel LabelCaracterBag;
+        private DoubleLabel LabelCaracterHp;
 
 #endregion
 
@@ -264,6 +267,8 @@ namespace jarg
             InventorySortMedicine.onPressed += InventorySortMedicine_onPressed;
             InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2), "Food", wp, sf, WindowInventory);
             InventorySortFood.onPressed += InventorySortFood_onPressed;
+            IntentoryEquip = new Button(new Vector2(WindowInventory.Locate.Width - 100, WindowInventory.Locate.Height - 200 + 30*2), "Equip", wp, sf, WindowInventory);
+            IntentoryEquip.onPressed += new EventHandler(IntentoryEquip_onPressed);
 
             WindowContainer = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Container", true, wp, sf, ws) { Visible = false };
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
@@ -296,6 +301,15 @@ namespace jarg
             LabelCaracterMeele = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Meele Weapon : ", wp, sf, WindowCaracter); ii++;
             LabelCaracterAmmo = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Ammo : ", wp, sf, WindowCaracter); ii++;
             LabelCaracterBag = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Bag : ", wp, sf, WindowCaracter);
+            ii = 0;
+            LabelCaracterHp = new DoubleLabel(new Vector2(10+300, 10 + 15 * ii), "HP : ", wp, sf, WindowCaracter);
+        }
+
+        void IntentoryEquip_onPressed(object sender, EventArgs e) {
+            player_.EquipItem(selectedItem, inventory_);
+            UpdateInventoryContainer();
+            selectedItem = null;
+            InventoryMoreInfo.Text = "";
         }
 
         void ButtonIngameExit_onPressed(object sender, EventArgs e)
@@ -388,8 +402,10 @@ namespace jarg
             }
         }
 
+        private Item selectedItem;
         void PressInInventory(object sender, EventArgs e) {
             var a = (int) (sender as Label).Tag;
+            selectedItem = inInv_[a];
             InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
         }
 
@@ -477,6 +493,8 @@ namespace jarg
                 {
                     LabelCaracterHat.Text2 = ItemDataBase.data[player_.ItemHat.Id].Name;
                 }
+
+                LabelCaracterHp.Text2 = string.Format("{0}/{1}",player_.Hp.Current, player_.Hp.Max);
             }
         }
 #endregion
@@ -499,6 +517,7 @@ namespace jarg
             new ItemDataBase();
             new SchemesDataBase();
             new BuffDataBase();
+            new DialogDataBase();
 
             font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
             Settings.Font = font1_;
@@ -516,6 +535,8 @@ namespace jarg
 
             inventory_ = new InventorySystem();
             inventory_.items.Add(new Item("testhat", 1));
+            inventory_.items.Add(new Item("testhat2", 1));
+            inventory_.items.Add(new Item("ak47", 1));
 
             CreateWindows(whitepixel_, font1_, ws_);
             

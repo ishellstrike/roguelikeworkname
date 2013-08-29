@@ -1,0 +1,18 @@
+~testd1_1
+Text="Hello 123"
+TextAgain="Whats else?"
+Reply1=testd1_2
+Reply1Text="Question?"
+Reply2=testd1_3
+Reply2Text="Question? Question?!"
+
+~testd1_2
+Text="Answer"
+Reply1=testd1_1
+Reply1Text="Return"
+
+
+~testd1_3
+Text="Answer Answer"
+Reply1=testd1_1
+Reply1Text="Return"

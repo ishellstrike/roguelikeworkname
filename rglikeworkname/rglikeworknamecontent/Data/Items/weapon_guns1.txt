@@ -65,7 +65,7 @@ magazine=30
 description="Made in Russia"
 ammo="a223"
 
-~12010,0
+~ak47,0
 Name="AK-47"
 stype="Gun"
 uptype="AssaultRifle"

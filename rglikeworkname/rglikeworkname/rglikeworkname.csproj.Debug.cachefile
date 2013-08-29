@@ -103,6 +103,11 @@ Content\Textures\Dungeon\Minimap\cross1.xnb
 Content\Textures\Dungeon\Minimap\nothing1.xnb
 Content\Effects\reductionEffect.xnb
 Content\Effects\resolveShadowsEffect.xnb
+Content\Textures\Dungeon\Objects\bath1.xnb
+Content\Textures\Dungeon\Objects\bath2.xnb
+Content\Textures\Dungeon\Objects\bath3.xnb
+Content\Textures\Dungeon\Objects\bath4.xnb
+Content\Textures\Dungeon\Objects\bath5.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Textures\Dungeon\Floor\textureloadorder.ord
@@ -125,6 +130,7 @@ Content\Data\Items\misc1.txt
 Content\Data\Items\weapon_guns1.txt
 Content\Data\Items\weapon_ammo.txt
 Content\Data\Schemes\bunker1.txt
+Content\Data\Dialogs\testdialog1.txt
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord

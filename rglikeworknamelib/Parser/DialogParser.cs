@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using NLog;
-using rglikeworknamelib.Creatures;
-using rglikeworknamelib.Dungeon.Buffs;
-using rglikeworknamelib.Dungeon.Effects;
+using rglikeworknamelib.Dialogs;
+using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Parser
 {
-    class BuffParser
-    {
+    internal class DialogParser {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-
         public static List<KeyValuePair<string, object>> Parser(string s)
         {
             var temp = new List<KeyValuePair<string, object>>();
@@ -30,22 +28,15 @@ namespace rglikeworknamelib.Parser
                     string[] lines = Regex.Split(block, "\n");
                     string[] header = lines[0].Split(',');
 
-                    Type type = Type.GetType("rglikeworknamelib.Dungeon.Buffs." + header[0]);
-                    temp.Add(new KeyValuePair<string, object>(header[1].Trim('\r'), new BuffData()));
-                    if (type == null)
-                    {
-                        logger.Error(string.Format("Subclass of Buff \"{0}\" for {1} cannot be created", "rglikeworknamelib.Dungeon.Buffs." + header[0], header[1]));
-                        type = typeof(Buff);
-                    }
+                    temp.Add(new KeyValuePair<string, object>(header[0], new DialogData()));
                     KeyValuePair<string, object> cur = temp.Last();
-                    ((BuffData)cur.Value).EffectPrototype = type;
 
                     for (int i = 1; i < lines.Length; i++) {
                         if (lines[i].Contains('=')) {
                             string sstart = lines[i].Substring(0, lines[i].IndexOf('='));
-                            var finfo = typeof (BuffData).GetField(sstart);
-                            var extracted = lines[i].Substring(lines[i].IndexOf('=') + 1,
-                                                               lines[i].Length - (lines[i].IndexOf('=') + 1)).Replace("\"","").Replace("\r","");
+                            FieldInfo finfo = typeof(DialogData).GetField(sstart);
+                            string extracted = lines[i].Substring(lines[i].IndexOf('=') + 1,
+                                                               lines[i].Length - (lines[i].IndexOf('=') + 1) - 1).Replace("\"","");
 
                             if (finfo != null) {
                                 var converter = TypeDescriptor.GetConverter(finfo.FieldType);

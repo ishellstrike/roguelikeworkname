@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using rglikeworknamelib.Dungeon.Buffs;
+﻿using System;
+using rglikeworknamelib.Creatures;
 
-namespace rglikeworknamelib.Dungeon.Effects
+namespace rglikeworknamelib.Dungeon.Buffs
 {
+    [Serializable]
     class BuffHpUp : Buff {
-        public override bool ApplyToTarget() {
+        public override bool ApplyToTarget(Player p) {
             if (!applied_) {
+                Target = p;
                 Target.hp_.Max = Target.hp_.Max + BuffDataBase.Data[Id].Value1;
 
                 applied_ = true;
@@ -16,10 +16,10 @@ namespace rglikeworknamelib.Dungeon.Effects
             return false;
         }
 
-        public override bool RemoveFromTarget()
+        public override bool RemoveFromTarget(Player p)
         {
-            if (applied_)
-            {
+            if (applied_) {
+                Target = p;
                 Target.hp_.Max = Target.hp_.Max - BuffDataBase.Data[Id].Value1;
 
                 applied_ = false;
