@@ -31,75 +31,29 @@ namespace DataEditor
 
             DataGridViewColumn dgc = new DataGridViewColumn();
             dgc.Name = "Id";
-            dgc.Width = 40;
+            dgc.Width = 60;
             dgc.CellTemplate = new DataGridViewTextBoxCell();
             dgc.SortMode = DataGridViewColumnSortMode.Automatic;
             dataGridView1.Columns.Add(dgc);
 
-            dgc = new DataGridViewColumn();
-            dgc.Name = "AftId";
-            dgc.Width = 40;
-            dgc.CellTemplate = new DataGridViewTextBoxCell();
-            dgc.SortMode = DataGridViewColumnSortMode.Automatic;
-            dataGridView1.Columns.Add(dgc);
+            var ttt = typeof (ItemData).GetFields();
+            foreach (var field in ttt) {
+                DataGridViewColumn dgc2 = new DataGridViewColumn();
+                dgc2.Name = field.Name;
+                dgc2.Width = 60;
+                dgc2.CellTemplate = new DataGridViewTextBoxCell();
+                dgc2.SortMode = DataGridViewColumnSortMode.Automatic;
+                dataGridView1.Columns.Add(dgc2);
+            }
 
-            dgc = new DataGridViewColumn();
-            dgc.Name = "stype";
-            dgc.Width = 40;
-            dgc.CellTemplate = new DataGridViewTextBoxCell();
-            dgc.SortMode = DataGridViewColumnSortMode.Automatic;
-            dataGridView1.Columns.Add(dgc);
-
-            dgc = new DataGridViewColumn();
-            dgc.Name = "Name";
-            dgc.Width = 100;
-            dgc.CellTemplate = new DataGridViewTextBoxCell();
-            dgc.SortMode = DataGridViewColumnSortMode.Automatic;
-            dataGridView1.Columns.Add(dgc);
-
-            dgc = new DataGridViewColumn();
-            dgc.Name = "Descr";
-            dgc.Width = 40;
-            dgc.CellTemplate = new DataGridViewTextBoxCell();
-            dataGridView1.Columns.Add(dgc);
-
-            dgc = new DataGridViewColumn();
-            dgc.Name = "Wei";
-            dgc.Width = 40;
-            dgc.CellTemplate = new DataGridViewTextBoxCell();
-            dgc.SortMode = DataGridViewColumnSortMode.Automatic;
-            dataGridView1.Columns.Add(dgc);
-
-            dgc = new DataGridViewColumn();
-            dgc.Name = "Vol";
-            dgc.Width = 40;
-            dgc.CellTemplate = new DataGridViewTextBoxCell();
-            dgc.SortMode = DataGridViewColumnSortMode.Automatic;
-            dataGridView1.Columns.Add(dgc);
+            new ItemDataBase();
 
             foreach (var a in ItemDataBase.data) {   
                 var bb = new DataGridViewRow();
-                bb.Cells.AddRange(new DataGridViewTextBoxCell() {
-                                                                    Value = a.Key
-                                                                },
-                                  new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.AfteruseId
-                                                                },
-                                  new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.SType
-                                                                },
-                                  new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.Name
-                                                                },
-                                  new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.Description
-                                                                },
-                                  new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.Weight
-                                                                },
-                                  new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.Volume
-                                                                });
+                bb.Cells.Add(new DataGridViewTextBoxCell() {Value = a.Key});
+                foreach (var fieldInfo in a.Value.GetType().GetFields()) {
+                    bb.Cells.Add(new DataGridViewTextBoxCell() {Value = fieldInfo.GetValue(a.Value)});
+                }
                 dataGridView1.Rows.Add(bb);
             }
 

@@ -9,10 +9,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NLog;
 
-namespace rglikeworknamelib.Parser
-{
-    public static class ParsersCore
-    {
+namespace rglikeworknamelib.Parser {
+    public static class ParsersCore {
         public static Regex stringExtractor = new Regex("\".*\"");
         public static Regex intextractor = new Regex("[0-9]+");
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -53,106 +51,94 @@ namespace rglikeworknamelib.Parser
         }
 
         public static Collection<Texture2D> LoadTexturesInOrder(string s, ContentManager content) {
-        Collection<Texture2D> temp = new Collection<Texture2D>();
-
-        StreamReader sr = new StreamReader(s, Encoding.Default);
-        while(true) {
-            string t = sr.ReadLine();
-            if (t == null || t.Length < 3) break;
-            temp.Add(content.Load<Texture2D>(t));
-        }
-
-        return temp;
-        }
-        
-        public static Dictionary<string, Texture2D> LoadTexturesTagged(string s, ContentManager content)
-        {
-            Dictionary<string, Texture2D> temp = new Dictionary<string, Texture2D>();
+            Collection<Texture2D> temp = new Collection<Texture2D>();
 
             StreamReader sr = new StreamReader(s, Encoding.Default);
-            while (true)
-            {
+            while (true) {
                 string t = sr.ReadLine();
                 if (t == null || t.Length < 3) break;
-                temp.Add(t.Substring(t.IndexOf(' ') + 1, t.Length - (t.IndexOf(' ') + 1)), content.Load<Texture2D>(t.Substring(0, t.IndexOf(' '))));
+                temp.Add(content.Load<Texture2D>(t));
             }
 
             return temp;
         }
 
-        public static List<T> ParseDirectory<T>(string patch, Func<string, List<T>> parser)
-        {
-            try
-            {
+        public static Dictionary<string, Texture2D> LoadTexturesTagged(string s, ContentManager content) {
+            Dictionary<string, Texture2D> temp = new Dictionary<string, Texture2D>();
+
+            StreamReader sr = new StreamReader(s, Encoding.Default);
+            while (true) {
+                string t = sr.ReadLine();
+                if (t == null || t.Length < 3) break;
+                temp.Add(t.Substring(t.IndexOf(' ') + 1, t.Length - (t.IndexOf(' ') + 1)),
+                         content.Load<Texture2D>(t.Substring(0, t.IndexOf(' '))));
+            }
+
+            return temp;
+        }
+
+        public static List<T> ParseDirectory<T>(string patch, Func<string, List<T>> parser) {
+            try {
                 string[] a = Directory.GetFiles(patch, "*.txt");
                 var temp = new List<T>();
-                foreach (string s in a)
-                {
+                foreach (string s in a) {
                     temp.AddRange(ParseFile(s, parser));
                 }
                 return temp;
             }
-            catch (DirectoryNotFoundException e)
-            {
+            catch (DirectoryNotFoundException e) {
                 logger.ErrorException(e.StackTrace + " --- " + e.Message, e);
                 throw;
             }
         }
-        public static List<T> ParseFile<T>(string patch, Func<string, List<T>> parser)
-        {
-            try
-            {
+
+        public static List<T> ParseFile<T>(string patch, Func<string, List<T>> parser) {
+            try {
                 var sr = new StreamReader(patch, Encoding.Default);
                 string a = sr.ReadToEnd();
                 sr.Close();
                 sr.Dispose();
                 return parser(a);
             }
-            catch (FileNotFoundException)
-            {
+            catch (FileNotFoundException) {
                 return new List<T>();
             }
         }
 
-        public static List<T> UniversalParseDirectory<T>(string patch, Func<string, string, Type, List<T>> parser, Type baseType = null)
-        {
-            try
-            {
+        public static List<T> UniversalParseDirectory<T>(string patch, Func<string, string, Type, List<T>> parser,
+                                                         Type baseType = null) {
+            try {
                 string[] a = Directory.GetFiles(patch, "*.txt");
                 var temp = new List<T>();
-                foreach (string s in a)
-                {
+                foreach (string s in a) {
                     temp.AddRange(UnivarsalParseFile(s, parser, baseType));
                 }
                 return temp;
             }
-            catch (DirectoryNotFoundException e)
-            {
+            catch (DirectoryNotFoundException e) {
                 logger.ErrorException(e.StackTrace + " --- " + e.Message, e);
                 throw;
             }
         }
-        public static List<T> UnivarsalParseFile<T>(string patch, Func<string, string, Type, List<T>> parser, Type baseType = null)
-        {
-            try
-            {
+
+        public static List<T> UnivarsalParseFile<T>(string patch, Func<string, string, Type, List<T>> parser,
+                                                    Type baseType = null) {
+            try {
                 var sr = new StreamReader(patch, Encoding.Default);
                 string a = sr.ReadToEnd();
                 sr.Close();
                 sr.Dispose();
                 return parser(a, patch, baseType);
             }
-            catch (FileNotFoundException)
-            {
+            catch (FileNotFoundException) {
                 return new List<T>();
             }
         }
 
-        public static T CreateFromString<T>(string stringToCreateFrom)
-        {
+        public static T CreateFromString<T>(string stringToCreateFrom) {
             T output = Activator.CreateInstance<T>();
 
-            output = (T)Enum.Parse(typeof(T), stringToCreateFrom, true);
+            output = (T) Enum.Parse(typeof (T), stringToCreateFrom, true);
 
             return output;
         }

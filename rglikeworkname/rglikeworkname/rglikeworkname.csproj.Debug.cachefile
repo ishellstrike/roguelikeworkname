@@ -131,6 +131,7 @@ Content\Data\Items\weapon_guns1.txt
 Content\Data\Items\weapon_ammo.txt
 Content\Data\Schemes\bunker1.txt
 Content\Data\Dialogs\testdialog1.txt
+Content\Data\Names\towannames.txt
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord

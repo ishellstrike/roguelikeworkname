@@ -21,6 +21,7 @@ using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
+using rglikeworknamelib.Generation.Names;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Window;
 using Button = rglikeworknamelib.Window.Button;
@@ -75,13 +76,13 @@ namespace jarg
             myProcess.WaitForExit(3000);
 #endif
 
-            if (File.Exists("JARGErrorLog_1.txt"))
+            if (File.Exists("JARGLog_previous.txt"))
             {
-                File.Delete("JARGErrorLog_1.txt");
+                File.Delete("JARGLog_previous.txt");
             }
-            if (File.Exists("JARGErrorLog.txt"))
+            if (File.Exists("JARGLog.txt"))
             {
-                File.Move("JARGErrorLog.txt", "JARGErrorLog_1.txt");
+                File.Move("JARGLog.txt", "JARGLog_previous.txt");
             }
 
             Version.Init();
@@ -569,23 +570,25 @@ namespace jarg
         private void DataBasesLoadAndThenInitialGeneration() {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            ShowInfoWindow("Bases loading :", "1/7");
+            ShowInfoWindow("Bases loading :", "1/8");
             new MonsterDataBase();
-            ShowInfoWindow("Bases loading :", "2/7");
+            ShowInfoWindow("Bases loading :", "2/8");
             new BlockDataBase();
-            ShowInfoWindow("Bases loading :", "3/7");
+            ShowInfoWindow("Bases loading :", "3/8");
             new FloorDataBase();
-            ShowInfoWindow("Bases loading :", "4/7");
+            ShowInfoWindow("Bases loading :", "4/8");
             new ItemDataBase();
-            ShowInfoWindow("Bases loading :", "5/7");
+            ShowInfoWindow("Bases loading :", "5/8");
             new SchemesDataBase();
-            ShowInfoWindow("Bases loading :", "6/7");
+            ShowInfoWindow("Bases loading :", "6/8");
             new BuffDataBase();
-            ShowInfoWindow("Bases loading :", "7/7");
+            ShowInfoWindow("Bases loading :", "7/8");
             new DialogDataBase();
+            ShowInfoWindow("Bases loading :", "8/8");
+            new NameDataBase();
             HideInfoWindow();
             sw.Stop();
-            logger.Info("Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\nloaded in {0}", 
+            logger.Info("Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\nloaded in {0}", 
                         sw.Elapsed, 
                         MonsterDataBase.Data.Count, 
                         BlockDataBase.Data.Count, 
@@ -593,7 +596,8 @@ namespace jarg
                         ItemDataBase.data.Count, 
                         SchemesDataBase.Data.Count, 
                         BuffDataBase.Data.Count, 
-                        DialogDataBase.data.Count);
+                        DialogDataBase.data.Count, 
+                        NameDataBase.data.Count);
 
             Action igen = InitialGeneration;
             igen.BeginInvoke(null, null);

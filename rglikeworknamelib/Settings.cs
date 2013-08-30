@@ -115,5 +115,9 @@ namespace rglikeworknamelib {
         public static string GetDialogDataDirectory() {
             return GetDataDirectory() + @"\Dialogs";
         }
+
+        public static string GetNamesDataDirectory() {
+            return GetDataDirectory() + @"\Names";
+        }
     }
 }
