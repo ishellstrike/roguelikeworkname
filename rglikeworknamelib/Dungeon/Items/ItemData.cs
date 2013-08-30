@@ -5,14 +5,18 @@ namespace rglikeworknamelib.Dungeon.Item {
     {
         public int stackNo;
 
-        public int weight;
-        public string afteruseId;
+        public int Weight;
+        public string AfteruseId;
 
         public int hasHealth; //if has health, count became health
 
         public string Name;
         public string Nameret;
-        public string description;
+        public string Description;
+
+        public int Doses;
+
+        public int NutH2O, NutCal;
 
         public string Buff1;
         public string Buff2;
@@ -20,11 +24,14 @@ namespace rglikeworknamelib.Dungeon.Item {
         public string Buff4;
         public string Buff5;
 
-        public int mtex;
+        public string Ammo;
+        public int Magazine;
 
-        public Microsoft.Xna.Framework.Color mmcol;
+        public int MTex;
 
-        public int volume;
-        public ItemType stype;
+        public Microsoft.Xna.Framework.Color MMCol;
+
+        public int Volume;
+        public ItemType SType;
     }
 }

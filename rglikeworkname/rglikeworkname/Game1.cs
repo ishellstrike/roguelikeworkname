@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork;
+using NLog;
 using rglikeworknamelib;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dialogs;
@@ -53,6 +55,8 @@ namespace jarg
         private SpriteBatch spriteBatch_;
 
         private Texture2D whitepixel_;
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public Game1() {
 #if DEBUG
@@ -184,6 +188,8 @@ namespace jarg
         private DoubleLabel LabelCaracterBag;
         private DoubleLabel LabelCaracterHp;
 
+        private Window InfoWindow;
+        private DoubleLabel InfoWindowLabel;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
@@ -304,6 +310,21 @@ namespace jarg
             LabelCaracterBag = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Bag : ", wp, sf, WindowCaracter);
             ii = 0;
             LabelCaracterHp = new DoubleLabel(new Vector2(10+300, 10 + 15 * ii), "HP : ", wp, sf, WindowCaracter);
+
+            InfoWindow = new Window(new Vector2(200,100), "Info", true, wp, sf, ws){Visible = false};
+            InfoWindowLabel = new DoubleLabel(new Vector2(20,20), "some info", wp, sf, InfoWindow);
+        }
+
+        void ShowInfoWindow(string s1, string s2) {
+            InfoWindowLabel.Text = s1;
+            InfoWindowLabel.Text2 = s2;
+           // InfoWindow.CenterComponentHor(InfoWindowLabel);
+            InfoWindow.Visible = true;
+        }
+
+        void HideInfoWindow()
+        {
+            InfoWindow.Visible = false;
         }
 
         void IntentoryEquip_onPressed(object sender, EventArgs e) {
@@ -482,7 +503,7 @@ namespace jarg
                 StatsHunger.Progress = (int) player_.Heat.Current;
             }
 
-            if(WindowMinimap.Visible) {
+            if(currentFloor_ != null && WindowMinimap.Visible) {
                 ImageMinimap.image = currentFloor_.GetMinimap();
             }
 
@@ -512,36 +533,70 @@ namespace jarg
             data[0] = 0xffffffff;
             whitepixel_.SetData(data);
 
-            new MonsterDataBase();
-            new BlockDataBase();
-            new FloorDataBase();
-            new ItemDataBase();
-            new SchemesDataBase();
-            new BuffDataBase();
-            new DialogDataBase();
-
             font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
             Settings.Font = font1_;
 
-            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice);
-
             ws_ = new WindowSystem(whitepixel_, font1_);
+            CreateWindows(whitepixel_, font1_, ws_);
 
-            ps_ = new ParticleSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
+            Action dbl = DataBasesLoadAndThenInitialGeneration;
+            dbl.BeginInvoke(null, null);
+        }
 
-            bs_ = new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content), currentFloor_, font1_, lineBatch_);
-
+        private void InitialGeneration() {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            ShowInfoWindow("Initial map generation", "");
+            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice);
+            ps_ = new ParticleSystem(spriteBatch_,
+                                     ParsersCore.LoadTexturesInOrder(
+                                         Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
+            bs_ = new BulletSystem(spriteBatch_,
+                                   ParsersCore.LoadTexturesInOrder(
+                                       Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
+                                   currentFloor_, font1_, lineBatch_);
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
-
-
             inventory_ = new InventorySystem();
             inventory_.items.Add(new Item("testhat", 1));
             inventory_.items.Add(new Item("testhat2", 1));
             inventory_.items.Add(new Item("ak47", 1));
-
-            CreateWindows(whitepixel_, font1_, ws_);
-            
             UpdateInventoryContainer();
+            HideInfoWindow();
+            sw.Stop();
+            logger.Info("Initial generation in {0}",sw.Elapsed);
+        }
+
+        private void DataBasesLoadAndThenInitialGeneration() {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            ShowInfoWindow("Bases loading :", "1/7");
+            new MonsterDataBase();
+            ShowInfoWindow("Bases loading :", "2/7");
+            new BlockDataBase();
+            ShowInfoWindow("Bases loading :", "3/7");
+            new FloorDataBase();
+            ShowInfoWindow("Bases loading :", "4/7");
+            new ItemDataBase();
+            ShowInfoWindow("Bases loading :", "5/7");
+            new SchemesDataBase();
+            ShowInfoWindow("Bases loading :", "6/7");
+            new BuffDataBase();
+            ShowInfoWindow("Bases loading :", "7/7");
+            new DialogDataBase();
+            HideInfoWindow();
+            sw.Stop();
+            logger.Info("Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\nloaded in {0}", 
+                        sw.Elapsed, 
+                        MonsterDataBase.Data.Count, 
+                        BlockDataBase.Data.Count, 
+                        FloorDataBase.Data.Count, 
+                        ItemDataBase.data.Count, 
+                        SchemesDataBase.Data.Count, 
+                        BuffDataBase.Data.Count, 
+                        DialogDataBase.data.Count);
+
+            Action igen = InitialGeneration;
+            igen.BeginInvoke(null, null);
         }
 
         protected override void UnloadContent()
@@ -580,7 +635,10 @@ namespace jarg
 
             WindowsUpdate(gameTime);
             ws_.Update(gameTime, ms_, lms_, false);
-            PlayerSeeAngle = (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
+            if (player_ != null) {
+                PlayerSeeAngle =
+                    (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
+            }
 
             if (Settings.DebugInfo)
             {
@@ -709,7 +767,10 @@ namespace jarg
                 ButtonContainerTakeAll_onPressed(null, null);
             }
 
-            pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200) / 2, player_.Position.Y - Settings.Resolution.Y / 2);
+            if (player_ != null) {
+                pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200)/2,
+                                          player_.Position.Y - Settings.Resolution.Y/2);
+            }
 
         }
 
@@ -733,56 +794,52 @@ namespace jarg
 
             WindowIngameHint.Visible = false;
 
-            if(!currentFloor_.IsCreatureMeele((int)containerOn.X, (int)containerOn.Y, player_)) {
+            if(player_ != null && !currentFloor_.IsCreatureMeele((int)containerOn.X, (int)containerOn.Y, player_)) {
                 WindowContainer.Visible = false;
             }
 
-            var nxny = currentFloor_.GetBlock(nx, ny);
-            if (nxny != null && nxny.Lightness == Color.White)// currentFloor_.IsExplored(aa))
-            {
-                var a = currentFloor_.GetBlock(nx, ny);
-                if (a != null)
+            if (currentFloor_ != null) {
+                var nxny = currentFloor_.GetBlock(nx, ny);
+                if (nxny != null && nxny.Lightness == Color.White) // currentFloor_.IsExplored(aa))
                 {
-                    var b = BlockDataBase.Data[a.Id];
-                    string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
-                    if (Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
+                    var a = currentFloor_.GetBlock(nx, ny);
+                    if (a != null) {
+                        var b = BlockDataBase.Data[a.Id];
+                        string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
+                        if (Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
 
-                    if (currentFloor_.IsCreatureMeele(nx, ny, player_))
-                    {
-                        if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released)
-                        {
-                            var undermouseblock = BlockDataBase.Data[a.Id];
-                            switch (undermouseblock.SmartAction)
-                            {
-                                case SmartAction.ActionSee:
-                                    EventLog.Add("Вы видите " + undermouseblock.Name, GlobalWorldLogic.CurrentTime,
-                                                 Color.Gray, LogEntityType.SeeSomething);
-                                    break;
-                                case SmartAction.ActionOpenContainer:
-                                    WindowContainer.Visible = true;
-                                    WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
-                                    UpdateContainerContainer((a as StorageBlock).StoredItems);
-                                    containerOn = new Vector2(nx, ny);
-                                    break;
-                                case SmartAction.ActionOpenClose:
-                                    currentFloor_.OpenCloseDoor(nx, ny);
-                                    break;
+                        if (currentFloor_.IsCreatureMeele(nx, ny, player_)) {
+                            if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                                var undermouseblock = BlockDataBase.Data[a.Id];
+                                switch (undermouseblock.SmartAction) {
+                                    case SmartAction.ActionSee:
+                                        EventLog.Add("Вы видите " + undermouseblock.Name, GlobalWorldLogic.CurrentTime,
+                                                     Color.Gray, LogEntityType.SeeSomething);
+                                        break;
+                                    case SmartAction.ActionOpenContainer:
+                                        WindowContainer.Visible = true;
+                                        WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
+                                        UpdateContainerContainer((a as StorageBlock).StoredItems);
+                                        containerOn = new Vector2(nx, ny);
+                                        break;
+                                    case SmartAction.ActionOpenClose:
+                                        currentFloor_.OpenCloseDoor(nx, ny);
+                                        break;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        s += " (далеко)";
-                        if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
-                            WindowContainer.Visible = false;
+                        else {
+                            s += " (далеко)";
+                            if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                                WindowContainer.Visible = false;
+                            }
                         }
-                    }
 
-                    if (WindowIngameHint.Visible = a.Id != "0")
-                    {
-                        LabelIngameHint.Text = s;
-                        WindowIngameHint.Locate.Width = (int)LabelIngameHint.Width + 20;
-                        WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
+                        if (WindowIngameHint.Visible = a.Id != "0") {
+                            LabelIngameHint.Text = s;
+                            WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
+                            WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
+                        }
                     }
                 }
             }

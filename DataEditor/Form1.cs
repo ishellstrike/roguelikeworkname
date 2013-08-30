@@ -83,22 +83,22 @@ namespace DataEditor
                                                                     Value = a.Key
                                                                 },
                                   new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.afteruseId
+                                                                    Value = a.Value.AfteruseId
                                                                 },
                                   new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.stype
+                                                                    Value = a.Value.SType
                                                                 },
                                   new DataGridViewTextBoxCell() {
                                                                     Value = a.Value.Name
                                                                 },
                                   new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.description
+                                                                    Value = a.Value.Description
                                                                 },
                                   new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.weight
+                                                                    Value = a.Value.Weight
                                                                 },
                                   new DataGridViewTextBoxCell() {
-                                                                    Value = a.Value.volume
+                                                                    Value = a.Value.Volume
                                                                 });
                 dataGridView1.Rows.Add(bb);
             }

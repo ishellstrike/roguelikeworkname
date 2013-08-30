@@ -2,82 +2,211 @@
 
 ~Item,12000,0
 Name="SA80"
-description="Made in UK"
-stype="Gun"
-uptype="Rifle"
+Description="Made in UK"
+SType="Gun"
+UpType="Rifle"
 some="some some"
 some2="some some2"
 
 
 ~Item,12001,0
 Name="HK417"
-description="Made in Germany"
-stype="Gun"
-uptype="AssaultRifle"
+Description="Made in Germany"
+SType="Gun"
+UpType="AssaultRifle"
 
 ~Item,12002,0
 Name="TAR-21"
-description="Made in Israel"
-stype="Gun"
-uptype="AssaultRifle"
+Description="Made in Israel"
+SType="Gun"
+UpType="AssaultRifle"
 
 ~Item,12003,0
 Name="СВД"
-description="Made in Russia"
-stype="Gun"
-uptype="SniperRifle"
-weight=5000
+Description="Made in Russia"
+SType="Gun"
+UpType="SniperRifle"
+Weight=5000
 
 ~Item,12004,0
 Name="Винтовка M14"
-description="Made in USA"
-stype="Gun"
-uptype="Rifle"
-weight=4000
+Description="Made in USA"
+SType="Gun"
+UpType="Rifle"
+Weight=4000
 
 ~Item,12005,0
 Name="Снайперская винтовка М25"
-description="Made in USA"
-stype="Gun"
-uptype="SniperRifle"
-weight=5000
+Description="Made in USA"
+SType="Gun"
+UpType="SniperRifle"
+Weight=5000
 
 ~Item,12006,0
 Name="FAMAS"
-stype="Gun"
-uptype="AssaultRifle"
-weight=4000
+SType="Gun"
+UpType="AssaultRifle"
+Weight=4000
 
 ~Item,12007,0
 Name="Barrett M82"
-stype="Gun"
-uptype="SniperRifle"
-weight=14000
-ammo="a50"
+SType="Gun"
+UpType="SniperRifle"
+Weight=14000
+Ammo="a50"
 
 
 ~Item,12008,0
 Name="AK-12"
-stype="Gun"
-uptype="AssaultRifle"
-weight=3500
-magazine=30
-description="Made in Russia"
-ammo="a223"
+SType="Gun"
+UpType="AssaultRifle"
+Weight=3500
+Magazine=30
+Description="Made in Russia"
+Ammo="a223"
 
 ~Item,ak47,0
 Name="AK-47"
-stype="Gun"
-uptype="AssaultRifle"
-weight=3500
-magazine=30
-description="Made in Russia"
+SType="Gun"
+UpType="AssaultRifle"
+Weight=3500
+Magazine=30
+Description="Made in Russia"
 
 ~Item,12009,0
 Name="AK-12 барабанный магазин"
-stype="Gun"
-uptype="AssaultRifle"
-weight=3800
-magazine=90
-description="Made in Russia"
-ammo="a223"
+SType="Gun"
+UpType="AssaultRifle"
+Weight=3800
+Magazine=90
+Description="Made in Russia"
+Ammo="a223"
+
+~Item,g1
+~Item,g2
+~Item,g3
+~Item,g4
+~Item,g5
+~Item,g7
+~Item,g6
+~Item,g8
+~Item,g11
+~Item,g22
+~Item,g33
+~Item,g44
+~Item,g55
+~Item,g76
+~Item,g67
+~Item,g88
+~Item,g1q
+~Item,g2q
+~Item,g3q
+~Item,g4q
+~Item,g5q
+~Item,g7q
+~Item,g6q
+~Item,g8q
+~Item,g11q
+~Item,g22q
+~Item,g33q
+~Item,g44q
+~Item,g55q
+~Item,g76q
+~Item,g67q
+~Item,g88q
+~Item,g1w
+~Item,g2w
+~Item,g3w
+~Item,g4w
+~Item,g5w
+~Item,g7w
+~Item,g6w
+~Item,g8w
+~Item,g11w
+~Item,g22w
+~Item,g33w
+~Item,g44w
+~Item,g55w
+~Item,g76w
+~Item,g67w
+~Item,g88w
+~Item,g1qw
+~Item,g2qw
+~Item,g3qw
+~Item,g4qw
+~Item,g5qw
+~Item,g7qw
+~Item,g6qw
+~Item,g8qw
+~Item,g11qw
+~Item,g22qw
+~Item,g33qw
+~Item,g44qw
+~Item,g55qw
+~Item,g76qw
+~Item,g67qw
+~Item,g88qw
+~Item,g1e
+~Item,g2e
+~Item,g3e
+~Item,g4e
+~Item,g5e
+~Item,g7e
+~Item,g6e
+~Item,g8e
+~Item,g11e
+~Item,g22e
+~Item,g33e
+~Item,g44e
+~Item,g55e
+~Item,g76e
+~Item,g67e
+~Item,g88e
+~Item,g1qe
+~Item,g2qe
+~Item,g3qe
+~Item,g4qe
+~Item,g5qe
+~Item,g7qe
+~Item,g6qe
+~Item,g8qe
+~Item,g11qe
+~Item,g22qe
+~Item,g33qe
+~Item,g44qe
+~Item,g55qe
+~Item,g76qe
+~Item,g67qe
+~Item,g88qe
+~Item,g1we
+~Item,g2we
+~Item,g3we
+~Item,g4we
+~Item,g5we
+~Item,g7we
+~Item,g6we
+~Item,g8we
+~Item,g11we
+~Item,g22we
+~Item,g33we
+~Item,g44we
+~Item,g55we
+~Item,g76we
+~Item,g67we
+~Item,g88we
+~Item,g1qwe
+~Item,g2qwe
+~Item,g3qwe
+~Item,g4qwe
+~Item,g5qwe
+~Item,g7qwe
+~Item,g6qwe
+~Item,g8qwe
+~Item,g11qwe
+~Item,g22qwe
+~Item,g33qwe
+~Item,g44qwe
+~Item,g55qwe
+~Item,g76qwe
+~Item,g67qwe
+~Item,g88qwe

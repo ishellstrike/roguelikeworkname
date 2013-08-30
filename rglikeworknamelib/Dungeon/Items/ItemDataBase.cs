@@ -29,11 +29,11 @@ namespace rglikeworknamelib.Dungeon.Item {
             data = new Dictionary<string, ItemData>();
             dataFoodItems = new Dictionary<string, ItemData>();
             dataMedicineItems = new Dictionary<string, ItemData>();
-            var a = ParsersCore.UniversalParseDirectory<KeyValuePair<string, object>>(Settings.GetItemDataDirectory(), UniversalParser.Parser<ItemData>, typeof(Item));
+            var a = ParsersCore.UniversalParseDirectory<KeyValuePair<string, object>>(Settings.GetItemDataDirectory(), UniversalParser.Parser<ItemData>);
             foreach (var pair in a) {
                 data.Add(pair.Key, (ItemData)pair.Value);
-                if (((ItemData)pair.Value).stype == ItemType.Medicine) dataMedicineItems.Add(pair.Key, (ItemData)pair.Value);
-                if (((ItemData)pair.Value).stype == ItemType.Food) dataFoodItems.Add(pair.Key, (ItemData)pair.Value);
+                if (((ItemData)pair.Value).SType == ItemType.Medicine) dataMedicineItems.Add(pair.Key, (ItemData)pair.Value);
+                if (((ItemData)pair.Value).SType == ItemType.Food) dataFoodItems.Add(pair.Key, (ItemData)pair.Value);
             }
         }
 
@@ -86,24 +86,24 @@ namespace rglikeworknamelib.Dungeon.Item {
 
         public static string GetItemDescription(Item i)
         {
-            return data[i.Id].description;
+            return data[i.Id].Description;
         }
 
         public static string GetItemFullDescription(Item i) {
             var item = data[i.Id];
             StringBuilder sb = new StringBuilder();
             sb.Append(item.Name);
-            if (data[i.Id].description != null) {
-                sb.Append(Environment.NewLine + Environment.NewLine + data[i.Id].description);
+            if (data[i.Id].Description != null) {
+                sb.Append(Environment.NewLine + Environment.NewLine + data[i.Id].Description);
             }
-            sb.Append(Environment.NewLine + string.Format("{0} г", item.weight));
-            sb.Append(Environment.NewLine + string.Format("{0} места", item.volume));
+            sb.Append(Environment.NewLine + string.Format("{0} г", item.Weight));
+            sb.Append(Environment.NewLine + string.Format("{0} места", item.Volume));
             if(Settings.DebugInfo) {
                 sb.Append(Environment.NewLine + string.Format("id {0} uid {1}", i.Id, i.Uid));
             }
 
-            if (item.afteruseId != null) {
-                sb.Append(Environment.NewLine + string.Format("оставляет {0}", data[item.afteruseId].Name));
+            if (item.AfteruseId != null) {
+                sb.Append(Environment.NewLine + string.Format("оставляет {0}", data[item.AfteruseId].Name));
             }
 
             if(item.Buff1 != null || item.Buff2 != null||item.Buff3 != null||item.Buff4 != null||item.Buff5 != null) {

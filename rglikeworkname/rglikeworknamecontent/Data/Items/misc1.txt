@@ -1,14 +1,14 @@
 //misc from 8000
 ~Item,8000,0
 Name="–юкзак походный"
-weight=1000
-volume=2000
-container=65000
-stype="Bag"
+Weight=1000
+Volume=2000
+Container=65000
+SType="Bag"
 
 ~Item,8001,0
 Name="–юкзак туристический"
-weight=600
-volume=1200
-container=28000
-stype="Bag"
+Weight=600
+Volume=1200
+Container=28000
+SType="Bag"

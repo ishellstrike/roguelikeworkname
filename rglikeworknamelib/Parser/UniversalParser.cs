@@ -16,7 +16,7 @@ namespace rglikeworknamelib.Parser {
         /// <param name="s">Readed data file</param>
         /// <param name="basetype">Basic type of parsing objects (for Prototype Parser) (e.g. typeof(Block) (null if you have no Prototype in parsed data))</param>
         /// <returns>List of data of type KeyValuePair&lt;string (id), object (parseof type)&gt;</returns>
-        public static List<KeyValuePair<string, object>> Parser<T>(string s, Type basetype = null)
+        public static List<KeyValuePair<string, object>> Parser<T>(string s, string filePos, Type basetype = null)
         {
             var temp = new List<KeyValuePair<string, object>>();
 
@@ -106,6 +106,7 @@ namespace rglikeworknamelib.Parser {
                     }
                 }
             }
+            logger.Info("{0} entities for {1} loaded from {2}", temp.Count, typeof(T).ToString(), filePos);
             return temp;
         }
     }

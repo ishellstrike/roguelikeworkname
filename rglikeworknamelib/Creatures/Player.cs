@@ -67,7 +67,7 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public void EquipItem(Item i, InventorySystem ins) {
-            switch (ItemDataBase.data[i.Id].stype) {
+            switch (ItemDataBase.data[i.Id].SType) {
                     case ItemType.Hat:
                         EquipExact(i, ins, ref ItemHat);
                     break;

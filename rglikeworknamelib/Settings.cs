@@ -26,25 +26,25 @@ namespace rglikeworknamelib {
         }
 
         public static string GetDataDirectory() {
-            return @"Content/Data";
+            return @"Content\Data";
         }
 
         public static string GetTextureDirectory() {
-            return @"Content/Textures";
+            return @"Content\Textures";
         }
 
         public static string GetFloorDataDirectory() {
-            return GetDataDirectory() + @"/Floor";
+            return GetDataDirectory() + @"\Floor";
         }
 
         public static string GetObjectDataDirectory()
         {
-            return GetDataDirectory() + @"/Object";
+            return GetDataDirectory() + @"\Object";
         }
 
         public static string GetItemDataDirectory()
         {
-            return GetDataDirectory() + @"/Items";
+            return GetDataDirectory() + @"\Items";
         }
 
         public static float GetMeeleActionRange() {
@@ -54,7 +54,7 @@ namespace rglikeworknamelib {
         public static Vector2 FloorSpriteSize = new Vector2(32, 32);
         public static Vector2 Sqeezer = new Vector2(1, 1);
         public static string GetWorldsDirectory() {
-            return @"Worlds/";
+            return @"Worlds\";
         }
     
 
@@ -81,39 +81,39 @@ namespace rglikeworknamelib {
         }
 
         public static string GetParticleTextureDirectory() {
-            return GetTextureDirectory() + @"/Particles";
+            return GetTextureDirectory() + @"\Particles";
         }
 
         public static string GetUnitTextureDirectory() {
-            return GetTextureDirectory() + @"/Units";
+            return GetTextureDirectory() + @"\Units";
         }
 
         public static string GetCreatureDataDirectory() {
-            return GetDataDirectory() + @"/Units";
+            return GetDataDirectory() + @"\Units";
         }
 
         public static string GetDressTexturesDirectory() {
-            return GetUnitTextureDirectory() + @"/Dress";
+            return GetUnitTextureDirectory() + @"\Dress";
         }
 
         public static string GetMinimapTexturesDirectory() {
-            return GetTextureDirectory() + @"/Dungeon/Minimap";
+            return GetTextureDirectory() + @"\Dungeon\Minimap";
         }
 
         public static string GetFloorTextureDirectory() {
-            return GetTextureDirectory() + @"/Dungeon/Floor";
+            return GetTextureDirectory() + @"\Dungeon\Floor";
         }
 
         public static string GetObjectTextureDirectory() {
-            return GetTextureDirectory() + @"/Dungeon/Objects";
+            return GetTextureDirectory() + @"\Dungeon\Objects";
         }
 
         public static string GetEffectDataDirectory() {
-            return GetDataDirectory() + @"/Effects";
+            return GetDataDirectory() + @"\Effects";
         }
 
         public static string GetDialogDataDirectory() {
-            return GetDataDirectory() + @"/Dialogs";
+            return GetDataDirectory() + @"\Dialogs";
         }
     }
 }

@@ -114,7 +114,7 @@ namespace rglikeworknamelib.Parser
             }
         }
 
-        public static List<T> UniversalParseDirectory<T>(string patch, Func<string, Type, List<T>> parser, Type baseType = null)
+        public static List<T> UniversalParseDirectory<T>(string patch, Func<string, string, Type, List<T>> parser, Type baseType = null)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace rglikeworknamelib.Parser
                 throw;
             }
         }
-        public static List<T> UnivarsalParseFile<T>(string patch, Func<string, Type, List<T>> parser, Type baseType = null)
+        public static List<T> UnivarsalParseFile<T>(string patch, Func<string, string, Type, List<T>> parser, Type baseType = null)
         {
             try
             {
@@ -140,7 +140,7 @@ namespace rglikeworknamelib.Parser
                 string a = sr.ReadToEnd();
                 sr.Close();
                 sr.Dispose();
-                return parser(a, baseType);
+                return parser(a, patch, baseType);
             }
             catch (FileNotFoundException)
             {
