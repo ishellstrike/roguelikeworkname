@@ -13,13 +13,13 @@ namespace rglikeworknamelib.Dungeon.Level
         public Color MMCol;
 
         public float HP;
-        public int MTex;
-        public int[] AlterMtex;
+        public string MTex;
+        public string[] AlterMtex;
         public string Name;
 
         public bool Walkable;
 
-        public int RandomMtexFromAlters() {
+        public string RandomMtexFromAlters() {
             if(AlterMtex == null || AlterMtex.Length == 0) {
                 return MTex;
             }

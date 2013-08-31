@@ -124,7 +124,7 @@ namespace rglikeworknamelib.Generation
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
                 PlaceScheme(mapSector, mapSector.Parent, a[r], posX, posY);
-                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent,  a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], "8"), posX, posY);
+                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent,  a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], "conk_base"), posX, posY);
             }
         }
 
@@ -138,24 +138,31 @@ namespace rglikeworknamelib.Generation
         }
 
         public static string[] GetInnerFloorArrayWithId(Schemes a, string id) {
+
             int[] visited = new int[a.data.Length];
             Queue<int> todo = new Queue<int>();
             if (a.data[0] == "0") todo.Enqueue(0); // угол 0,0
             if (a.data[(a.x - 1) * a.y] == "0") todo.Enqueue((a.x - 1) * a.y); //угол х,0
             if (a.data[a.y - 1] == "0") todo.Enqueue(a.y - 1); //угол 0,у
-            if (a.data[(a.x - 1) * a.y + a.y - 1] == "0") todo.Enqueue((a.x - 1) *a.y + a.y - 1); //угол х,у
+            if (a.data[a.y * a.x - 1] == "0") todo.Enqueue(a.y * a.x - 1); //угол х,у
 
-            var dd = Math.Max(a.y, a.x);
 
-            while (todo.Count > 0) {
+
+            while (todo.Count > 0)
+            {
                 int t = todo.Dequeue();
+                if (t >= 0 && t <= a.y * a.x - 1)
+                {
+                    if (visited[t] == 0 && a.data[t] == "0")
+                    {
+                        visited[t] = 1;
 
-                if(visited[t] == 0 && a.data[t] == "0") {
-                    visited[t] = 1;
-                    if (t % dd < a.x - 1) todo.Enqueue(t + 1);
-                    if (t % dd > 0) todo.Enqueue(t - 1);
-                    if (t / dd < a.y - 1) todo.Enqueue(t + dd);
-                    if (t / dd > 0) todo.Enqueue(t - dd);
+                        if (t % a.y < a.x - 1) todo.Enqueue(t + 1);
+                        if (t % a.y > 0) todo.Enqueue(t - 1);
+                        if (t / a.y < a.y - 1) todo.Enqueue(t + a.y);
+                        if (t / a.y > 0) todo.Enqueue(t - a.y);
+
+                    }
                 }
             }
 
@@ -311,9 +318,9 @@ namespace rglikeworknamelib.Generation
                         mapSector.SetFloor(i, j, "1");
                     } else {
                         if (t > 0.5) {
-                            mapSector.SetFloor(i, j, "8");
+                            mapSector.SetFloor(i, j, "1");
                         } else {
-                            mapSector.SetFloor(i, j, "3");
+                            mapSector.SetFloor(i, j, "grass_base");
                         }
                     }
                 }

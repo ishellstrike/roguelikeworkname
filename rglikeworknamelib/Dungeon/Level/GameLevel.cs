@@ -789,6 +789,11 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void SaveAll() {
+            Action a = SaveAllAsync;
+            a.BeginInvoke(null, null);
+        }
+
+        private void SaveAllAsync() {
             foreach (var sector in sectors_) {
                 SaveSector(sector.Value);
             }

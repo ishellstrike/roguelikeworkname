@@ -6,48 +6,62 @@ MTex=0
 ~Floor,1
 Name="Земля"
 mmcol="brown"
-walkable
+Walkable=true
 MTex=1
 
 ~Floor,2
 Name="Асфальт"
 mmcol="darkgray"
-walkable
+Walkable=true
 MTex=2
 
 ~Floor,3
 Name="Бетон"
 mmcol="lightgray"
-walkable
+Walkable=true
 MTex=3
 
 ~Floor,4
 Name="Бетон"
 mmcol="green"
-walkable
+Walkable=true
 MTex=4
 
 ~Floor,5
 Name="Бетон"
 mmcol="yellow"
-walkable
+Walkable=true
 MTex=5
 
 ~Floor,6
 Name="Бетон"
 mmcol="red"
-walkable
+Walkable=true
 MTex=6
 
 ~Floor,7
 Name="Бетон"
 mmcol="blue"
-walkable
+Walkable=true
 MTex=7
 
 ~Floor,8
 Name="Пол Корабля"
 mmcol="blue"
-walkable
-altermtex=9,10,11,12,13,14,15
+Walkable=true
+AlterMtex={9,10,11,12,13,14,15}
 MTex=16
+
+~Floor,grass_base
+Name="Трава"
+mmcol="green"
+Walkable=true
+AlterMtex={grass2,grass3,grass4,grass5,grass6,grass7}
+MTex=grass1
+
+~Floor,conk_base
+Name="Бетон"
+mmcol="green"
+Walkable=true
+AlterMtex={conk2}
+MTex=conk1

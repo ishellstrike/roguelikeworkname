@@ -10,7 +10,7 @@ using rglikeworknamelib.Parser;
 namespace rglikeworknamelib
 {
     public class Atlases {
-        public static Collection<Texture2D>  FloorAtlas;
+        public static Dictionary<string, Texture2D> FloorAtlas;
         public static Dictionary<string, Texture2D> BlockAtlas, CreatureAtlas; 
         public static ContentManager Content;
         public static Collection<Texture2D> ParticleAtlas;
@@ -23,7 +23,7 @@ namespace rglikeworknamelib
         }
 
         private void Load() {
-            FloorAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetFloorTextureDirectory() + @"/textureloadorder.ord", Content);
+            FloorAtlas = ParsersCore.LoadTexturesTagged(Settings.GetFloorTextureDirectory() + @"/textureloadorder.ord", Content);
             BlockAtlas = ParsersCore.LoadTexturesTagged(Settings.GetObjectTextureDirectory() + @"/textureloadorder.ord", Content);
             CreatureAtlas = ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"/textureloadorder.ord", Content);
             ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content);

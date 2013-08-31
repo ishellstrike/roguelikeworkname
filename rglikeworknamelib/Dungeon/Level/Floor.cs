@@ -6,6 +6,6 @@ namespace rglikeworknamelib.Dungeon.Level
     public class Floor
     {
         public string Id;
-        public int Mtex;
+        public string Mtex;
     }
 }

@@ -75,27 +75,24 @@ namespace rglikeworknamelib.Parser {
                             if (finfo != null)
                             {
                                 var converter = TypeDescriptor.GetConverter(finfo.FieldType);
-                                if (extracted.StartsWith("{")) //Array parser
+                                if (converter != null)
                                 {
-                                    extracted = extracted.Substring(1, extracted.Length - 2);
-                                    var arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
-
-                                    foreach (var arrextr in arrayextractor)
+                                    if (extracted.StartsWith("{")) //Array parser
                                     {
-
+                                        extracted = extracted.Substring(1, extracted.Length - 2);
+                                        var arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
+                                        var ar = arrayextractor.ToArray();
+                                        finfo.SetValue(cur.Value, ar);
                                     }
-                                }
-                                else
-                                {
-                                    if (converter != null)
+                                    else
                                     {
                                         var converted = converter.ConvertFromString(extracted);
                                         finfo.SetValue(cur.Value, converted);
                                     }
-                                    else
-                                    {
-                                        logger.Error("Could't convert \""+extracted+"\" to "+finfo+" to ID "+header[0]);
-                                    }
+                                }
+                                else
+                                {
+                                    logger.Error("Could't convert \"" + extracted + "\" to " + finfo + " to ID " + header[0]);
                                 }
                             }
                             else
