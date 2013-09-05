@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using rglikeworknamelib.Dungeon.Effects;
 
 namespace rglikeworknamelib.Dungeon.Item {
@@ -18,14 +19,17 @@ namespace rglikeworknamelib.Dungeon.Item {
 
         public int NutH2O, NutCal;
 
-        public string Buff1;
-        public string Buff2;
-        public string Buff3;
-        public string Buff4;
-        public string Buff5;
+        public string[] Buff;
 
         public string Ammo;
         public int Magazine;
+        public string BulletParticle;
+        public int FireRate;
+
+        /// <summary>
+        /// In 0.1 degree offset
+        /// </summary>
+        public int Accuracy;
 
         public int MTex;
 

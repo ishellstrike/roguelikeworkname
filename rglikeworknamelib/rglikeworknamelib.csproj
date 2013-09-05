@@ -68,6 +68,10 @@
     <Compile Include="AutoVersion.cs" />
     <Compile Include="Atlases.cs" />
     <Compile Include="Creatures\CrearureZombie.cs" />
+    <Compile Include="Creatures\DamageType.cs" />
+    <Compile Include="Creatures\ICreature.cs" />
+    <Compile Include="Creatures\ShootingCreature.cs" />
+    <Compile Include="Creatures\Stat.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
     <Compile Include="Dungeon\Bullets\BasicBulletShleif.cs" />
     <Compile Include="Dungeon\Bullets\Bullet.cs" />

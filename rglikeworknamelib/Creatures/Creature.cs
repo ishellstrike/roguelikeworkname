@@ -8,45 +8,16 @@ using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
     [Serializable]
-    public struct Stat {
-        public float Current, Max;
-
-        public Stat(float a, float b) {
-            Current = a;
-            Max = b;
-        }
-
-        public Stat(float a)
-        {
-            Current = a;
-            Max = a;
-        }
-    }
-
-    
-    public interface ICreature {
-        Vector2 Position { get; set; }
-        Stat Hp { get; set; }
-        bool isDead { get; }
-        string Id { get; set; }
-        bool Skipp { get; set; }
-        void Kill(MapSector ms);
-        void GiveDamage(float value, DamageType type, MapSector ms);
-        void Update(GameTime gt, MapSector ms, Player hero);
-        void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms);
-        Vector2 WorldPosition();
-        Vector2 GetWorldPositionInBlocks();
-        event EventHandler onDamageRecieve;
-    }
-
-    [Serializable]
     public class Creature : ICreature {
         public string Id { get; set; }
 
         private Vector2 lastpos_;
+        private Vector2 remPos;
 
         private Vector2 sectoroffset;
         internal Color col;
+
+        internal float percenter = (float)Settings.rnd.NextDouble()/5f + 0.8f;
 
         public bool IsWarmCloth() {
             return true;
@@ -112,23 +83,27 @@ namespace rglikeworknamelib.Creatures {
         }
 
         private TimeSpan sec = TimeSpan.Zero;
-        public void Update(GameTime gt, MapSector ms, Player hero) {
+        private TimeSpan reactionT = TimeSpan.Zero;
+        public virtual void Update(GameTime gt, MapSector ms, Player hero) {
+            var time = gt.ElapsedGameTime.TotalSeconds;
+            reactionT += gt.ElapsedGameTime;
             sec += gt.ElapsedGameTime;
             if (!Skipp) {
                 sectoroffset = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
-                // Position = new Vector2(position_.X+(float)Settings.rnd.NextDouble() - 0.5f, position_.Y+(float)Settings.rnd.NextDouble() - 0.5f);
-                if (
-                    ms.Parent.GetBlock((int) GetWorldPositionInBlocks().X, (int) GetWorldPositionInBlocks().Y).Lightness ==
-                    Color.White) {
-                    Position = Vector2.Lerp(Position, hero.Position - WorldPosition() + Position, 0.01f);
+                if (ms.Parent.GetBlock((int) GetWorldPositionInBlocks().X, (int) GetWorldPositionInBlocks().Y).Lightness ==
+                    Color.White && reactionT.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
+                    remPos = hero.Position - WorldPosition() + Position;
+                    MoveByMover(ms, time);
+
                     col = Color.White;
                     if(sec.TotalSeconds > 1 && ms.Parent.IsCreatureMeele(hero, this)) {
-                        hero.GiveDamage(5, DamageType.Default, ms);
+                        hero.GiveDamage(MonsterDataBase.Data[Id].Damage, DamageType.Default, ms);
                         sec = TimeSpan.Zero;
                     }
                 }
                 else {
                     col = Color.Black;
+                    MoveByMover(ms, time);
                 }
 
                 if (Position.Y >= 1024) {
@@ -171,8 +146,8 @@ namespace rglikeworknamelib.Creatures {
                     
                     var t = ms.Parent.GetLeftN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove((ICreature)this);
-                        t.creatures.Add((ICreature)this);
+                        ms.creatures.Remove(this);
+                        t.creatures.Add(this);
                         position_.X = position_.X + 1024;
                         sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
@@ -180,7 +155,30 @@ namespace rglikeworknamelib.Creatures {
                         position_.X = 0;
                     }
                 }
-                Skipp = true;
+            }
+        }
+
+        private void MoveByMover(MapSector ms, double time) {
+            if (remPos != Vector2.Zero && ((int)remPos.X != (int)position_.X || (int)remPos.Y != (int)position_.Y))
+            {
+                var mover = - position_ + remPos;
+                var percenterMax = MonsterDataBase.Data[Id].Speed*percenter;
+
+                if (mover.Length() > time * percenterMax)
+                {
+                    mover.Normalize();
+                    mover *= (float)time * percenterMax;
+                }
+
+                var newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
+                var newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
+
+                if (BlockDataBase.Data[ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y).Id].IsWalkable) {
+                    position_.X += mover.X;
+                }
+                if (BlockDataBase.Data[ms.Parent.GetBlock((int) newwposy.X, (int) newwposy.Y).Id].IsWalkable) {
+                    position_.Y += mover.Y;
+                }
             }
         }
 
@@ -193,7 +191,7 @@ namespace rglikeworknamelib.Creatures {
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
             var a = GetPositionInBlocks();
             var p = WorldPosition() - camera;
-            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p, col);
+            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p+new Vector2(16,-32), col);
             if (Settings.DebugInfo) {
                 spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
             }
@@ -232,9 +230,5 @@ namespace rglikeworknamelib.Creatures {
         {
             GiveDamage(value, DamageType.Default, ms);
         }
-    }
-
-    public enum DamageType {
-        Default
     }
 }

@@ -1,93 +1,93 @@
-~Item,0,0
-Name="blank item"
+~Item,0
+Name=blank item
 
-~Item,colacan,2
-Name="Кола"
-Nameret="Банка"
+~Item,colacan
+Name=Кола
+Nameret=Банка
 NutH2O=500
 Weight=500
 NutCal=50
 AfteruseId=8
-SType="Food"
+SType=Food
 
-~Item,fishcan1,0
-Name="Банка сардин"
-Nameret="Банка с едой"
+~Item,fishcan1
+Name=Банка сардин
+Nameret=Банка с едой
 AfteruseId=8
-SType="Food"
+SType=Food
 
-~Item,lapsha1,0
-Name="Пакет лапши"
+~Item,lapsha1
+Name=Пакет лапши
 Weight=100
 NutCal=80
-Nameret="Пакет с едой"
-SType="Food"
+Nameret=Пакет с едой
+SType=Food
 
-~Item,cookie1,0
-Name="Коробка галет"
+~Item,cookie1
+Name=Коробка галет
 Weight=300
 NutCal=100
-Nameret="Коробка с едой"
-SType="Food"
+Nameret=Коробка с едой
+SType=Food
 
-~Item,meatcan1,0
-Name="Банка тушеной говядины"
-Nameret="Банка с едой"
+~Item,meatcan1
+Name=Банка тушеной говядины
+Nameret=Банка с едой
+Weight=300
+NutCal=200
+AfteruseId=emptycan
+SType=Food
+
+~Item,meatcan2
+Name=Банка паштета
+Nameret=Банка с едой
 Weight=300
 NutCal=200
 AfteruseId=8
-SType="Food"
+SType=Food
 
-~Item,meatcan2,0
-Name="Банка паштета"
-Nameret="Банка с едой"
-Weight=300
-NutCal=200
-AfteruseId=8
-SType="Food"
-
-~Item,milk1,0
-Name="Пакет молока"
+~Item,milk1
+Name=Пакет молока
 Weight=1000
 AfteruseId=13
-SType="Food"
+SType=Food
 
 
-~Item,emptycan,0
-Name="Пустая банка"
+~Item,emptycan
+Name=Пустая банка
 Weight=30
 
-~Item,9,0
-Name="Фляга армейская (полная)"
+~Item,9
+Name=Фляга армейская (полная)
 Weight=600
 NutH2O=500
 AfteruseId=14
-SType="Food"
+SType=Food
 
-~Item,10,0
-Name="Аварийный рацион питания"
-Nameret="Странная коробка"
+~Item,10
+Name=Аварийный рацион питания
+Nameret=Странная коробка
 Weight=500
 NutCal=500
 AfteruseId=13
-SType="Food"
+SType=Food
 
-~Item,watercons,0
-Name="Вода консервированая"
-Nameret="Странный пакет"
+~Item,watercons
+Name=Вода консервированая
+Nameret=Странный пакет
 NutH2O=500
 Weight=500
 AfteruseId=12
-SType="Food"
+SType=Food
 
-~Item,12,0
-Name="Пустой пакет"
+~Item,12
+Name=Пустой пакет
 Weight=10
 
-~Item,13,0
-Name="Пустая коробка"
+~Item,13
+Name=Пустая коробка
 Weight=20
 
-~Item,14,0
-Name="Фляга армейская (пустая)"
+~Item,14
+Name=Фляга армейская (пустая)
 Weight=100

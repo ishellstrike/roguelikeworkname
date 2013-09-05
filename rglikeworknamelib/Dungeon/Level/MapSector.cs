@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Generation;
@@ -172,9 +173,24 @@ namespace rglikeworknamelib.Dungeon.Level {
                     break;
 
                 case SectorBiom.Forest:
-                    for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
-                    for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
-                    for (int i = 0; i < rand.Next(12, 40); i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
+                    var aa = rand.Next(5, 10);
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
+                    break;
+
+                case SectorBiom.WildForest:
+                    aa = rand.Next(20, 40);
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
+                    break;
+
+                case SectorBiom.SuperWildForest:
+                    aa = rand.Next(60, 80);
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
+                    for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
                     break;
             }
 
@@ -186,12 +202,17 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             foreach (var block in sb) {
                 for (int i = 0; i < rand.Next(0,3); i++) {
-                    block.StoredItems.Add(new Item.Item(ItemDataBase.data.ElementAt(rand.Next(0, ItemDataBase.data.Count)).Key, rand.Next(1, 2)));
+                    block.StoredItems.Add(new Item.Item(ItemDataBase.Data.ElementAt(rand.Next(0, ItemDataBase.Data.Count)).Key, rand.Next(1, 2)));
                 }
             }
-
-            for (int i = 1; i< rand.Next(0, 4); i++ ) {
+            var rnd1 = rand.Next(0, 5);
+            var rnd2 = rand.Next(0, 3);
+            for (int i = 1; i< rnd1; i++ ) {
                 Spawn("zombie1", rand);
+            }
+            for (int i = 1; i < rnd2; i++)
+            {
+                Spawn("hdzombie", rand);
             }
 
             Parent.generated++;

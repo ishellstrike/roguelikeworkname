@@ -27,7 +27,8 @@ namespace rglikeworknamelib.Window {
         public void Draw(SpriteBatch sb)
         {
             sb.Begin();
-            foreach (var component in Windows) {
+            for (int i = 0; i < Windows.Count; i++) {
+                var component = Windows[i];
                 component.Draw(sb);
             }
             sb.End();

@@ -1,24 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
-using Microsoft.Xna.Framework.Graphics;
 using NLog;
 using rglikeworknamelib.Dungeon.Buffs;
-using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Parser;
 
-namespace rglikeworknamelib.Dungeon.Item {
+namespace rglikeworknamelib.Dungeon.Items {
     public class ItemDataBase
     {
-        public static Dictionary<string, ItemData> data;
-        public static Dictionary<string, ItemData> dataMedicineItems;
-        public static Dictionary<string, ItemData> dataFoodItems;
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public static Dictionary<string, ItemData> Data;
+        public static Dictionary<string, ItemData> DataMedicineItems;
+        public static Dictionary<string, ItemData> DataFoodItems;
+        private static Logger logger_ = LogManager.GetCurrentClassLogger();
        // public Collection<Texture2D> texatlas;
 
         /// <summary>
@@ -26,14 +23,14 @@ namespace rglikeworknamelib.Dungeon.Item {
         /// </summary>
         public ItemDataBase() {
             //texatlas = texatlas_;
-            data = new Dictionary<string, ItemData>();
-            dataFoodItems = new Dictionary<string, ItemData>();
-            dataMedicineItems = new Dictionary<string, ItemData>();
-            var a = ParsersCore.UniversalParseDirectory<KeyValuePair<string, object>>(Settings.GetItemDataDirectory(), UniversalParser.Parser<ItemData>);
+            Data = new Dictionary<string, ItemData>();
+            DataFoodItems = new Dictionary<string, ItemData>();
+            DataMedicineItems = new Dictionary<string, ItemData>();
+            var a = ParsersCore.UniversalParseDirectory(Settings.GetItemDataDirectory(), UniversalParser.Parser<ItemData>);
             foreach (var pair in a) {
-                data.Add(pair.Key, (ItemData)pair.Value);
-                if (((ItemData)pair.Value).SType == ItemType.Medicine) dataMedicineItems.Add(pair.Key, (ItemData)pair.Value);
-                if (((ItemData)pair.Value).SType == ItemType.Food) dataFoodItems.Add(pair.Key, (ItemData)pair.Value);
+                Data.Add(pair.Key, (ItemData)pair.Value);
+                if (((ItemData)pair.Value).SType == ItemType.Medicine) DataMedicineItems.Add(pair.Key, (ItemData)pair.Value);
+                if (((ItemData)pair.Value).SType == ItemType.Food) DataFoodItems.Add(pair.Key, (ItemData)pair.Value);
             }
         }
 
@@ -74,27 +71,27 @@ namespace rglikeworknamelib.Dungeon.Item {
         public static Dictionary<string, ItemData> GetItemByItemDatasType(ItemType it) {
             switch (it) {
                 case ItemType.Nothing:
-                    return data;
+                    return Data;
                 case ItemType.Medicine:
-                    return dataMedicineItems;
+                    return DataMedicineItems;
                 case ItemType.Food:
-                    return dataFoodItems;
+                    return DataFoodItems;
                 default:
                     return null;
             }
         }
 
-        public static string GetItemDescription(Item i)
+        public static string GetItemDescription(Item.Item i)
         {
-            return data[i.Id].Description;
+            return Data[i.Id].Description;
         }
 
-        public static string GetItemFullDescription(Item i) {
-            var item = data[i.Id];
+        public static string GetItemFullDescription(Item.Item i) {
+            var item = Data[i.Id];
             StringBuilder sb = new StringBuilder();
             sb.Append(item.Name);
-            if (data[i.Id].Description != null) {
-                sb.Append(Environment.NewLine + Environment.NewLine + data[i.Id].Description);
+            if (Data[i.Id].Description != null) {
+                sb.Append(Environment.NewLine + Environment.NewLine + Data[i.Id].Description);
             }
             sb.Append(Environment.NewLine + string.Format("{0} г", item.Weight));
             sb.Append(Environment.NewLine + string.Format("{0} места", item.Volume));
@@ -103,30 +100,15 @@ namespace rglikeworknamelib.Dungeon.Item {
             }
 
             if (item.AfteruseId != null) {
-                sb.Append(Environment.NewLine + string.Format("оставл€ет {0}", data[item.AfteruseId].Name));
+                sb.Append(Environment.NewLine + string.Format("оставл€ет {0}", Data[item.AfteruseId].Name));
             }
 
-            if(item.Buff1 != null || item.Buff2 != null||item.Buff3 != null||item.Buff4 != null||item.Buff5 != null) {
+            if(item.Buff != null) {
                 sb.Append(Environment.NewLine +Environment.NewLine+ string.Format("Ёффекты :"));
-            }
-            if(item.Buff1 != null) {
-                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff1].Name));
-            }
-            if (item.Buff2 != null)
-            {
-                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff2].Name));
-            }
-            if (item.Buff3 != null)
-            {
-                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff3].Name));
-            }
-            if (item.Buff4 != null)
-            {
-                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff4].Name));
-            }
-            if (item.Buff5 != null)
-            {
-                sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[item.Buff5].Name));
+
+                foreach (var buff in item.Buff) {
+                    sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[buff].Name));
+                }
             }
             //switch (item.stype) {
             //    case ItemType.Medicine:

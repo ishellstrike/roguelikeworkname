@@ -5,8 +5,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
+using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
 
@@ -21,7 +23,7 @@ namespace rglikeworknamelib.Creatures {
             col = c;
         }
     }
-    public class Player : Creature {
+    public class Player : ShootingCreature {
         private readonly SpriteBatch sb_;
         public Texture2D Tex;
         public SpriteFont Font;
@@ -67,7 +69,7 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public void EquipItem(Item i, InventorySystem ins) {
-            switch (ItemDataBase.data[i.Id].SType) {
+            switch (ItemDataBase.Data[i.Id].SType) {
                     case ItemType.Hat:
                         EquipExact(i, ins, ref ItemHat);
                     break;
@@ -131,16 +133,17 @@ namespace rglikeworknamelib.Creatures {
             ms.AddDecal(new Particle(WorldPosition() + adder, 3) { Rotation = Settings.rnd.Next() % 360, Life = new TimeSpan(0, 0, 1, 0) });
         }
 
-        public void Update(GameTime gt, GameLevel gl) {
-            var time = (float) gt.ElapsedGameTime.TotalSeconds;
+        public override void Update(GameTime gt, MapSector ms, Player hero)
+        {
+            var time = (float)gt.ElapsedGameTime.TotalSeconds;
 
-            var tpos = Position; 
+            var tpos = Position;
             tpos.X += Velocity.X;
             var tpos2 = Position;
             tpos2.Y += Velocity.Y;
 
-            int a = (int) (tpos.X/32.0);
-            int b = (int) (tpos.Y/32.0);
+            int a = (int)(tpos.X / 32.0);
+            int b = (int)(tpos.Y / 32.0);
 
             int c = (int)(tpos2.X / 32.0);
             int d = (int)(tpos2.Y / 32.0);
@@ -150,28 +153,31 @@ namespace rglikeworknamelib.Creatures {
             if (tpos2.X < 0) c--;
             if (tpos2.Y < 0) d--;
 
-            if (!gl.IsWalkable(a, b))
+            if (!ms.Parent.IsWalkable(a, b))
             {
                 Velocity.X = 0;
-                if (BlockDataBase.Data[gl.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose)
+                if (BlockDataBase.Data[ms.Parent.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose)
                 {
-                    gl.OpenCloseDoor(a, b);
+                    ms.Parent.OpenCloseDoor(a, b);
                 }
             }
-            if (!gl.IsWalkable(c, d))
+            if (!ms.Parent.IsWalkable(c, d))
             {
                 Velocity.Y = 0;
-                if (BlockDataBase.Data[gl.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
+                if (BlockDataBase.Data[ms.Parent.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
                 {
-                    gl.OpenCloseDoor(c, d);
+                    ms.Parent.OpenCloseDoor(c, d);
                 }
             }
 
-            Position += Velocity * time * 20;/////////
+            Position += Velocity * time * 20; /////////
 
-            if (time != 0) {
+            if (time != 0)
+            {
                 Velocity /= Settings.H() / time;
             }
+
+            sec_shoot += gt.ElapsedGameTime;
         }
 
         public void Draw(GameTime gt, Vector2 cam) {
@@ -186,6 +192,21 @@ namespace rglikeworknamelib.Creatures {
             if (Settings.DebugInfo)
             {
                 sb_.DrawString(Font, string.Format("{0}", Position), new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
+            }
+        }
+
+        private TimeSpan sec_shoot = TimeSpan.Zero;
+        public void TryShoot(BulletSystem bs_, float playerSeeAngle) {
+            if (ItemGun != null) {
+                if (sec_shoot.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
+                    bs_.AddBullet(this, 50, playerSeeAngle + MathHelper.ToRadians((((float)Settings.rnd.NextDouble()*2f-1)*ItemDataBase.Data[ItemGun.Id].Accuracy/10f)));
+                    sec_shoot = TimeSpan.Zero;
+                }
+            } else {
+                if (sec_shoot.TotalMilliseconds > 1000) {
+                    EventLog.Add("No weapon", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
+                    sec_shoot = TimeSpan.Zero;
+                }
             }
         }
     }

@@ -368,18 +368,19 @@ namespace rglikeworknamelib.Dungeon.Level {
         private TimeSpan sec;
         public void KillFarSectors(Creature cara, GameTime gt) {
             sec += gt.ElapsedGameTime;
-            if (sec.TotalSeconds >= 1) {
-                sec = TimeSpan.Zero;
-                for (int i = 0; i < sectors_.Count; i++) {
-                    var a = sectors_.ElementAt(i);
-                    if (Math.Abs(a.Value.SectorOffsetX*MapSector.Rx - cara.Position.X/32) > 128 ||
-                        Math.Abs(a.Value.SectorOffsetY*MapSector.Ry - cara.Position.Y/32) > 128) {
-                        sectors_.Remove(sectors_.ElementAt(i).Key);
-                        SaveSector(a.Value);
-                        return;
-                    }
-                }
-            }
+            //if (sec.TotalSeconds >= 1) {
+            //    sec = TimeSpan.Zero;
+            //    for (int i = 0; i < sectors_.Count; i++) {
+            //        var a = sectors_.ElementAt(i);
+            //        if (Math.Abs((a.Value.SectorOffsetX + 0.5) * MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 64 ||
+            //            Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 64)
+            //        {
+            //            sectors_.Remove(sectors_.ElementAt(i).Key);
+            //            SaveSector(a.Value);
+            //            return;
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>
@@ -447,6 +448,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             switch (bi) {
                 case SectorBiom.Forest:
+                case SectorBiom.WildForest:
+                case SectorBiom.SuperWildForest:
                     a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["forest1"], Color.Green);
                     break;
                 default:
@@ -741,7 +744,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
 
-            if(Settings.DebugInfo) {
+            if(Settings.DebugWire) {
                 gd_.RasterizerState = new RasterizerState() { CullMode = CullMode.None, FillMode = FillMode.WireFrame };
                 gd_.DepthStencilState = DepthStencilState.Default;
                 gd_.BlendState = BlendState.AlphaBlend;
@@ -788,16 +791,29 @@ namespace rglikeworknamelib.Dungeon.Level {
             return sectors_.Count;
         }
 
-        public void SaveAll() {
-            Action a = SaveAllAsync;
-            a.BeginInvoke(null, null);
+        public void SaveAll(Game game1) {
+            Action<Game> a = SaveAllAsync;
+            if (game1 != null) {
+                a.BeginInvoke(null, null, game1);
+            }
         }
 
-        private void SaveAllAsync() {
+        private bool all_saved;
+        private void SaveAllAsync(Game game) {
+            Settings.NeedToShowInfoWindow = true;
+            Settings.NTS1 = "Saving : ";
+            Settings.NTS2 = "";
+            int i = 0;
             foreach (var sector in sectors_) {
+                i++;
+                Settings.NTS2 = i+"/"+sectors_.Count;
+                Settings.NeedToShowInfoWindow = true;
                 SaveSector(sector.Value);
             }
+            Settings.NTS1 = "Saving Map";
+            Settings.NeedToShowInfoWindow = true;
             SaveMap();
+            Settings.NeedExit = true;
         }
 
         private void SaveMap() {

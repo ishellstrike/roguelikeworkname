@@ -66,16 +66,14 @@ namespace rglikeworknamelib.Generation
                 from.X = to.X;
                 to.X = a;
             }
-            if (from.Y > to.Y)
-            {
+            if (from.Y > to.Y) {
                 float a = from.Y;
                 from.Y = to.Y;
                 to.Y = a;
             }
 
             for (int i = (int)from.X; i <= to.X; i++) {
-                for (int j = (int)from.Y; j <= to.Y; j++)
-                {
+                for (int j = (int)from.Y; j <= to.Y; j++) {
                     ms.SetFloor(i, j, id);
                 }
             }
@@ -99,7 +97,6 @@ namespace rglikeworknamelib.Generation
         {
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
-                   
                         if (scheme.data[i * scheme.y + j] != "0") {
                             level.SetBlock(x + i + gl.SectorOffsetX * MapSector.Rx, y + j + gl.SectorOffsetY * MapSector.Ry, scheme.data[i * scheme.y + j]);
                         }
@@ -118,20 +115,21 @@ namespace rglikeworknamelib.Generation
 
                 default:
                     a = SchemesDataBase.Data.Where(x => x.type == schemeType).ToList();
-                    break;;
+                    break;
             }
 
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
+                var aa = GetInnerFloorArrayWithId(a[r], "conk_base");
+                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent, a[r].x, a[r].y, aa, posX, posY);
+                ClearBlocksFromArrayAndOffset(mapSector, mapSector.Parent, a[r].x, a[r].y, aa, posX, posY);
                 PlaceScheme(mapSector, mapSector.Parent, a[r], posX, posY);
-                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent,  a[r].x, a[r].y, GetInnerFloorArrayWithId(a[r], "conk_base"), posX, posY);
             }
         }
 
         public static void ClearBlocks(MapSector gameLevel) {
             for (int i = 0; i < MapSector.Rx; i++) {
-                for (int j = 0; j < MapSector.Rx; j++)
-                {
+                for (int j = 0; j < MapSector.Rx; j++) { 
                     gameLevel.SetBlock(i,j,"0");
                 }
             }
@@ -146,39 +144,40 @@ namespace rglikeworknamelib.Generation
             if (a.data[a.y - 1] == "0") todo.Enqueue(a.y - 1); //угол 0,у
             if (a.data[a.y * a.x - 1] == "0") todo.Enqueue(a.y * a.x - 1); //угол х,у
 
-
-
-            while (todo.Count > 0)
-            {
+            while (todo.Count > 0) {
                 int t = todo.Dequeue();
-                if (t >= 0 && t <= a.y * a.x - 1)
-                {
-                    if (visited[t] == 0 && a.data[t] == "0")
-                    {
+                if (t >= 0 && t <= a.y * a.x - 1) {
+                    if (visited[t] == 0 && a.data[t] == "0") {
                         visited[t] = 1;
 
                         if (t % a.y < a.x - 1) todo.Enqueue(t + 1);
                         if (t % a.y > 0) todo.Enqueue(t - 1);
                         if (t / a.y < a.y - 1) todo.Enqueue(t + a.y);
                         if (t / a.y > 0) todo.Enqueue(t - a.y);
-
                     }
                 }
             }
-
             string[] converted = visited.Select(x => x == 0 ? id : "0").ToArray();
-
             return converted;
         }
 
         public static void FillFloorFromArrayAndOffset(MapSector gl, GameLevel level, int x, int y, string[] arr, int sx, int sy) {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    
-                        if(arr[i*y+j] != "0") {
-                            level.SetFloor(sx + i + gl.SectorOffsetX * MapSector.Rx, sy + j + gl.SectorOffsetY * MapSector.Ry, arr[i * y + j]);
-                        }
-                    
+                    if(arr[i*y+j] != "0") {
+                        level.SetFloor(sx + i + gl.SectorOffsetX * MapSector.Rx, sy + j + gl.SectorOffsetY * MapSector.Ry, arr[i * y + j]);
+                    }
+                }
+            }
+        }
+
+        public static void ClearBlocksFromArrayAndOffset(MapSector gl, GameLevel level, int x, int y, string[] arr, int sx, int sy)
+        {
+            for (int i = 0; i < x; i++) {
+                for (int j = 0; j < y; j++) {
+                    if (arr[i * y + j] != "0") {
+                        level.SetBlock(sx + i + gl.SectorOffsetX * MapSector.Rx, sy + j + gl.SectorOffsetY * MapSector.Ry, "0");
+                    }
                 }
             }
         }
@@ -186,8 +185,7 @@ namespace rglikeworknamelib.Generation
         public static int seed = 12345;
 
         internal static double Noise2D(double x, double y) {
-            return ((0x6C078965*(seed ^ (((int) x*2971902361) ^ ((int) y*3572953751)))) & 0x7FFFFFFF)/
-                   (double) int.MaxValue;
+            return ((0x6C078965*(seed ^ (((int) x*2971902361) ^ ((int) y*3572953751)))) & 0x7FFFFFFF)/(double)int.MaxValue;
         }
 
         private static double Noise2D_2(double x, double y) {
@@ -198,10 +196,8 @@ namespace rglikeworknamelib.Generation
         }
 
         private static double SmoothedNoise2D(double x, double y) {
-            double corners = (Noise2D(x - 1, y - 1) + Noise2D(x + 1, y - 1) +
-                              Noise2D(x - 1, y + 1) + Noise2D(x + 1, y + 1))/16;
-            double sides = (Noise2D(x - 1, y) + Noise2D(x + 1, y) +
-                            Noise2D(x, y - 1) + Noise2D(x, y + 1))/8;
+            double corners = (Noise2D(x - 1, y - 1) + Noise2D(x + 1, y - 1) + Noise2D(x - 1, y + 1) + Noise2D(x + 1, y + 1))/16;
+            double sides = (Noise2D(x - 1, y) + Noise2D(x + 1, y) + Noise2D(x, y - 1) + Noise2D(x, y + 1))/8;
             double center = Noise2D(x, y)/4;
             return corners + sides + center;
         }
@@ -227,6 +223,26 @@ namespace rglikeworknamelib.Generation
             double v2 = SmoothedNoise2D(int_X + 1, int_Y);
             double v3 = SmoothedNoise2D(int_X, int_Y + 1);
             double v4 = SmoothedNoise2D(int_X + 1, int_Y + 1);
+
+            double i1 = Cosine_Interpolate(v1, v2, fractional_X);
+            double i2 = Cosine_Interpolate(v3, v4, fractional_X);
+
+
+            return Cosine_Interpolate(i1, i2, fractional_Y);
+        }
+
+        private static double CompileSmoothedNoiseDiamond(double x, double y)
+        {
+            double int_X = (int)x;
+            double fractional_X = x - int_X;
+
+            double int_Y = (int)y;
+            double fractional_Y = y - int_Y;
+
+            double v2 = SmoothedNoise2D(int_X + 1, int_Y);
+            double v3 = SmoothedNoise2D(int_X - 1, int_Y);
+            double v4 = SmoothedNoise2D(int_X, int_Y + 1);
+            double v1 = SmoothedNoise2D(int_X, int_Y - 1);
 
             double i1 = Cosine_Interpolate(v1, v2, fractional_X);
             double i2 = Cosine_Interpolate(v3, v4, fractional_X);
@@ -267,6 +283,28 @@ namespace rglikeworknamelib.Generation
                         diver *= 2;
                     }
                     a[i*sy + j] = tt/oct;
+                }
+            }
+            return a;
+        }
+
+        public static double[] CompiledNoiseMap(double x, double y, int sx, int sy, double zoom = 1)
+        {
+            double[] a = new double[sx * sy];
+            const int oct = 5;
+
+            for (int i = 0; i < sx; i++)
+            {
+                for (int j = 0; j < sy; j++)
+                {
+                    double tt = 0;
+                    double diver = 1;
+                    for (int w = 1; w <= oct; w++)
+                    {
+                        tt += CompileSmoothedNoiseDiamond((i + x * sx) * zoom / diver, (j + y * sy) * zoom / diver);
+                        diver *= 2;
+                    }
+                    a[i * sy + j] = tt / oct;
                 }
             }
             return a;

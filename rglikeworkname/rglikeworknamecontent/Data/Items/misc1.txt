@@ -1,14 +1,14 @@
 //misc from 8000
-~Item,8000,0
-Name="–юкзак походный"
+~Item,8000
+Name=–юкзак походный
 Weight=1000
 Volume=2000
 Container=65000
-SType="Bag"
+SType=Bag
 
-~Item,8001,0
-Name="–юкзак туристический"
+~Item,8001
+Name=–юкзак туристический
 Weight=600
 Volume=1200
 Container=28000
-SType="Bag"
+SType=Bag

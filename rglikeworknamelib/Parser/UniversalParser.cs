@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using NLog;
 
 namespace rglikeworknamelib.Parser {
+    [Serializable]
+    public class NoPrototypeException : Exception {
+    }
+
     internal class UniversalParser {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 

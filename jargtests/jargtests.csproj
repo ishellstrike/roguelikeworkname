@@ -52,6 +52,7 @@
     <Reference Include="MonoGame.Framework.Windows">
       <HintPath>..\rglikeworkname\rglikeworkname\MonoGame.Framework.Windows.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -73,6 +74,7 @@
     <Compile Include="MapTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest1.cs" />
+    <Compile Include="UniversalParserTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\rglikeworknamelib\rglikeworknamelib.csproj">

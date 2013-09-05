@@ -6,3 +6,9 @@ MTex=0
 ~CrearureZombie,zombie1
 Name="Зомби житель"
 MTex=zombie
+
+~Creature,hdzombie
+Name="Изувеченый зомби"
+MTex=hdzombie
+Damage=2
+Speed=25

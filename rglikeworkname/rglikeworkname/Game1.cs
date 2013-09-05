@@ -18,6 +18,7 @@ using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
@@ -321,6 +322,7 @@ namespace jarg
             InfoWindowLabel.Text2 = s2;
            // InfoWindow.CenterComponentHor(InfoWindowLabel);
             InfoWindow.Visible = true;
+            InfoWindow.OnTop();
         }
 
         void HideInfoWindow()
@@ -337,8 +339,7 @@ namespace jarg
 
         void ButtonIngameExit_onPressed(object sender, EventArgs e)
         {
-            currentFloor_.SaveAll();
-            Exit();
+            currentFloor_.SaveAll(this);
         }
 
         void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
@@ -397,7 +398,7 @@ namespace jarg
 
             int cou = 0;
             foreach (var item in a) {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerInventoryItems);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerInventoryItems);
                 i.Tag = cou;
                 i.onPressed += PressInInventory;
                 cou++;
@@ -417,7 +418,7 @@ namespace jarg
             int cou = 0;
             foreach (var item in a)
             {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerContainer);
+                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerContainer);
                 i.Tag = cou;
                 i.onPressed += PressInContainer;
                 cou++;
@@ -428,8 +429,13 @@ namespace jarg
         private Item selectedItem;
         void PressInInventory(object sender, EventArgs e) {
             var a = (int) (sender as Label).Tag;
-            selectedItem = inInv_[a];
-            InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
+                selectedItem = inInv_[a];
+
+            if (!doubleclick) {
+                InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
+            } else {
+                IntentoryEquip_onPressed(null, null);
+            }
         }
 
         void PressInContainer(object sender, EventArgs e)
@@ -510,11 +516,11 @@ namespace jarg
 
             if(WindowCaracter.Visible) {
                 if (player_.ItemGun != null) {
-                    LabelCaracterGun.Text2 = ItemDataBase.data[player_.ItemGun.Id].Name;
+                    LabelCaracterGun.Text2 = ItemDataBase.Data[player_.ItemGun.Id].Name;
                 }
                 if (player_.ItemHat != null)
                 {
-                    LabelCaracterHat.Text2 = ItemDataBase.data[player_.ItemHat.Id].Name;
+                    LabelCaracterHat.Text2 = ItemDataBase.Data[player_.ItemHat.Id].Name;
                 }
 
                 LabelCaracterHp.Text2 = string.Format("{0}/{1}",player_.Hp.Current, player_.Hp.Max);
@@ -593,7 +599,7 @@ namespace jarg
                         MonsterDataBase.Data.Count, 
                         BlockDataBase.Data.Count, 
                         FloorDataBase.Data.Count, 
-                        ItemDataBase.data.Count, 
+                        ItemDataBase.Data.Count, 
                         SchemesDataBase.Data.Count, 
                         BuffDataBase.Data.Count, 
                         DialogDataBase.data.Count, 
@@ -684,7 +690,9 @@ namespace jarg
                                         Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y,
                                                 ms_.X - player_.Position.X + camera_.X),
                                         seeAngleDeg);
-            player_.Update(gameTime, currentFloor_);
+
+            var aa = currentFloor_.GetInSectorPosition(player_.GetPositionInBlocks());
+            player_.Update(gameTime, currentFloor_.GetSector((int)aa.X, (int)aa.Y), player_);
             currentFloor_.KillFarSectors(player_, gameTime);
             ps_.Update(gameTime);
             bs_.Update(gameTime);
@@ -694,6 +702,15 @@ namespace jarg
             currentFloor_.UpdateCreatures(gameTime, player_);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
+
+            if(Settings.NeedToShowInfoWindow) {
+                ShowInfoWindow(Settings.NTS1, Settings.NTS2);
+                Settings.NeedToShowInfoWindow = false;
+            }
+
+            if(Settings.NeedExit) {
+                Exit();
+            }
         }
 
         private void KeyboardUpdate(GameTime gameTime)
@@ -705,9 +722,9 @@ namespace jarg
                 Settings.DebugInfo = !Settings.DebugInfo;
             }
 
-            if (ks_[Keys.F2] == KeyState.Down)
+            if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up)
             {
-                currentFloor_.SetFloor(Settings.rnd.Next(-10000, 10000), Settings.rnd.Next(-10000, 10000), "1");
+                Settings.DebugWire = !Settings.DebugWire;
             }
 
             if (ks_[Keys.W] == KeyState.Down) {
@@ -778,16 +795,32 @@ namespace jarg
 
         }
 
-        private TimeSpan sec_shoot = TimeSpan.Zero;
+        private TimeSpan doubleclicktimer = TimeSpan.Zero;
+        private bool firstclick;
+        private bool doubleclick;
         private void MouseUpdate(GameTime gameTime)
         {
             lms_ = ms_;
             ms_ = Mouse.GetState();
-            sec_shoot += gameTime.ElapsedGameTime;
 
-            if(ms_.LeftButton == ButtonState.Pressed && sec_shoot.TotalSeconds > 0.2f) {
-                bs_.AddBullet(player_, 50, PlayerSeeAngle);
-                sec_shoot = TimeSpan.Zero;
+            doubleclicktimer += gameTime.ElapsedGameTime;
+
+            doubleclick = false;
+            if(firstclick && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && doubleclicktimer.TotalMilliseconds < 300) {
+                doubleclick = true;
+                firstclick = false;
+            }
+            if (!firstclick && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                firstclick = true;
+                doubleclicktimer = TimeSpan.Zero;
+            }
+            if (doubleclicktimer.TotalMilliseconds > 300) {
+                firstclick = false;
+                doubleclick = false;
+            }
+
+            if(ms_.LeftButton == ButtonState.Pressed) {
+                player_.TryShoot(bs_, PlayerSeeAngle);
             }
 
             int nx = (ms_.X + (int)camera_.X) / 32;

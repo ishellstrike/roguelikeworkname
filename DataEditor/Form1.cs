@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 
 namespace DataEditor
@@ -48,7 +49,7 @@ namespace DataEditor
 
             new ItemDataBase();
 
-            foreach (var a in ItemDataBase.data) {   
+            foreach (var a in ItemDataBase.Data) {   
                 var bb = new DataGridViewRow();
                 bb.Cells.Add(new DataGridViewTextBoxCell() {Value = a.Key});
                 foreach (var fieldInfo in a.Value.GetType().GetFields()) {

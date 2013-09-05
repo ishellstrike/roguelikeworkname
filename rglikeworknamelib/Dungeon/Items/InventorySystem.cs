@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Item
 {
@@ -16,7 +17,7 @@ namespace rglikeworknamelib.Dungeon.Item
             var a = new List<Item>();
 
             foreach (var item in items) {
-                if(ItemDataBase.data[item.Id].SType == it) a.Add(item);
+                if(ItemDataBase.Data[item.Id].SType == it) a.Add(item);
             }
 
             return a;

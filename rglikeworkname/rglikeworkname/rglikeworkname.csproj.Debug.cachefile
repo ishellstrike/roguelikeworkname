@@ -116,6 +116,10 @@ Content\Textures\Dungeon\Floor\grass5.xnb
 Content\Textures\Dungeon\Floor\grass6.xnb
 Content\Textures\Dungeon\Floor\grass7.xnb
 Content\Textures\Dungeon\Floor\conk2.xnb
+Content\Textures\Dungeon\Objects\mbush1.xnb
+Content\Textures\Dungeon\Objects\mbush2.xnb
+Content\Textures\Dungeon\Objects\mbush3.xnb
+Content\Textures\Units\hdzombie.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Textures\Dungeon\Floor\textureloadorder.ord

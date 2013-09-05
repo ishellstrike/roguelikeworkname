@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Level {
@@ -27,6 +29,27 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int StorageSlots;
 
         public string[] AlterMtex;
+
+        //public override bool Equals(object obj) {
+        //    if (obj == null || GetType() != obj.GetType()) {
+        //        return false;
+        //    }
+        //    var a = obj as BlockData;
+        //    if (a == null) return false;
+
+        //    var fields = typeof (BlockData).GetFields();
+
+        //    foreach (FieldInfo field in fields) {
+        //        var value = field.GetValue(a);
+        //        var o = field.GetValue(this);
+        //        if(o == null && value == null) continue;
+        //        if (o == null || value == null) return false;
+        //        if (value.Equals(o)) {
+        //            return false;
+        //        }
+        //    }
+        //    return true;
+        //}
 
         public string RandomMtexFromAlters()
         {

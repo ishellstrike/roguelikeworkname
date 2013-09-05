@@ -23,8 +23,7 @@ namespace rglikeworknamelib.Generation.Names
 
 
         public NameDataBase() {
-            var temp = ParsersCore.UniversalParseDirectory(Settings.GetNamesDataDirectory(),
-                                                           UniversalParser.NoIdParser<NameClass>);
+            var temp = ParsersCore.UniversalParseDirectory(Settings.GetNamesDataDirectory(), UniversalParser.NoIdParser<NameClass>);
 
             foreach (var o in temp) {
                 data.Add((NameClass)o);

@@ -1,14 +1,13 @@
-~Item,testhat,0
-Name="Тестовая шляпа"
-Buff1=hpup5
-Buff2=hpup2
+~Item,testhat
+Name=Тестовая шляпа
+Buff={hpup5,hpup2}
 Weight=100
 Volume=300
 SType="Hat"
 
-~Item,testhat2,0
-Name="Тестовая шляпа2"
-Buff1=hpup5
+~Item,testhat2
+Name=Тестовая шляпа2
+Buff={hpup5}
 Weight=100
 Volume=300
 SType="Hat"

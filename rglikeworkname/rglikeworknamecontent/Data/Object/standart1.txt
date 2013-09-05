@@ -84,53 +84,61 @@ Name="Небольшое дерево"
 swide=16
 MTex=38
 
-~Block,17,37
+~Block,17
 Name="Куст"
 swide=16
 MTex=37
 
 
-~Block,19,38
+~Block,19
 Name="Окно"
 IsTransparent=true
 MTex=38
 
-~Block,20,39
+~Block,20
 Name="Окно"
 IsTransparent=true
 MTex=39
 
 
-~Block,21,40
+~Block,21
 Name="Прилавок"
 IsTransparent=true
 MTex=40
 
-~Block,22,41
+~Block,22
 Name="Прилавок"
 IsTransparent=true
 MTex=41
 
-~Block,23,42
+~Block,23
 Name="Прилавок"
 IsTransparent=true
 MTex=42
 
-~Block,kustsmall,palka
+~Block,kustsmall
 Name="Молодой кустарник"
-IsTransparent=true
+IsTransparent=false
 IsWalkable=true
-swide=16
-MTex=palka
+swide=8
+MTex=mbush1
+AlterMtex={mbush2,mbush3}
 
 
-~Block,kustbig,bush
+~Block,kustbig
 Name="Густой кустарник"
 IsWalkable=true
 swide=16
 MTex=bush
 
-~BlockButningBochka,bbochka,bochka
+~BlockButningBochka,bbochka
 Name="Горящая бочка"
 IsTransparent=true
 MTex=bochka
+
+~Block,bath
+Name="Ванная"
+IsTransparent=true
+MTex=bath1
+AlterMtex={bath2,bath3,bath4,bath5}
+IsTransparent=true

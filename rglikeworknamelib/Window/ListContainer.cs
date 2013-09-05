@@ -172,8 +172,8 @@ namespace rglikeworknamelib.Window {
 
         public void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
             if (Visible) {
-                foreach (var item in Components) {
-                    item.Update(gt, ms, lms, h);
+                for (int i = 0; i < Components.Count; i++) {
+                    Components[i].Update(gt, ms, lms, h);
                 }
             }
         }

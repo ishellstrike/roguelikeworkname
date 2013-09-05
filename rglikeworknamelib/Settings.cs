@@ -12,6 +12,10 @@ namespace rglikeworknamelib {
         public static int Framelimit;
 
         public static bool DebugInfo;
+        public static bool DebugWire;
+
+        public static bool NeedToShowInfoWindow;
+        public static string NTS1, NTS2;
 
         public static Random rnd = new Random();
 
@@ -74,6 +78,7 @@ namespace rglikeworknamelib {
         private static Color hcol_ = Color.LightGray;
         public static bool IsAMDM;
         public static SpriteFont Font;
+        public static bool NeedExit;
 
         public static Color HudСolor {
             get { return hcol_; }

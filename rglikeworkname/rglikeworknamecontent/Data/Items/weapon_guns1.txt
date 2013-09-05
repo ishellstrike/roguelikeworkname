@@ -1,86 +1,88 @@
 //12000
 
-~Item,12000,0
-Name="SA80"
-Description="Made in UK"
-SType="Gun"
-UpType="Rifle"
-some="some some"
-some2="some some2"
+~Item,12000
+Name=SA80
+Description=Made in UK
+SType=Gun
+UpType=Rifle
+some=some some
+some2=some some2
 
 
-~Item,12001,0
-Name="HK417"
-Description="Made in Germany"
-SType="Gun"
-UpType="AssaultRifle"
+~Item,12001
+Name=HK417
+Description=Made in Germany
+SType=Gun
+UpType=AssaultRifle
 
-~Item,12002,0
-Name="TAR-21"
-Description="Made in Israel"
-SType="Gun"
-UpType="AssaultRifle"
+~Item,12002
+Name=TAR-21
+Description=Made in Israel
+SType=Gun
+UpType=AssaultRifle
 
-~Item,12003,0
-Name="СВД"
-Description="Made in Russia"
-SType="Gun"
-UpType="SniperRifle"
+~Item,12003
+Name=СВД
+Description=Made in Russia
+SType=Gun
+UpType=SniperRifle
 Weight=5000
 
-~Item,12004,0
-Name="Винтовка M14"
-Description="Made in USA"
-SType="Gun"
-UpType="Rifle"
+~Item,12004
+Name=Винтовка M14
+Description=Made in USA
+SType=Gun
+UpType=Rifle
 Weight=4000
 
-~Item,12005,0
-Name="Снайперская винтовка М25"
-Description="Made in USA"
-SType="Gun"
-UpType="SniperRifle"
+~Item,12005
+Name=Снайперская винтовка М25
+Description=Made in USA
+SType=Gun
+UpType=SniperRifle
 Weight=5000
 
-~Item,12006,0
-Name="FAMAS"
-SType="Gun"
-UpType="AssaultRifle"
+~Item,12006
+Name=FAMAS
+SType=Gun
+UpType=AssaultRifle
 Weight=4000
 
-~Item,12007,0
-Name="Barrett M82"
-SType="Gun"
-UpType="SniperRifle"
+~Item,12007
+Name=Barrett M82
+SType=Gun
+UpType=SniperRifle
 Weight=14000
-Ammo="a50"
+Ammo=a50
 
 
-~Item,12008,0
-Name="AK-12"
-SType="Gun"
-UpType="AssaultRifle"
+~Item,12008
+Name=AK-12
+SType=Gun
+UpType=AssaultRifle
 Weight=3500
 Magazine=30
-Description="Made in Russia"
-Ammo="a223"
+Description=Made in Russia
+Ammo=a223
 
-~Item,ak47,0
-Name="AK-47"
-SType="Gun"
-UpType="AssaultRifle"
+~Item,ak47
+Name=AK-47
+SType=Gun
+UpType=AssaultRifle
 Weight=3500
 Magazine=30
-Description="Made in Russia"
+FireRate=50
+Accuracy=50
+Description=Made in Russia
 
-~Item,12009,0
-Name="AK-12 барабанный магазин"
-SType="Gun"
-UpType="AssaultRifle"
+~Item,12009
+Name=AK-12 барабанный магазин
+SType=Gun
+UpType=AssaultRifle
 Weight=3800
 Magazine=90
-Description="Made in Russia"
-Ammo="a223"
+Description=Made in Russia
+Ammo=a223
 
 ~Item,g1
 ~Item,g2

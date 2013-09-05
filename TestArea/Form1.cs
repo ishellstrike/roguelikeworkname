@@ -16,92 +16,69 @@ using Label = System.Windows.Forms.Label;
 namespace TestArea
 {
     public partial class Form1 : Form {
-        private int off1, off2;
+        private int off1_, off2_;
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        private Stopwatch sw1 = new Stopwatch();
-        private TimeSpan ts,ts1,ts2,ts3,ts4,ts5;
+        private readonly Stopwatch sw1_ = new Stopwatch();
+        private TimeSpan ts_,ts1_,ts2_,ts3_,ts4_,ts5_,ts6_;
         private void button1_Click(object sender, EventArgs e)
         {
             const int size = 128;
             const double zoom = 0.4;
 
-            sw1.Restart();
-            var f1 = MapGenerators.NoiseMap(off1, off2, size, size, zoom);
-            ts = sw1.Elapsed;
-            GetValue(size, pictureBox1, label1, label2, ref ts1, ts, f1);
+            sw1_.Restart();
+            var f1 = MapGenerators.NoiseMap(off1_, off2_, size, size, zoom);
+            ts_ = sw1_.Elapsed;
+            GetValue(size, pictureBox1, label1, label2, ref ts1_, ts_, f1);
 
-            sw1.Restart();
-            f1 = MapGenerators.SmoothNoiseMap(MapGenerators.NoiseMap(off1, off2, size, size, zoom));
-            ts = sw1.Elapsed;
-            GetValue(size, pictureBox2, label3, label4, ref ts2, ts, f1);
+            sw1_.Restart();
+            f1 = MapGenerators.SmoothNoiseMap(MapGenerators.NoiseMap(off1_, off2_, size, size, zoom));
+            ts_ = sw1_.Elapsed;
+            GetValue(size, pictureBox2, label3, label4, ref ts2_, ts_, f1);
 
-            sw1.Restart();
-            f1 = MapGenerators.SmoothNoiseMap(MapGenerators.SmoothNoiseMap(MapGenerators.NoiseMap(off1, off2, size, size, zoom)));
-            ts = sw1.Elapsed;
-            GetValue(size, pictureBox3, label5, label6, ref ts3, ts, f1);
+            sw1_.Restart();
+            f1 = MapGenerators.SmoothNoiseMap(MapGenerators.SmoothNoiseMap(MapGenerators.NoiseMap(off1_, off2_, size, size, zoom)));
+            ts_ = sw1_.Elapsed;
+            GetValue(size, pictureBox3, label5, label6, ref ts3_, ts_, f1);
 
-            sw1.Restart();
-            f1 = MapGenerators.PostEffect(MapGenerators.NoiseMap(off1, off2, size, size, zoom), 5, 2.5);
-            ts = sw1.Elapsed;
-            GetValue(size, pictureBox4, label7, label8, ref ts4, ts, f1);
+            sw1_.Restart();
+            f1 = MapGenerators.PostEffect(MapGenerators.NoiseMap(off1_, off2_, size, size, zoom), 5, 2.5);
+            ts_ = sw1_.Elapsed;
+            GetValue(size, pictureBox4, label7, label8, ref ts4_, ts_, f1);
 
-            sw1.Restart();
-            f1 = MapGenerators.PostEffect(MapGenerators.SmoothNoiseMap(MapGenerators.SmoothNoiseMap(MapGenerators.NoiseMap(off1, off2, size, size, zoom))), 5, 2.5);
-            ts = sw1.Elapsed;
-            GetValue(size, pictureBox5, label9, label10, ref ts5, ts, f1);
+            sw1_.Restart();
+            f1 = MapGenerators.PostEffect(MapGenerators.SmoothNoiseMap(MapGenerators.SmoothNoiseMap(MapGenerators.NoiseMap(off1_, off2_, size, size, zoom))), 5, 2.5);
+            ts_ = sw1_.Elapsed;
+            GetValue(size, pictureBox5, label9, label10, ref ts5_, ts_, f1);
 
-            //bd = bm.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.ReadWrite,
-            //            PixelFormat.Format24bppRgb);
-
-            //ptr = bd.Scan0;
-
-            //bytes = Math.Abs(bd.Stride) * bd.Height;
-            //rgbValues = new byte[bytes];
-
-            //a = MapGenerators.NoiseMap(mx, my, size, size, zoom);
-
-            //System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
-
-            //for (int counter = 0; counter < a.Length; counter++)
-            //{
-            //    var t = (byte)(a[counter] * 255);
-            //    rgbValues[counter * 3] = rgbValues[counter * 3 + 1] = rgbValues[counter * 3 + 2] = t;
-            //}
-
-            //System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, ptr, bytes);
-
-            //bm.UnlockBits(bd);
-            //pictureBox2.Image = bm;
-            //pictureBox2.Refresh();
+            sw1_.Restart();
+            f1 = MapGenerators.PostEffect(MapGenerators.SmoothNoiseMap(MapGenerators.SmoothNoiseMap(MapGenerators.CompiledNoiseMap(off1_, off2_, size, size, zoom))), 5, 2.5);
+            ts_ = sw1_.Elapsed;
+            GetValue(size, pictureBox7, label12, label11, ref ts6_, ts_, f1);
         }
 
         private void GetValue(int size, PictureBox pb, Label l1, Label l2, ref TimeSpan ts1, TimeSpan ts, double[] a)
         {
-            Bitmap bm = new Bitmap(size, size);
+            var bm = new Bitmap(size, size);
 
-            BitmapData bd;
+            double mx = off1_;
+            double my = off2_;
 
-            double mx = off1;
-            double my = off2;
-
-            bd = bm.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.ReadWrite,
-                             PixelFormat.Format24bppRgb);
+            BitmapData bd = bm.LockBits(new Rectangle(0, 0, size, size), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
             IntPtr ptr = bd.Scan0;
 
             int bytes = Math.Abs(bd.Stride)*bd.Height;
-            byte[] rgbValues = new byte[bytes];
+            var rgbValues = new byte[bytes];
 
             l1.Text = ts.ToString();
             l1.Refresh();
             ts1 = TimeSpan.FromTicks((ts1 + ts).Ticks/2);
             l2.Text = ts1.ToString();
-
 
             System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
 
@@ -117,30 +94,25 @@ namespace TestArea
             pb.Refresh();
         }
 
-        private bool down;
+        private bool down_;
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e) {
-            down = true;
+            down_ = true;
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e) {
-            down = false;
+            down_ = false;
         }
 
-        private Point lastpos;
+        private Point lastpos_;
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
 
-            if (down) {
-                off1 -= e.X - lastpos.X;
-                off2 -= e.Y - lastpos.Y;
+            if (down_) {
+                off1_ -= e.X - lastpos_.X;
+                off2_ -= e.Y - lastpos_.Y;
                 button1_Click(null, null);
             }
 
-            lastpos = e.Location;
-        }
-
-        private void tabPage1_Click(object sender, EventArgs e)
-        {
-
+            lastpos_ = e.Location;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -151,24 +123,18 @@ namespace TestArea
 
         private void pictureBox6_Click(object sender, EventArgs e)
         {
-            Bitmap bm = new Bitmap(512, 512);
+            var bm = new Bitmap(512, 512);
 
-            BitmapData bd;
-
-            double mx = off1;
-            double my = off2;
-
-            bd = bm.LockBits(new Rectangle(0, 0, 512, 512), ImageLockMode.ReadWrite,
-                             PixelFormat.Format24bppRgb);
+            BitmapData bd = bm.LockBits(new Rectangle(0, 0, 512, 512), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
             IntPtr ptr = bd.Scan0;
 
             int bytes = Math.Abs(bd.Stride) * bd.Height;
-            byte[] rgbValues = new byte[bytes];
+            var rgbValues = new byte[bytes];
 
             System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
 
-            byte[] a = new byte[512*512];
+            var a = new byte[512*512];
 
             var ff = Directory.GetFiles(Settings.GetWorldsDirectory(),"*.rlm");
 
@@ -180,8 +146,7 @@ namespace TestArea
                 a[(q + 255)*512 + (w + 255)] = 1;
             }
 
-            for (int counter = 0; counter < a.Length; counter++)
-            {
+            for (int counter = 0; counter < a.Length; counter++) {
                 var t = (byte)(a[counter] * 255);
                 rgbValues[counter * 3] = rgbValues[counter * 3 + 1] = rgbValues[counter * 3 + 2] = t;
             }
@@ -194,24 +159,23 @@ namespace TestArea
         }
 
         private void pictureBox6_MouseUp(object sender, MouseEventArgs e) {
-            down1 = false;
+            down1_ = false;
         }
 
         private void pictureBox6_MouseMove(object sender, MouseEventArgs e)
         {
-            if (down1)
-            {
-                off1 -= e.X - lastpos.X;
-                off2 -= e.Y - lastpos.Y;
+            if (down1_) {
+                off1_ -= e.X - lastpos_.X;
+                off2_ -= e.Y - lastpos_.Y;
                 pictureBox6_Click(null, null);
             }
 
-            lastpos = e.Location;
+            lastpos_ = e.Location;
         }
 
-        private bool down1;
+        private bool down1_;
         private void pictureBox6_MouseDown(object sender, MouseEventArgs e) {
-            down = true;
+            down_ = true;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
