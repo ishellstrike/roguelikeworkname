@@ -438,12 +438,23 @@ namespace jarg
             }
         }
 
+        private Item ContainerSelected;
         void PressInContainer(object sender, EventArgs e)
         {
             var a = (int)(sender as Label).Tag;
             if (inInv_.Count > a) {
-                LabelContainer.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
-            }
+                ContainerSelected = inContainer_[a];
+                LabelContainer.Text = ItemDataBase.GetItemFullDescription(ContainerSelected);
+                if(doubleclick) {
+                    if (inContainer_.Contains(ContainerSelected)) {
+                        inventory_.items.Add(ContainerSelected);
+                        inContainer_.Remove(ContainerSelected);
+                        inventory_.StackSimilar();
+                        UpdateInventoryContainer();
+                        UpdateContainerContainer(inContainer_);
+                    }
+                }
+            } 
         }
 
         void ButtonCaracterCancel_onPressed(object sender, EventArgs e)
