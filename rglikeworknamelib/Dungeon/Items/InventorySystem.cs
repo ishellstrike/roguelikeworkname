@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Item
@@ -53,6 +55,40 @@ namespace rglikeworknamelib.Dungeon.Item
             }
 
             return a;
+        }
+
+        public void UseItem(Item selectedItem, Player player)
+        {
+            if (selectedItem != null && player != null)
+            {
+                switch (ItemDataBase.Data[selectedItem.Id].SType)
+                {
+                    case ItemType.Hat:
+                    case ItemType.Pants:
+                    case ItemType.Helmet:
+                    case ItemType.Meele:
+                    case ItemType.Shirt:
+                    case ItemType.Ammo:
+                    case ItemType.Bag:
+                    case ItemType.Boots:
+                    case ItemType.Glaces:
+                    case ItemType.Gloves:
+                    case ItemType.Gun:
+                        player.EquipItem(selectedItem, this);
+                        break;
+                    case ItemType.Food:
+                        EventLog.Add(string.Format("Вы употребили {0}", ItemDataBase.Data[selectedItem.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
+                        foreach (var buff in selectedItem.Buffs)
+                        {
+                            buff.ApplyToTarget(player);
+                        }
+                        if (items.Contains(selectedItem))
+                        {
+                            items.Remove(selectedItem);
+                        }
+                        break;
+                }
+            }
         }
     }
 }

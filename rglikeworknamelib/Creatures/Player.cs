@@ -90,6 +90,7 @@ namespace rglikeworknamelib.Creatures {
             if (i != null) {
                 if (ite != null) {
                     ins.items.Add(ite);
+                    EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ItemDataBase.Data[ite.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
                     foreach (var buff in ite.Buffs.Where(buff => buffs.Contains(buff))) {
                         buffs.Remove(buff);
                         buff.RemoveFromTarget(this);
@@ -99,6 +100,7 @@ namespace rglikeworknamelib.Creatures {
                 if (ins.items.Contains(i)) {
                     ins.items.Remove(i);
                 }
+                EventLog.Add(string.Format("Вы экипировали {0}", ItemDataBase.Data[i.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
                 foreach (var buff in i.Buffs)
                 {
                     buffs.Add(buff);

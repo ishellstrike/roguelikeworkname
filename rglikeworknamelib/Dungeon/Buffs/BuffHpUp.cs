@@ -7,34 +7,34 @@ namespace rglikeworknamelib.Dungeon.Buffs
 {
     [Serializable]
     class BuffHpUp : Buff {
-        public override bool ApplyToTarget(Player p) {
+        public override bool ApplyToTarget(Creature p) {
             if (!applied_) {
                 Target = p;
-                Target.hp_.Max = Target.hp_.Max + BuffDataBase.Data[Id].Value1;
-
-                applied_ = true;
-                return true;
+                Target.hp_.Max = Target.hp_.Max + int.Parse(BuffDataBase.Data[Id].Value[0]);
             }
-            return false;
+            else {
+                return false;
+            }
+            return base.ApplyToTarget(p);
         }
 
-        public override bool RemoveFromTarget(Player p)
+        public override bool RemoveFromTarget(Creature p)
         {
             if (applied_) {
                 Target = p;
-                Target.hp_.Max = Target.hp_.Max - BuffDataBase.Data[Id].Value1;
-
-                applied_ = false;
-                return true;
+                Target.hp_.Max = Target.hp_.Max - int.Parse(BuffDataBase.Data[Id].Value[0]);
             }
-            return false;
+            else {
+                return false;
+            }
+            return base.RemoveFromTarget(p);
         }
     }
 
     class BuffBurn : Buff
     {
-        TimeSpan ts = new TimeSpan();
-        public override void Update(Microsoft.Xna.Framework.GameTime gt) {
+        TimeSpan ts;
+        public override void Update(GameTime gt) {
             ts += gt.ElapsedGameTime;
             if (ts.TotalMilliseconds > 200) {
                 var part = new Particle(Target.WorldPosition() + new Vector2(16,16), 2) {
@@ -49,6 +49,18 @@ namespace rglikeworknamelib.Dungeon.Buffs
                 ParticleSystem.AddParticle(part);
                 ts = TimeSpan.Zero;
             }
+            base.Update(gt);
+        }
+    }
+
+    class HealOnce : Buff
+    {
+        public override bool ApplyToTarget(Creature p) {
+            p.hp_.Current += int.Parse(BuffDataBase.Data[Id].Value[0]);
+            if (p.hp_.Current > p.hp_.Max) {
+                p.hp_.Current = p.hp_.Max;
+            }
+            return base.ApplyToTarget(p);
         }
     }
 }

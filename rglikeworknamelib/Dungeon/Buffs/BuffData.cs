@@ -8,7 +8,7 @@ namespace rglikeworknamelib.Dungeon.Effects
     public class BuffData
     {
         public Type Prototype;
-        public float Value1, Value2, Value3, Value4, Value5;
+        public string[] Value;
 
         /// <summary>
         /// Duration in game minutes

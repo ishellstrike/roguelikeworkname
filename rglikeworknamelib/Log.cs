@@ -17,7 +17,10 @@ namespace rglikeworknamelib
         Dies,
         Default,
         SelfDamage,
-        NoAmmoWeapon
+        NoAmmoWeapon,
+        Consume,
+        Buff,
+        Equip
     }
 
     public struct LogEntity {

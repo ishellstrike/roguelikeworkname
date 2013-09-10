@@ -331,7 +331,7 @@ namespace jarg
         }
 
         void IntentoryEquip_onPressed(object sender, EventArgs e) {
-            player_.EquipItem(selectedItem, inventory_);
+            inventory_.UseItem(selectedItem, player_);
             UpdateInventoryContainer();
             selectedItem = null;
             InventoryMoreInfo.Text = "";
@@ -634,6 +634,9 @@ namespace jarg
 
             base.Update(gameTime);
 
+            WindowsUpdate(gameTime);
+            ws_.Update(gameTime, ms_, lms_, false);
+
             KeyboardUpdate(gameTime);
             MouseUpdate(gameTime);
 
@@ -643,8 +646,6 @@ namespace jarg
                 FrameRateCounter.Update(gameTime);
             }
 
-            WindowsUpdate(gameTime);
-            ws_.Update(gameTime, ms_, lms_, false);
             if (player_ != null) {
                 PlayerSeeAngle =
                     (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
@@ -819,63 +820,66 @@ namespace jarg
                 doubleclick = false;
             }
 
-            if(ms_.LeftButton == ButtonState.Pressed) {
-                player_.TryShoot(bs_, PlayerSeeAngle);
-            }
+            if (!ws_.Mopusehook) {
+                if (ms_.LeftButton == ButtonState.Pressed) {
+                    player_.TryShoot(bs_, PlayerSeeAngle);
+                }
 
-            int nx = (ms_.X + (int)camera_.X) / 32;
-            int ny = (ms_.Y + (int)camera_.Y) / 32;
+                int nx = (ms_.X + (int) camera_.X)/32;
+                int ny = (ms_.Y + (int) camera_.Y)/32;
 
-            if (ms_.X + camera_.X < 0) nx--;
-            if (ms_.Y + camera_.Y < 0) ny--;
+                if (ms_.X + camera_.X < 0) nx--;
+                if (ms_.Y + camera_.Y < 0) ny--;
 
-            WindowIngameHint.Visible = false;
+                WindowIngameHint.Visible = false;
 
-            if(player_ != null && !currentFloor_.IsCreatureMeele((int)containerOn.X, (int)containerOn.Y, player_)) {
-                WindowContainer.Visible = false;
-            }
+                if (player_ != null && !currentFloor_.IsCreatureMeele((int) containerOn.X, (int) containerOn.Y, player_)) {
+                    WindowContainer.Visible = false;
+                }
 
-            if (currentFloor_ != null) {
-                var nxny = currentFloor_.GetBlock(nx, ny);
-                if (nxny != null && nxny.Lightness == Color.White) // currentFloor_.IsExplored(aa))
-                {
-                    var a = currentFloor_.GetBlock(nx, ny);
-                    if (a != null) {
-                        var b = BlockDataBase.Data[a.Id];
-                        string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
-                        if (Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
+                if (currentFloor_ != null) {
+                    var nxny = currentFloor_.GetBlock(nx, ny);
+                    if (nxny != null && nxny.Lightness == Color.White) // currentFloor_.IsExplored(aa))
+                    {
+                        var a = currentFloor_.GetBlock(nx, ny);
+                        if (a != null) {
+                            var b = BlockDataBase.Data[a.Id];
+                            string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
+                            if (Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
 
-                        if (currentFloor_.IsCreatureMeele(nx, ny, player_)) {
-                            if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
-                                var undermouseblock = BlockDataBase.Data[a.Id];
-                                switch (undermouseblock.SmartAction) {
-                                    case SmartAction.ActionSee:
-                                        EventLog.Add("Вы видите " + undermouseblock.Name, GlobalWorldLogic.CurrentTime,
-                                                     Color.Gray, LogEntityType.SeeSomething);
-                                        break;
-                                    case SmartAction.ActionOpenContainer:
-                                        WindowContainer.Visible = true;
-                                        WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
-                                        UpdateContainerContainer((a as StorageBlock).StoredItems);
-                                        containerOn = new Vector2(nx, ny);
-                                        break;
-                                    case SmartAction.ActionOpenClose:
-                                        currentFloor_.OpenCloseDoor(nx, ny);
-                                        break;
+                            if (currentFloor_.IsCreatureMeele(nx, ny, player_)) {
+                                if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                                    var undermouseblock = BlockDataBase.Data[a.Id];
+                                    switch (undermouseblock.SmartAction) {
+                                        case SmartAction.ActionSee:
+                                            EventLog.Add("Вы видите " + undermouseblock.Name,
+                                                         GlobalWorldLogic.CurrentTime,
+                                                         Color.Gray, LogEntityType.SeeSomething);
+                                            break;
+                                        case SmartAction.ActionOpenContainer:
+                                            WindowContainer.Visible = true;
+                                            WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
+                                            UpdateContainerContainer((a as StorageBlock).StoredItems);
+                                            containerOn = new Vector2(nx, ny);
+                                            break;
+                                        case SmartAction.ActionOpenClose:
+                                            currentFloor_.OpenCloseDoor(nx, ny);
+                                            break;
+                                    }
                                 }
                             }
-                        }
-                        else {
-                            s += " (далеко)";
-                            if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
-                                WindowContainer.Visible = false;
+                            else {
+                                s += " (далеко)";
+                                if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                                    WindowContainer.Visible = false;
+                                }
                             }
-                        }
 
-                        if (WindowIngameHint.Visible = a.Id != "0") {
-                            LabelIngameHint.Text = s;
-                            WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
-                            WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
+                            if (WindowIngameHint.Visible = a.Id != "0") {
+                                LabelIngameHint.Text = s;
+                                WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
+                                WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
+                            }
                         }
                     }
                 }
