@@ -83,6 +83,9 @@ namespace rglikeworknamelib.Creatures {
                     case ItemType.Meele:
                         EquipExact(i, ins, ref ItemMeele);
                     break;
+                    case ItemType.Ammo:
+                    EquipExact(i, ins, ref ItemAmmo);
+                    break;
             }
         }
 
@@ -203,8 +206,25 @@ namespace rglikeworknamelib.Creatures {
         public void TryShoot(BulletSystem bs_, float playerSeeAngle) {
             if (ItemGun != null) {
                 if (sec_shoot.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
-                    bs_.AddBullet(this, 50, playerSeeAngle + MathHelper.ToRadians((((float)Settings.rnd.NextDouble()*2f-1)*ItemDataBase.Data[ItemGun.Id].Accuracy/10f)));
-                    sec_shoot = TimeSpan.Zero;
+                    if ((ItemDataBase.Data[ItemGun.Id].Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemDataBase.Data[ItemGun.Id].Ammo) || ItemDataBase.Data[ItemGun.Id].Ammo == null)
+                    {
+                        bs_.AddBullet(this, 50,
+                                      playerSeeAngle +
+                                      MathHelper.ToRadians((((float) Settings.rnd.NextDouble()*2f - 1)*
+                                                            ItemDataBase.Data[ItemGun.Id].Accuracy/10f)));
+                        sec_shoot = TimeSpan.Zero;
+                        if (ItemAmmo != null) {
+                            ItemAmmo.Count--;
+                            if(ItemAmmo.Count <= 0) {
+                                ItemAmmo = null;
+                            }
+                        }  
+                    } else {
+                        if (sec_shoot.TotalMilliseconds > 1000) {
+                            EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
+                            sec_shoot = TimeSpan.Zero;
+                        }
+                    }
                 }
             } else {
                 if (sec_shoot.TotalMilliseconds > 1000) {

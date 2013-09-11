@@ -70,6 +70,7 @@ Name=AK-47
 SType=Gun
 UpType=AssaultRifle
 Weight=3500
+Ammo=a762
 Magazine=30
 FireRate=50
 Accuracy=50

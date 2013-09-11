@@ -31,6 +31,7 @@ namespace rglikeworknamelib.Dungeon.Buffs
         }
     }
 
+    [Serializable]
     class BuffBurn : Buff
     {
         TimeSpan ts;
@@ -53,6 +54,7 @@ namespace rglikeworknamelib.Dungeon.Buffs
         }
     }
 
+    [Serializable]
     class HealOnce : Buff
     {
         public override bool ApplyToTarget(Creature p) {

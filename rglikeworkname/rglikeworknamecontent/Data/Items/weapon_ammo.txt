@@ -20,3 +20,8 @@ Weight=50
 Name=.223 Remington
 Description=Made in USA. Малоимпульсный промежуточный патрон.
 SType=Ammo
+
+~Item,a762
+Name=7,62-мм
+Description=Made in Russia. Gромежуточный патрон, считается третьим по мощности из автоматных патронов в мире.
+SType=Ammo

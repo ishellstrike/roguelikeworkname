@@ -526,13 +526,9 @@ namespace jarg
             }
 
             if(WindowCaracter.Visible) {
-                if (player_.ItemGun != null) {
-                    LabelCaracterGun.Text2 = ItemDataBase.Data[player_.ItemGun.Id].Name;
-                }
-                if (player_.ItemHat != null)
-                {
-                    LabelCaracterHat.Text2 = ItemDataBase.Data[player_.ItemHat.Id].Name;
-                }
+                LabelCaracterGun.Text2 = player_.ItemGun != null ? ItemDataBase.Data[player_.ItemGun.Id].Name : "";
+                LabelCaracterHat.Text2 = player_.ItemHat != null ? ItemDataBase.Data[player_.ItemHat.Id].Name : "";
+                LabelCaracterHat.Text2 = player_.ItemAmmo != null ? ItemDataBase.Data[player_.ItemAmmo.Id].Name + " x" + player_.ItemAmmo.Count : "";
 
                 LabelCaracterHp.Text2 = string.Format("{0}/{1}",player_.Hp.Current, player_.Hp.Max);
             }
@@ -578,6 +574,8 @@ namespace jarg
             inventory_.items.Add(new Item("testhat", 1));
             inventory_.items.Add(new Item("testhat2", 1));
             inventory_.items.Add(new Item("ak47", 1));
+            inventory_.items.Add(new Item("a762", 100));
+            inventory_.items.Add(new Item("a762", 100000));
             UpdateInventoryContainer();
             HideInfoWindow();
             sw.Stop();

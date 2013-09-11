@@ -73,6 +73,7 @@
     <Compile Include="Creatures\ShootingCreature.cs" />
     <Compile Include="Creatures\Stat.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
+    <Compile Include="DrawUlils.cs" />
     <Compile Include="Dungeon\Bullets\BasicBulletShleif.cs" />
     <Compile Include="Dungeon\Bullets\Bullet.cs" />
     <Compile Include="Dungeon\Bullets\BulletSystem.cs" />

@@ -368,19 +368,19 @@ namespace rglikeworknamelib.Dungeon.Level {
         private TimeSpan sec;
         public void KillFarSectors(Creature cara, GameTime gt) {
             sec += gt.ElapsedGameTime;
-            //if (sec.TotalSeconds >= 1) {
-            //    sec = TimeSpan.Zero;
-            //    for (int i = 0; i < sectors_.Count; i++) {
-            //        var a = sectors_.ElementAt(i);
-            //        if (Math.Abs((a.Value.SectorOffsetX + 0.5) * MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 64 ||
-            //            Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 64)
-            //        {
-            //            sectors_.Remove(sectors_.ElementAt(i).Key);
-            //            SaveSector(a.Value);
-            //            return;
-            //        }
-            //    }
-            //}
+            if (sec.TotalSeconds >= 1) {
+                sec = TimeSpan.Zero;
+                for (int i = 0; i < sectors_.Count; i++) {
+                    var a = sectors_.ElementAt(i);
+                    if (Math.Abs((a.Value.SectorOffsetX + 0.5) * MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 64 ||
+                        Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 64)
+                    {
+                        sectors_.Remove(sectors_.ElementAt(i).Key);
+                        SaveSector(a.Value);
+                        return;
+                    }
+                }
+            }
         }
 
         /// <summary>
