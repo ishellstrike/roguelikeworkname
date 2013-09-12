@@ -19,6 +19,7 @@ namespace rglikeworknamelib.Creatures {
         Vector2 WorldPosition();
         Vector2 GetWorldPositionInBlocks();
         event EventHandler onDamageRecieve;
+        event EventHandler onDeath;
         List<IBuff> buffs { get; set; }
     }
 }

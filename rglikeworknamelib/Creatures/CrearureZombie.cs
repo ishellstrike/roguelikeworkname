@@ -29,10 +29,10 @@ namespace rglikeworknamelib.Creatures {
             var a = GetPositionInBlocks();
             var p = WorldPosition() - camera;
             var position = p + new Vector2(16, -32);
-            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], position, base.col);
+            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], position, base.Col);
 
             var origin = Vector2.Zero;
-            if (col != Color.Black) {
+            if (Col != Color.Black) {
                 spriteBatch.Draw(Atlases.DressAtlas[Hat.id], position, null, Hat.col, 0, origin, 1,
                                  SpriteEffects.None, 1);
                 spriteBatch.Draw(Atlases.DressAtlas[Pants.id], position, null, Pants.col, 0, origin, 1,

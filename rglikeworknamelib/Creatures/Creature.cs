@@ -14,12 +14,12 @@ namespace rglikeworknamelib.Creatures {
         public string Id { get; set; }
 
         private Vector2 lastpos_;
-        private Vector2 remPos;
+        private Vector2 remPos_;
 
-        private Vector2 sectoroffset;
-        internal Color col;
+        private Vector2 sectoroffset_;
+        internal Color Col;
 
-        internal float percenter = (float)Settings.rnd.NextDouble()/5f + 0.8f;
+        internal float Percenter = (float)Settings.rnd.NextDouble()/5f + 0.8f;
 
         public bool IsWarmCloth() {
             return true;
@@ -77,6 +77,7 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public event EventHandler onDamageRecieve;
+        public event EventHandler onDeath;
 
         private List<IBuff> buffs_ = new List<IBuff>();
         public List<IBuff> buffs 
@@ -104,20 +105,20 @@ namespace rglikeworknamelib.Creatures {
             reactionT += gt.ElapsedGameTime;
             sec += gt.ElapsedGameTime;
             if (!Skipp) {
-                sectoroffset = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
+                sectoroffset_ = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
                 if (ms.Parent.GetBlock((int) GetWorldPositionInBlocks().X, (int) GetWorldPositionInBlocks().Y).Lightness ==
                     Color.White && reactionT.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
-                    remPos = hero.Position - WorldPosition() + Position;
+                    remPos_ = hero.Position - WorldPosition() + Position;
                     MoveByMover(ms, time);
 
-                    col = Color.White;
+                    Col = Color.White;
                     if(sec.TotalSeconds > 1 && ms.Parent.IsCreatureMeele(hero, this)) {
                         hero.GiveDamage(MonsterDataBase.Data[Id].Damage, DamageType.Default, ms);
                         sec = TimeSpan.Zero;
                     }
                 }
                 else {
-                    col = Color.Black;
+                    Col = Color.Black;
                     MoveByMover(ms, time);
                 }
 
@@ -127,7 +128,7 @@ namespace rglikeworknamelib.Creatures {
                         ms.creatures.Remove(this);
                         t.creatures.Add(this);
                         position_.Y = position_.Y - 1024;
-                        sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
                         position_.Y = 1023;
@@ -139,7 +140,7 @@ namespace rglikeworknamelib.Creatures {
                         ms.creatures.Remove(this);
                         t.creatures.Add(this); 
                         position_.Y = position_.Y + 1024;
-                        sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
                         position_.Y = 0;
@@ -151,7 +152,7 @@ namespace rglikeworknamelib.Creatures {
                         ms.creatures.Remove(this);
                         t.creatures.Add(this);
                         position_.X = position_.X - 1024;
-                        sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
                         position_.X = 1023;
@@ -164,7 +165,7 @@ namespace rglikeworknamelib.Creatures {
                         ms.creatures.Remove(this);
                         t.creatures.Add(this);
                         position_.X = position_.X + 1024;
-                        sectoroffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
                         position_.X = 0;
@@ -178,10 +179,10 @@ namespace rglikeworknamelib.Creatures {
         }
 
         private void MoveByMover(MapSector ms, double time) {
-            if (remPos != Vector2.Zero && ((int)remPos.X != (int)position_.X || (int)remPos.Y != (int)position_.Y))
+            if (remPos_ != Vector2.Zero && ((int)remPos_.X != (int)position_.X || (int)remPos_.Y != (int)position_.Y))
             {
-                var mover = - position_ + remPos;
-                var percenterMax = MonsterDataBase.Data[Id].Speed*percenter;
+                var mover = - position_ + remPos_;
+                var percenterMax = MonsterDataBase.Data[Id].Speed*Percenter;
 
                 if (mover.Length() > time * percenterMax)
                 {
@@ -210,7 +211,7 @@ namespace rglikeworknamelib.Creatures {
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
             var a = GetPositionInBlocks();
             var p = WorldPosition() - camera;
-            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p+new Vector2(16,-32), col);
+            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p+new Vector2(16,-32), Col);
             if (Settings.DebugInfo) {
                 spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
             }
@@ -218,13 +219,16 @@ namespace rglikeworknamelib.Creatures {
 
         public Vector2 WorldPosition() {
             return Position + new Vector2(-16, -32) +
-                   new Vector2(sectoroffset.X*MapSector.Rx*32, sectoroffset.Y*MapSector.Ry*32);
+                   new Vector2(sectoroffset_.X*MapSector.Rx*32, sectoroffset_.Y*MapSector.Ry*32);
         }
 
         public virtual void Kill(MapSector ms) {
-            Hp = new Stat(0,0);
+            Hp = new Stat(0, 0);
             isDead = true;
             ms.AddDecal(new Particle(WorldPosition(), 3) { Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0) });
+            if(onDeath != null) {
+                onDeath(null, null);
+            }
         }
 
         public void GiveDamage(float value, DamageType type, MapSector ms) {

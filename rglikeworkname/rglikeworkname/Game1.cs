@@ -344,7 +344,7 @@ namespace jarg
 
         void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
         {
-            inventory_.items.AddRange(inContainer_);
+            inventory_.Items.AddRange(inContainer_);
             inContainer_.Clear();
             inventory_.StackSimilar();
             UpdateContainerContainer(inContainer_);
@@ -447,7 +447,7 @@ namespace jarg
                 LabelContainer.Text = ItemDataBase.GetItemFullDescription(ContainerSelected);
                 if(doubleclick) {
                     if (inContainer_.Contains(ContainerSelected)) {
-                        inventory_.items.Add(ContainerSelected);
+                        inventory_.Items.Add(ContainerSelected);
                         inContainer_.Remove(ContainerSelected);
                         inventory_.StackSimilar();
                         UpdateInventoryContainer();
@@ -571,11 +571,11 @@ namespace jarg
                                    currentFloor_, font1_, lineBatch_);
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
             inventory_ = new InventorySystem();
-            inventory_.items.Add(new Item("testhat", 1));
-            inventory_.items.Add(new Item("testhat2", 1));
-            inventory_.items.Add(new Item("ak47", 1));
-            inventory_.items.Add(new Item("a762", 100));
-            inventory_.items.Add(new Item("a762", 100000));
+            inventory_.Items.Add(new Item("testhat", 1));
+            inventory_.Items.Add(new Item("testhat2", 1));
+            inventory_.Items.Add(new Item("ak47", 1));
+            inventory_.Items.Add(new Item("a762", 100));
+            inventory_.Items.Add(new Item("a762", 100000));
             UpdateInventoryContainer();
             HideInfoWindow();
             sw.Stop();

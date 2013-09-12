@@ -92,7 +92,7 @@ namespace rglikeworknamelib.Creatures {
         private void EquipExact(Item i, InventorySystem ins, ref Item ite) {
             if (i != null) {
                 if (ite != null) {
-                    ins.items.Add(ite);
+                    ins.Items.Add(ite);
                     EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ItemDataBase.Data[ite.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
                     foreach (var buff in ite.Buffs.Where(buff => buffs.Contains(buff))) {
                         buffs.Remove(buff);
@@ -100,8 +100,8 @@ namespace rglikeworknamelib.Creatures {
                     }
                 }
                 ite = i;
-                if (ins.items.Contains(i)) {
-                    ins.items.Remove(i);
+                if (ins.Items.Contains(i)) {
+                    ins.Items.Remove(i);
                 }
                 EventLog.Add(string.Format("Вы экипировали {0}", ItemDataBase.Data[i.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
                 foreach (var buff in i.Buffs)
@@ -122,7 +122,7 @@ namespace rglikeworknamelib.Creatures {
             Velocity += ac;
         }
 
-        public void GiveDamage(float value, DamageType type, MapSector ms)
+        public new void GiveDamage(float value, DamageType type, MapSector ms)
         {
 
             Hp = new Stat(Hp.Current-value, Hp.Max);
@@ -132,7 +132,7 @@ namespace rglikeworknamelib.Creatures {
                 Kill(ms);
                 EventLog.Add(string.Format("Вы умерли! GAME OVER!"), GlobalWorldLogic.CurrentTime, Color.Red, LogEntityType.Dies);
             }
-            Vector2 adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
+            var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
             ms.AddDecal(new Particle(WorldPosition() + adder, 3) { Rotation = Settings.rnd.Next() % 360, Life = new TimeSpan(0, 0, 1, 0) });
         }
 
@@ -180,7 +180,7 @@ namespace rglikeworknamelib.Creatures {
                 Velocity /= Settings.H() / time;
             }
 
-            sec_shoot += gt.ElapsedGameTime;
+            secShoot_ += gt.ElapsedGameTime;
 
             foreach (var buff in buffs) {
                 buff.Update(gt);
@@ -189,7 +189,7 @@ namespace rglikeworknamelib.Creatures {
 
         public void Draw(GameTime gt, Vector2 cam) {
             var position = Position - cam;
-            var origin = new Vector2(Tex.Width / 2, Tex.Height);
+            var origin = new Vector2(Tex.Width / 2f, Tex.Height);
             sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
                      SpriteEffects.None, 1);
             sb_.Draw(Atlases.DressAtlas[DressHat.id], position, null, DressHat.col, 0, origin, 1, SpriteEffects.None, 1);
@@ -202,17 +202,17 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        private TimeSpan sec_shoot = TimeSpan.Zero;
-        public void TryShoot(BulletSystem bs_, float playerSeeAngle) {
+        private TimeSpan secShoot_ = TimeSpan.Zero;
+        public void TryShoot(BulletSystem bs, float playerSeeAngle) {
             if (ItemGun != null) {
-                if (sec_shoot.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
+                if (secShoot_.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
                     if ((ItemDataBase.Data[ItemGun.Id].Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemDataBase.Data[ItemGun.Id].Ammo) || ItemDataBase.Data[ItemGun.Id].Ammo == null)
                     {
-                        bs_.AddBullet(this, 50,
+                        bs.AddBullet(this, 50,
                                       playerSeeAngle +
                                       MathHelper.ToRadians((((float) Settings.rnd.NextDouble()*2f - 1)*
                                                             ItemDataBase.Data[ItemGun.Id].Accuracy/10f)));
-                        sec_shoot = TimeSpan.Zero;
+                        secShoot_ = TimeSpan.Zero;
                         if (ItemAmmo != null) {
                             ItemAmmo.Count--;
                             if(ItemAmmo.Count <= 0) {
@@ -220,16 +220,16 @@ namespace rglikeworknamelib.Creatures {
                             }
                         }  
                     } else {
-                        if (sec_shoot.TotalMilliseconds > 1000) {
+                        if (secShoot_.TotalMilliseconds > 1000) {
                             EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
-                            sec_shoot = TimeSpan.Zero;
+                            secShoot_ = TimeSpan.Zero;
                         }
                     }
                 }
             } else {
-                if (sec_shoot.TotalMilliseconds > 1000) {
+                if (secShoot_.TotalMilliseconds > 1000) {
                     EventLog.Add("No weapon", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
-                    sec_shoot = TimeSpan.Zero;
+                    secShoot_ = TimeSpan.Zero;
                 }
             }
         }
