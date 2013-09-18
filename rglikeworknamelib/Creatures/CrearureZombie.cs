@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using jarg;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
@@ -22,6 +23,7 @@ namespace rglikeworknamelib.Creatures {
             Hp = new Stat(0, 0);
             isDead = true;
             ms.AddDecal(new Particle(WorldPosition()+new Vector2(15,15), 4) { Rotation = Settings.rnd.Next()%360, Life = new TimeSpan(0, 0, 1, 0) });
+            Achievements.Stat["zombiekill"].Count++;
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms)

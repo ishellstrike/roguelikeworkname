@@ -65,6 +65,7 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Achievements.cs" />
     <Compile Include="AutoVersion.cs" />
     <Compile Include="Atlases.cs" />
     <Compile Include="Creatures\CrearureZombie.cs" />

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Generation;
@@ -359,6 +360,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
                 else {
                     EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray, LogEntityType.OpenCloseDor);
+                    Achievements.Stat["dooro"].Count++;
                 }
                 SetBlock(x, y, BlockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);
                 MapJustUpdated = true;

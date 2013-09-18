@@ -56,6 +56,8 @@ namespace jarg
         private Vector2 pivotpoint_;
         private SpriteBatch spriteBatch_;
 
+        private Achievements achievements_;
+
         private Texture2D whitepixel_;
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -193,6 +195,9 @@ namespace jarg
 
         private Window InfoWindow;
         private DoubleLabel InfoWindowLabel;
+
+        private Window WindowStatist;
+        private ListContainer ListStatist;
 #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws) {
@@ -257,7 +262,8 @@ namespace jarg
             ButtonSettings.onPressed += ButtonIngameMenuSettings_onPressed;
             RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y / 2 - 50), "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.", 50, wp, sf, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(RunningMotd);
-            LabelControls = new Label(new Vector2(10, Settings.Resolution.Y/2 + 10), "I-inventory C-caracter page L-event log M-map WASD-moving LMB-shooting F1-debug info", wp, sf, WindowMainMenu);
+            LabelControls = new Label(new Vector2(10, Settings.Resolution.Y/2 + 10), "I-inventory C-caracter page L-event log M-map WASD-moving LMB-shooting F1-debug info"+Environment.NewLine +
+                                                                                     "O-statistic P-achievements", wp, sf, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(LabelControls);
             ButtonOpenGit = new Button(new Vector2(10, Settings.Resolution.Y / 2 - 20), "Open in browser", wp, sf, WindowMainMenu);
             ButtonOpenGit.onPressed += ButtonOpenGit_onPressed;
@@ -318,6 +324,9 @@ namespace jarg
 
             InfoWindow = new Window(new Vector2(200,100), "Info", true, wp, sf, ws){Visible = false};
             InfoWindowLabel = new DoubleLabel(new Vector2(20,20), "some info", wp, sf, InfoWindow);
+
+            WindowStatist = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Statistic", true, wp, sf, ws);
+            ListStatist = new ListContainer(new Rectangle(0,0,(int)Settings.Resolution.X/3, (int)Settings.Resolution.Y/3-20), wp, sf, WindowStatist);
         }
 
         void ShowInfoWindow(string s1, string s2) {
@@ -347,7 +356,7 @@ namespace jarg
 
         void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
         {
-            inventory_.Items.AddRange(inContainer_);
+            inventory_.AddItemRange(inContainer_);
             inContainer_.Clear();
             inventory_.StackSimilar();
             UpdateContainerContainer(inContainer_);
@@ -450,7 +459,7 @@ namespace jarg
                 LabelContainer.Text = ItemDataBase.GetItemFullDescription(ContainerSelected);
                 if(doubleclick) {
                     if (inContainer_.Contains(ContainerSelected)) {
-                        inventory_.Items.Add(ContainerSelected);
+                        inventory_.AddItem(ContainerSelected);
                         inContainer_.Remove(ContainerSelected);
                         inventory_.StackSimilar();
                         UpdateInventoryContainer();
@@ -511,6 +520,7 @@ namespace jarg
             player_.Hunger.Current--;
         }
 
+        private TimeSpan SecondTimespan;
         private void WindowsUpdate(GameTime gt) {
 
             if (WindowStats.Visible) {
@@ -535,6 +545,16 @@ namespace jarg
 
                 LabelCaracterHp.Text2 = string.Format("{0}/{1}",player_.Hp.Current, player_.Hp.Max);
             }
+
+            if(SecondTimespan.TotalSeconds >= 1) {
+                ListStatist.Clear();
+                foreach (var statist in Achievements.Stat) {
+                    if (statist.Value.Count != 0) {
+                        ListStatist.AddItem(new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count,
+                                                      whitepixel_, font1_, ListStatist));
+                    }
+                }
+            }
         }
 #endregion
 
@@ -558,6 +578,8 @@ namespace jarg
 
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
+
+            achievements_ = new Achievements();
         }
 
         private void InitialGeneration() {
@@ -574,11 +596,11 @@ namespace jarg
                                    currentFloor_, font1_, lineBatch_);
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
             inventory_ = new InventorySystem();
-            inventory_.Items.Add(new Item("testhat", 1));
-            inventory_.Items.Add(new Item("testhat2", 1));
-            inventory_.Items.Add(new Item("ak47", 1));
-            inventory_.Items.Add(new Item("a762", 100));
-            inventory_.Items.Add(new Item("a762", 100000));
+            inventory_.AddItem(new Item("testhat", 1));
+            inventory_.AddItem(new Item("testhat2", 1));
+            inventory_.AddItem(new Item("ak47", 1));
+            inventory_.AddItem(new Item("a762", 100));
+            inventory_.AddItem(new Item("a762", 100000));
             UpdateInventoryContainer();
             HideInfoWindow();
             sw.Stop();
@@ -637,6 +659,8 @@ namespace jarg
         public int jji=-2, jjj=-2;
         private Action<GameTime> UpdateAction = x => { };
         protected override void Update(GameTime gameTime) {
+            SecondTimespan += gameTime.ElapsedGameTime;
+            //first
 
             if(Settings.DebugInfo) {
                 sw_update.Restart();
@@ -666,6 +690,12 @@ namespace jarg
             if (Settings.DebugInfo)
             {
                 sw_update.Stop();
+            }
+
+            // last
+            if (SecondTimespan.TotalSeconds >= 1)
+            {
+                SecondTimespan = TimeSpan.Zero;
             }
         }
 
@@ -793,6 +823,24 @@ namespace jarg
                 if (WindowEventLog.Visible)
                 {
                     WindowEventLog.OnTop();
+                }
+            }
+
+            if (ks_[Keys.O] == KeyState.Down && lks_[Keys.O] == KeyState.Up)
+            {
+                WindowStatist.Visible = !WindowStatist.Visible;
+                if (WindowStatist.Visible)
+                {
+                    WindowStatist.OnTop();
+                }
+            }
+
+            if (ks_[Keys.P] == KeyState.Down && lks_[Keys.P] == KeyState.Up)
+            {
+                WindowStatist.Visible = !WindowStatist.Visible;
+                if (WindowStatist.Visible)
+                {
+                    WindowStatist.OnTop();
                 }
             }
 

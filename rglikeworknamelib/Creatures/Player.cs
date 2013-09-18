@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using jarg;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
@@ -92,7 +93,7 @@ namespace rglikeworknamelib.Creatures {
         private void EquipExact(Item i, InventorySystem ins, ref Item ite) {
             if (i != null) {
                 if (ite != null) {
-                    ins.Items.Add(ite);
+                    ins.AddItem(ite);
                     EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ItemDataBase.Data[ite.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
                     foreach (var buff in ite.Buffs.Where(buff => buffs.Contains(buff))) {
                         buffs.Remove(buff);
@@ -100,8 +101,8 @@ namespace rglikeworknamelib.Creatures {
                     }
                 }
                 ite = i;
-                if (ins.Items.Contains(i)) {
-                    ins.Items.Remove(i);
+                if (ins.ContainsItem(i)) {
+                    ins.RemoveItem(i);
                 }
                 EventLog.Add(string.Format("Вы экипировали {0}", ItemDataBase.Data[i.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
                 foreach (var buff in i.Buffs)
@@ -134,6 +135,7 @@ namespace rglikeworknamelib.Creatures {
             }
             var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
             ms.AddDecal(new Particle(WorldPosition() + adder, 3) { Rotation = Settings.rnd.Next() % 360, Life = new TimeSpan(0, 0, 1, 0) });
+            Achievements.Stat["takedmg"].Count += value;
         }
 
         public override void Update(GameTime gt, MapSector ms, Player hero)
@@ -218,7 +220,8 @@ namespace rglikeworknamelib.Creatures {
                             if(ItemAmmo.Count <= 0) {
                                 ItemAmmo = null;
                             }
-                        }  
+                        }
+                        Achievements.Stat["ammouse"].Count++;
                     } else {
                         if (secShoot_.TotalMilliseconds > 1000) {
                             EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
