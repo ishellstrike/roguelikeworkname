@@ -85,8 +85,11 @@ namespace rglikeworknamelib.Creatures {
                         EquipExact(i, ins, ref ItemMeele);
                     break;
                     case ItemType.Ammo:
-                    EquipExact(i, ins, ref ItemAmmo);
+                        EquipExact(i, ins, ref ItemAmmo);
                     break;
+            }
+            if (onUpdatedEquip != null) {
+                onUpdatedEquip(null, null);
             }
         }
 
@@ -205,6 +208,9 @@ namespace rglikeworknamelib.Creatures {
         }
 
         private TimeSpan secShoot_ = TimeSpan.Zero;
+        public event EventHandler onUpdatedEquip;
+        public event EventHandler onShoot;
+
         public void TryShoot(BulletSystem bs, float playerSeeAngle) {
             if (ItemGun != null) {
                 if (secShoot_.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
@@ -222,6 +228,9 @@ namespace rglikeworknamelib.Creatures {
                             }
                         }
                         Achievements.Stat["ammouse"].Count++;
+                        if(onShoot != null) {
+                            onShoot(null, null);
+                        }
                     } else {
                         if (secShoot_.TotalMilliseconds > 1000) {
                             EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);

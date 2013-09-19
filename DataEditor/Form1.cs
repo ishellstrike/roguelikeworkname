@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;

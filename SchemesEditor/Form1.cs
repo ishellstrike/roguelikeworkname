@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
-using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using Image = System.Drawing.Image;
 
 namespace SchemesEditor

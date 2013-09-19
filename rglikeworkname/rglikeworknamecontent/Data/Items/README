@@ -1,0 +1,49 @@
+//some string or int Field=Value ""not required
+//some array Field={value1,value2}
+
+int stackNo;
+
+int Weight;
+string AfteruseId;// becomes after use
+
+int hasHealth;
+
+string Name;
+string Nameret; //name for low iq caracters
+string Description;
+
+int Doses; //uses per 1 item
+
+int NutH2O, NutCal; // water, nutrition
+
+string[] Buff; // list of
+
+string Ammo; // ID of using ammo
+int Magazine; // bullets in 1 magazin
+string BulletParticle; // bullet particle ID
+int FireRate; // in millisecont betwen shoot
+
+int Accuracy; //In 0.1 degree offset
+
+int MTex;//Texture ID
+
+Microsoft.Xna.Framework.Color MMCol; // nothing
+
+int Volume;// range of sound then using in blocks
+ItemType SType;{        
+		Hat,
+        	Glaces,
+      	 	Helmet,
+      		Chest,
+     		Shirt,
+        	Pants,
+        	Gloves,
+        	Boots,     
+        	Gun,
+        	Meele,
+        	Ammo,
+        	Bag,
+        	Food,
+        	Medicine,
+        	Craft,
+        	Currency}

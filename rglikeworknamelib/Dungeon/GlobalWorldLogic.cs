@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace rglikeworknamelib.Dungeon
 {
@@ -13,7 +14,7 @@ namespace rglikeworknamelib.Dungeon
         Osen
     }
 
-    enum DayPart {
+    public enum DayPart {
         Day,
         Morning,
         Vecher,
@@ -23,13 +24,19 @@ namespace rglikeworknamelib.Dungeon
     public static class GlobalWorldLogic
     {
         public static DateTime CurrentTime = new DateTime(2020, 6, 1, 12, 0, 0);
+        private static TimeSpan elapse;
         public static float Temperature = 10;
         private static Seasons currentSeason_ = Seasons.Summer;
-        private static DayPart dayPart_  = DayPart.Day;
+        public static DayPart dayPart_  = DayPart.Day;
         private static readonly long Hour3 = new TimeSpan(0,3,0,0).Ticks;
+        private static float ler = 3;
+        public static float GetCurrentSlen() {
+            return ler;
+        }
 
         public static void Update(GameTime gt) {
-            CurrentTime += TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds);
+            elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds*50);
+            CurrentTime += elapse;
             Temperature -= Temperature * (float)gt.ElapsedGameTime.TotalMinutes;
             Temperature += GetNormalTemp(CurrentTime) * (float)gt.ElapsedGameTime.TotalMinutes;
 
@@ -67,6 +74,24 @@ namespace rglikeworknamelib.Dungeon
                     }
                     break;
             }
+
+            float a = 3;
+            switch (dayPart_) {
+                    case DayPart.Day:
+                    a = 0.1f;
+                    break;
+                    case DayPart.Morning:
+                    a = 1;
+                    break;
+                    case DayPart.Vecher:
+                    a = 4;
+                    break;
+                    case DayPart.Night:
+                    a = 7;
+                    break;
+            }
+            ler = Vector2.Lerp(new Vector2(ler, 0), new Vector2(a, 0), (float) elapse.TotalHours).X;
+             
 
             switch (currentSeason_) {
                 case Seasons.Osen:

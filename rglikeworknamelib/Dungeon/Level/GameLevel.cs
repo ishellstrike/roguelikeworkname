@@ -736,7 +736,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             gd_.RasterizerState = new RasterizerState() {CullMode = CullMode.None, FillMode = FillMode.Solid};
             gd_.DepthStencilState = DepthStencilState.Default;
             gd_.BlendState = BlendState.AlphaBlend;
-            (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
+            ((BasicEffect) be_).DiffuseColor = Color.Black.ToVector3();
 
             foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
                 pass.Apply();
@@ -802,19 +802,19 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private bool all_saved;
         private void SaveAllAsync(Game game) {
-            Settings.NeedToShowInfoWindow = true;
-            Settings.NTS1 = "Saving : ";
-            Settings.NTS2 = "";
-            int i = 0;
-            foreach (var sector in sectors_) {
-                i++;
-                Settings.NTS2 = i+"/"+sectors_.Count;
-                Settings.NeedToShowInfoWindow = true;
-                SaveSector(sector.Value);
-            }
             Settings.NTS1 = "Saving Map";
             Settings.NeedToShowInfoWindow = true;
             SaveMap();
+            Settings.NeedToShowInfoWindow = true;
+            Settings.NTS1 = "Saving : ";
+            Settings.NTS2 = "";
+            if(sectors_.Count > 0) {
+                for(int i=0; i<sectors_.Count; i++) {
+                    Settings.NTS2 = i+"/"+sectors_.Count;
+                    Settings.NeedToShowInfoWindow = true;
+                    SaveSector(sectors_.ElementAt(i).Value); 
+                }
+            }
             Settings.NeedExit = true;
         }
 
@@ -857,7 +857,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         #region Drawes
         private Vector2 min, max;
-        public void DrawFloors(GameTime gameTime, Vector2 camera)
+        public void DrawFloors(GameTime gameTime, Vector2 camera, Effect fl1)
         {
             var fatlas = Atlases.FloorAtlas; // Make field's non-static
             var fdb = FloorDataBase.Data;
@@ -894,8 +894,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         if (sector.SectorOffsetX * rx + i > min.X &&
                             sector.SectorOffsetY * ry + j > min.Y &&
                             sector.SectorOffsetX * rx + i < max.X &&
-                            sector.SectorOffsetY * ry + j < max.Y)
-                        {
+                            sector.SectorOffsetY * ry + j < max.Y) {
                             int a = i * ry + j;
                             spriteBatch_.Draw(fatlas[sector.Floors[a].Mtex],
                                               new Vector2(
@@ -965,7 +964,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                             sector.SectorOffsetY * ry + j < max.Y)
                         {
 
-
+                            if(block.Id != "0")
                             block.Draw(spriteBatch_, batlas, new Vector2(xpos, ypos));
 
 

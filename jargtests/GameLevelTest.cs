@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using rglikeworknamelib.Creatures;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 
 namespace jargtests
 {
