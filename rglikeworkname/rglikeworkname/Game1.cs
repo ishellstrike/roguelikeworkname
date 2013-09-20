@@ -45,6 +45,8 @@ namespace jarg
         
         private Player player_;
 
+        private bool GameStarted;
+
         private GraphicsDeviceManager graphics_;
         private Vector2 camera_;
         private SpriteFont font1_;
@@ -472,7 +474,7 @@ namespace jarg
             //    sec20glitch = TimeSpan.Zero;
             //}
 
-            if (!ws_.Mopusehook) {
+            if (!ws_.Mopusehook && GameStarted) {
                 if (ms_.LeftButton == ButtonState.Pressed) {
                     player_.TryShoot(bs_, PlayerSeeAngle);
                 }
@@ -578,14 +580,15 @@ namespace jarg
         private RenderTarget2D rt2d;
         private void GameDraw(GameTime gameTime) {
             GraphicsDevice.SetRenderTarget(rt2d);
+            currentFloor_.RenderFloors(camera_, GraphicsDevice);
             spriteBatch_.Begin();
-                EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X-camera_.X, player_.Position.Y-camera_.Y});
-                currentFloor_.DrawFloors(gameTime, camera_, EffectOmnilight);
+            EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X - camera_.X, player_.Position.Y - camera_.Y });
+            currentFloor_.DrawFloors(gameTime, camera_, GraphicsDevice);
             spriteBatch_.End();
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
                          DepthStencilState.None, RasterizerState.CullNone, EffectOmnilight);
-            spriteBatch_.Draw(rt2d,Vector2.Zero, Color.White);
+            spriteBatch_.Draw(rt2d, Vector2.Zero, Color.White);
             spriteBatch_.End();
 
             GraphicsDevice.SetRenderTarget(rt2d);
@@ -593,7 +596,7 @@ namespace jarg
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
                          DepthStencilState.None, RasterizerState.CullNone);
-            spriteBatch_.Draw(rt2d, Vector2.Zero, new Color(1,1,1,0.5f));
+            spriteBatch_.Draw(rt2d, Vector2.Zero, new Color(1, 1, 1, 0.5f));
             spriteBatch_.End();
 
             GraphicsDevice.SetRenderTarget(rt2d);
@@ -616,9 +619,9 @@ namespace jarg
                                   (int)Settings.Resolution.Y, sw_draw, sw_update);
 
             string ss =
-                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}",
+                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7}+{10} slen {8} {9}",
                               PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
-                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),GlobalWorldLogic.dayPart_);
+                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount() / 3, GlobalWorldLogic.GetCurrentSlen(), GlobalWorldLogic.dayPart_, currentFloor_.GetFloorRenderCount() / 3);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 

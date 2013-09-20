@@ -37,7 +37,6 @@ namespace jarg
 {
     public partial class Game1
     {
-        #region Window Designer
         #region Windows Vars
 
         private Window WindowStats;
@@ -223,7 +222,7 @@ namespace jarg
             ContainerEventLog = new ListContainer(new Rectangle(0, 0, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4 - 20), wp, sf, WindowEventLog);
             EventLog.onLogUpdate += EventLog_onLogUpdate;
 
-            WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, wp, sf, ws) { NoBorder = true };
+            WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, wp, sf, ws) { NoBorder = true, Visible = false};
             LabelIngameHint = new Label(new Vector2(10, 3), "a-ha", wp, sf, WindowIngameHint);
 
             WindowGlobal = new Window(new Vector2(Settings.Resolution.X - 100, Settings.Resolution.Y - 50), "Map", true, wp, sf, ws) { Visible = false };
@@ -418,6 +417,7 @@ namespace jarg
             WindowCaracterCration.Visible = false;
             DrawAction = GameDraw;
             UpdateAction = GameUpdate;
+            GameStarted = true;
         }
 
         void ButtonNewGame_onPressed(object sender, EventArgs e)
@@ -541,7 +541,5 @@ namespace jarg
                                            ? ItemDataBase.Data[player_.ItemMeele.Id].Name
                                            : "";
         }
-
-        #endregion
     }
 }

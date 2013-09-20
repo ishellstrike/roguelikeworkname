@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NLog;
 using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Level.Blocks;
@@ -15,6 +17,7 @@ namespace rglikeworknamelib.Dungeon.Level {
     public class GameLevel
     {
         public int MapSeed = 23142455;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private Texture2D whitepixel;
         private Texture2D transparentpixel;
@@ -35,6 +38,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         #region Constructor
         Effect be_;
+        private Effect beFloor_;
         public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd)
         {
             MapGenerators.seed = MapSeed;
@@ -63,6 +67,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             be_ = new BasicEffect(gd_);
             (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
 
+            beFloor_ = new BasicEffect(gd_);
+            (beFloor_ as BasicEffect).DiffuseColor = Color.White.ToVector3();
+
             LoadMap();
         }
 
@@ -74,6 +81,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY) {
             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY))) {
+                
                 BinaryFormatter binaryFormatter_ = new BinaryFormatter();
                 FileStream fileStream_;
                 GZipStream gZipStream_;
@@ -83,19 +91,29 @@ namespace rglikeworknamelib.Dungeon.Level {
                         Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY),
                         FileMode.Open);
                 gZipStream_ = new GZipStream(fileStream_, CompressionMode.Decompress);
-                var q1 = binaryFormatter_.Deserialize(gZipStream_);
-                var q2 = binaryFormatter_.Deserialize(gZipStream_);
-                var q3 = binaryFormatter_.Deserialize(gZipStream_);
-                var q4 = binaryFormatter_.Deserialize(gZipStream_);
-                var q5 = binaryFormatter_.Deserialize(gZipStream_);
-                var q6 = binaryFormatter_.Deserialize(gZipStream_);
-                var q7 = binaryFormatter_.Deserialize(gZipStream_);
-                var q8 = binaryFormatter_.Deserialize(gZipStream_);
+                MapSector t = null;
+                try {
+                    var q1 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q2 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q3 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q4 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q5 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q6 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q7 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q8 = binaryFormatter_.Deserialize(gZipStream_);
+                    t = new MapSector(this, q1, q2, q3, q4, q5, q6, q7, q8);
+                } catch (SerializationException e) { 
+                    //TODO: сделать, чтобы не вылетало из за старой карты
+                    throw;
+                }
                 gZipStream_.Close();
                 fileStream_.Close();
-                var t = new MapSector(this, q1, q2, q3, q4, q5, q6,q7,q8);
-                t.ready = true;
-                return t;
+
+                if (t != null) {
+                    t.RebuildFloorGeometry();
+                    t.ready = true;
+                    return t;
+                }
             }
             return null;
         }
@@ -729,41 +747,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             return r.Position + r.Direction*5;
         }
 
-        List<VertexPositionColor> points = new List<VertexPositionColor>();
-
-        public void ShadowRender() {
-
-            gd_.RasterizerState = new RasterizerState() {CullMode = CullMode.None, FillMode = FillMode.Solid};
-            gd_.DepthStencilState = DepthStencilState.Default;
-            gd_.BlendState = BlendState.AlphaBlend;
-            ((BasicEffect) be_).DiffuseColor = Color.Black.ToVector3();
-
-            foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
-                pass.Apply();
-
-                if (points.Count != 0) {
-                    gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count/3);
-                }
-            }
-
-            if(Settings.DebugWire) {
-                gd_.RasterizerState = new RasterizerState() { CullMode = CullMode.None, FillMode = FillMode.WireFrame };
-                gd_.DepthStencilState = DepthStencilState.Default;
-                gd_.BlendState = BlendState.AlphaBlend;
-                (be_ as BasicEffect).DiffuseColor = Color.White.ToVector3();
-
-                foreach (EffectPass pass in be_.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-
-                    if (points.Count != 0)
-                    {
-                        gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count / 3);
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Приводит координаты из [0,resolution] к [-1,1] представлению
         /// </summary>
@@ -853,11 +836,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             return points.Count;
         }
 
-        // Shadow casting region
-
         #region Drawes
         private Vector2 min, max;
-        public void DrawFloors(GameTime gameTime, Vector2 camera, Effect fl1)
+        public void DrawFloors(GameTime gameTime, Vector2 camera, GraphicsDevice gd)
         {
             var fatlas = Atlases.FloorAtlas; // Make field's non-static
             var fdb = FloorDataBase.Data;
@@ -887,34 +868,86 @@ namespace rglikeworknamelib.Dungeon.Level {
                 {
                     continue;
                 }
-                for (int i = 0; i < rx; i++)
-                {
-                    for (int j = 0; j < ry; j++)
-                    {
-                        if (sector.SectorOffsetX * rx + i > min.X &&
-                            sector.SectorOffsetY * ry + j > min.Y &&
-                            sector.SectorOffsetX * rx + i < max.X &&
-                            sector.SectorOffsetY * ry + j < max.Y) {
-                            int a = i * ry + j;
-                            spriteBatch_.Draw(fatlas[sector.Floors[a].Mtex],
-                                              new Vector2(
-                                                  i * ssx - (int)camera.X +
-                                                  rx * ssx * sector.SectorOffsetX,
-                                                  j * ssy - (int)camera.Y +
-                                                  ry * ssy * sector.SectorOffsetY),
-                                              null, Color.White);
-                        }
-                    }
-                    foreach (var dec in sector.decals) {
-                        spriteBatch_.Draw(Atlases.ParticleAtlas[dec.MTex],
-                                          dec.Pos - camera,
-                                          null, dec.Color, dec.Rotation, new Vector2(Atlases.ParticleAtlas[dec.MTex].Height / 2, Atlases.ParticleAtlas[dec.MTex].Width / 2), dec.Scale, SpriteEffects.None, 0);
-                    }
+                foreach (var dec in sector.decals) {
+                    spriteBatch_.Draw(Atlases.ParticleAtlas[dec.MTex],
+                                      dec.Pos - camera,
+                                      null, dec.Color, dec.Rotation, new Vector2(Atlases.ParticleAtlas[dec.MTex].Height / 2.0f, Atlases.ParticleAtlas[dec.MTex].Width / 2.0f), dec.Scale, SpriteEffects.None, 0);
                 }
             }
         }
+        public void RenderFloors(Vector2 camera, GraphicsDevice gd) {
+            var fatlas = Atlases.FloorAtlas; // Make field's non-static
+            var fdb = FloorDataBase.Data;
+            var rx = MapSector.Rx;
+            var ry = MapSector.Ry;
+            var ssx = Settings.FloorSpriteSize.X;
+            var ssy = Settings.FloorSpriteSize.Y;
 
-        private Vector2 per_prew;
+            GetBlock((int) (camera.X/32), (int) (camera.Y/32));
+            GetBlock((int) ((camera.X + Settings.Resolution.X)/32), (int) ((camera.Y + Settings.Resolution.Y)/32));
+            GetBlock((int) ((camera.X + Settings.Resolution.X)/32), (int) ((camera.Y)/32));
+            GetBlock((int) ((camera.X)/32), (int) ((camera.Y + Settings.Resolution.Y)/32));
+
+            min = new Vector2((camera.X)/ssx - 1, (camera.Y)/ssy - 1);
+            max = new Vector2((camera.X + Settings.Resolution.X)/ssx,
+                              (camera.Y + Settings.Resolution.Y)/ssy);
+
+            for (int k = 0; k < sectors_.Count; k++) {
+                MapSector sector = sectors_.ElementAt(k).Value;
+                if (sector.SectorOffsetX*rx + rx < min.X &&
+                    sector.SectorOffsetY*ry + ry < min.Y) {
+                    continue;
+                }
+                if (sector.SectorOffsetX*rx > max.X && sector.SectorOffsetY*ry > max.Y) {
+                    continue;
+                }
+                var xCornPos = -(int) camera.X + rx*ssx*sector.SectorOffsetX;
+                var yCornPos = -(int) camera.Y + ry*ssy*sector.SectorOffsetY;
+                RenderSector(sector, camera, xCornPos, yCornPos, gd);
+            }
+        }
+
+        public void RenderSector(MapSector ms, Vector2 camera, float xCorn, float yCorn, GraphicsDevice gd) {
+            var scale = Matrix.CreateTranslation(xCorn, yCorn, 0) * Matrix.CreateScale(2 / Settings.Resolution.X, -(2 / Settings.Resolution.Y), 1) * Matrix.CreateTranslation(-1, -1, 0); // вреведение из пиксельных координат (без камеры), в которых с камерой, затем в [0,2], затем в [-1,1]
+
+            gd.RasterizerState = new RasterizerState() {
+                CullMode = CullMode.None,
+                FillMode = FillMode.Solid
+            };
+            gd.DepthStencilState = DepthStencilState.Default;
+            gd.BlendState = BlendState.AlphaBlend;
+            ((BasicEffect) beFloor_).DiffuseColor = Color.White.ToVector3();
+            ((BasicEffect) beFloor_).Texture = Atlases.FloorAtlas["grass1"];
+            ((BasicEffect) beFloor_).TextureEnabled = true;
+            ((BasicEffect) beFloor_).World = scale;
+
+            foreach (EffectPass pass in beFloor_.CurrentTechnique.Passes) {
+                pass.Apply();
+
+                //gd.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, ms.FloorGeometry.ToArray(), 0, ms.FloorGeometry.Count, ms.FloorIndexes.ToArray(), 0, ms.FloorIndexes.Count/3);
+                gd.DrawUserPrimitives(PrimitiveType.TriangleList, ms.FloorGeometry.ToArray(), 0, ms.FloorGeometry.Length / 3);
+ 
+            }
+
+            if (Settings.DebugWire) {
+                gd.RasterizerState = new RasterizerState() {
+                    CullMode = CullMode.None,
+                    FillMode = FillMode.WireFrame
+                };
+                gd.DepthStencilState = DepthStencilState.Default;
+                gd.BlendState = BlendState.AlphaBlend;
+                (beFloor_ as BasicEffect).DiffuseColor = Color.Yellow.ToVector3();
+                ((BasicEffect)beFloor_).TextureEnabled = false;
+
+                foreach (EffectPass pass in beFloor_.CurrentTechnique.Passes) {
+                    pass.Apply();
+                        //gd.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, ms.FloorGeometry.ToArray(), 0, ms.FloorGeometry.Count, ms.FloorIndexes.ToArray(), 0, ms.FloorIndexes.Count / 3);
+                        gd.DrawUserPrimitives(PrimitiveType.TriangleList, ms.FloorGeometry.ToArray(), 0, ms.FloorGeometry.Length / 3);
+                    }
+            }
+        }
+
+        Vector2 per_prew;
         public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per)
         {
             var batlas = Atlases.BlockAtlas; // Make field's non-static
@@ -1013,6 +1046,44 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
         }
+
+        List<VertexPositionColor> points = new List<VertexPositionColor>();
+        public void ShadowRender()
+        {
+            gd_.RasterizerState = new RasterizerState() {
+                CullMode = CullMode.None,
+                FillMode = FillMode.Solid
+            };
+            gd_.DepthStencilState = DepthStencilState.Default;
+            gd_.BlendState = BlendState.AlphaBlend;
+            ((BasicEffect)be_).DiffuseColor = Color.Black.ToVector3();
+
+            foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
+                pass.Apply();
+
+                if (points.Count != 0) {
+                    gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count / 3);
+                }
+            }
+
+            if (Settings.DebugWire) {
+                gd_.RasterizerState = new RasterizerState() {
+                    CullMode = CullMode.None,
+                    FillMode = FillMode.WireFrame
+                };
+                gd_.DepthStencilState = DepthStencilState.Default;
+                gd_.BlendState = BlendState.AlphaBlend;
+                (be_ as BasicEffect).DiffuseColor = Color.White.ToVector3();
+
+                foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
+                    pass.Apply();
+
+                    if (points.Count != 0) {
+                        gd_.DrawUserPrimitives(PrimitiveType.TriangleList, points.ToArray(), 0, points.Count / 3);
+                    }
+                }
+            }
+        }
 #endregion
 
         public MapSector GetCreatureSector(Vector2 pos, Vector2 start) {
@@ -1025,6 +1096,10 @@ namespace rglikeworknamelib.Dungeon.Level {
         public bool IsCreatureMeele(Creature hero, Creature ny) {
             return (Settings.GetMeeleActionRange() >=
                     Vector2.Distance(ny.WorldPosition(), hero.Position));
+        }
+
+        public int GetFloorRenderCount() {
+            return sectors_.Select(x => x.Value.FloorGeometry.Length).Sum();
         }
     } 
 }

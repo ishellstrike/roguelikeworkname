@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
@@ -37,6 +38,10 @@ namespace rglikeworknamelib.Dungeon.Level {
         internal List<Vector2> initialNodes;
         internal SectorBiom biom;
 
+        internal VertexPositionColorTexture[] FloorGeometry;
+        internal List<int> FloorIndexes;
+        internal string[] FloorTexes;
+
         public MapSector(int sectorOffsetX, int sectorOffsetY) {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
@@ -52,6 +57,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             initialNodes = new List<Vector2>();
+            FloorGeometry = null;
+            FloorIndexes = new List<int>();
         }
 
         public MapSector(GameLevel parent, int sectorOffsetX, int sectorOffsetY)
@@ -71,6 +78,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Blocks.Add(new Block());
             }
             initialNodes = new List<Vector2>();
+            FloorGeometry = null;
+            FloorIndexes = new List<int>();
         }
 
         /// <summary>
@@ -215,8 +224,50 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Spawn("hdzombie", rand);
             }
 
+            // After all floor generation
+            RebuildFloorGeometry();
             Parent.generated++;
             ready = true;
+        }
+
+        internal void RebuildFloorGeometry() {
+            var temp = new List<VertexPositionColorTexture>();
+            var tempT = new List<string>();
+            FloorIndexes = new List<int>();
+            var proc = new string[Rx*Ry];
+            for (int i = 0; i < proc.Length; i++) {
+                proc[i] = Floors[i].Mtex;
+            }
+            int nindex = 0;
+            for (int i = 0; i < Rx; i++) {
+                for (int j = 0; j < Ry; j++) {
+                    var tS = proc[i*Ry + j];
+                    if(proc[i*Ry+j] != "-1")
+                    {
+                        proc[i * Ry + j] = "-1";
+                        temp.Add(new VertexPositionColorTexture(new Vector3(i * 32, j * 32, 0), Color.White, new Vector2(0, 0)));
+                        int ii = i;
+                        int jj = j;
+                        while (true) {
+                            if (ii + 1 < Rx && proc[(ii+1) * Ry + jj] != "-1" && proc[(ii+1) * Ry + jj] == tS) {
+                                ii++;
+                                proc[ii * Ry + jj] = "-1";
+                            } else {
+                                break;
+                            }
+                        }
+                        temp.Add(new VertexPositionColorTexture(new Vector3((ii+1) * 32, j * 32, 0), Color.White, new Vector2(1, 0)));
+                        temp.Add(new VertexPositionColorTexture(new Vector3(i * 32, (jj+1) * 32, 0), Color.White, new Vector2(0, 1)));
+
+                        temp.Add(new VertexPositionColorTexture(new Vector3((ii+1) * 32, j * 32, 0), Color.White, new Vector2(1, 0)));
+                        temp.Add(new VertexPositionColorTexture(new Vector3((ii+1) * 32, (jj+1) * 32, 0), Color.White, new Vector2(1, 1)));
+                        temp.Add(new VertexPositionColorTexture(new Vector3(i * 32, (jj+1) * 32, 0), Color.White, new Vector2(0, 1)));
+                        tempT.Add(tS);
+                    }
+                }
+            }
+            FloorGeometry = temp.ToArray();
+            FloorTexes = tempT.ToArray();
         }
 
         private void Spawn(string i, Random rnd) {
