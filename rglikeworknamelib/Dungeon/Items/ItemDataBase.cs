@@ -110,6 +110,11 @@ namespace rglikeworknamelib.Dungeon.Items {
                     sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[buff].Name));
                 }
             }
+            if (item.Ammo != null) {
+                sb.Append(Environment.NewLine + Environment.NewLine + string.Format("Калибр :"));
+
+                sb.Append(Environment.NewLine + Data[item.Ammo].Name);
+            }
             //switch (item.stype) {
             //    case ItemType.Medicine:
             //        sb.Append(item.)

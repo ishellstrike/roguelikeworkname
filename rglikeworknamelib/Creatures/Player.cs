@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
@@ -22,6 +23,111 @@ namespace rglikeworknamelib.Creatures {
         public Dress(string i , Color c) {
             id = i;
             col = c;
+        }
+    }
+    public class Ability {
+        public static readonly int[] XpNeeds = new[] { 10, 25, 40, 60, 85, 115, 155, 200, 265, 340, 435, 555, 700, 890, 1120};
+        private int xpCurrent_;
+        public int XpCurrent
+        {
+            get { return xpCurrent_; }
+            set 
+            { 
+                xpCurrent_ = value; 
+                if(xpCurrent_ > XpNeeds[XpLevel]) {
+                    XpLevel++;
+                    if(onLevelUp != null) {
+                        onLevelUp(null, null);
+                    }
+                } 
+            }
+        }
+        public int XpLevel;
+        public string Name;
+
+        public event EventHandler onLevelUp;
+
+        public override string ToString() {
+            switch (XpLevel) {
+                case 0:
+                    return "нет";
+                case 1:
+                    return "дилетант";
+                case 2:
+                    return "начинающий";
+                case 3:
+                    return "новичок";
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                    return "легенда";
+            }
+
+            return XpCurrent.ToString();
+        }
+    }
+    public class AbilitiesBasic {
+     public AbilitiesBasic() {
+         
+     }
+    }
+    public class AbilitiesPlayer : AbilitiesBasic {
+            public Ability Survive,
+                           Run,
+                           Shooting,
+                           Martial,
+                           Cooking,
+                           Chemistry,
+                           Physics,
+                           Biology,
+                           Gadgets,
+                           Tailoring,
+                           Reading;
+
+        public Ability[] AllAbilities;
+
+        public AbilitiesPlayer()
+            {
+                Survive = new Ability {
+                    Name = "Выживание"
+                };
+                Run = new Ability {
+                    Name = "Бег"
+                };
+                Shooting = new Ability {
+                    Name = "Стрельба"
+                };
+                Martial = new Ability();
+                Cooking = new Ability();
+                Chemistry = new Ability();
+                Physics = new Ability();
+                Biology = new Ability();
+                Gadgets = new Ability();
+                Tailoring = new Ability();
+                Reading = new Ability();
+
+            AllAbilities = new[] {
+                                     Survive,
+                                     Run,
+                                     Shooting,
+                                     Martial,
+                                     Cooking,
+                                     Chemistry,
+                                     Physics,
+                                     Biology,
+                                     Gadgets,
+                                     Tailoring,
+                                     Reading
+                                 };
         }
     }
     public class Player : ShootingCreature {
@@ -46,15 +152,12 @@ namespace rglikeworknamelib.Creatures {
         public Item ItemAmmo;
         public Item ItemBag;
 
-        /// <summary>
-        /// Experience for other abilities. From monsters
-        /// </summary>
-        public int XpPool;
+        public AbilitiesPlayer Abilities = new AbilitiesPlayer();
 
         /// <summary>
-        /// Experience for battle abilities. From rest
+        /// Experience for abilities. From rest
         /// </summary>
-        public int RestPool; 
+        public int XpPool;
 
         public Player(SpriteBatch sb, Texture2D tex, SpriteFont font) {
             sb_ = sb;
@@ -121,6 +224,15 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public Vector2 CurrentActiveRoom { get; set; }
+
+        public int MaxWeight {
+            get { return 1000; }
+        }
+
+        public int MaxVolume
+        {
+            get { return 1000; }
+        }
 
         public void Accelerate(Vector2 ac) {
             Velocity += ac;
@@ -214,12 +326,12 @@ namespace rglikeworknamelib.Creatures {
         public void TryShoot(BulletSystem bs, float playerSeeAngle) {
             if (ItemGun != null) {
                 if (secShoot_.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
-                    if ((ItemDataBase.Data[ItemGun.Id].Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemDataBase.Data[ItemGun.Id].Ammo) || ItemDataBase.Data[ItemGun.Id].Ammo == null)
-                    {
+                    if ((ItemDataBase.Data[ItemGun.Id].Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemDataBase.Data[ItemGun.Id].Ammo) || ItemDataBase.Data[ItemGun.Id].Ammo == null) {
+                        var dam = ItemGun != null ? ItemDataBase.Data[ItemGun.Id].Damage : 0;
                         bs.AddBullet(this, 50,
                                       playerSeeAngle +
                                       MathHelper.ToRadians((((float) Settings.rnd.NextDouble()*2f - 1)*
-                                                            ItemDataBase.Data[ItemGun.Id].Accuracy/10f)));
+                                                            ItemDataBase.Data[ItemGun.Id].Accuracy/10f)), dam);
                         secShoot_ = TimeSpan.Zero;
                         if (ItemAmmo != null) {
                             ItemAmmo.Count--;

@@ -30,7 +30,7 @@ namespace rglikeworknamelib.Creatures {
         {
             var a = GetPositionInBlocks();
             var p = WorldPosition() - camera;
-            var position = p + new Vector2(16, -32);
+            var position = p + new Vector2(-16, 0);
             spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], position, base.Col);
 
             var origin = Vector2.Zero;

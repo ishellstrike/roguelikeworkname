@@ -12,6 +12,22 @@ namespace rglikeworknamelib.Dungeon.Item
     public class InventorySystem {
         private List<Item> items_ = new List<Item>();
 
+        public int TotalWeight {
+            get {
+                var db = ItemDataBase.Data;
+                return items_.Select(x => db[x.Id].Weight).Sum();
+            }
+        }
+
+        public int TotalVolume
+        {
+            get
+            {
+                var db = ItemDataBase.Data;
+                return items_.Select(x => db[x.Id].Volume).Sum();
+            }
+        }
+
         public void AddItem(Item it) {
             items_.Add(it);
             switch (ItemDataBase.Data[it.Id].SType) {
