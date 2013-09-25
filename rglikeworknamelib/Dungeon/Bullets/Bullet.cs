@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Dungeon.Bullets {
@@ -13,6 +14,8 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         internal TimeSpan Life;
         private ParticleSystem ps;
         private Random rnd = new Random();
+        public int Damage;
+        public ICreature Owner;
 
         internal Vector3 Velocity;
 

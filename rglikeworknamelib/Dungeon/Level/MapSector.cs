@@ -201,7 +201,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             var sb = GetStorageBlocks();
 
             foreach (var block in sb) {
-                for (int i = 0; i < rand.Next(0,3); i++) {
+                int next = rand.Next(0, 3);
+                for (int i = 0; i < next; i++) {
                     block.StoredItems.Add(new Item.Item(ItemDataBase.Data.ElementAt(rand.Next(0, ItemDataBase.Data.Count)).Key, rand.Next(1, 2)));
                 }
             }

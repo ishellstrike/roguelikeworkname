@@ -24,7 +24,8 @@ namespace rglikeworknamelib.Dungeon.Item {
         public string Ammo;
         public int Magazine;
         public string BulletParticle;
-        public int FireRate;
+        public int FireRate = 1000;
+        public int Damage = 20;
 
         /// <summary>
         /// In 0.1 degree offset

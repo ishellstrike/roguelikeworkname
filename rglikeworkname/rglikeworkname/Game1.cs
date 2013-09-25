@@ -43,7 +43,7 @@ namespace jarg
         private GameLevel currentFloor_;
         private InventorySystem inventory_;
         
-        private Player player_;
+        private Player player_ = null;
 
         private GraphicsDeviceManager graphics_;
         private Vector2 camera_;
@@ -432,10 +432,11 @@ namespace jarg
             if (WindowContainer.Visible && ks_[Keys.R] == KeyState.Down && lks_[Keys.R] == KeyState.Up)
             {
                 ButtonContainerTakeAll_onPressed(null, null);
+                WindowContainer.Visible = false;
             }
 
             if (player_ != null) {
-                pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200)/2,
+                pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200)/2.0f,
                                           player_.Position.Y - Settings.Resolution.Y/2);
             }
 
@@ -445,6 +446,7 @@ namespace jarg
         private TimeSpan sec20glitch;
         private bool firstclick;
         private bool doubleclick;
+        private bool rememberShoot;
         private void MouseUpdate(GameTime gameTime)
         {
             lms_ = ms_;
@@ -472,11 +474,11 @@ namespace jarg
             //    sec20glitch = TimeSpan.Zero;
             //}
 
-            if (!ws_.Mopusehook) {
-                if (ms_.LeftButton == ButtonState.Pressed) {
-                    player_.TryShoot(bs_, PlayerSeeAngle);
-                }
+            if (ms_.LeftButton == ButtonState.Released) {
+                rememberShoot = false;
+            }
 
+            if (!ws_.Mopusehook) {
                 int nx = (ms_.X + (int) camera_.X)/32;
                 int ny = (ms_.Y + (int) camera_.Y)/32;
 
@@ -491,7 +493,8 @@ namespace jarg
 
                 if (currentFloor_ != null) {
                     var nxny = currentFloor_.GetBlock(nx, ny);
-                    if (nxny != null && nxny.Lightness == Color.White) // currentFloor_.IsExplored(aa))
+                    bool nothingUndermouse = true;
+                    if (nxny != null && nxny.Lightness == Color.White && !rememberShoot) // currentFloor_.IsExplored(aa))
                     {
                         var a = currentFloor_.GetBlock(nx, ny);
                         if (a != null) {
@@ -511,7 +514,7 @@ namespace jarg
                                         case SmartAction.ActionOpenContainer:
                                             WindowContainer.Visible = true;
                                             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
-                                            UpdateContainerContainer((a as StorageBlock).StoredItems);
+                                            UpdateContainerContainer(((StorageBlock) a).StoredItems);
                                             containerOn = new Vector2(nx, ny);
                                             break;
                                         case SmartAction.ActionOpenClose:
@@ -531,8 +534,14 @@ namespace jarg
                                 LabelIngameHint.Text = s;
                                 WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
                                 WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
+                                nothingUndermouse = false;
                             }
                         }
+                    }
+                    
+                    if((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot) {
+                        player_.TryShoot(bs_, PlayerSeeAngle);
+                        rememberShoot = true;
                     }
                 }
             }
@@ -582,21 +591,7 @@ namespace jarg
                 EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X-camera_.X, player_.Position.Y-camera_.Y});
                 currentFloor_.DrawFloors(gameTime, camera_, EffectOmnilight);
             spriteBatch_.End();
-            GraphicsDevice.SetRenderTarget(null);
-            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
-                         DepthStencilState.None, RasterizerState.CullNone, EffectOmnilight);
-            spriteBatch_.Draw(rt2d,Vector2.Zero, Color.White);
-            spriteBatch_.End();
-
-            GraphicsDevice.SetRenderTarget(rt2d);
             currentFloor_.ShadowRender();
-            GraphicsDevice.SetRenderTarget(null);
-            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
-                         DepthStencilState.None, RasterizerState.CullNone);
-            spriteBatch_.Draw(rt2d, Vector2.Zero, new Color(1,1,1,0.5f));
-            spriteBatch_.End();
-
-            GraphicsDevice.SetRenderTarget(rt2d);
             spriteBatch_.Begin();
             currentFloor_.DrawBlocks(gameTime, camera_, player_);
             currentFloor_.DrawCreatures(gameTime, camera_);
@@ -604,6 +599,7 @@ namespace jarg
             bs_.Draw(gameTime, camera_);
             ps_.Draw(gameTime, camera_);
             spriteBatch_.End();
+
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, EffectOmnilight);
             spriteBatch_.Draw(rt2d, Vector2.Zero, Color.White);

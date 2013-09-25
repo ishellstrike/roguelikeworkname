@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
@@ -14,16 +15,6 @@ using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
-
-    [Serializable]
-    public struct Dress {
-        public string id;
-        public Color col;
-        public Dress(string i , Color c) {
-            id = i;
-            col = c;
-        }
-    }
     public class Player : ShootingCreature {
         private readonly SpriteBatch sb_;
         public Texture2D Tex;
@@ -46,15 +37,12 @@ namespace rglikeworknamelib.Creatures {
         public Item ItemAmmo;
         public Item ItemBag;
 
-        /// <summary>
-        /// Experience for other abilities. From monsters
-        /// </summary>
-        public int XpPool;
+        public AbilitiesPlayer Abilities = new AbilitiesPlayer();
 
         /// <summary>
-        /// Experience for battle abilities. From rest
+        /// Experience for abilities. From rest
         /// </summary>
-        public int RestPool; 
+        public int XpPool;
 
         public Player(SpriteBatch sb, Texture2D tex, SpriteFont font) {
             sb_ = sb;
@@ -121,6 +109,15 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public Vector2 CurrentActiveRoom { get; set; }
+
+        public int MaxWeight {
+            get { return 1000; }
+        }
+
+        public int MaxVolume
+        {
+            get { return 1000; }
+        }
 
         public void Accelerate(Vector2 ac) {
             Velocity += ac;
@@ -214,12 +211,12 @@ namespace rglikeworknamelib.Creatures {
         public void TryShoot(BulletSystem bs, float playerSeeAngle) {
             if (ItemGun != null) {
                 if (secShoot_.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
-                    if ((ItemDataBase.Data[ItemGun.Id].Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemDataBase.Data[ItemGun.Id].Ammo) || ItemDataBase.Data[ItemGun.Id].Ammo == null)
-                    {
+                    if ((ItemDataBase.Data[ItemGun.Id].Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemDataBase.Data[ItemGun.Id].Ammo) || ItemDataBase.Data[ItemGun.Id].Ammo == null) {
+                        var dam = ItemGun != null ? ItemDataBase.Data[ItemGun.Id].Damage : 0;
                         bs.AddBullet(this, 50,
                                       playerSeeAngle +
                                       MathHelper.ToRadians((((float) Settings.rnd.NextDouble()*2f - 1)*
-                                                            ItemDataBase.Data[ItemGun.Id].Accuracy/10f)));
+                                                            ItemDataBase.Data[ItemGun.Id].Accuracy/10f)), dam);
                         secShoot_ = TimeSpan.Zero;
                         if (ItemAmmo != null) {
                             ItemAmmo.Count--;

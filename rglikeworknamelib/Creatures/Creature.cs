@@ -211,7 +211,7 @@ namespace rglikeworknamelib.Creatures {
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
             var a = GetPositionInBlocks();
             var p = WorldPosition() - camera;
-            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p+new Vector2(16,-32), Col);
+            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p+new Vector2(-16,0), Col);
             if (Settings.DebugInfo) {
                 spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
             }

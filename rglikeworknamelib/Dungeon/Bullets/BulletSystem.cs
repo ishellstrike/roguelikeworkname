@@ -26,13 +26,13 @@ namespace rglikeworknamelib.Dungeon.Bullets {
             lb = l;
         }
 
-        public void AddBullet(Vector2 pos, float vel, float an) {
-            bullet_.Add(new Bullet(pos, vel, an, 0, 1, TimeSpan.FromSeconds(1)));
+        public void AddBullet(Vector2 pos, float vel, float an, int dam) {
+            bullet_.Add(new Bullet(pos, vel, an, 0, 1, TimeSpan.FromSeconds(1)){Damage = dam, Owner = null});
         }
 
-        public void AddBullet(Creature who, float vel, float an)
+        public void AddBullet(Creature who, float vel, float an, int dam)
         {
-            bullet_.Add(new Bullet(who.Position, vel, an, 0, 1, TimeSpan.FromSeconds(1)));
+            bullet_.Add(new Bullet(who.Position, vel, an, 0, 1, TimeSpan.FromSeconds(1)){Damage = dam, Owner = who});
         }
 
         public void Update(GameTime gameTime) {
@@ -51,27 +51,29 @@ namespace rglikeworknamelib.Dungeon.Bullets {
 
                 bullet.Start += new Vector2(f/2, f1/2);
 
-                var bl = level.GetBlock((int) bullet.GetPositionInBlocks().X, (int) bullet.GetPositionInBlocks().Y);
-                if(!BlockDataBase.Data[bl.Id].IsWalkable) {
-                    bullet.Life = TimeSpan.Zero;
-                }
-               
-                var sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start);
-                var crea = level.GetCreatureSector(bullet.Pos, bullet.Start);
-
-                if (sect != null) {
-                    sect.GiveDamage(20, DamageType.Default, crea);
-                    if (sect.isDead) {
-
+                var bl = level.GetBlock((int) bullet.GetPositionInBlocks().X, (int) bullet.GetPositionInBlocks().Y, true);
+                if (bl != null) {
+                    if (!BlockDataBase.Data[bl.Id].IsWalkable) {
+                        bullet.Life = TimeSpan.Zero;
                     }
 
-                    bullet.Life = TimeSpan.Zero;
-                }
+                    var sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start);
+                    var crea = level.GetCreatureSector(bullet.Pos, bullet.Start);
 
-                if (bullet.Life <= TimeSpan.Zero)
-                {
+                    if (sect != null) {
+                        sect.GiveDamage(bullet.Damage, DamageType.Default, crea);
+                        if (sect.isDead) {
+
+                        }
+
+                        bullet.Life = TimeSpan.Zero;
+                    }
+
+                    if (bullet.Life <= TimeSpan.Zero) {
+                        bullet_.Remove(bullet);
+                    }
+                } else {
                     bullet_.Remove(bullet);
-                    continue;
                 }
             }
         }

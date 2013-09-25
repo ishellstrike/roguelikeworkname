@@ -37,7 +37,6 @@ namespace jarg
 {
     public partial class Game1
     {
-        #region Window Designer
         #region Windows Vars
 
         private Window WindowStats;
@@ -86,6 +85,7 @@ namespace jarg
         private Button InventorySortMedicine;
         private Button InventorySortFood;
         private Button IntentoryEquip;
+        private Label InventoryTotalWV;
 
         private Window WindowContainer;
         private ListContainer ContainerContainer;
@@ -115,6 +115,7 @@ namespace jarg
         private DoubleLabel LabelCaracterAmmo;
         private DoubleLabel LabelCaracterBag;
         private DoubleLabel LabelCaracterHp;
+        private List<Label> LabelsAbilities;
 
         private Window InfoWindow;
         private DoubleLabel InfoWindowLabel;
@@ -210,7 +211,10 @@ namespace jarg
             InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30 * 2), "Food", wp, sf, WindowInventory);
             InventorySortFood.onPressed += InventorySortFood_onPressed;
             IntentoryEquip = new Button(new Vector2(WindowInventory.Locate.Width - 100, WindowInventory.Locate.Height - 200 + 30 * 2), "Equip", wp, sf, WindowInventory);
-            IntentoryEquip.onPressed += new EventHandler(IntentoryEquip_onPressed);
+            IntentoryEquip.onPressed += IntentoryEquip_onPressed;
+            InventoryTotalWV =
+                new Label(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*3),
+                          "some weight" + Environment.NewLine + "some volume", wp, sf, WindowInventory);
 
             WindowContainer = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Container", true, wp, sf, ws) { Visible = false };
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
@@ -223,7 +227,7 @@ namespace jarg
             ContainerEventLog = new ListContainer(new Rectangle(0, 0, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4 - 20), wp, sf, WindowEventLog);
             EventLog.onLogUpdate += EventLog_onLogUpdate;
 
-            WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, wp, sf, ws) { NoBorder = true };
+            WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, wp, sf, ws) { NoBorder = true, Visible = false};
             LabelIngameHint = new Label(new Vector2(10, 3), "a-ha", wp, sf, WindowIngameHint);
 
             WindowGlobal = new Window(new Vector2(Settings.Resolution.X - 100, Settings.Resolution.Y - 50), "Map", true, wp, sf, ws) { Visible = false };
@@ -245,6 +249,12 @@ namespace jarg
             LabelCaracterBag = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Bag : ", wp, sf, WindowCaracter);
             ii = 0;
             LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15 * ii), "HP : ", wp, sf, WindowCaracter);
+            LabelsAbilities = new List<Label>();
+            for (int i = 0; i < 11; i++) {
+                Label temp = new Label(new Vector2(10, 400 + 15 * ii), "", wp, sf, WindowCaracter);
+                ii++;
+                LabelsAbilities.Add(temp);
+            }
 
             InfoWindow = new Window(new Vector2(200, 100), "Info", true, wp, sf, ws) { Visible = false };
             InfoWindowLabel = new DoubleLabel(new Vector2(20, 20), "some info", wp, sf, InfoWindow);
@@ -347,6 +357,8 @@ namespace jarg
                 cou++;
                 ContainerInventoryItems.AddItem(i);
             }
+            InventoryTotalWV.Text = string.Format("Weight {0}/{1}{2}Volume {3}/{4}", inventory_.TotalWeight, player_.MaxWeight, Environment.NewLine,
+                                             inventory_.TotalVolume, player_.MaxVolume);
         }
 
         private ItemType nowSortContainer_ = ItemType.Nothing;
@@ -418,6 +430,7 @@ namespace jarg
             WindowCaracterCration.Visible = false;
             DrawAction = GameDraw;
             UpdateAction = GameUpdate;
+            WindowEventLog.Visible = true;
         }
 
         void ButtonNewGame_onPressed(object sender, EventArgs e)
@@ -488,9 +501,12 @@ namespace jarg
                 ImageMinimap.image = currentFloor_.GetMinimap();
             }
 
-            if (WindowCaracter.Visible)
-            {
+            if (WindowCaracter.Visible) {
                 LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
+
+                for (int i = 0; i < LabelsAbilities.Count; i++) {
+                    LabelsAbilities[i].Text = player_.Abilities.AllAbilities[i].Name+" "+player_.Abilities.AllAbilities[i];
+                }
             }
 
             if (SecondTimespan.TotalSeconds >= 1)
@@ -542,6 +558,5 @@ namespace jarg
                                            : "";
         }
 
-        #endregion
     }
 }
