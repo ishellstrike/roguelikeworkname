@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -20,6 +21,7 @@ namespace rglikeworknamelib.Window {
         public WindowSystem(Texture2D wp, SpriteFont f1) {
             whitepixel_ = wp;
             font1_ = f1;
+            Visible = true;
         }
 
         //public Window New 
@@ -76,7 +78,12 @@ namespace rglikeworknamelib.Window {
         }
 
         public void AddWindow(Window w) {
+            w.Id = Windows.Count;
             Windows.Add(w);
+        }
+
+        public Window GetWindowById(int id) {
+            return Windows.Find(x => x.Id == id);
         }
 
         public bool CloseTop() {
@@ -88,6 +95,34 @@ namespace rglikeworknamelib.Window {
                 }
             }
             return false;
+        }
+
+        public void Clear() {
+             Windows.Clear();
+        }
+
+        /// <summary>
+        /// On top ID in last element
+        /// </summary>
+        /// <returns></returns>
+        public Tuple<int, bool>[] GetVisibleList() {
+            var a = Windows.Select(window => new Tuple<int, bool>(window.Id, window.Visible)).ToList();
+            a.Add(new Tuple<int, bool>(Windows[Windows.Count-1].Id, true));
+            return a.ToArray();
+        }
+
+        public void SetVisibleList(Tuple<int, bool>[] a)
+        {
+            if (a.Length != Windows.Count + 1) {
+                return;
+            }
+
+            for (int i = 0; i < a.Length - 1; i++) {
+                var b = a[i];
+                GetWindowById(b.Item1).Visible = b.Item2;
+            }
+
+            GetWindowById(a.Last().Item1).OnTop();
         }
     }
 }

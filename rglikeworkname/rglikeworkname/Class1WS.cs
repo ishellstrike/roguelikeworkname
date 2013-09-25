@@ -156,9 +156,9 @@ namespace jarg
     |  |/ __ \|  | \/ /_/  >
 /\__|  (____  /__|  \___  / 
 \______|    \/     /_____/", wp, sf, WindowMainMenu);
-            LabelMainVer = new Label(new Vector2(10, LabelMainMenu.Height + 10), Version.GetShort(), wp, sf, Color.Gray, WindowMainMenu);
+            labelMainVer_ = new Label(new Vector2(10, LabelMainMenu.Height + 10), Version.GetShort(), wp, sf, Color.Gray, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(LabelMainMenu);
-            WindowMainMenu.CenterComponentHor(LabelMainVer);
+            WindowMainMenu.CenterComponentHor(labelMainVer_);
             ButtonNewGame = new Button(new Vector2(10, 120 + 40 * 1), "New game", wp, sf, WindowMainMenu);
             ButtonNewGame.onPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
@@ -445,7 +445,7 @@ namespace jarg
         void ButtonCaracterConfirm_onPressed(object sender, EventArgs e)
         {
             WindowCaracterCration.Visible = false;
-            DrawAction = GameDraw;
+            drawAction_ = GameDraw;
             UpdateAction = GameUpdate;
             WindowEventLog.Visible = true;
         }

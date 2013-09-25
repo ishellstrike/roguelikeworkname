@@ -31,6 +31,10 @@ namespace jarg {
             m_basicEffect = new BasicEffect(graphicsDevice);
             m_basicEffect.VertexColorEnabled = true;
 
+            UpdateProjection(graphicsDevice);
+        }
+
+        public void UpdateProjection(GraphicsDevice graphicsDevice) {
             m_basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
                 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height, 0, 0, 1);
         }

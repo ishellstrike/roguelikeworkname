@@ -734,9 +734,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <returns></returns>
         private Vector3 XyToVector3(Vector3 vec)
         {
-            var nx = (vec.X / Settings.Resolution.X) * 2.0f - 1;
-            var ny = -(vec.Y / Settings.Resolution.Y) * 2.0f + 1;
-            return new Vector3(nx, ny, 0.0f);
+            var nx = (vec.X / Settings.Resolution.X) * 2.0 - 1;
+            var ny = -(vec.Y / Settings.Resolution.Y) * 2.0 + 1;
+            return new Vector3((float)nx, (float)ny, 0.0f);
         }
 
         public bool IsCreatureMeele(int nx, int ny, Player player) {
@@ -868,16 +868,49 @@ namespace rglikeworknamelib.Dungeon.Level {
                                               null, Color.White);
                         }
                     }
-                    foreach (var dec in sector.decals) {
-                        spriteBatch_.Draw(Atlases.ParticleAtlas[dec.MTex],
-                                          dec.Pos - camera,
-                                          null, dec.Color, dec.Rotation, new Vector2(Atlases.ParticleAtlas[dec.MTex].Height / 2, Atlases.ParticleAtlas[dec.MTex].Width / 2), dec.Scale, SpriteEffects.None, 0);
-                    }
                 }
             }
         }
 
-        private Vector2 per_prew;
+        public void DrawDecals(GameTime gameTime, Vector2 camera, Effect fl1) {
+            var atl = Atlases.ParticleAtlas;
+            var rx = MapSector.Rx;
+            var ry = MapSector.Ry;
+            var ssx = Settings.FloorSpriteSize.X;
+            var ssy = Settings.FloorSpriteSize.Y;
+
+            GetBlock((int)(camera.X / 32), (int)(camera.Y / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y) / 32));
+            GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+
+            min = new Vector2((camera.X) / ssx - 1, (camera.Y) / ssy - 1);
+            max = new Vector2((camera.X + Settings.Resolution.X) / ssx,
+                                  (camera.Y + Settings.Resolution.Y) / ssy);
+
+            for (int k = 0; k < sectors_.Count; k++)
+            {
+                MapSector sector = sectors_.ElementAt(k).Value;
+                if (sector.SectorOffsetX * rx + rx < min.X &&
+                    sector.SectorOffsetY * ry + ry < min.Y)
+                {
+                    continue;
+                }
+                if (sector.SectorOffsetX * rx > max.X && sector.SectorOffsetY * ry > max.Y)
+                {
+                    continue;
+                }
+                
+                    foreach (var dec in sector.decals)
+                    {
+                        spriteBatch_.Draw(Atlases.ParticleAtlas[dec.MTex],
+                                          dec.Pos - camera,
+                                          null, dec.Color, dec.Rotation, new Vector2(atl[dec.MTex].Height / 2f, atl[dec.MTex].Width / 2f), dec.Scale, SpriteEffects.None, 0);
+                    }
+                }
+        }
+
+        private Vector2 perPrew_;
         public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per)
         {
             var batlas = Atlases.BlockAtlas; // Make field's non-static
@@ -888,7 +921,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             var ssy = Settings.FloorSpriteSize.Y;
 
 
-            bool shad = Vector2.Distance(camera, per_prew) > 2;
+            bool shad = Vector2.Distance(camera, perPrew_) > 2;
 
             if (shad || MapJustUpdated)
             {
@@ -941,7 +974,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     }
                 }
 
-                per_prew = per.Position;
+                perPrew_ = per.Position;
 
                 if (Settings.DebugInfo)
                 {

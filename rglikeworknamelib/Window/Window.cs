@@ -14,6 +14,7 @@ namespace rglikeworknamelib.Window {
         private readonly Color backtransparent_;
 
         private readonly Button closeButton_;
+        public int Id;
 
         private bool closable_ = true;
 

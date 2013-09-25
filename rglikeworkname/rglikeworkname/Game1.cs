@@ -101,9 +101,13 @@ namespace jarg
             }
         }
 
+        private static Form gameWindowForm_;
         protected override void Initialize()
         {
-            Window.Title = Version.GetLong();
+            var gameWindowForm = (Form)Control.FromHandle(Window.Handle);
+            gameWindowForm.MinimumSize = new System.Drawing.Size(800, 600);
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             Settings.Resolution = new Vector2(1024, 768);
             graphics_.IsFullScreen = false;
@@ -111,11 +115,38 @@ namespace jarg
             graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             
-            IsFixedTimeStep = false; //wierd, actually it's true
+            IsFixedTimeStep = false;
             IsMouseVisible = true;
             graphics_.ApplyChanges();
 
+            UpdateTitle();
+
             base.Initialize();
+        }
+
+        private void UpdateTitle() {
+            Window.Title = Version.GetLong() + string.Format(" - {0}x{1}", Settings.Resolution.X, Settings.Resolution.Y);
+        }
+
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            Settings.Resolution = new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height);
+            graphics_.PreferredBackBufferHeight = (int)Settings.Resolution.Y;
+            graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
+            graphics_.ApplyChanges();
+            var t = ws_.GetVisibleList();
+            ws_.Clear();
+            ws_ = new WindowSystem(whitepixel_, font1_);
+            CreateWindows(whitepixel_, font1_, ws_);
+            ws_.SetVisibleList(t);
+            UpdateTitle();
+            UpdateInventoryContainer();
+            UpdateCaracterWindowItems(null, null);
+            EventLog_onLogUpdate(null, null);
+            rt2d = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight);
+            EffectOmnilight.Parameters["screenWidth"].SetValue(graphics_.PreferredBackBufferWidth);
+            EffectOmnilight.Parameters["screenHeight"].SetValue(graphics_.PreferredBackBufferHeight);
+            lineBatch_.UpdateProjection(GraphicsDevice);
         }
 
 
@@ -550,8 +581,8 @@ namespace jarg
         }
 
 
-        private Action<GameTime> DrawAction = x => { };
-        private Label LabelMainVer;
+        private Action<GameTime> drawAction_ = x => { };
+        private Label labelMainVer_;
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -566,7 +597,7 @@ namespace jarg
 
             GraphicsDevice.Clear(Color.Black);
 
-            DrawAction(gameTime);
+            drawAction_(gameTime);
 
             base.Draw(gameTime);
 
@@ -589,9 +620,12 @@ namespace jarg
         private RenderTarget2D rt2d;
         private void GameDraw(GameTime gameTime) {
             GraphicsDevice.SetRenderTarget(rt2d);
-            spriteBatch_.Begin();
+            spriteBatch_.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
                 EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X-camera_.X, player_.Position.Y-camera_.Y});
                 currentFloor_.DrawFloors(gameTime, camera_, EffectOmnilight);
+            spriteBatch_.End();
+            spriteBatch_.Begin();
+            currentFloor_.DrawDecals(gameTime, camera_, EffectOmnilight);
             spriteBatch_.End();
             currentFloor_.ShadowRender();
             spriteBatch_.Begin();
