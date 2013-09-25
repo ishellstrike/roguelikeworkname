@@ -1,37 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Mork;
-using NLog;
 using rglikeworknamelib;
 using rglikeworknamelib.Creatures;
-using rglikeworknamelib.Dialogs;
 using rglikeworknamelib.Dungeon;
-using rglikeworknamelib.Dungeon.Buffs;
-using rglikeworknamelib.Dungeon.Bullets;
-using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
-using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Dungeon.Level.Blocks;
-using rglikeworknamelib.Dungeon.Particles;
-using rglikeworknamelib.Generation.Names;
-using rglikeworknamelib.Parser;
 using rglikeworknamelib.Window;
-using Button = rglikeworknamelib.Window.Button;
-using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
 using EventLog = rglikeworknamelib.EventLog;
-using Keys = Microsoft.Xna.Framework.Input.Keys;
-using Label = rglikeworknamelib.Window.Label;
-using ProgressBar = rglikeworknamelib.Window.ProgressBar;
-using Settings = rglikeworknamelib.Settings;
 
 namespace jarg
 {
@@ -122,6 +100,9 @@ namespace jarg
 
         private Window WindowStatist;
         private ListContainer ListStatist;
+
+        private Window ConsoleWindow;
+        private TextBox ConsoleTB;
         #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws)
@@ -261,6 +242,42 @@ namespace jarg
 
             WindowStatist = new Window(new Vector2(Settings.Resolution.X / 3, Settings.Resolution.Y / 3), "Statistic", true, wp, sf, ws) { Visible = false };
             ListStatist = new ListContainer(new Rectangle(0, 0, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 3 - 20), wp, sf, WindowStatist);
+
+            ConsoleWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Concole", true, wp, sf, ws) {Visible = false};
+            ConsoleTB = new TextBox(new Vector2(10,100), 200, wp, sf, ConsoleWindow);
+            ConsoleTB.onEnter += ConsoleTB_onEnter;
+            ConsoleWindow.CenterComponentHor(ConsoleTB);
+        }
+
+        void ConsoleTB_onEnter(object sender, EventArgs e) {
+            string s = ConsoleTB.Text;
+            ConsoleTB.Tag = "";
+
+            if(s.Contains("spawn c ")) {
+                string ss = s.Substring(8);
+                if(MonsterDataBase.Data.ContainsKey(ss)) {
+                    var pp = player_.GetWorldPositionInBlocks();
+                    pp.X = (int)pp.X;
+                    pp.Y = (int)pp.Y;
+                    var ppp = currentFloor_.GetInSectorPosition(pp);
+                    var i = (int)(player_.Position.X - (int)ppp.X * 32 * 32);
+                    var i1 = (int)(player_.Position.Y - (int)ppp.Y * 32 * 32);
+                    currentFloor_.GetSector((int)ppp.X, (int)ppp.Y).Spawn(ss, i/32, i1/32);
+                    EventLog.Add(string.Format("Creature {0} spawn at ({1}, {2}), in ({3}, {4})", ss, i, i1, (int)ppp.X, (int)ppp.Y), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                } else {
+                EventLog.Add(string.Format("Creature {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+            }
+            }
+            if (s.Contains("mypos"))
+            {
+                var pp = player_.GetWorldPositionInBlocks();
+                pp.X = (int)pp.X;
+                pp.Y = (int)pp.Y;
+                var ppp = currentFloor_.GetInSectorPosition(pp);
+                var i = (int)(player_.Position.X - (int)ppp.X * 32 * 32);
+                var i1 = (int)(player_.Position.Y - (int)ppp.Y * 32 * 32);
+                EventLog.Add(string.Format("Player position {4} or ({0}, {1}) in sector ({2}, {3})", i, i1, (int)ppp.X, (int)ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+            }
         }
 
         void ShowInfoWindow(string s1, string s2)

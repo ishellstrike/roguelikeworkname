@@ -63,7 +63,7 @@ namespace Mork
             frameCounter_++;
 
             string fps = string.Format("{0}x{1} {2} fps", resx, resy, insec.Sum());
-            string mem = string.Format("{0} MiB {1}U+D={2:0.00}ms", memo,Environment.NewLine,draw.Elapsed.TotalMilliseconds+update.Elapsed.TotalMilliseconds);
+            string mem = string.Format("{0} MiB {1}D+U={2:0.00}ms", memo,Environment.NewLine,draw.Elapsed.TotalMilliseconds+update.Elapsed.TotalMilliseconds);
 
             sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp,
                      DepthStencilState.Default, RasterizerState.CullCounterClockwise, null);

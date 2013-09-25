@@ -45,7 +45,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             transparentpixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             data[0] = 0x0;
-            whitepixel.SetData(data);
+            transparentpixel.SetData(data);
 
             minimap_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 121, 121);
             map_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 671, 671);
@@ -955,7 +955,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                                       SpriteEffects.None, 0);
                     spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1024, 1),
                                       SpriteEffects.None, 0);
-                    spriteBatch_.DrawString(font_, sector.biom.ToString(), new Vector2(20, 20) + ff, Color.White);
+
+                    spriteBatch_.DrawString(font_, string.Format("({0},{1}) {2}",sector.SectorOffsetX, sector.SectorOffsetY,  sector.biom), new Vector2(20, 20) + ff, Color.White);
                 }
             }
         }

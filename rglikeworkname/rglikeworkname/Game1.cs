@@ -345,101 +345,103 @@ namespace jarg
         {
             lks_ = ks_;
             ks_ = Keyboard.GetState();
+            if (!ws_.Keyboardhook) {
+                if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
+                    Settings.DebugInfo = !Settings.DebugInfo;
+                }
 
-            if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
-                Settings.DebugInfo = !Settings.DebugInfo;
+                if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up) {
+                    Settings.DebugWire = !Settings.DebugWire;
+                }
+
+                if (ks_[Keys.W] == KeyState.Down) {
+                    player_.Accelerate(new Vector2(0, -10));
+                }
+                if (ks_[Keys.S] == KeyState.Down) {
+                    player_.Accelerate(new Vector2(0, 10));
+                }
+                if (ks_[Keys.A] == KeyState.Down) {
+                    player_.Accelerate(new Vector2(-10, 0));
+                }
+                if (ks_[Keys.D] == KeyState.Down) {
+                    player_.Accelerate(new Vector2(10, 0));
+                }
+
+                if (ks_[Keys.G] == KeyState.Down && lks_[Keys.G] == KeyState.Up) {
+                    currentFloor_.Rebuild();
+                }
+
+                if (ks_[Keys.H] == KeyState.Down && lks_[Keys.H] == KeyState.Up) {
+                    currentFloor_.ExploreAllMap();
+                }
+
+                if (ks_[Keys.M] == KeyState.Down && lks_[Keys.M] == KeyState.Up) {
+                    WindowGlobal.Visible = !WindowGlobal.Visible;
+                    if (WindowGlobal.Visible) {
+                        currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
+                        ImageGlobal.image = currentFloor_.GetMap();
+                    }
+                }
+
+                if (ks_[Keys.C] == KeyState.Down && lks_[Keys.C] == KeyState.Up) {
+                    WindowCaracter.Visible = !WindowCaracter.Visible;
+                }
+
+                if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
+                    WindowInventory.Visible = !WindowInventory.Visible;
+                    if (WindowInventory.Visible) {
+                        WindowInventory.OnTop();
+                        WindowInventory.SetPosition(new Vector2(0, 0));
+                    }
+                }
+
+                if (ks_[Keys.L] == KeyState.Down && lks_[Keys.L] == KeyState.Up) {
+                    WindowEventLog.Visible = !WindowEventLog.Visible;
+                    if (WindowEventLog.Visible) {
+                        WindowEventLog.OnTop();
+                    }
+                }
+
+                if (ks_[Keys.O] == KeyState.Down && lks_[Keys.O] == KeyState.Up) {
+                    WindowStatist.Visible = !WindowStatist.Visible;
+                    if (WindowStatist.Visible) {
+                        WindowStatist.OnTop();
+                    }
+                }
+
+                if (ks_[Keys.P] == KeyState.Down && lks_[Keys.P] == KeyState.Up) {
+                    WindowStatist.Visible = !WindowStatist.Visible;
+                    if (WindowStatist.Visible) {
+                        WindowStatist.OnTop();
+                    }
+                }
+
+                if (WindowContainer.Visible && ks_[Keys.R] == KeyState.Down && lks_[Keys.R] == KeyState.Up) {
+                    ButtonContainerTakeAll_onPressed(null, null);
+                    WindowContainer.Visible = false;
+                }
+
+                if (player_ != null) {
+                    pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200)/2.0f,
+                                              player_.Position.Y - Settings.Resolution.Y/2);
+                }
             }
 
-            if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up)
+            if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up)
             {
-                Settings.DebugWire = !Settings.DebugWire;
-            }
-
-            if (ks_[Keys.W] == KeyState.Down) {
-                player_.Accelerate(new Vector2(0, -10));
-            }
-            if (ks_[Keys.S] == KeyState.Down) {
-                player_.Accelerate(new Vector2(0, 10));
-            }
-            if (ks_[Keys.A] == KeyState.Down) {
-                player_.Accelerate(new Vector2(-10, 0));
-            }
-            if (ks_[Keys.D] == KeyState.Down) {
-                player_.Accelerate(new Vector2(10, 0));
-            }
-
-            if (ks_[Keys.G] == KeyState.Down && lks_[Keys.G] == KeyState.Up) {
-                currentFloor_.Rebuild();
-            }
-
-            if (ks_[Keys.H] == KeyState.Down && lks_[Keys.H] == KeyState.Up) {
-                currentFloor_.ExploreAllMap();
-            }
-
-            if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up) {
-                if (!ws_.CloseTop()) {
+                if (!ws_.CloseTop())
+                {
                     WindowIngameMenu.Visible = true;
                 }
             }
 
-            if (ks_[Keys.M] == KeyState.Down && lks_[Keys.M] == KeyState.Up) {
-                WindowGlobal.Visible = !WindowGlobal.Visible;
-                if(WindowGlobal.Visible) {
-                    currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
-                    ImageGlobal.image = currentFloor_.GetMap();
-                }
-            }
-
-            if (ks_[Keys.C] == KeyState.Down && lks_[Keys.C] == KeyState.Up) {
-                WindowCaracter.Visible = !WindowCaracter.Visible;
-            }
-
-            if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
-                    WindowInventory.Visible = !WindowInventory.Visible;
-                if (WindowInventory.Visible) {
-                    WindowInventory.OnTop();
-                    WindowInventory.SetPosition(new Vector2(0, 0));
-                }
-            }
-
-            if (ks_[Keys.L] == KeyState.Down && lks_[Keys.L] == KeyState.Up)
-            {
-                WindowEventLog.Visible = !WindowEventLog.Visible;
-                if (WindowEventLog.Visible)
+            if (ks_[Keys.OemTilde] == KeyState.Down && lks_[Keys.OemTilde] == KeyState.Up) {
+                ConsoleWindow.Visible = !ConsoleWindow.Visible;
+                if (ConsoleWindow.Visible)
                 {
-                    WindowEventLog.OnTop();
+                    ConsoleWindow.OnTop();
                 }
             }
-
-            if (ks_[Keys.O] == KeyState.Down && lks_[Keys.O] == KeyState.Up)
-            {
-                WindowStatist.Visible = !WindowStatist.Visible;
-                if (WindowStatist.Visible)
-                {
-                    WindowStatist.OnTop();
-                }
-            }
-
-            if (ks_[Keys.P] == KeyState.Down && lks_[Keys.P] == KeyState.Up)
-            {
-                WindowStatist.Visible = !WindowStatist.Visible;
-                if (WindowStatist.Visible)
-                {
-                    WindowStatist.OnTop();
-                }
-            }
-
-            if (WindowContainer.Visible && ks_[Keys.R] == KeyState.Down && lks_[Keys.R] == KeyState.Up)
-            {
-                ButtonContainerTakeAll_onPressed(null, null);
-                WindowContainer.Visible = false;
-            }
-
-            if (player_ != null) {
-                pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200)/2.0f,
-                                          player_.Position.Y - Settings.Resolution.Y/2);
-            }
-
         }
 
         private TimeSpan doubleclicktimer = TimeSpan.Zero;
@@ -568,10 +570,10 @@ namespace jarg
 
             base.Draw(gameTime);
 
+            ws_.Draw(spriteBatch_, lig1, gameTime);
+
             lineBatch_.Draw();
             lineBatch_.Clear();
-
-            ws_.Draw(spriteBatch_, lig1, gameTime);
 
             if (Settings.DebugInfo)
             {
@@ -612,9 +614,9 @@ namespace jarg
                                   (int)Settings.Resolution.Y, sw_draw, sw_update);
 
             string ss =
-                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}",
+                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
                               PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
-                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),GlobalWorldLogic.dayPart_);
+                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),GlobalWorldLogic.dayPart_,ws_.Mopusehook, ws_.Keyboardhook);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 
@@ -627,38 +629,6 @@ namespace jarg
             spriteBatch_.DrawString(font1_,string.Format("       {0} {1}", nx, ny), new Vector2(ms_.X, ms_.Y), Color.White);
 
             spriteBatch_.End();
-        }
-    }
-
-    internal class DoubleLabel : Label {
-        public string Text2;
-
-        public DoubleLabel(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, IGameContainer win) : base(p, s, wp, wf, c, win) {
-        }
-
-        public DoubleLabel(Vector2 p, string s, Texture2D wp, SpriteFont wf, IGameContainer win) : base(p, s, wp, wf, win) {
-        }
-
-        public override void Draw(SpriteBatch sb)
-        {
-            if (Text != null && Visible)
-            {
-                if (isHudColored)
-                {
-                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Settings.Hud—olor);
-                    if (Text2 != null) {
-                        sb.DrawString(font1_, Text2, Parent.GetPosition() + pos_ + new Vector2(Width, 0),
-                                      Color.LightBlue);
-                    }
-                }
-                else
-                {
-                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, col_);
-                    if (Text2 != null) {
-                        sb.DrawString(font1_, Text2, Parent.GetPosition() + pos_ + new Vector2(Width, 0), Color.LightBlue);
-                    }
-                }
-            }
         }
     }
 }

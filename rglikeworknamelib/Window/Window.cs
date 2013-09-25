@@ -39,6 +39,7 @@ namespace rglikeworknamelib.Window {
 
         private readonly Texture2D whitepixel_;
         private readonly SpriteFont font1_;
+        private bool hasTextbox_;
 
         public string Name;
 
@@ -122,6 +123,9 @@ namespace rglikeworknamelib.Window {
 
         public void AddComponent(IGameComponent component) {
             Components.Add(component);
+            if (component is TextBox) {
+                hasTextbox_ = true;
+            }
         }
 
         public bool MouseClickCatched { get; set; }
@@ -181,6 +185,9 @@ namespace rglikeworknamelib.Window {
         {
             aimed = false;
             if (Visible) {
+                if (hasTextbox_) {
+                    parent_.Keyboardhook  = true;
+                }
                 if (!parent_.Mopusehook && lms.X >= Locate.Left && lms.Y >= Locate.Top &&
                     lms.X <= Locate.Right && lms.Y <= Locate.Bottom) {
                     h = true;

@@ -20,7 +20,8 @@ namespace rglikeworknamelib
         NoAmmoWeapon,
         Consume,
         Buff,
-        Equip
+        Equip,
+        Console
     }
 
     public struct LogEntity {

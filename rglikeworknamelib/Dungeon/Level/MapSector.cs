@@ -220,11 +220,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             ready = true;
         }
 
-        private void Spawn(string i, Random rnd) {
+        public void Spawn(string i, Random rnd) {
             Spawn(i, rnd.Next(0, Rx), rnd.Next(0, Ry));
         }
 
-        private void Spawn(string i, int x, int y) {
+        public void Spawn(string i, int x, int y) {
             var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[i].Prototype);
             n.Position = new Vector2(x*32, y*32);
             n.Id = i;

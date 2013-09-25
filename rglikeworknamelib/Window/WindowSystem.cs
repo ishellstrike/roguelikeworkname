@@ -23,42 +23,14 @@ namespace rglikeworknamelib.Window {
         }
 
         //public Window New 
-
-
-        private float timer1;
-        private float force1;
-        private TimeSpan ts1;
         public void Draw(SpriteBatch sb, Effect lig1, GameTime gt) {
-            if(ts1.TotalMilliseconds > 500) {
-                force1 = 0;
-                ts1 = TimeSpan.Zero;
-            }
 
-            if (force1 != 0) {
-                ts1 += gt.ElapsedGameTime;
-                lig1.Parameters["force"].SetValue(force1);
-                lig1.Parameters["random1"].SetValue((float) Settings.rnd.NextDouble());
-                lig1.Parameters["random2"].SetValue((float) Settings.rnd.NextDouble());
-                lig1.Parameters["timer"].SetValue(timer1);
-                //lig1.Parameters["desaturation_float"].SetValue(0.5f);
-                timer1+=100;
-
-                sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
-                         DepthStencilState.None, RasterizerState.CullNone, lig1);
-            } else {
-                sb.Begin();
-            }
+            sb.Begin();
             for (int i = 0; i < Windows.Count; i++) {
                 var component = Windows[i];
                 component.Draw(sb);
             }
             sb.End();
-        }
-
-        public void DoGlitch()
-        {
-            timer1 = 0;
-            force1 = 1f;
         }
 
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
