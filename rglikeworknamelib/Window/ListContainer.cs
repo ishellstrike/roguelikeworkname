@@ -170,10 +170,11 @@ namespace rglikeworknamelib.Window {
             return lastN - FromI;
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        {
             if (Visible) {
                 for (int i = 0; i < Components.Count; i++) {
-                    Components[i].Update(gt, ms, lms, h);
+                    Components[i].Update(gt, ms, lms, ks, lks, h);
                 }
             }
         }

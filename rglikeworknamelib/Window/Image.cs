@@ -34,7 +34,7 @@ namespace rglikeworknamelib.Window {
             sb.Draw(image, Parent.GetPosition() + pos_, col_);
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, bool h)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
         {
 
         }

@@ -6,7 +6,7 @@ namespace rglikeworknamelib.Window {
     public interface IGameComponent
     {
         void Draw(SpriteBatch sb);
-        void Update(GameTime gt, MouseState ms, MouseState lms, bool mh);
+        void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh);
 
         Vector2 GetPosition();
         void SetPosition(Vector2 pos);

@@ -249,7 +249,7 @@ namespace jarg
             base.Update(gameTime);
 
             WindowsUpdate(gameTime);
-            ws_.Update(gameTime, ms_, lms_, false);
+            ws_.Update(gameTime, ms_, lms_, ks_, lks_, false);
 
             KeyboardUpdate(gameTime);
             MouseUpdate(gameTime);

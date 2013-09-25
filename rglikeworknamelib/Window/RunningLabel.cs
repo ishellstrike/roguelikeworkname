@@ -37,9 +37,10 @@ namespace rglikeworknamelib.Window {
             return (text.Remove(0, offset) + text.Remove(offset)).Substring(0,ss);
         }
 
-        public override void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
+        public override void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        {
             runStep += 5*(float)gt.ElapsedGameTime.TotalSeconds;
-            base.Update(gt, ms, lms, h);
+            base.Update(gt, ms, lms, ks, lks, h);
         }
 
         public override float Width

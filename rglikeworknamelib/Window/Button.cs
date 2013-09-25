@@ -70,7 +70,7 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, bool mh)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
             if (Visible) {
                 Vector2 realpos = GetPosition();

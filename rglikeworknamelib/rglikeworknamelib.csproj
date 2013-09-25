@@ -133,6 +133,7 @@
     <Compile Include="Window\ListContainer.cs" />
     <Compile Include="Window\ProgressBar.cs" />
     <Compile Include="Window\RunningLabel.cs" />
+    <Compile Include="Window\TextBox.cs" />
     <Compile Include="Window\VerticalProgressBar.cs" />
     <Compile Include="Window\Window.cs" />
     <Compile Include="Window\WindowSystem.cs" />

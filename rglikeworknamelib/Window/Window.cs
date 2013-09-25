@@ -177,7 +177,8 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, bool h) {
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        {
             aimed = false;
             if (Visible) {
                 if (!parent_.Mopusehook && lms.X >= Locate.Left && lms.Y >= Locate.Top &&
@@ -203,7 +204,7 @@ namespace rglikeworknamelib.Window {
                 }
                 for (int i = Components.Count - 1; i >= 0; i--) {
                     var component = Components[i];
-                    component.Update(gt, ms, lms, h);
+                    component.Update(gt, ms, lms, ks, lks, h);
                 }
             }
         }

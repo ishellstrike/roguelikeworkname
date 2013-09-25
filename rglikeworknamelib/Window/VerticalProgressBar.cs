@@ -42,10 +42,10 @@ namespace rglikeworknamelib.Window {
             sb.Draw(whitepixel_, new Vector2(locate_.Right, locate_.Y) + Parent.GetPosition(), null, Settings.Hud—olor, 0, Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
             sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + Parent.GetPosition(), null, Settings.Hud—olor, 0, Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
 
-            sb.Draw(whitepixel_, new Vector2(locate_.X + 3, locate_.Y + 3) + Parent.GetPosition(), null, Settings.Hud—olor, 0, Vector2.Zero, new Vector2((locate_.Width - 4), (locate_.Height - 4) * ((float)Progress / Max)), SpriteEffects.None, 0);
+            sb.Draw(whitepixel_, new Vector2(locate_.X + 3, locate_.Y + 3) + Parent.GetPosition(), null, Settings.Hud—olor, 0, Vector2.Zero, new Vector2((locate_.Width - 4), (locate_.Height - 4 - 20) * ((float)Progress / Max)), SpriteEffects.None, 0);
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, bool h)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
         {
 
         }

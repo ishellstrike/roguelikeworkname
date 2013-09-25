@@ -76,7 +76,8 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public virtual void Update(GameTime gt, MouseState ms, MouseState lms, bool mh) {
+        public virtual void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
+        {
             if (Text != null) {
                 var locate_ = new Rectangle((int) pos_.X, (int) pos_.Y, (int) font1_.MeasureString(Text).X,
                                             (int) font1_.MeasureString(Text).Y);

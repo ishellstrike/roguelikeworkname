@@ -61,7 +61,7 @@ namespace rglikeworknamelib.Window {
             force1 = 1f;
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, bool mh)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
             Mopusehook = false;
             Keyboardhook = false;
@@ -70,7 +70,7 @@ namespace rglikeworknamelib.Window {
             for (int index = Windows.Count-1; index >= 0; index--)
             {
                 var component = Windows[index];
-                component.Update(gt, ms, lms, Mopusehook);
+                component.Update(gt, ms, lms, ks, lks, Mopusehook);
             }
         }
 
