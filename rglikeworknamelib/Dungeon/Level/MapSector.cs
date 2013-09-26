@@ -37,6 +37,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         internal List<Vector2> initialNodes;
         internal SectorBiom biom;
 
+        internal List<Light> lights; 
+
         public MapSector(int sectorOffsetX, int sectorOffsetY) {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
@@ -71,6 +73,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Blocks.Add(new Block());
             }
             initialNodes = new List<Vector2>();
+            lights = new List<Light>();
         }
 
         /// <summary>
@@ -95,6 +98,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             biom = (SectorBiom)obiom;
             creatures = (List<ICreature>)creat;
             decals = (List<Particle>)decal;
+            lights = new List<Light>();
+            ResetLightingSources();
         }
 
         public List<StorageBlock> GetStorageBlocks()
@@ -102,6 +107,24 @@ namespace rglikeworknamelib.Dungeon.Level {
             return (from a in Blocks
                     where BlockDataBase.Data[a.Id].Prototype == typeof(StorageBlock)
                     select a as StorageBlock).ToList();
+        }
+
+        public void ResetLightingSources() {
+            int i = 0;
+            foreach (var block in Blocks) {
+                if(block is ILightSource) {
+                    lights.Add(GetLights(block, i / 32 * 32 + SectorOffsetX * 32 * 32, i % 32 * 32 + SectorOffsetY * 32 * 32));
+                }
+                i++;
+            }
+        }
+
+        private Light GetLights(IBlock block, int x, int y) {
+            var a1 = block as ILightSource;
+            var t = new Light {
+                                  Color = a1.LightColor, LightRadius = a1.LightRange, Power = a1.LightPower, Position = new Vector3(x+16, y, 1+32)
+                              };
+            return t;
         }
 
         public void ExploreAllSector()
@@ -165,11 +188,12 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             MapGenerators.GenerateStreetGrid(this, initialNodes.ToArray(), rand);
 
-            biom = (SectorBiom)rand.Next(0, 5);
+            biom = (SectorBiom)rand.Next(0, 6);
 
             switch (biom) {
                 case SectorBiom.Bushland:
-                    for (int i = 0; i < rand.Next(14, 40); i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "bbochka");
+                    int next = rand.Next(1, 3);
+                    for (int i = 0; i < next; i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "bbochka");
                     break;
 
                 case SectorBiom.Forest:
@@ -215,6 +239,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             {
                 Spawn("hdzombie", rand);
             }
+
+            ResetLightingSources();
 
             Parent.generated++;
             ready = true;

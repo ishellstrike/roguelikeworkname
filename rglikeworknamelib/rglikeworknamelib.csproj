@@ -103,6 +103,7 @@
     <Compile Include="Dungeon\Level\FloorData.cs" />
     <Compile Include="Dungeon\Level\FloorDataBase.cs" />
     <Compile Include="Dungeon\Level\GameLevel.cs" />
+    <Compile Include="Dungeon\Level\Light.cs" />
     <Compile Include="Dungeon\Level\MapSector.cs" />
     <Compile Include="Dungeon\Level\Room.cs" />
     <Compile Include="Dungeon\Level\Schemes.cs" />

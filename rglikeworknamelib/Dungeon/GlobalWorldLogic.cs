@@ -35,7 +35,7 @@ namespace rglikeworknamelib.Dungeon
         }
 
         public static void Update(GameTime gt) {
-            elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds*50);
+            elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds*5);
             CurrentTime += elapse;
             Temperature -= Temperature * (float)gt.ElapsedGameTime.TotalMinutes;
             Temperature += GetNormalTemp(CurrentTime) * (float)gt.ElapsedGameTime.TotalMinutes;

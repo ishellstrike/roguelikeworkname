@@ -126,6 +126,10 @@ Content\Effects\Effect1.xnb
 Content\Effects\Effect2.xnb
 Content\Effects\Effect11.xnb
 Content\Effects\Effect111.xnb
+Content\Textures\Dungeon\Normals\bricks.xnb
+Content\Effects\ShadersLightningShadow.xnb
+Content\Effects\ShadersLightningCombined.xnb
+Content\Effects\ToWhite.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README

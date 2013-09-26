@@ -1026,25 +1026,15 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public IEnumerable<Light> GetLights() {
             var a = new List<Light>();
-            foreach (var mapSector in sectors_) {
-                foreach (var crea in mapSector.Value.creatures) {
-                    a.Add(new Light { Color = Color.DarkRed, LightRadius = 50, Power = 20, Position = new Vector3(crea.Position.X + mapSector.Value.SectorOffsetX * 32 * 32, crea.Position.Y + mapSector.Value.SectorOffsetY * 32 * 32, 1) });
+            if(sectors_.Count > 0) {
+                for(int i = 0; i< sectors_.Count; i++) {
+                    var sec = sectors_.ElementAt(i);
+                    if(sec.Value.lights != null) {
+                        a.AddRange(sec.Value.lights);
+                    }
                 }
             }
             return a;
-        }
-    }
-
-    public class Light
-    {
-        public float Power;
-        public Color Color;
-        public float LightRadius;
-
-        public Vector3 Position;
-        public Vector3 GetWorldPosition(Vector2 camera)
-        {
-            return Position - new Vector3(camera.X, camera.Y, 0);
         }
     }
 }

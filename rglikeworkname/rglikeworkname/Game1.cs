@@ -413,7 +413,7 @@ namespace jarg
                 Exit();
             }
 
-            LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
+            //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
 
         private void KeyboardUpdate(GameTime gameTime)
@@ -481,6 +481,11 @@ namespace jarg
                     if (WindowStatist.Visible) {
                         WindowStatist.OnTop();
                     }
+                }
+
+                if (ks_[Keys.F] == KeyState.Down && lks_[Keys.F] == KeyState.Up)
+                {
+                    Flashlight = !Flashlight;
                 }
 
                 if (WindowContainer.Visible && ks_[Keys.R] == KeyState.Down && lks_[Keys.R] == KeyState.Up) {
@@ -676,21 +681,76 @@ namespace jarg
                                   (int)Settings.Resolution.Y, sw_draw, sw_update);
         }
 
+        private bool Flashlight;
         private RenderTarget2D rt2d;
         private void GameDraw(GameTime gameTime) {
             LightCollection.Clear();
             LightCollection.AddRange(currentFloor_.GetLights());
+            if (Flashlight) {
+                var hpos = new Vector3(player_.Position.X, player_.Position.Y, 0.5f);
+                Ray ray = new Ray(hpos, Vector3.Normalize(new Vector3(ms_.X + camera_.X, ms_.Y + camera_.Y, 1) - hpos));
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 30*3,
+                                                  Position = ray.Position + ray.Direction*40,
+                                                  Power = 110
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 30*3,
+                                                  Position = ray.Position + ray.Direction*45,
+                                                  Power = 120
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 40*3,
+                                                  Position = ray.Position + ray.Direction*80,
+                                                  Power = 140
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 50*3,
+                                                  Position = ray.Position + ray.Direction*120,
+                                                  Power = 150
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 60*3,
+                                                  Position = ray.Position + ray.Direction*160,
+                                                  Power = 150
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 70*3,
+                                                  Position = ray.Position + ray.Direction*200,
+                                                  Power = 200
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 80*3,
+                                                  Position = ray.Position + ray.Direction*240,
+                                                  Power = 250
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 90*3,
+                                                  Position = ray.Position + ray.Direction*280,
+                                                  Power = 250
+                                              });
+            }
+
+
             EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X - camera_.X, player_.Position.Y - camera_.Y });
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
             //color maps
-            spriteBatch_.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
                 currentFloor_.DrawFloors(gameTime, camera_);
                 currentFloor_.DrawDecals(gameTime, camera_);
             spriteBatch_.End();
             currentFloor_.ShadowRender();
-            spriteBatch_.Begin();
+            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
                 currentFloor_.DrawBlocks(gameTime, camera_, player_);
                 currentFloor_.DrawCreatures(gameTime, camera_);
                 player_.Draw(gameTime, camera_);
@@ -703,23 +763,26 @@ namespace jarg
                 GraphicsDevice.SetRenderTarget(normalMapRenderTarget_);
                 GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
                 //normal maps
-                spriteBatch_.Begin();
-                for (int i = 0; i < 35; i++) {
-                    for (int j = 0; j < 26; j++) {
-                        spriteBatch_.Draw(Atlases.NormalAtlas[0],
-                                          new Vector2(i*32 - camera_.X%32 - 32, j*32 - camera_.Y%32 - 32), Color.White);
-                    }
-                }
-                spriteBatch_.End();
+                //spriteBatch_.Begin();
+                //for (int i = 0; i < Settings.Resolution.X / 32 + 1; i++)
+                //{
+                //    for (int j = 0; j < Settings.Resolution.Y / 32 + 1; j++)
+                //    {
+                //        spriteBatch_.Draw(Atlases.NormalAtlas[0],
+                //                          new Vector2(i*32 - camera_.X%32 - 32, j*32 - camera_.Y%32 - 32), Color.White);
+                //    }
+                //}
+                //spriteBatch_.End();
 
                 GraphicsDevice.SetRenderTarget(depthMapRenderTarget_);
-                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.LightGray, 1, 0);
+                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1, 0);
                 //depth maps
                 spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
                                    DepthStencilState.None, RasterizerState.CullNone, toWhite_);
-                currentFloor_.DrawBlocks(gameTime, camera_, player_);
-                currentFloor_.DrawCreatures(gameTime, camera_);
-                player_.Draw(gameTime, camera_);
+                //    currentFloor_.DrawBlocks(gameTime, camera_, player_);
+                //    currentFloor_.DrawCreatures(gameTime, camera_);
+                //    player_.Draw(gameTime, camera_);
+                    spriteBatch_.Draw(whitepixel_, Vector2.Zero, Color.Black);
                 spriteBatch_.End();
 
                 GraphicsDevice.SetRenderTarget(null);
@@ -782,12 +845,12 @@ namespace jarg
 
         private void DrawCombinedMaps()
         {
-            lightEffect2_.Parameters["ambient"].SetValue(1);
+            lightEffect2_.Parameters["ambient"].SetValue(7/4-GlobalWorldLogic.GetCurrentSlen()/3);
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
             // This variable is used to boost to output of the light sources when they are combined
             // I found 4 a good value for my lights but you can also make this dynamic if you want
-            lightEffect2_.Parameters["lightAmbient"].SetValue(4);
+            lightEffect2_.Parameters["lightAmbient"].SetValue(3);
             lightEffect2_.Parameters["ColorMap"].SetValue(colorMapTexture_);
             lightEffect2_.Parameters["ShadingMap"].SetValue(shadowMapTexture_);
 
@@ -841,7 +904,7 @@ namespace jarg
             string ss =
                 string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
                               PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
-                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),GlobalWorldLogic.dayPart_,ws_.Mopusehook, ws_.Keyboardhook);
+                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount() / 3, 7/4 - GlobalWorldLogic.GetCurrentSlen() / 3, GlobalWorldLogic.dayPart_, ws_.Mopusehook, ws_.Keyboardhook);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 

@@ -13,7 +13,7 @@ struct VertexShaderOutput
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
 	float4 base = tex2D(ColorMap, input.texCoord);
-    return float4(1,1,1, base.a);
+    return float4(0, 0, 0, base.a);
 }
 
 technique Technique1

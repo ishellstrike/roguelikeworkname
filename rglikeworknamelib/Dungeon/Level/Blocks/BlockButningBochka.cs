@@ -6,13 +6,17 @@ using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]
-    class BlockButningBochka : IBlock {
+    class BlockButningBochka : IBlock, ILightSource {
         private TimeSpan sec;
 
         public string Id { get; set; }
         public Color Lightness { get; set; }
         public bool Explored { get; set; }
         public string Mtex { get; set; }
+
+        public Color LightColor { get { return Color.LightYellow; }}
+        public float LightPower { get { return 150; } }
+        public float LightRange { get { return 200; } }
 
         Random rand = new Random();
 
@@ -37,5 +41,11 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             sb.Draw(batlas[Mtex], vector2, light);
         }
 
+    }
+
+    internal interface ILightSource {
+        Color LightColor { get; }
+        float LightPower { get; }
+        float LightRange { get; }
     }
 }
