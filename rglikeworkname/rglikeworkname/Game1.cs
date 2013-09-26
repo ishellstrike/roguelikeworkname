@@ -67,9 +67,6 @@ namespace jarg
         private RenderTarget2D normalMapRenderTarget_;
         private RenderTarget2D shadowMapRenderTarget_;
         private Texture2D shadowMapTexture_;
-        private Texture2D colorMapTexture_;
-        private Texture2D normalMapTexture_;
-        private Texture2D depthMapTexture_;
         private VertexDeclaration vertexDeclaration_;
         private VertexPositionTexture[] vertices_;
         private Effect lightEffect1_;
@@ -681,7 +678,7 @@ namespace jarg
                                   (int)Settings.Resolution.Y, sw_draw, sw_update);
         }
 
-        private bool Flashlight;
+        private bool Flashlight = true;
         private RenderTarget2D rt2d;
         private void GameDraw(GameTime gameTime) {
             LightCollection.Clear();
@@ -785,25 +782,12 @@ namespace jarg
                 GraphicsDevice.SetRenderTarget(depthMapRenderTarget_);
                 GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1, 0);
                 //depth maps
-                spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
-                                   DepthStencilState.None, RasterizerState.CullNone, toWhite_);
-                //    currentFloor_.DrawBlocks(gameTime, camera_, player_);
-                //    currentFloor_.DrawCreatures(gameTime, camera_);
-                //    player_.Draw(gameTime, camera_);
-                    spriteBatch_.Draw(whitepixel_, Vector2.Zero, Color.Black);
-                spriteBatch_.End();
+                //spriteBatch_.Begin();
+                //    currentFloor_.DrawFloorsInnerDepth(gameTime, camera_);
+                //spriteBatch_.End();
 
                 GraphicsDevice.SetRenderTarget(null);
-
-                colorMapTexture_ = colorMapRenderTarget_;
-                normalMapTexture_ = normalMapRenderTarget_;
-                depthMapTexture_ = depthMapRenderTarget_;
                 shadowMapTexture_ = GenerateShadowMap();
-                GraphicsDevice.SetRenderTarget(null);
-                GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
-                spriteBatch_.Begin();
-                    spriteBatch_.Draw(shadowMapTexture_,Vector2.Zero,Color.White);
-                spriteBatch_.End();
 
                 GraphicsDevice.SetRenderTarget(null);
                 DrawCombinedMaps();
@@ -863,15 +847,16 @@ namespace jarg
 
             // This variable is used to boost to output of the light sources when they are combined
             // I found 4 a good value for my lights but you can also make this dynamic if you want
-            lightEffect2_.Parameters["lightAmbient"].SetValue(3);
-            lightEffect2_.Parameters["ColorMap"].SetValue(colorMapTexture_);
+            lightEffect2_.Parameters["lightAmbient"].SetValue(4);
+            lightEffect2_.Parameters["ColorMap"].SetValue(colorMapRenderTarget_);
             lightEffect2_.Parameters["ShadingMap"].SetValue(shadowMapTexture_);
+            lightEffect1_.Parameters["DepthMap"].SetValue(depthMapRenderTarget_);
 
             spriteBatch_.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend);
             foreach (var pass in lightEffect2_.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                spriteBatch_.Draw(colorMapTexture_, Vector2.Zero, Color.White);
+                spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
             }
             spriteBatch_.End();
         }
@@ -898,8 +883,8 @@ namespace jarg
 
                 lightEffect1_.Parameters["screenWidth"].SetValue(GraphicsDevice.Viewport.Width);
                 lightEffect1_.Parameters["screenHeight"].SetValue(GraphicsDevice.Viewport.Height);
-                lightEffect1_.Parameters["NormalMap"].SetValue(normalMapTexture_);
-                lightEffect1_.Parameters["DepthMap"].SetValue(depthMapTexture_);
+                lightEffect1_.Parameters["NormalMap"].SetValue(normalMapRenderTarget_);
+                lightEffect1_.Parameters["DepthMap"].SetValue(depthMapRenderTarget_);
 
                 foreach (var pass in lightEffect1_.CurrentTechnique.Passes)
                 {

@@ -1036,5 +1036,58 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
             return a;
         }
+
+        public void DrawFloorsInnerDepth(GameTime gameTime, Vector2 camera) {
+            var fatlas = Atlases.FloorAtlas; // Make field's non-static
+            var fdb = FloorDataBase.Data;
+            var rx = MapSector.Rx;
+            var ry = MapSector.Ry;
+            var ssx = Settings.FloorSpriteSize.X;
+            var ssy = Settings.FloorSpriteSize.Y;
+
+            GetBlock((int)(camera.X / 32), (int)(camera.Y / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y) / 32));
+            GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+
+            min = new Vector2((camera.X) / ssx - 1, (camera.Y) / ssy - 1);
+            max = new Vector2((camera.X + Settings.Resolution.X) / ssx,
+                                  (camera.Y + Settings.Resolution.Y) / ssy);
+
+            for (int k = 0; k < sectors_.Count; k++)
+            {
+                MapSector sector = sectors_.ElementAt(k).Value;
+                if (sector.SectorOffsetX * rx + rx < min.X &&
+                    sector.SectorOffsetY * ry + ry < min.Y)
+                {
+                    continue;
+                }
+                if (sector.SectorOffsetX * rx > max.X && sector.SectorOffsetY * ry > max.Y)
+                {
+                    continue;
+                }
+                for (int i = 0; i < rx; i++)
+                {
+                    for (int j = 0; j < ry; j++)
+                    {
+                        int a = i * ry + j;
+                        if (sector.SectorOffsetX * rx + i > min.X &&
+                            sector.SectorOffsetY * ry + j > min.Y &&
+                            sector.SectorOffsetX * rx + i < max.X &&
+                            sector.SectorOffsetY * ry + j < max.Y && 
+                            (sector.Floors[a].Mtex == "conk1"))
+                        {
+                            spriteBatch_.Draw(fatlas[sector.Floors[a].Mtex],
+                                              new Vector2(
+                                                  i * ssx - (int)camera.X +
+                                                  rx * ssx * sector.SectorOffsetX,
+                                                  j * ssy - (int)camera.Y +
+                                                  ry * ssy * sector.SectorOffsetY),
+                                              null, Color.Black);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

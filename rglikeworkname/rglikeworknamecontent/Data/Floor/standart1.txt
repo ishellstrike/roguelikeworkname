@@ -63,5 +63,4 @@ MTex=grass1
 Name="Бетон"
 mmcol="green"
 Walkable=true
-AlterMtex={conk2}
 MTex=conk1

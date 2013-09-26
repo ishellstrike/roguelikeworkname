@@ -55,25 +55,22 @@ PixelToFrame PointLightShader(VertexToPixel PSIn) : COLOR0
     normal = normal*2.0f-1.0f;
     normal = normalize(normal);
  
-    float depth = tex2D(DepthMapSampler, PSIn.TexCoord);
+    float depth = 1;
  
     float3 pixelPosition;
     pixelPosition.x = screenWidth * PSIn.TexCoord.x;
     pixelPosition.y = screenHeight * PSIn.TexCoord.y;
-    pixelPosition.z = depth;
+    pixelPosition.z = 1;
     //pixelPosition.w = 1.0f;
  
     float3 shading;
-    if (depth > 0)
-    {
-        float3 lightDirection = lightPosition - pixelPosition;
-        float distance = 1 / length(lightPosition - pixelPosition) * lightStrength;
-        float amount = max(dot(normal + depth, normalize(distance)), 0);
+    float3 lightDirection = lightPosition - pixelPosition;
+    float distance = 1 / length(lightPosition - pixelPosition) * lightStrength;
+    float amount = max(dot(normal + depth, normalize(distance)), 0);
  
-                float coneAttenuation = saturate(1.0f - length(lightDirection) / lightRadius);
+    float coneAttenuation = saturate(1.0f - length(lightDirection) / lightRadius);
  
-        shading = distance * amount * coneAttenuation * lightColor;
-    }
+    shading = distance * amount * coneAttenuation * lightColor;
  
     Output.Color = float4(shading.r, shading.g, shading.b, 1);
     return Output;
@@ -83,7 +80,7 @@ technique DeferredPointLight
 {
     pass Pass1
     {
-    VertexShader = compile vs_2_0 VertexToPixelShader();
+		VertexShader = compile vs_2_0 VertexToPixelShader();
         PixelShader = compile ps_2_0 PointLightShader();
     }
 }
