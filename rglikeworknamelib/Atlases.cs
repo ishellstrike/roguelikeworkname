@@ -16,6 +16,7 @@ namespace rglikeworknamelib
         public static Collection<Texture2D> ParticleAtlas;
         public static Dictionary<string, Texture2D> DressAtlas;
         public static Dictionary<string, Texture2D> MinimapAtlas;
+        public static Collection<Texture2D> NormalAtlas; 
 
         public Atlases(ContentManager c) {
             Content = c;
@@ -23,12 +24,15 @@ namespace rglikeworknamelib
         }
 
         private void Load() {
-            FloorAtlas = ParsersCore.LoadTexturesTagged(Settings.GetFloorTextureDirectory() + @"/textureloadorder.ord", Content);
-            BlockAtlas = ParsersCore.LoadTexturesTagged(Settings.GetObjectTextureDirectory() + @"/textureloadorder.ord", Content);
-            CreatureAtlas = ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"/textureloadorder.ord", Content);
-            ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content);
-            DressAtlas = ParsersCore.LoadTexturesTagged(Settings.GetDressTexturesDirectory() + @"/textureloadorder.ord", Content);
-            MinimapAtlas = ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"/textureloadorder.ord", Content);
+            FloorAtlas = ParsersCore.LoadTexturesTagged(Settings.GetFloorTextureDirectory() + @"\textureloadorder.ord", Content);
+            BlockAtlas = ParsersCore.LoadTexturesTagged(Settings.GetObjectTextureDirectory() + @"\textureloadorder.ord", Content);
+            CreatureAtlas = ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"\textureloadorder.ord", Content);
+            ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"\textureloadorder.ord", Content);
+            DressAtlas = ParsersCore.LoadTexturesTagged(Settings.GetDressTexturesDirectory() + @"\textureloadorder.ord", Content);
+            MinimapAtlas = ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"\textureloadorder.ord", Content);
+
+            NormalAtlas = new Collection<Texture2D>();
+            NormalAtlas.Add(Content.Load<Texture2D>(@"Textures/Dungeon/Normals/bricks"));
         }
     }
 }

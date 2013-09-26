@@ -820,7 +820,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         #region Drawes
         private Vector2 min, max;
-        public void DrawFloors(GameTime gameTime, Vector2 camera, Effect fl1)
+        public void DrawFloors(GameTime gameTime, Vector2 camera)
         {
             var fatlas = Atlases.FloorAtlas; // Make field's non-static
             var fdb = FloorDataBase.Data;
@@ -872,7 +872,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public void DrawDecals(GameTime gameTime, Vector2 camera, Effect fl1) {
+        public void DrawDecals(GameTime gameTime, Vector2 camera) {
             var atl = Atlases.ParticleAtlas;
             var rx = MapSector.Rx;
             var ry = MapSector.Ry;
@@ -1023,5 +1023,28 @@ namespace rglikeworknamelib.Dungeon.Level {
             return (Settings.GetMeeleActionRange() >=
                     Vector2.Distance(ny.WorldPosition(), hero.Position));
         }
-    } 
+
+        public IEnumerable<Light> GetLights() {
+            var a = new List<Light>();
+            foreach (var mapSector in sectors_) {
+                foreach (var crea in mapSector.Value.creatures) {
+                    a.Add(new Light { Color = Color.DarkRed, LightRadius = 50, Power = 20, Position = new Vector3(crea.Position.X + mapSector.Value.SectorOffsetX * 32 * 32, crea.Position.Y + mapSector.Value.SectorOffsetY * 32 * 32, 1) });
+                }
+            }
+            return a;
+        }
+    }
+
+    public class Light
+    {
+        public float Power;
+        public Color Color;
+        public float LightRadius;
+
+        public Vector3 Position;
+        public Vector3 GetWorldPosition(Vector2 camera)
+        {
+            return Position - new Vector3(camera.X, camera.Y, 0);
+        }
+    }
 }

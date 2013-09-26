@@ -13,6 +13,7 @@ namespace rglikeworknamelib {
 
         public static bool DebugInfo;
         public static bool DebugWire;
+        public static bool Lighting = true;
 
         public static bool NeedToShowInfoWindow;
         public static string NTS1, NTS2;

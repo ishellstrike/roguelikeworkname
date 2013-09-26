@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork;
@@ -59,6 +61,20 @@ namespace jarg
         private Effect EffectOmnilight;
         private Effect lig3;
         private Effect lig4;
+
+        private RenderTarget2D colorMapRenderTarget_;
+        private RenderTarget2D depthMapRenderTarget_;
+        private RenderTarget2D normalMapRenderTarget_;
+        private RenderTarget2D shadowMapRenderTarget_;
+        private Texture2D shadowMapTexture_;
+        private Texture2D colorMapTexture_;
+        private Texture2D normalMapTexture_;
+        private Texture2D depthMapTexture_;
+        private VertexDeclaration vertexDeclaration_;
+        private VertexPositionTexture[] vertices_;
+        private Effect lightEffect1_;
+        private Effect lightEffect2_;
+        private Effect toWhite_;
 
         private Achievements achievements_;
 
@@ -115,10 +131,9 @@ namespace jarg
             graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             
-            IsFixedTimeStep = false;
+            IsFixedTimeStep = true;
             IsMouseVisible = true;
             graphics_.ApplyChanges();
-
             UpdateTitle();
 
             base.Initialize();
@@ -128,11 +143,14 @@ namespace jarg
             Window.Title = Version.GetLong() + string.Format(" - {0}x{1}", Settings.Resolution.X, Settings.Resolution.Y);
         }
 
-        void Window_ClientSizeChanged(object sender, EventArgs e)
-        {
+        void Window_ClientSizeChanged(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height);
-            graphics_.PreferredBackBufferHeight = (int)Settings.Resolution.Y;
-            graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
+            ResolutionChanging();
+        }
+
+        private void ResolutionChanging() {
+            graphics_.PreferredBackBufferHeight = (int) Settings.Resolution.Y;
+            graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             graphics_.ApplyChanges();
             var t = ws_.GetVisibleList();
             ws_.Clear();
@@ -144,6 +162,10 @@ namespace jarg
             UpdateCaracterWindowItems(null, null);
             EventLog_onLogUpdate(null, null);
             rt2d = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight);
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
             EffectOmnilight.Parameters["screenWidth"].SetValue(graphics_.PreferredBackBufferWidth);
             EffectOmnilight.Parameters["screenHeight"].SetValue(graphics_.PreferredBackBufferHeight);
             lineBatch_.UpdateProjection(GraphicsDevice);
@@ -169,6 +191,7 @@ namespace jarg
             EffectOmnilight = Content.Load<Effect>(@"Effects/Effect1");
             lig3 = Content.Load<Effect>(@"Effects/Effect11");
             lig4 = Content.Load<Effect>(@"Effects/Effect111");
+            toWhite_ = Content.Load<Effect>(@"Effects/ToWhite");
 
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(whitepixel_, font1_, ws_);
@@ -179,6 +202,27 @@ namespace jarg
             achievements_ = new Achievements();
 
             rt2d = new RenderTarget2D(GraphicsDevice, (int)Settings.Resolution.X, (int)Settings.Resolution.Y, false, SurfaceFormat.Color, DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+
+            PresentationParameters pp = GraphicsDevice.PresentationParameters;
+            int width = pp.BackBufferWidth;
+            int height = pp.BackBufferHeight;
+
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+
+            lightEffect1_ = Content.Load<Effect>(@"Effects/ShadersLightningShadow");
+            lightEffect2_ = Content.Load<Effect>(@"Effects/ShadersLightningCombined");
+
+            vertices_ = new VertexPositionTexture[4];
+            vertices_[0] = new VertexPositionTexture(new Vector3(-1, 1, 0), new Vector2(0, 0));
+            vertices_[1] = new VertexPositionTexture(new Vector3(1, 1, 0), new Vector2(1, 0));
+            vertices_[2] = new VertexPositionTexture(new Vector3(-1, -1, 0), new Vector2(0, 1));
+            vertices_[3] = new VertexPositionTexture(new Vector3(1, -1, 0), new Vector2(1, 1));
+
+            LightCollection = new List<Light>();
+            LightCollection.Add(new Light{Color = Color.Brown, LightRadius = 2000f, Position = Vector3.Zero, Power = 100});
         }
 
         private void InitialGeneration() {
@@ -287,9 +331,7 @@ namespace jarg
 
             UpdateAction(gameTime);
 
-            if (Settings.DebugInfo) {
-                FrameRateCounter.Update(gameTime);
-            }
+            FrameRateCounter.Update(gameTime);
 
             if (player_ != null) {
                 PlayerSeeAngle =
@@ -370,6 +412,8 @@ namespace jarg
             if(Settings.NeedExit) {
                 Exit();
             }
+
+            LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
 
         private void KeyboardUpdate(GameTime gameTime)
@@ -377,14 +421,6 @@ namespace jarg
             lks_ = ks_;
             ks_ = Keyboard.GetState();
             if (!ws_.Keyboardhook) {
-                if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
-                    Settings.DebugInfo = !Settings.DebugInfo;
-                }
-
-                if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up) {
-                    Settings.DebugWire = !Settings.DebugWire;
-                }
-
                 if (ks_[Keys.W] == KeyState.Down) {
                     player_.Accelerate(new Vector2(0, -10));
                 }
@@ -471,6 +507,26 @@ namespace jarg
                 if (ConsoleWindow.Visible)
                 {
                     ConsoleWindow.OnTop();
+                }
+            }
+
+            if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up)
+            {
+                Settings.DebugInfo = !Settings.DebugInfo;
+            }
+
+            if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up)
+            {
+                Settings.DebugWire = !Settings.DebugWire;
+            }
+
+            if (ks_[Keys.F3] == KeyState.Down && lks_[Keys.F3] == KeyState.Up)
+            {
+                if(drawAction_ == GameDraw) {
+                    drawAction_ = DrawDebugRenderTargets;
+                } else if (drawAction_ == DrawDebugRenderTargets)
+                {
+                    drawAction_ = GameDraw;
                 }
             }
         }
@@ -615,38 +671,173 @@ namespace jarg
             {
                 DebugInfoDraw(gameTime);
             }
+
+            FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
+                                  (int)Settings.Resolution.Y, sw_draw, sw_update);
         }
 
         private RenderTarget2D rt2d;
         private void GameDraw(GameTime gameTime) {
-            GraphicsDevice.SetRenderTarget(rt2d);
+            LightCollection.Clear();
+            LightCollection.AddRange(currentFloor_.GetLights());
+            EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X - camera_.X, player_.Position.Y - camera_.Y });
+
+            GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
+            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
+            //color maps
             spriteBatch_.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
-                EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X-camera_.X, player_.Position.Y-camera_.Y});
-                currentFloor_.DrawFloors(gameTime, camera_, EffectOmnilight);
-            spriteBatch_.End();
-            spriteBatch_.Begin();
-            currentFloor_.DrawDecals(gameTime, camera_, EffectOmnilight);
+                currentFloor_.DrawFloors(gameTime, camera_);
+                currentFloor_.DrawDecals(gameTime, camera_);
             spriteBatch_.End();
             currentFloor_.ShadowRender();
             spriteBatch_.Begin();
-            currentFloor_.DrawBlocks(gameTime, camera_, player_);
-            currentFloor_.DrawCreatures(gameTime, camera_);
-            player_.Draw(gameTime, camera_);
-            bs_.Draw(gameTime, camera_);
-            ps_.Draw(gameTime, camera_);
+                currentFloor_.DrawBlocks(gameTime, camera_, player_);
+                currentFloor_.DrawCreatures(gameTime, camera_);
+                player_.Draw(gameTime, camera_);
+                bs_.Draw(gameTime, camera_);
+                ps_.Draw(gameTime, camera_);
             spriteBatch_.End();
 
-            GraphicsDevice.SetRenderTarget(null);
-            spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, EffectOmnilight);
-            spriteBatch_.Draw(rt2d, Vector2.Zero, Color.White);
+
+            if (Settings.Lighting) {
+                GraphicsDevice.SetRenderTarget(normalMapRenderTarget_);
+                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
+                //normal maps
+                spriteBatch_.Begin();
+                for (int i = 0; i < 35; i++) {
+                    for (int j = 0; j < 26; j++) {
+                        spriteBatch_.Draw(Atlases.NormalAtlas[0],
+                                          new Vector2(i*32 - camera_.X%32 - 32, j*32 - camera_.Y%32 - 32), Color.White);
+                    }
+                }
+                spriteBatch_.End();
+
+                GraphicsDevice.SetRenderTarget(depthMapRenderTarget_);
+                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.LightGray, 1, 0);
+                //depth maps
+                spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp,
+                                   DepthStencilState.None, RasterizerState.CullNone, toWhite_);
+                currentFloor_.DrawBlocks(gameTime, camera_, player_);
+                currentFloor_.DrawCreatures(gameTime, camera_);
+                player_.Draw(gameTime, camera_);
+                spriteBatch_.End();
+
+                GraphicsDevice.SetRenderTarget(null);
+
+                colorMapTexture_ = colorMapRenderTarget_;
+                normalMapTexture_ = normalMapRenderTarget_;
+                depthMapTexture_ = depthMapRenderTarget_;
+                shadowMapTexture_ = GenerateShadowMap();
+
+                GraphicsDevice.SetRenderTarget(null);
+                DrawCombinedMaps();
+            }
+            else {
+                GraphicsDevice.SetRenderTarget(null);
+                spriteBatch_.Begin();
+                    spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
+                spriteBatch_.End();
+            }
+        }
+
+        public void DrawDebugRenderTargets(GameTime time)
+        {
+            GameDraw(time);
+            // Draw some debug textures
+            GraphicsDevice.Clear(Color.DarkGreen);
+            spriteBatch_.Begin();
+
+            Rectangle size = new Rectangle(0, 0, colorMapRenderTarget_.Width / 2, colorMapRenderTarget_.Height / 2);
+            var position = new Vector2(0, GraphicsDevice.Viewport.Height - size.Height);
+            spriteBatch_.Draw(
+                colorMapRenderTarget_,
+                new Rectangle(0,0,
+                    size.Width,
+                    size.Height),
+                Color.White);
+
+            spriteBatch_.Draw(
+                depthMapRenderTarget_,
+                new Rectangle( size.Width, 0,
+                    size.Width,
+                    size.Height),
+                Color.White);
+
+            spriteBatch_.Draw(
+                normalMapRenderTarget_,
+                new Rectangle(size.Width, size.Height,
+                    size.Width,
+                    size.Height),
+                Color.White);
+
+            spriteBatch_.Draw(
+                shadowMapRenderTarget_,
+                new Rectangle(0, size.Height,
+                    size.Width,
+                    size.Height),
+                Color.White);
+
             spriteBatch_.End();
+        }
+
+        private void DrawCombinedMaps()
+        {
+            lightEffect2_.Parameters["ambient"].SetValue(1);
+            lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
+
+            // This variable is used to boost to output of the light sources when they are combined
+            // I found 4 a good value for my lights but you can also make this dynamic if you want
+            lightEffect2_.Parameters["lightAmbient"].SetValue(4);
+            lightEffect2_.Parameters["ColorMap"].SetValue(colorMapTexture_);
+            lightEffect2_.Parameters["ShadingMap"].SetValue(shadowMapTexture_);
+
+            spriteBatch_.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend);
+            foreach (var pass in lightEffect2_.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                spriteBatch_.Draw(colorMapTexture_, Vector2.Zero, Color.White);
+            }
+            spriteBatch_.End();
+        }
+
+        private List<Light> LightCollection;
+        private Texture2D GenerateShadowMap()
+        {
+            //GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
+            
+            //GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            //GraphicsDevice.BlendState = new BlendState{AlphaSourceBlend = Blend.One, AlphaDestinationBlend = Blend.One};
+
+            // For every light inside the current scene, you can optimize this
+            // list to only draw the lights that are visible a.t.m.
+            foreach (var light in LightCollection)
+            {
+                lightEffect1_.CurrentTechnique = lightEffect1_.Techniques["DeferredPointLight"];
+                lightEffect1_.Parameters["lightStrength"].SetValue(light.Power);
+                lightEffect1_.Parameters["lightPosition"].SetValue(light.GetWorldPosition(camera_));
+                lightEffect1_.Parameters["lightColor"].SetValue(light.Color.ToVector3());
+                lightEffect1_.Parameters["lightRadius"].SetValue(light.LightRadius);
+
+                lightEffect1_.Parameters["screenWidth"].SetValue(GraphicsDevice.Viewport.Width);
+                lightEffect1_.Parameters["screenHeight"].SetValue(GraphicsDevice.Viewport.Height);
+                lightEffect1_.Parameters["NormalMap"].SetValue(normalMapTexture_);
+                lightEffect1_.Parameters["DepthMap"].SetValue(depthMapTexture_);
+
+                foreach (var pass in lightEffect1_.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices_, 0, 2);
+                }
+            }
+
+            return shadowMapRenderTarget_;
         }
 
         private void DebugInfoDraw(GameTime gameTime)
         {
-            FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
-                                  (int)Settings.Resolution.Y, sw_draw, sw_update);
-
             string ss =
                 string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
                               PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,

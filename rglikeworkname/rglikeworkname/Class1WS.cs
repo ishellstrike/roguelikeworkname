@@ -29,13 +29,17 @@ namespace jarg
 
         private Window WindowSettings;
         private Label LabelHudColor;
-        private Button ButtonHudColor1;
-        private Button ButtonHudColor2;
-        private Button ButtonHudColor3;
-        private Button ButtonHudColor4;
-        private Button ButtonHudColor5;
+        private Button ButtonHudColor1, ButtonHudColor2, ButtonHudColor3, ButtonHudColor4, ButtonHudColor5;
         private Label LabelTimeType;
         private Button Button12h, Button24h;
+        private Label LabelFullscreen;
+        private Button ButtonFullscreenOn, ButtonFullscreenOff;
+        private Label LabelFramelimit;
+        private Button ButtonFramelimitOn, ButtonFramelimitOff;
+        private Label LabelLight;
+        private Button ButtonLightOn, ButtonLightOff;
+        private Label LabelResolution;
+        private Button ButtonResolution800600, ButtonResolution1024768, ButtonResolution1280800, ButtonResolution19201024;
 
         private Window WindowIngameMenu;
         private Label LabelIngameMenu1;
@@ -141,12 +145,36 @@ namespace jarg
             Button12h.onPressed += Button12h_onPressed;
             Button24h = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 1), "24h", wp, sf, WindowSettings);
             Button24h.onPressed += Button24h_onPressed;
+            LabelFullscreen = new Label(new Vector2(10, 10 + 40 * 2), "Fullscreen", wp, sf, WindowSettings);
+            ButtonFullscreenOn = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 2), "On", wp, sf, WindowSettings);
+            ButtonFullscreenOn.onPressed += ButtonFullscreenOn_onPressed;
+            ButtonFullscreenOff = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 2), "Off", wp, sf, WindowSettings);
+            ButtonFullscreenOff.onPressed += ButtonFullscreenOff_onPressed;
+            LabelFramelimit = new Label(new Vector2(10, 10 + 40 * 3), "Framelimit", wp, sf, WindowSettings);
+            ButtonFramelimitOn = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 3), "On", wp, sf, WindowSettings);
+            ButtonFramelimitOn.onPressed += ButtonFramelimitOn_onPressed;
+            ButtonFramelimitOff = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 3), "Off", wp, sf, WindowSettings);
+            ButtonFramelimitOff.onPressed += ButtonFramelimitOff_onPressed;
+            LabelLight = new Label(new Vector2(10, 10 + 40 * 4), "Enable lighting", wp, sf, WindowSettings);
+            ButtonLightOn = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 4), "On", wp, sf, WindowSettings);
+            ButtonLightOn.onPressed += ButtonLightOn_onPressed;
+            ButtonLightOff = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 4), "Off", wp, sf, WindowSettings);
+            ButtonLightOff.onPressed += ButtonLightOff_onPressed;
+            LabelResolution = new Label(new Vector2(10, 10 + 40 * 5), "Resolution", wp, sf, WindowSettings);
+            ButtonResolution800600 = new Button(new Vector2(10 + 50 + 95 * 1, 10 + 40 * 5), " 800x600 ", wp, sf, WindowSettings);
+            ButtonResolution800600.onPressed += ButtonResolution800600_onPressed;
+            ButtonResolution1024768 = new Button(new Vector2(10 + 50 + 95 * 2, 10 + 40 * 5), "1024x768 ", wp, sf, WindowSettings);
+            ButtonResolution1024768.onPressed += ButtonResolution1024768_onPressed;
+            ButtonResolution1280800 = new Button(new Vector2(10 + 50 + 95 * 3, 10 + 40 * 5), "1280x800 ", wp, sf, WindowSettings);
+            ButtonResolution1280800.onPressed += ButtonResolution1280800_onPressed;
+            ButtonResolution19201024 = new Button(new Vector2(10 + 50 + 95 * 4, 10 + 40 * 5), "1920x1024", wp, sf, WindowSettings);
+            ButtonResolution19201024.onPressed += ButtonResolution19201024_onPressed;
 
             WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) { Visible = false };
             ButtonIngameMenuSettings = new Button(new Vector2(20, 100), "Settings", wp, sf, WindowIngameMenu);
             ButtonIngameMenuSettings.onPressed += ButtonIngameMenuSettings_onPressed;
             ButtonIngameExit = new Button(new Vector2(20, 100 + 30 * 3), "Exit game", wp, sf, WindowIngameMenu);
-            ButtonIngameExit.onPressed += new EventHandler(ButtonIngameExit_onPressed);
+            ButtonIngameExit.onPressed += ButtonIngameExit_onPressed;
 
             WindowMainMenu = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y), "MAIN MENU",
                                         false, wp, sf, ws) { NoBorder = true, Moveable = false };
@@ -177,9 +205,9 @@ namespace jarg
 
             WindowCaracterCration = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y), "CARACTER CREATION",
                                         false, wp, sf, ws) { NoBorder = true, Moveable = false, Visible = false };
-            ButtonCaracterConfirm = new Button(new Vector2(Settings.Resolution.X / 4 * 2, Settings.Resolution.Y / 2 - 20), "Continue", wp, sf, WindowCaracterCration);
+            ButtonCaracterConfirm = new Button(new Vector2(Settings.Resolution.X / 2 + Settings.Resolution.X / 4, Settings.Resolution.Y / 5 * 4), "Continue", wp, sf, WindowCaracterCration);
             ButtonCaracterConfirm.onPressed += ButtonCaracterConfirm_onPressed;
-            ButtonCaracterCancel = new Button(new Vector2(0, Settings.Resolution.Y / 2 - 20), "Cancel", wp, sf, WindowCaracterCration);
+            ButtonCaracterCancel = new Button(new Vector2(Settings.Resolution.X / 2 - Settings.Resolution.X / 4, Settings.Resolution.Y / 5 * 4), "Cancel", wp, sf, WindowCaracterCration);
             ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
 
             WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
@@ -247,6 +275,62 @@ namespace jarg
             ConsoleTB = new TextBox(new Vector2(10,100), 200, wp, sf, ConsoleWindow);
             ConsoleTB.onEnter += ConsoleTB_onEnter;
             ConsoleWindow.CenterComponentHor(ConsoleTB);
+        }
+
+        private void ButtonLightOff_onPressed(object sender, EventArgs e) {
+            Settings.Lighting = false;
+        }
+
+        private void ButtonLightOn_onPressed(object sender, EventArgs e) {
+            Settings.Lighting = true;
+        }
+
+        private void ButtonFramelimitOff_onPressed(object sender, EventArgs e) {
+            IsFixedTimeStep = false;
+        }
+
+        private void ButtonFramelimitOn_onPressed(object sender, EventArgs e) {
+            IsFixedTimeStep = true;
+        }
+
+        void ButtonResolution19201024_onPressed(object sender, EventArgs e)
+        {
+            Settings.Resolution = new Vector2(1920, 1024);
+            ResolutionChanging();
+        }
+
+        void ButtonResolution1280800_onPressed(object sender, EventArgs e)
+        {
+            Settings.Resolution = new Vector2(1280, 800);
+            ResolutionChanging();
+        }
+
+        void ButtonResolution1024768_onPressed(object sender, EventArgs e)
+        {
+            Settings.Resolution = new Vector2(1024, 768);
+            ResolutionChanging();
+        }
+
+        void ButtonResolution800600_onPressed(object sender, EventArgs e)
+        {
+            Settings.Resolution = new Vector2(800, 600);
+            ResolutionChanging();
+        }
+
+        void ButtonFullscreenOff_onPressed(object sender, EventArgs e)
+        {
+            if (graphics_.IsFullScreen) {
+                graphics_.ToggleFullScreen();
+            }
+            ResolutionChanging();
+        }
+
+        void ButtonFullscreenOn_onPressed(object sender, EventArgs e)
+        {
+            if (!graphics_.IsFullScreen) {
+                graphics_.ToggleFullScreen();
+            }
+            ResolutionChanging();
         }
 
         void ConsoleTB_onEnter(object sender, EventArgs e) {
