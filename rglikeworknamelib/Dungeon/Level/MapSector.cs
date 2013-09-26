@@ -110,6 +110,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void ResetLightingSources() {
+            lights.Clear();
             int i = 0;
             foreach (var block in Blocks) {
                 if(block is ILightSource) {

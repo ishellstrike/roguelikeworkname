@@ -75,7 +75,7 @@ PixelToFrame PointLightShader(VertexToPixel PSIn) : COLOR0
         shading = distance * amount * coneAttenuation * lightColor;
     }
  
-    Output.Color = float4(shading.r, shading.g, shading.b, 0.1f);
+    Output.Color = float4(shading.r, shading.g, shading.b, 1);
     return Output;
 }
  

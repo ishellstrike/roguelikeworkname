@@ -29,7 +29,7 @@ namespace rglikeworknamelib.Dungeon
         private static Seasons currentSeason_ = Seasons.Summer;
         public static DayPart dayPart_  = DayPart.Day;
         private static readonly long Hour3 = new TimeSpan(0,3,0,0).Ticks;
-        private static float ler = 3;
+        private static float ler = 7;
         public static float GetCurrentSlen() {
             return ler;
         }

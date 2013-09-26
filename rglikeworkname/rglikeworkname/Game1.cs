@@ -689,54 +689,62 @@ namespace jarg
             if (Flashlight) {
                 var hpos = new Vector3(player_.Position.X, player_.Position.Y, 0.5f);
                 Ray ray = new Ray(hpos, Vector3.Normalize(new Vector3(ms_.X + camera_.X, ms_.Y + camera_.Y, 1) - hpos));
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 30*3,
-                                                  Position = ray.Position + ray.Direction*40,
-                                                  Power = 110
-                                              });
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 30*3,
-                                                  Position = ray.Position + ray.Direction*45,
-                                                  Power = 120
-                                              });
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 40*3,
-                                                  Position = ray.Position + ray.Direction*80,
-                                                  Power = 140
-                                              });
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 50*3,
-                                                  Position = ray.Position + ray.Direction*120,
-                                                  Power = 150
-                                              });
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 60*3,
-                                                  Position = ray.Position + ray.Direction*160,
-                                                  Power = 150
-                                              });
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 70*3,
-                                                  Position = ray.Position + ray.Direction*200,
-                                                  Power = 200
-                                              });
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 80*3,
-                                                  Position = ray.Position + ray.Direction*240,
-                                                  Power = 250
-                                              });
-                LightCollection.Add(new Light {
-                                                  Color = Color.White,
-                                                  LightRadius = 90*3,
-                                                  Position = ray.Position + ray.Direction*280,
-                                                  Power = 250
-                                              });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 30 * 3,
+                    Position = ray.Position + ray.Direction * 40,
+                    Power = 10
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 30 * 3,
+                    Position = ray.Position + ray.Direction * 45,
+                    Power = 20
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 40 * 3,
+                    Position = ray.Position + ray.Direction * 80,
+                    Power = 40
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 50 * 3,
+                    Position = ray.Position + ray.Direction * 120,
+                    Power = 50
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 60 * 3,
+                    Position = ray.Position + ray.Direction * 160,
+                    Power = 50
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 70 * 3,
+                    Position = ray.Position + ray.Direction * 200,
+                    Power = 100
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 80 * 3,
+                    Position = ray.Position + ray.Direction * 240,
+                    Power = 150
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 90 * 3,
+                    Position = ray.Position + ray.Direction * 280,
+                    Power = 150
+                });
             }
 
 
@@ -791,6 +799,11 @@ namespace jarg
                 normalMapTexture_ = normalMapRenderTarget_;
                 depthMapTexture_ = depthMapRenderTarget_;
                 shadowMapTexture_ = GenerateShadowMap();
+                GraphicsDevice.SetRenderTarget(null);
+                GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+                spriteBatch_.Begin();
+                    spriteBatch_.Draw(shadowMapTexture_,Vector2.Zero,Color.White);
+                spriteBatch_.End();
 
                 GraphicsDevice.SetRenderTarget(null);
                 DrawCombinedMaps();
@@ -868,10 +881,10 @@ namespace jarg
         {
             //GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
-            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
+            GraphicsDevice.Clear(Color.Black);
             
-            //GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            //GraphicsDevice.BlendState = new BlendState{AlphaSourceBlend = Blend.One, AlphaDestinationBlend = Blend.One};
+            GraphicsDevice.BlendState = BlendState.Additive;
+            //GraphicsDevice.BlendState = new BlendState{AlphaSourceBlend = Blend.Zero, AlphaDestinationBlend = Blend.One};
 
             // For every light inside the current scene, you can optimize this
             // list to only draw the lights that are visible a.t.m.
