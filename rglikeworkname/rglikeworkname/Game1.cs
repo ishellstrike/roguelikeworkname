@@ -34,6 +34,7 @@ using Keys = Microsoft.Xna.Framework.Input.Keys;
 using Label = rglikeworknamelib.Window.Label;
 using ProgressBar = rglikeworknamelib.Window.ProgressBar;
 using Settings = rglikeworknamelib.Settings;
+using WMPLib;
 
 namespace jarg
 {
@@ -115,6 +116,7 @@ namespace jarg
         }
 
         private static Form gameWindowForm_;
+        private WindowsMediaPlayer WMPs;
         protected override void Initialize()
         {
             var gameWindowForm = (Form)Control.FromHandle(Window.Handle);
@@ -127,6 +129,12 @@ namespace jarg
             graphics_.PreferredBackBufferHeight = (int)Settings.Resolution.Y;
             graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
+
+            WMPs = new WMPLib.WindowsMediaPlayer(); //создаётся плеер 
+            WMPs.settings.volume = 20;
+            WMPs.URL = "http://208.43.42.26:8086 ";
+            WMPs.controls.play();
+            WMPs.MediaChange += WMPs_MediaChange;
             
             IsFixedTimeStep = true;
             IsMouseVisible = true;
@@ -134,6 +142,15 @@ namespace jarg
             UpdateTitle();
 
             base.Initialize();
+        }
+
+        void WMPs_MediaChange(object Item) {
+            IWMPMedia a = Item as IWMPMedia;
+            if (a != null) {
+                LabelRadio.Text = " --- "+ a.name + " --- from " + a.sourceURL;
+                LabelRadio.SetPosition(new Vector2(0, 8));
+                WindowRadio.CenterComponentHor(LabelRadio);
+            }
         }
 
         private void UpdateTitle() {
@@ -399,7 +416,9 @@ namespace jarg
 
             currentFloor_.UpdateCreatures(gameTime, player_);
 
-            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
+            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 4);
+            camera_.X = (int)camera_.X;
+            camera_.Y = (int)camera_.Y;
 
             if(Settings.NeedToShowInfoWindow) {
                 ShowInfoWindow(Settings.NTS1, Settings.NTS2);

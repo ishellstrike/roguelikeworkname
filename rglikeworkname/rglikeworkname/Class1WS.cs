@@ -107,6 +107,9 @@ namespace jarg
 
         private Window ConsoleWindow;
         private TextBox ConsoleTB;
+
+        private Window WindowRadio;
+        private RunningLabel LabelRadio;
         #endregion
 
         private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws)
@@ -275,6 +278,10 @@ namespace jarg
             ConsoleTB = new TextBox(new Vector2(10,100), 200, wp, sf, ConsoleWindow);
             ConsoleTB.onEnter += ConsoleTB_onEnter;
             ConsoleWindow.CenterComponentHor(ConsoleTB);
+
+            WindowRadio = new Window(new Rectangle((int)(Settings.Resolution.X/2 - Settings.Resolution.X/6), -23, (int)(Settings.Resolution.X/6 * 2), (int)(Settings.Resolution.Y / 15)), "radio", false, wp, sf, ws) {Moveable = false};
+            LabelRadio = new RunningLabel(new Vector2(0, 8), "radio string radio string radio string radio string", ((int)(Settings.Resolution.X / 6 * 2) - 10)/9, wp, sf, WindowRadio);
+            WindowRadio.CenterComponentHor(LabelRadio);
         }
 
         private void ButtonLightOff_onPressed(object sender, EventArgs e) {
