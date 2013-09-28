@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Parser;
@@ -10,22 +11,32 @@ using rglikeworknamelib.Parser;
 namespace rglikeworknamelib
 {
     public class Atlases {
-        public static Dictionary<string, Texture2D> FloorAtlas;
-        public static Dictionary<string, Texture2D> BlockAtlas, CreatureAtlas; 
+        public static Dictionary<string, Texture2D> FloorArray;
+        public static Texture2D FloorAtlas;
+        public static Dictionary<string, int> FloorIndexes;
+        public static Dictionary<string, Texture2D> BlockArray;
+        public static Texture2D BlockAtlas;
+        public static Dictionary<string, int> BlockIndexes;
+        public static Dictionary<string, Texture2D> CreatureAtlas;
         public static ContentManager Content;
         public static Collection<Texture2D> ParticleAtlas;
         public static Dictionary<string, Texture2D> DressAtlas;
         public static Dictionary<string, Texture2D> MinimapAtlas;
         public static Collection<Texture2D> NormalAtlas; 
 
-        public Atlases(ContentManager c) {
+        public Atlases(ContentManager c, GraphicsDevice gd, SpriteBatch sb) {
             Content = c;
-            Load();
+            Load(gd, sb);
         }
 
-        private void Load() {
-            FloorAtlas = ParsersCore.LoadTexturesTagged(Settings.GetFloorTextureDirectory() + @"\textureloadorder.ord", Content);
-            BlockAtlas = ParsersCore.LoadTexturesTagged(Settings.GetObjectTextureDirectory() + @"\textureloadorder.ord", Content);
+        private void Load(GraphicsDevice gd, SpriteBatch sb) {
+            FloorArray = ParsersCore.LoadTexturesTagged(Settings.GetFloorTextureDirectory() + @"\textureloadorder.ord", Content);
+            FloorIndexes = new Dictionary<string, int>();
+            FloorAtlas = GenerateAtlas(gd, sb, FloorArray, ref FloorIndexes);
+            BlockArray = ParsersCore.LoadTexturesTagged(Settings.GetObjectTextureDirectory() + @"\textureloadorder.ord", Content);
+            BlockIndexes = new Dictionary<string, int>();
+            BlockAtlas = GenerateAtlas(gd, sb, BlockArray, ref BlockIndexes);
+            BlockArray.Clear();
             CreatureAtlas = ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"\textureloadorder.ord", Content);
             ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"\textureloadorder.ord", Content);
             DressAtlas = ParsersCore.LoadTexturesTagged(Settings.GetDressTexturesDirectory() + @"\textureloadorder.ord", Content);
@@ -33,6 +44,22 @@ namespace rglikeworknamelib
 
             NormalAtlas = new Collection<Texture2D>();
             NormalAtlas.Add(Content.Load<Texture2D>(@"Textures/Dungeon/Normals/bricks"));
+        }
+
+        private Texture2D GenerateAtlas(GraphicsDevice gd, SpriteBatch sb, Dictionary<string, Texture2D> texes, ref Dictionary<string, int> indexes) {
+            RenderTarget2D atl = new RenderTarget2D(gd, 1024, (texes.Count / 32 + 1)*32);
+            gd.SetRenderTarget(atl);
+            gd.Clear(Color.Transparent);
+            sb.Begin();
+            int i = 0;
+                foreach (var tex in texes) {
+                    sb.Draw(tex.Value, new Vector2(i%32*32, i/32*32), Color.White);
+                    indexes.Add(tex.Key, i);
+                    i++;
+                }
+            sb.End();
+            gd.SetRenderTarget(null);
+            return atl;
         }
     }
 }

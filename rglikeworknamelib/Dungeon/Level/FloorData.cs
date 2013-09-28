@@ -19,14 +19,19 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public bool Walkable;
 
-        public string RandomMtexFromAlters() {
-            if(AlterMtex == null || AlterMtex.Length == 0) {
-                return MTex;
+        public Rectangle RandomMtexFromAlters(ref string texstring)
+        {
+            if (AlterMtex != null && Settings.rnd.Next(1, 5) == 1) {
+                texstring = AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
+            } else {
+                texstring = MTex;
             }
-            if (Settings.rnd.Next(1, 5) == 1) {
-                return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
-            }
-            return MTex;
+            return GetSource(texstring);
+        }
+
+        public static Rectangle GetSource(string s) {
+            int index = Atlases.FloorIndexes[s];
+            return new Rectangle(index % 32 * 32, index / 32 * 32, 32, 32);
         }
 
     }

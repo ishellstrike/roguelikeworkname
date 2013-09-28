@@ -9,7 +9,8 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         public string Id { get; set; }
         public Color Lightness { get; set; }
         public bool Explored { get; set; }
-        public string Mtex { get; set; }
+        public Rectangle Source { get; set;}
+        public string MTex { get; set; }
 
         public static string GetSmartActionName(SmartAction smartAction)
         {
@@ -27,14 +28,14 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             Lightness = color;
         }
 
-        public virtual void Draw(SpriteBatch sb, Dictionary<string, Texture2D> batlas, Vector2 vector2) {
+        public virtual void Draw(SpriteBatch sb,Texture2D batlas, Vector2 vector2) {
             Color light = Lightness;
             if (Explored && light == Color.Black)
             {
                 light = new Color(40, 40, 40);
             }
 
-            sb.Draw(batlas[Mtex],vector2, light);
+            sb.Draw(batlas,vector2, Source, light);
         }
 
         public virtual void Update(TimeSpan ts, Vector2 vector2)

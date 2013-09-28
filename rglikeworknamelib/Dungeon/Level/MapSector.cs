@@ -100,6 +100,13 @@ namespace rglikeworknamelib.Dungeon.Level {
             decals = (List<Particle>)decal;
             lights = new List<Light>();
             ResetLightingSources();
+
+            foreach (var block in Blocks) {
+                block.Source = BlockData.GetSource(block.MTex);
+            }
+            foreach (var floor in Floors) {
+                floor.Source = FloorData.GetSource(floor.MTex);
+            }
         }
 
         public List<StorageBlock> GetStorageBlocks()
@@ -286,7 +293,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void SetFloor(int x, int y, string id)
         {
             Floors[x * Ry + y].Id = id;
-            Floors[x * Ry + y].Mtex = FloorDataBase.Data[id].RandomMtexFromAlters();
+            Floors[x * Ry + y].Source = FloorDataBase.Data[id].RandomMtexFromAlters(ref Floors[x * Ry + y].MTex);
         }
 
         public string GetId(int x, int y)
@@ -307,7 +314,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void SetBlock(int oneDimCoord, string id) {
             Blocks[oneDimCoord] = (IBlock)Activator.CreateInstance(BlockDataBase.Data[id].Prototype);
             Blocks[oneDimCoord].Id = id;
-            Blocks[oneDimCoord].Mtex = BlockDataBase.Data[id].RandomMtexFromAlters();
+            string mTex ="";
+            Blocks[oneDimCoord].Source = BlockDataBase.Data[id].RandomMtexFromAlters(ref mTex);
+            Blocks[oneDimCoord].MTex = mTex;
         }
 
         /// <summary>
@@ -318,8 +327,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void SetBlock(int oneDimCoord, IBlock bl)
         {
             Blocks[oneDimCoord] = bl;
-           
-            Blocks[oneDimCoord].Mtex = BlockDataBase.Data[bl.Id].RandomMtexFromAlters();
+            string mTex ="";
+            Blocks[oneDimCoord].Source = BlockDataBase.Data[bl.Id].RandomMtexFromAlters(ref mTex);
+            Blocks[oneDimCoord].MTex = mTex;
         }
 
         public void SetBlock(int posX, int posY, string id)
@@ -353,10 +363,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                     SetBlock(i, j, arr[i]);
                 }
             }
-        }
-
-        public string GetMtex(int i, int i1) {
-            return Blocks[i*Rx + i1].Mtex;
         }
 
         public void AddDecal(Particle particle) {

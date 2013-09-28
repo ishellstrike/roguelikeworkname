@@ -51,12 +51,20 @@ namespace rglikeworknamelib.Dungeon.Level {
         //    return true;
         //}
 
-        public string RandomMtexFromAlters()
+        public Rectangle RandomMtexFromAlters(ref string texstring)
         {
-            if (AlterMtex == null || AlterMtex.Length == 0) {
-                return MTex;
+            if (AlterMtex != null && Settings.rnd.Next(1, 5) == 1) {
+                texstring = AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
+            } else {
+                texstring = MTex;
             }
-            return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
+            return GetSource(texstring);
+        }
+
+        public static Rectangle GetSource(string s)
+        {
+            int index = Atlases.BlockIndexes[s];
+            return new Rectangle(index % 32 * 32, index / 32 * 32, 32, 32);
         }
     }
 }

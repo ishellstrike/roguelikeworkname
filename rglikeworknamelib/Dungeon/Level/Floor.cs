@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Level
 {
@@ -6,6 +7,7 @@ namespace rglikeworknamelib.Dungeon.Level
     public class Floor
     {
         public string Id;
-        public string Mtex;
+        public Rectangle Source;
+        public string MTex;
     }
 }

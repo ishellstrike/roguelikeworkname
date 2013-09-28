@@ -129,6 +129,7 @@ namespace jarg
             graphics_.PreferredBackBufferHeight = (int)Settings.Resolution.Y;
             graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
+            InactiveSleepTime = TimeSpan.FromMilliseconds(100);
 
             WMPs = new WMPLib.WindowsMediaPlayer(); //создаётся плеер 
             WMPs.settings.volume = 20;
@@ -185,13 +186,22 @@ namespace jarg
             lineBatch_.UpdateProjection(GraphicsDevice);
         }
 
+        protected override void OnActivated(object sender, EventArgs args) {
+
+            //IsFixedTimeStep = Settings.Framelimit;
+            base.OnActivated(sender, args);
+        }
+
+        protected override void OnDeactivated(object sender, EventArgs args) {
+            base.OnDeactivated(sender, args);
+        }
 
         protected override void LoadContent()
         {
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
 
-            Atlases a = new Atlases(Content);
+            Atlases a = new Atlases(Content, GraphicsDevice, spriteBatch_);
 
             whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             var data = new uint[1];
@@ -312,7 +322,7 @@ namespace jarg
 
         protected override void UnloadContent()
         {
-           
+           WMPs.close();
         }
 
         private Stopwatch sw_update = new Stopwatch();
@@ -715,44 +725,9 @@ namespace jarg
                 LightCollection.Add(new Light
                 {
                     Color = Color.White,
-                    LightRadius = 30 * 3,
-                    Position = ray.Position + ray.Direction * 45,
-                    Power = 20
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 40 * 3,
-                    Position = ray.Position + ray.Direction * 80,
-                    Power = 40
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
                     LightRadius = 50 * 3,
                     Position = ray.Position + ray.Direction * 120,
                     Power = 50
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 60 * 3,
-                    Position = ray.Position + ray.Direction * 160,
-                    Power = 50
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 70 * 3,
-                    Position = ray.Position + ray.Direction * 200,
-                    Power = 100
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 80 * 3,
-                    Position = ray.Position + ray.Direction * 240,
-                    Power = 150
                 });
                 LightCollection.Add(new Light
                 {
