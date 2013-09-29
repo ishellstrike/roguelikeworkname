@@ -78,8 +78,6 @@ Content\Textures\Dungeon\Objects\crates2.xnb
 Content\Textures\Dungeon\Objects\crates3.xnb
 Content\Textures\Dungeon\Objects\bush1.xnb
 Content\Textures\Dungeon\Objects\tree1.xnb
-Content\Effects\reductionEffect.xnb
-Content\Effects\resolveShadowsEffect.xnb
 Content\Textures\Dungeon\Objects\tree2.xnb
 Content\Textures\Dungeon\Objects\glass_hor.xnb
 Content\Textures\Dungeon\Objects\glass_ver.xnb
@@ -103,6 +101,8 @@ Content\Textures\Particles\zombie_corp.xnb
 Content\Textures\Dungeon\Minimap\forest1.xnb
 Content\Textures\Dungeon\Minimap\cross1.xnb
 Content\Textures\Dungeon\Minimap\nothing1.xnb
+Content\Effects\reductionEffect.xnb
+Content\Effects\resolveShadowsEffect.xnb
 Content\Textures\Dungeon\Objects\bath1.xnb
 Content\Textures\Dungeon\Objects\bath2.xnb
 Content\Textures\Dungeon\Objects\bath3.xnb
@@ -126,10 +126,10 @@ Content\Effects\Effect1.xnb
 Content\Effects\Effect2.xnb
 Content\Effects\Effect11.xnb
 Content\Effects\Effect111.xnb
-Content\Textures\Dungeon\Normals\bricks.xnb
 Content\Effects\ShadersLightningShadow.xnb
 Content\Effects\ShadersLightningCombined.xnb
 Content\Effects\ToWhite.xnb
+Content\Textures\Dungeon\Normals\bricks.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README

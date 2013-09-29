@@ -40,6 +40,8 @@ namespace jarg
         private Button ButtonLightOn, ButtonLightOff;
         private Label LabelResolution;
         private Button ButtonResolution800600, ButtonResolution1024768, ButtonResolution1280800, ButtonResolution19201024;
+        private Label LabelOnlineRadio;
+        private Button ButtonRadioGB, ButtonRadioOff;
 
         private Window WindowIngameMenu;
         private Label LabelIngameMenu1;
@@ -172,6 +174,11 @@ namespace jarg
             ButtonResolution1280800.onPressed += ButtonResolution1280800_onPressed;
             ButtonResolution19201024 = new Button(new Vector2(10 + 50 + 95 * 4, 10 + 40 * 5), "1920x1024", wp, sf, WindowSettings);
             ButtonResolution19201024.onPressed += ButtonResolution19201024_onPressed;
+            LabelOnlineRadio = new Label(new Vector2(10, 10 + 40*6), "Resolution", wp, sf, WindowSettings);
+            ButtonRadioGB = new Button(new Vector2(10 + 50 + 95 * 1, 10 + 40 * 6), "GhostBox", wp, sf, WindowSettings);
+            ButtonRadioGB.onPressed += ButtonRadioGB_onPressed;
+            ButtonRadioOff = new Button(new Vector2(10 + 50 + 95 * 2, 10 + 40 * 6), "  Off   ", wp, sf, WindowSettings);
+            ButtonRadioOff.onPressed += new EventHandler(ButtonRadioOff_onPressed);
 
             WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) { Visible = false };
             ButtonIngameMenuSettings = new Button(new Vector2(20, 100), "Settings", wp, sf, WindowIngameMenu);
@@ -283,6 +290,20 @@ namespace jarg
             LabelRadio = new RunningLabel(new Vector2(0, 8), "radio string radio string radio string radio string", ((int)(Settings.Resolution.X / 6 * 2) - 10)/9, wp, sf, WindowRadio);
             WindowRadio.CenterComponentHor(LabelRadio);
         }
+
+        void ButtonRadioOff_onPressed(object sender, EventArgs e)
+        {
+            WMPs.controls.stop();
+            WindowRadio.Visible = false;
+        }
+
+        void ButtonRadioGB_onPressed(object sender, EventArgs e)
+        {
+            WMPs.controls.play();
+            WindowRadio.Visible = true;
+        }
+
+
 
         private void ButtonLightOff_onPressed(object sender, EventArgs e) {
             Settings.Lighting = false;
@@ -495,7 +516,7 @@ namespace jarg
             var a = (int)(sender as Label).Tag;
             selectedItem = inInv_[a];
 
-            if (!doubleclick)
+            if (!doubleclick_)
             {
                 InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
             }
@@ -513,7 +534,7 @@ namespace jarg
             {
                 ContainerSelected = inContainer_[a];
                 LabelContainer.Text = ItemDataBase.GetItemFullDescription(ContainerSelected);
-                if (doubleclick)
+                if (doubleclick_)
                 {
                     if (inContainer_.Contains(ContainerSelected))
                     {

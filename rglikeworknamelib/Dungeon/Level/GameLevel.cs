@@ -961,8 +961,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                             sector.SectorOffsetY * ry + j < max.Y)
                         {
 
-                            if(block.Id != "0")
-                            block.Draw(spriteBatch_, batlas, new Vector2(xpos, ypos));
+                            if(block.Id != "0") {
+                                spriteBatch_.Draw(batlas,new Vector2(xpos, ypos), block.Source, block.Lightness);
+                            }
 
 
                             if ((shad || MapJustUpdated) && !bdb[sector.GetBlock(a).Id].IsTransparent)

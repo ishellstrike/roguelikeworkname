@@ -131,18 +131,20 @@ namespace jarg
             graphics_.SynchronizeWithVerticalRetrace = false;
             InactiveSleepTime = TimeSpan.FromMilliseconds(100);
 
-            WMPs = new WMPLib.WindowsMediaPlayer(); //создаётся плеер 
-            WMPs.settings.volume = 20;
-            WMPs.URL = "http://208.43.42.26:8086 ";
-            WMPs.controls.play();
-            WMPs.MediaChange += WMPs_MediaChange;
-            
             IsFixedTimeStep = true;
             IsMouseVisible = true;
             graphics_.ApplyChanges();
             UpdateTitle();
 
             base.Initialize();
+        }
+
+        private void RunRadioGhostBox() {
+            WMPs = new WindowsMediaPlayer(); //создаётся плеер 
+            WMPs.settings.volume = 20;
+            WMPs.URL = "http://208.43.42.26:8086 ";
+            WMPs.controls.play();
+            WMPs.MediaChange += WMPs_MediaChange;
         }
 
         void WMPs_MediaChange(object Item) {
@@ -274,6 +276,11 @@ namespace jarg
             logger.Info("Initial generation in {0}",sw.Elapsed);
             player_.onUpdatedEquip += UpdateCaracterWindowItems;
             player_.onShoot +=player__onShoot;
+            RenderedFlashlight = GetRenderedFlashlight();
+
+            RunRadioGhostBox();
+            WMPs.controls.stop();
+            WindowRadio.Visible = false;
         }
 
         void player__onShoot(object sender, EventArgs e) {
@@ -427,8 +434,6 @@ namespace jarg
             currentFloor_.UpdateCreatures(gameTime, player_);
 
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 4);
-            camera_.X = (int)camera_.X;
-            camera_.Y = (int)camera_.Y;
 
             if(Settings.NeedToShowInfoWindow) {
                 ShowInfoWindow(Settings.NTS1, Settings.NTS2);
@@ -441,31 +446,31 @@ namespace jarg
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
-
+        
+        Vector2 acW = new Vector2(0, -10);
+        Vector2 acS = new Vector2(0, 10); 
+        Vector2 acA = new Vector2(-10, 0);
+        Vector2 acD = new Vector2(10, 0);
         private void KeyboardUpdate(GameTime gameTime)
         {
             lks_ = ks_;
             ks_ = Keyboard.GetState();
             if (!ws_.Keyboardhook) {
                 if (ks_[Keys.W] == KeyState.Down) {
-                    player_.Accelerate(new Vector2(0, -10));
+                    
+                    player_.Accelerate(acW);
                 }
                 if (ks_[Keys.S] == KeyState.Down) {
-                    player_.Accelerate(new Vector2(0, 10));
+                    
+                    player_.Accelerate(acS);
                 }
                 if (ks_[Keys.A] == KeyState.Down) {
-                    player_.Accelerate(new Vector2(-10, 0));
+                   
+                    player_.Accelerate(acA);
                 }
                 if (ks_[Keys.D] == KeyState.Down) {
-                    player_.Accelerate(new Vector2(10, 0));
-                }
-
-                if (ks_[Keys.G] == KeyState.Down && lks_[Keys.G] == KeyState.Up) {
-                    currentFloor_.Rebuild();
-                }
-
-                if (ks_[Keys.H] == KeyState.Down && lks_[Keys.H] == KeyState.Up) {
-                    currentFloor_.ExploreAllMap();
+                    
+                    player_.Accelerate(acD);
                 }
 
                 if (ks_[Keys.M] == KeyState.Down && lks_[Keys.M] == KeyState.Up) {
@@ -484,7 +489,7 @@ namespace jarg
                     WindowInventory.Visible = !WindowInventory.Visible;
                     if (WindowInventory.Visible) {
                         WindowInventory.OnTop();
-                        WindowInventory.SetPosition(new Vector2(0, 0));
+                        WindowInventory.SetPosition(Vector2.Zero);
                     }
                 }
 
@@ -520,8 +525,7 @@ namespace jarg
                 }
 
                 if (player_ != null) {
-                    pivotpoint_ = new Vector2(player_.Position.X - (Settings.Resolution.X - 200)/2.0f,
-                                              player_.Position.Y - Settings.Resolution.Y/2);
+                    pivotpoint_ = Vector2.Subtract(player_.Position, Vector2.Divide(Settings.Resolution, 2));
                 }
             }
 
@@ -562,30 +566,30 @@ namespace jarg
             }
         }
 
-        private TimeSpan doubleclicktimer = TimeSpan.Zero;
+        private TimeSpan doubleclicktimer_ = TimeSpan.Zero;
         private TimeSpan sec20glitch;
-        private bool firstclick;
-        private bool doubleclick;
-        private bool rememberShoot;
+        private bool firstclick_;
+        private bool doubleclick_;
+        private bool rememberShoot_;
         private void MouseUpdate(GameTime gameTime)
         {
             lms_ = ms_;
             ms_ = Mouse.GetState();
 
-            doubleclicktimer += gameTime.ElapsedGameTime;
+            doubleclicktimer_ += gameTime.ElapsedGameTime;
 
-            doubleclick = false;
-            if(firstclick && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && doubleclicktimer.TotalMilliseconds < 300) {
-                doubleclick = true;
-                firstclick = false;
+            doubleclick_ = false;
+            if(firstclick_ && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && doubleclicktimer_.TotalMilliseconds < 300) {
+                doubleclick_ = true;
+                firstclick_ = false;
             }
-            if (!firstclick && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
-                firstclick = true;
-                doubleclicktimer = TimeSpan.Zero;
+            if (!firstclick_ && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
+                firstclick_ = true;
+                doubleclicktimer_ = TimeSpan.Zero;
             }
-            if (doubleclicktimer.TotalMilliseconds > 300) {
-                firstclick = false;
-                doubleclick = false;
+            if (doubleclicktimer_.TotalMilliseconds > 300) {
+                firstclick_ = false;
+                doubleclick_ = false;
             }
 
             //sec20glitch += gameTime.ElapsedGameTime;
@@ -595,7 +599,7 @@ namespace jarg
             //}
 
             if (ms_.LeftButton == ButtonState.Released) {
-                rememberShoot = false;
+                rememberShoot_ = false;
             }
 
             if (!ws_.Mopusehook) {
@@ -614,7 +618,7 @@ namespace jarg
                 if (currentFloor_ != null) {
                     var nxny = currentFloor_.GetBlock(nx, ny);
                     bool nothingUndermouse = true;
-                    if (nxny != null && nxny.Lightness == Color.White && !rememberShoot) // currentFloor_.IsExplored(aa))
+                    if (nxny != null && nxny.Lightness == Color.White && !rememberShoot_) // currentFloor_.IsExplored(aa))
                     {
                         var a = currentFloor_.GetBlock(nx, ny);
                         if (a != null) {
@@ -659,9 +663,9 @@ namespace jarg
                         }
                     }
                     
-                    if((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot) {
+                    if((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot_) {
                         player_.TryShoot(bs_, PlayerSeeAngle);
-                        rememberShoot = true;
+                        rememberShoot_ = true;
                     }
                 }
             }
@@ -726,7 +730,14 @@ namespace jarg
                 {
                     Color = Color.White,
                     LightRadius = 50 * 3,
-                    Position = ray.Position + ray.Direction * 120,
+                    Position = ray.Position + ray.Direction * 90,
+                    Power = 50
+                });
+                LightCollection.Add(new Light
+                {
+                    Color = Color.White,
+                    LightRadius = 80 * 3,
+                    Position = ray.Position + ray.Direction * 160,
                     Power = 50
                 });
                 LightCollection.Add(new Light
@@ -792,6 +803,11 @@ namespace jarg
                     spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
                 spriteBatch_.End();
             }
+        }
+
+        private Texture2D RenderedFlashlight;
+        private Texture2D GetRenderedFlashlight() {
+            return null;
         }
 
         public void DrawDebugRenderTargets(GameTime time)

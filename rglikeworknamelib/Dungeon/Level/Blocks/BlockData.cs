@@ -63,6 +63,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public static Rectangle GetSource(string s)
         {
+            if (s == null) return new Rectangle(0, 0, 0, 0);
             int index = Atlases.BlockIndexes[s];
             return new Rectangle(index % 32 * 32, index / 32 * 32, 32, 32);
         }

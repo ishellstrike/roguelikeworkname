@@ -28,16 +28,6 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             Lightness = color;
         }
 
-        public virtual void Draw(SpriteBatch sb,Texture2D batlas, Vector2 vector2) {
-            Color light = Lightness;
-            if (Explored && light == Color.Black)
-            {
-                light = new Color(40, 40, 40);
-            }
-
-            sb.Draw(batlas,vector2, Source, light);
-        }
-
         public virtual void Update(TimeSpan ts, Vector2 vector2)
         {
             

@@ -83,7 +83,7 @@ namespace SchemesEditor
             for (int i = 0; i < 30; i++) {
                 for (int j = 0; j < 30; j++) {
                     if (i - camx < gl.rx && j - camy < gl.ry && i - camx >= 0 && j - camy >= 0)
-                        map[i * 30 + j].Image = gl.block[i - camx, j - camy].Mtex == null ? imdict["0"] : imdict[gl.block[i - camx, j - camy].Mtex];
+                        map[i * 30 + j].Image = gl.block[i - camx, j - camy].MTex == null ? imdict["0"] : imdict[gl.block[i - camx, j - camy].MTex];
                     else map[i*30 + j].Image = imageList2.Images[2];
                 }
             }
@@ -136,7 +136,7 @@ namespace SchemesEditor
             for (int index0 = 0; index0 < gl.rx; index0++) {
                 for (int index1 = 0; index1 < gl.ry; index1++) {
                     gl.block[index0, index1].Id = "0";
-                    gl.block[index0, index1].Mtex = "0";
+                    gl.block[index0, index1].MTex = "0";
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace SchemesEditor
                                                                                             listBox1.SelectedIndex].
                                                                                             ToString().IndexOf(" ")).
                                 Substring(2);
-                    gl.block[x, y].Mtex = BlockDataBase.Data[gl.block[x, y].Id].MTex;
+                    gl.block[x, y].MTex = BlockDataBase.Data[gl.block[x, y].Id].MTex;
                 }
             }
         }
@@ -210,7 +210,7 @@ namespace SchemesEditor
         public void CreateAllMapFromArray(string[] ints) {
             for (int i = 0; i < ints.Length; i++) {
                 block[i/ry, i%ry].Id = ints[i];
-                block[i/ry, i%ry].Mtex = BlockDataBase.Data[ints[i]].MTex;
+                block[i/ry, i%ry].MTex = BlockDataBase.Data[ints[i]].MTex;
             }
         }
     }
