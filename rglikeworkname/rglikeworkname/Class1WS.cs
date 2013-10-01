@@ -10,6 +10,7 @@ using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
+using IGameComponent = rglikeworknamelib.Window.IGameComponent;
 
 namespace jarg
 {
@@ -59,6 +60,8 @@ namespace jarg
         private Window WindowCaracterCration;
         private Button ButtonCaracterConfirm;
         private Button ButtonCaracterCancel;
+        private ListContainer PerksContainer;
+        private List<CheckBox> CheckBoxesPerks;
 
         private Window WindowPickup;
 
@@ -219,6 +222,17 @@ namespace jarg
             ButtonCaracterConfirm.onPressed += ButtonCaracterConfirm_onPressed;
             ButtonCaracterCancel = new Button(new Vector2(Settings.Resolution.X / 2 - Settings.Resolution.X / 4, Settings.Resolution.Y / 5 * 4), "Cancel", wp, sf, WindowCaracterCration);
             ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
+            PerksContainer = new ListContainer(new Rectangle(40, 40, 250, (int)(Settings.Resolution.Y / 3 * 2)), wp, sf, WindowCaracterCration);
+            CheckBoxesPerks = new List<CheckBox>();
+            for (int i = 0; i < player_.InitialPerks.Count; i++)
+            {
+                var t = new CheckBox(Vector2.Zero, player_.InitialPerks[i].Name, wp, sf, PerksContainer)
+                        {Cheked = player_.InitialPerks[i].Selected, Tag = i};
+                PerksContainer.AddItem(t);
+                t.onPressed += Game1_onPressed;
+
+                CheckBoxesPerks.Add(t);
+            }
 
             WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
             ContainerInventoryItems = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
@@ -289,6 +303,12 @@ namespace jarg
             WindowRadio = new Window(new Rectangle((int)(Settings.Resolution.X/2 - Settings.Resolution.X/6), -23, (int)(Settings.Resolution.X/6 * 2), (int)(Settings.Resolution.Y / 15)), "radio", false, wp, sf, ws) {Moveable = false};
             LabelRadio = new RunningLabel(new Vector2(0, 8), "radio string radio string radio string radio string", ((int)(Settings.Resolution.X / 6 * 2) - 10)/9, wp, sf, WindowRadio);
             WindowRadio.CenterComponentHor(LabelRadio);
+        }
+
+        void Game1_onPressed(object sender, EventArgs e) {
+            var t = (int) ((IGameComponent) sender).Tag;
+
+            player_.InitialPerks[t].Selected = !player_.InitialPerks[t].Selected;
         }
 
         void ButtonRadioOff_onPressed(object sender, EventArgs e)
@@ -634,7 +654,7 @@ namespace jarg
                 LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
 
                 for (int i = 0; i < LabelsAbilities.Count; i++) {
-                    LabelsAbilities[i].Text = player_.Abilities.AllAbilities[i].Name+" "+player_.Abilities.AllAbilities[i];
+                    LabelsAbilities[i].Text = player_.Abilities.ToShow[i].Name + " " + player_.Abilities.ToShow[i];
                 }
             }
 

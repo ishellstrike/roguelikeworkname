@@ -24,6 +24,9 @@ namespace rglikeworknamelib.Creatures {
         public Dress DressTshort = new Dress("t-short1", Color.DarkRed);
         public Dress DressPants = new Dress("pants1", Color.DarkBlue);
 
+        public PerksSystem Perks;
+        public List<Perk> InitialPerks;
+
         public Item ItemHat;
         public Item ItemGlaces;
         public Item ItemHelmet;
@@ -49,11 +52,12 @@ namespace rglikeworknamelib.Creatures {
             Font = font;
             Tex = tex;
             Position = new Vector2(1, 1);
+            Perks = new PerksSystem();
+            InitialPerks = new List<Perk>();
+            InitialPerks.AddRange(Perks.Perks.Where(x => x.Value.Initial).Select(x=>x.Value));
+            InitialPerks.Sort((x,y)=>x.Name.CompareTo(y.Name));
         }
 
-        public Player()
-        {
-        }
 
         public void EquipItem(Item i, InventorySystem ins) {
             switch (ItemDataBase.Data[i.Id].SType) {
@@ -242,5 +246,37 @@ namespace rglikeworknamelib.Creatures {
                 }
             }
         }
+    }
+    public class PerksSystem {
+        public Dictionary<string, Perk> Perks;
+
+        public PerksSystem()
+        {
+            Perks = new Dictionary<string, Perk>();
+            Perks.Add("huge", new Perk("Здоровяк") { Initial = true });
+            Perks.Add("evil", new Perk("Жестокий") { Initial = true });
+            Perks.Add("badeye", new Perk("Близорукий") { Initial = true });
+            Perks.Add("veg", new Perk("Вегитерианец") { Initial = true });
+            Perks.Add("shiz", new Perk("Шизофреник") { Initial = true });
+            Perks.Add("para", new Perk("Параноик") { Initial = true });
+            Perks.Add("intro", new Perk("Интороверт") { Initial = true });
+            Perks.Add("extro", new Perk("Эктроверт") { Initial = true });
+            Perks.Add("clever", new Perk("Образованный") { Initial = true });
+            Perks.Add("tard", new Perk("Необразованный") { Initial = true });
+            Perks.Add("sport", new Perk("Спортсмен") { Initial = true });
+            Perks.Add("thief", new Perk("Клептомания") { Initial = true });
+            Perks.Add("cfobia", new Perk("Клаутрофобия") { Initial = true });
+            Perks.Add("bandit", new Perk("Бывший заключенный") { Initial = true });
+        }
+    }
+
+    public class Perk {
+        public Perk(string s) {
+            Name = s;
+        }
+        public string Name;
+        public bool Selected;
+        public bool Initial;
+        public int Cost;
     }
 }

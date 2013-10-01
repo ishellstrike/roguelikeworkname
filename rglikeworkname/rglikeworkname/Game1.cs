@@ -219,6 +219,8 @@ namespace jarg
             lig4 = Content.Load<Effect>(@"Effects/Effect111");
             toWhite_ = Content.Load<Effect>(@"Effects/ToWhite");
 
+            player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
+
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(whitepixel_, font1_, ws_);
 
@@ -263,7 +265,6 @@ namespace jarg
                                    ParsersCore.LoadTexturesInOrder(
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
                                    currentFloor_, font1_, lineBatch_);
-            player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
             inventory_ = new InventorySystem();
             inventory_.AddItem(new Item("testhat", 1));
             inventory_.AddItem(new Item("testhat2", 1));

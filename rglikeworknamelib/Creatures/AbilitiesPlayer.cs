@@ -1,79 +1,73 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace rglikeworknamelib.Creatures {
     public class AbilitiesPlayer : AbilitiesBasic {
-        public Ability Survive,
-                       Run,
-                       Shooting,
-                       Martial,
-                       Cooking,
-                       Chemistry,
-                       Physics,
-                       Biology,
-                       Gadgets,
-                       Tailoring,
-                       Reading;
-
-        public Ability[] AllAbilities;
+        public Dictionary<string, Ability> Abilities;
+        public List<Ability> ToShow; 
 
         public AbilitiesPlayer()
         {
-            Survive = new Ability {
+            Abilities = new Dictionary<string, Ability>();
+            Abilities.Add("survive", new Ability
+            {
                 Name = "Выживание",
                 nameStyle = AbilityNameStyle.physical
-            };
-            Run = new Ability {
-                Name = "Бег",
+            });
+            Abilities.Add("atlet", new Ability
+            {
+                Name = "Атлетика",
                 nameStyle = AbilityNameStyle.physical
-            };
-            Shooting = new Ability {
+            });
+            Abilities.Add("shoot", new Ability
+            {
                 Name = "Стрельба",
                 nameStyle = AbilityNameStyle.physical
-            };
-            Martial = new Ability {
+            });
+            Abilities.Add("martial", new Ability
+            {
                 Name = "Ближний бой",
                 nameStyle = AbilityNameStyle.physical
-            };
-            Cooking = new Ability {
+            });
+            Abilities.Add("coock", new Ability
+            {
                 Name = "Готовка",
                 nameStyle = AbilityNameStyle.mental
-            };
-            Chemistry = new Ability {
+            });
+            Abilities.Add("chem", new Ability
+            {
                 Name = "Химия",
                 nameStyle = AbilityNameStyle.mental
-            };
-            Physics = new Ability {
+            });
+            Abilities.Add("phys", new Ability
+            {
                 Name = "Физика",
                 nameStyle = AbilityNameStyle.mental
-            };
-            Biology = new Ability {
+            });
+            Abilities.Add("bio", new Ability
+            {
                 Name = "Биология",
                 nameStyle = AbilityNameStyle.mental
-            };
-            Gadgets = new Ability {
+            });
+            Abilities.Add("it", new Ability
+            {
                 Name = "IT",
                 nameStyle = AbilityNameStyle.mental
-            };
-            Tailoring = new Ability {
+            });
+            Abilities.Add("tailor", new Ability
+            {
                 Name = "Шитье",
                 nameStyle = AbilityNameStyle.mental
-            };
-            Reading = new Ability {
+            });
+            Abilities.Add("read", new Ability
+            {
                 Name = "Чтение",
                 nameStyle = AbilityNameStyle.mental
-            };
+            });
 
-            AllAbilities = new[] {
-                                     Survive,
-                                     Run,
-                                     Shooting,
-                                     Martial,
-                                     Cooking,
-                                     Chemistry,
-                                     Physics,
-                                     Biology,
-                                     Gadgets,
-                                     Tailoring,
-                                     Reading
-                                 };
+            ToShow = new List<Ability>();
+            ToShow.AddRange(Abilities.Select(x=>x.Value));
+            ToShow.Sort((x,y)=>x.Name.CompareTo(y.Name));
         }
     }
 }

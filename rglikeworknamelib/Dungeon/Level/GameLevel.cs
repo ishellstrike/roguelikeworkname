@@ -78,10 +78,16 @@ namespace rglikeworknamelib.Dungeon.Level {
                 FileStream fileStream_;
                 GZipStream gZipStream_;
 
-                fileStream_ =
+                try {
+                    fileStream_ =
                     new FileStream(
                         Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY),
                         FileMode.Open);
+                }
+                catch (IOException) {
+                    return null;
+                }
+                
                 gZipStream_ = new GZipStream(fileStream_, CompressionMode.Decompress);
                 var q1 = binaryFormatter_.Deserialize(gZipStream_);
                 var q2 = binaryFormatter_.Deserialize(gZipStream_);
@@ -209,6 +215,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             var temp = new MapSector(this, sectorOffsetX, sectorOffsetY);
+            if (sectors_.ContainsKey(new Point(sectorOffsetX, sectorOffsetY))) { return sectors_[new Point(sectorOffsetX, sectorOffsetY)];}
             sectors_.Add(new Point(sectorOffsetX, sectorOffsetY), temp);
             temp.Rebuild(MapSeed);
             GlobalMapAdd(temp);
@@ -374,7 +381,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         private TimeSpan sec;
         public void KillFarSectors(Creature cara, GameTime gt) {
             sec += gt.ElapsedGameTime;
-            if (sec.TotalMilliseconds >= 500) {
+            if (sec.TotalMilliseconds >= 100) {
                 sec = TimeSpan.Zero;
                 for (int i = 0; i < sectors_.Count; i++) {
                     var a = sectors_.ElementAt(i);
@@ -382,7 +389,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                         Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 64)
                     {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
-                        SaveSector(a.Value);
+                        var aa = new Action<MapSector>(SaveSector);
+                        aa(a.Value);
                         return;
                     }
                 }
@@ -526,6 +534,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 Vector2 checkPoint = start;
 
+                var blockDatas = BlockDataBase.Data;
                 if (Math.Abs(xDelta) > Math.Abs(yDelta)) {
                     if (end.X == 30 && end.Y == 37)
                         end.X = 30;
@@ -534,7 +543,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                     for (int x = 1; x <= Math.Abs(xDelta); x++) {
                         checkPoint.X = start.X + (int) Math.Round(x*unitX, 2);
                         checkPoint.Y = start.Y + (int) Math.Round(x*uintY, 2);
-                        if (!BlockDataBase.Data[GetBlock((int) checkPoint.X, (int) checkPoint.Y).Id].IsTransparent) {
+                        var key = GetBlock((int) checkPoint.X, (int) checkPoint.Y).Id;
+                        if (key != null && !blockDatas[key].IsTransparent) {
                             GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
                             return false;
                         }
@@ -554,7 +564,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                         var t = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
 
-                        if (t!= null && !BlockDataBase.Data[t.Id].IsTransparent) {
+                        if (t!= null && t.Id != null && !blockDatas[t.Id].IsTransparent) {
                             GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
                             return false;
                         }
