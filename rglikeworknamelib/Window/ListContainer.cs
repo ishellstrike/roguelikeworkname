@@ -78,7 +78,7 @@ namespace rglikeworknamelib.Window {
             {
                 while (true)
                 {
-                    if (curBottom + Items[fromNow].Height + 10 > location_.Bottom)
+                    if (curBottom + Items[fromNow].Height + 10 > location_.Bottom - location_.Top)
                     {
                         break;
                     }

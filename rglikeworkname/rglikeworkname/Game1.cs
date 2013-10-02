@@ -45,6 +45,7 @@ namespace jarg
         private BulletSystem bs_;
         private GameLevel currentFloor_;
         private InventorySystem inventory_;
+        private LevelWorker levelWorker_;
         
         private Player player_ = null;
 
@@ -130,6 +131,7 @@ namespace jarg
             graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             InactiveSleepTime = TimeSpan.FromMilliseconds(100);
+            TargetElapsedTime = TimeSpan.FromMilliseconds(33);
 
             IsFixedTimeStep = true;
             IsMouseVisible = true;
@@ -160,14 +162,18 @@ namespace jarg
             Window.Title = Version.GetLong() + string.Format(" - {0}x{1}", Settings.Resolution.X, Settings.Resolution.Y);
         }
 
+        private bool needChangeSesolution;
         void Window_ClientSizeChanged(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height);
-            ResolutionChanging();
+            needChangeSesolution = true;
         }
 
         private void ResolutionChanging() {
-            graphics_.PreferredBackBufferHeight = (int) Settings.Resolution.Y;
-            graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
+            var height = (int)Settings.Resolution.Y;
+            var width = (int)Settings.Resolution.X;
+
+            graphics_.PreferredBackBufferHeight = height;
+            graphics_.PreferredBackBufferWidth = width;
             graphics_.ApplyChanges();
             var t = ws_.GetVisibleList();
             ws_.Clear();
@@ -179,13 +185,14 @@ namespace jarg
             UpdateCaracterWindowItems(null, null);
             EventLog_onLogUpdate(null, null);
             rt2d = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight);
-            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            EffectOmnilight.Parameters["screenWidth"].SetValue(graphics_.PreferredBackBufferWidth);
-            EffectOmnilight.Parameters["screenHeight"].SetValue(graphics_.PreferredBackBufferHeight);
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            EffectOmnilight.Parameters["screenWidth"].SetValue(width);
+            EffectOmnilight.Parameters["screenHeight"].SetValue(height);
             lineBatch_.UpdateProjection(GraphicsDevice);
+            Atlases.RebuildAtlases(GraphicsDevice);
         }
 
         protected override void OnActivated(object sender, EventArgs args) {
@@ -203,7 +210,7 @@ namespace jarg
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
 
-            Atlases a = new Atlases(Content, GraphicsDevice, spriteBatch_);
+            Atlases a = new Atlases(Content, GraphicsDevice);
 
             whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             var data = new uint[1];
@@ -218,6 +225,8 @@ namespace jarg
             lig3 = Content.Load<Effect>(@"Effects/Effect11");
             lig4 = Content.Load<Effect>(@"Effects/Effect111");
             toWhite_ = Content.Load<Effect>(@"Effects/ToWhite");
+
+            player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(whitepixel_, font1_, ws_);
@@ -254,8 +263,11 @@ namespace jarg
         private void InitialGeneration() {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+            levelWorker_ = new LevelWorker();
+            Action lw_ = levelWorker_.Run;
+            lw_.BeginInvoke(null, null);
             ShowInfoWindow("Initial map generation", "");
-            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice);
+            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice, levelWorker_);
             ps_ = new ParticleSystem(spriteBatch_,
                                      ParsersCore.LoadTexturesInOrder(
                                          Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
@@ -263,7 +275,6 @@ namespace jarg
                                    ParsersCore.LoadTexturesInOrder(
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
                                    currentFloor_, font1_, lineBatch_);
-            player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
             inventory_ = new InventorySystem();
             inventory_.AddItem(new Item("testhat", 1));
             inventory_.AddItem(new Item("testhat2", 1));
@@ -330,6 +341,7 @@ namespace jarg
         protected override void UnloadContent()
         {
            WMPs.close();
+           levelWorker_.Stop();
         }
 
         private Stopwatch sw_update = new Stopwatch();
@@ -378,6 +390,11 @@ namespace jarg
             if (SecondTimespan.TotalSeconds >= 1)
             {
                 SecondTimespan = TimeSpan.Zero;
+            }
+
+            if(needChangeSesolution) {
+                needChangeSesolution = false;
+                ResolutionChanging();
             }
         }
 
@@ -483,6 +500,7 @@ namespace jarg
 
                 if (ks_[Keys.C] == KeyState.Down && lks_[Keys.C] == KeyState.Up) {
                     WindowCaracter.Visible = !WindowCaracter.Visible;
+                    UpdateCaracterWindowItems(null,null);
                 }
 
                 if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
@@ -753,14 +771,14 @@ namespace jarg
             EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X - camera_.X, player_.Position.Y - camera_.Y });
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
+            GraphicsDevice.Clear(Color.Black);
             //color maps
-            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch_.Begin();
                 currentFloor_.DrawFloors(gameTime, camera_);
                 currentFloor_.DrawDecals(gameTime, camera_);
             spriteBatch_.End();
             currentFloor_.ShadowRender();
-            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone);
+            spriteBatch_.Begin();
                 currentFloor_.DrawBlocks(gameTime, camera_, player_);
                 currentFloor_.DrawCreatures(gameTime, camera_);
                 player_.Draw(gameTime, camera_);
@@ -770,8 +788,8 @@ namespace jarg
 
 
             if (Settings.Lighting) {
-                GraphicsDevice.SetRenderTarget(normalMapRenderTarget_);
-                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
+                //GraphicsDevice.SetRenderTarget(normalMapRenderTarget_);
+                //GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
                 //normal maps
                 //spriteBatch_.Begin();
                 //for (int i = 0; i < Settings.Resolution.X / 32 + 1; i++)
@@ -784,8 +802,8 @@ namespace jarg
                 //}
                 //spriteBatch_.End();
 
-                GraphicsDevice.SetRenderTarget(depthMapRenderTarget_);
-                GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1, 0);
+                //GraphicsDevice.SetRenderTarget(depthMapRenderTarget_);
+                //GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1, 0);
                 //depth maps
                 //spriteBatch_.Begin();
                 //    currentFloor_.DrawFloorsInnerDepth(gameTime, camera_);

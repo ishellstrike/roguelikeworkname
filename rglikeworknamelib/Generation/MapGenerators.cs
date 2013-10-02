@@ -93,12 +93,12 @@ namespace rglikeworknamelib.Generation
             return rnd.Next(-rx/10,rx/10)+rx/2;
         }
 
-        internal static void PlaceScheme(MapSector gl, GameLevel level, Schemes scheme, int x, int y)
+        internal static void PlaceScheme(MapSector gl, Schemes scheme, int x, int y)
         {
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
                         if (scheme.data[i * scheme.y + j] != "0") {
-                            level.SetBlock(x + i + gl.SectorOffsetX * MapSector.Rx, y + j + gl.SectorOffsetY * MapSector.Ry, scheme.data[i * scheme.y + j]);
+                            gl.SetBlock(x + i, y + j, scheme.data[i * scheme.y + j]);
                         }
                     
                 }
@@ -120,10 +120,24 @@ namespace rglikeworknamelib.Generation
 
             if(a.Count > 0) {
                 int r = rnd.Next(0, a.Count);
-                var aa = GetInnerFloorArrayWithId(a[r], "conk_base");
-                FillFloorFromArrayAndOffset(mapSector, mapSector.Parent, a[r].x, a[r].y, aa, posX, posY);
-                ClearBlocksFromArrayAndOffset(mapSector, mapSector.Parent, a[r].x, a[r].y, aa, posX, posY);
-                PlaceScheme(mapSector, mapSector.Parent, a[r], posX, posY);
+                int rr = rnd.Next(0, 4);
+                int rrr = rnd.Next(0, 2);
+                int rrrr = rnd.Next(0, 2);
+                var scheme = a[r];
+                if (rr > 0) {
+                    scheme.Rotate(rr);
+                }
+                if(rrr > 0) {
+                    scheme.TransHor();
+                }
+                if (rrrr > 0)
+                {
+                    scheme.TransVer();
+                }
+                var aa = GetInnerFloorArrayWithId(scheme, "conk_base");
+                FillFloorFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 1, 1);
+                ClearBlocksFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 1, 1);
+                PlaceScheme(mapSector, scheme, 1, 1);
             }
         }
 
@@ -161,22 +175,22 @@ namespace rglikeworknamelib.Generation
             return converted;
         }
 
-        public static void FillFloorFromArrayAndOffset(MapSector gl, GameLevel level, int x, int y, string[] arr, int sx, int sy) {
+        public static void FillFloorFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy) {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
                     if(arr[i*y+j] != "0") {
-                        level.SetFloor(sx + i + gl.SectorOffsetX * MapSector.Rx, sy + j + gl.SectorOffsetY * MapSector.Ry, arr[i * y + j]);
+                        gl.SetFloor(sx + i, sy + j, arr[i * y + j]);
                     }
                 }
             }
         }
 
-        public static void ClearBlocksFromArrayAndOffset(MapSector gl, GameLevel level, int x, int y, string[] arr, int sx, int sy)
+        public static void ClearBlocksFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy)
         {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
                     if (arr[i * y + j] != "0") {
-                        level.SetBlock(sx + i + gl.SectorOffsetX * MapSector.Rx, sy + j + gl.SectorOffsetY * MapSector.Ry, "0");
+                        gl.SetBlock(sx + i, sy + j, "0");
                     }
                 }
             }

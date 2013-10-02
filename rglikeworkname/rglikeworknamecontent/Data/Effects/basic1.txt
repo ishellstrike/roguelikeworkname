@@ -4,9 +4,9 @@ Value={1}
 Duration=-1
 
 ~BuffHpUp,hpup2
-Name=Временное повышение здоровья +2"
+Name=Временное повышение здоровья +2 (1 час)"
 Value={2}
-Duration=5000
+Duration=60
 
 ~BuffHpUp,hpup5
 Name=Повышение здоровья +5
@@ -21,3 +21,23 @@ Duration=-1
 Name=Восстанавливает 5 здоровья
 Duration=0
 Value={5}
+
+~HealOnce,heal10
+Name=Восстанавливает 10 здоровья
+Duration=0
+Value={10}
+
+~HealOnce,heal15
+Name=Восстанавливает 15 здоровья
+Duration=0
+Value={15}
+
+~HealOnce,heal25
+Name=Восстанавливает 25 здоровья
+Duration=0
+Value={25}
+
+~HealOnce,heal50
+Name=Восстанавливает 50 здоровья
+Duration=0
+Value={50}

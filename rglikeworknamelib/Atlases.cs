@@ -22,21 +22,20 @@ namespace rglikeworknamelib
         public static Collection<Texture2D> ParticleAtlas;
         public static Dictionary<string, Texture2D> DressAtlas;
         public static Dictionary<string, Texture2D> MinimapAtlas;
-        public static Collection<Texture2D> NormalAtlas; 
+        public static Collection<Texture2D> NormalAtlas;
+        private static SpriteBatch sb;
 
-        public Atlases(ContentManager c, GraphicsDevice gd, SpriteBatch sb) {
+        public Atlases(ContentManager c, GraphicsDevice gd) {
             Content = c;
-            Load(gd, sb);
+            sb = new SpriteBatch(gd);
+            Load(gd);
         }
 
-        private void Load(GraphicsDevice gd, SpriteBatch sb) {
+        private void Load(GraphicsDevice gd) {
             FloorArray = ParsersCore.LoadTexturesTagged(Settings.GetFloorTextureDirectory() + @"\textureloadorder.ord", Content);
-            FloorIndexes = new Dictionary<string, int>();
-            FloorAtlas = GenerateAtlas(gd, sb, FloorArray, ref FloorIndexes);
             BlockArray = ParsersCore.LoadTexturesTagged(Settings.GetObjectTextureDirectory() + @"\textureloadorder.ord", Content);
-            BlockIndexes = new Dictionary<string, int>();
-            BlockAtlas = GenerateAtlas(gd, sb, BlockArray, ref BlockIndexes);
-            BlockArray.Clear();
+            RebuildAtlases(gd);
+           // BlockArray.Clear();
             CreatureAtlas = ParsersCore.LoadTexturesTagged(Settings.GetUnitTextureDirectory() + @"\textureloadorder.ord", Content);
             ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"\textureloadorder.ord", Content);
             DressAtlas = ParsersCore.LoadTexturesTagged(Settings.GetDressTexturesDirectory() + @"\textureloadorder.ord", Content);
@@ -46,7 +45,14 @@ namespace rglikeworknamelib
             NormalAtlas.Add(Content.Load<Texture2D>(@"Textures/Dungeon/Normals/bricks"));
         }
 
-        private Texture2D GenerateAtlas(GraphicsDevice gd, SpriteBatch sb, Dictionary<string, Texture2D> texes, ref Dictionary<string, int> indexes) {
+        public static void RebuildAtlases(GraphicsDevice gd) {
+            FloorIndexes = new Dictionary<string, int>();
+            FloorAtlas = GenerateAtlas(gd, FloorArray, ref FloorIndexes);
+            BlockIndexes = new Dictionary<string, int>();
+            BlockAtlas = GenerateAtlas(gd, BlockArray, ref BlockIndexes);
+        }
+
+        private static Texture2D GenerateAtlas(GraphicsDevice gd, Dictionary<string, Texture2D> texes, ref Dictionary<string, int> indexes) {
             RenderTarget2D atl = new RenderTarget2D(gd, 1024, (texes.Count / 32 + 1)*32);
             gd.SetRenderTarget(atl);
             gd.Clear(Color.Transparent);

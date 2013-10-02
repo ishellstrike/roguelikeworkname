@@ -27,12 +27,12 @@ namespace rglikeworknamelib.Dungeon.Buffs {
             if(!applied_) {
                 Target = p;
                 if (BuffDataBase.Data[Id].Duration != -1) {
-                    Expire = new TimeSpan(0,0,0,0,BuffDataBase.Data[Id].Duration);
+                    Expire = new TimeSpan(0,0,BuffDataBase.Data[Id].Duration,0,0);
                     Expiring = true;
                 } else {
                     Expiring = false;
                 }
-                EventLog.Add(string.Format("Получен эффект {0}", BuffDataBase.Data[Id].Name), GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Buff);
+                EventLog.Add(string.Format("Получен эффект {0})", BuffDataBase.Data[Id].Name), GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Buff);
                 applied_ = true;
                 return true;
             }
@@ -41,7 +41,7 @@ namespace rglikeworknamelib.Dungeon.Buffs {
 
         public virtual void Update(GameTime gt) {
             if(Expiring) {
-                Expire -= gt.ElapsedGameTime;
+                Expire -= GlobalWorldLogic.Elapse;
                 if(Expire.TotalMilliseconds <= 0) {
                     RemoveFromTarget(Target);
                 }

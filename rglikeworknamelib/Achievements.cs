@@ -40,6 +40,7 @@ namespace jarg
             Stat.Add("makedmg", new Statist { Name = "Naneseno urona" });
             Stat.Add("maxdmg", new Statist { Name = "Maksimalnii uron" });
             Stat.Add("dooro", new Statist { Name = "Otkrito dverei" });
+            Stat.Add("walk", new Statist { Name = "Vsego proideno" });
         }
     }
 }

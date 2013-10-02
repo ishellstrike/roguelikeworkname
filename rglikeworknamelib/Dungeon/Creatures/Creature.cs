@@ -92,6 +92,16 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
+        public Ability GetAbility(string s) {
+            return abilities_.list[s];
+        }
+
+        private Abilities abilities_ = new Abilities();
+        public Abilities Abilities {
+            get { return abilities_; }
+            set { abilities_ = value; }
+        }
+
         public Vector2 LastPos
         {
             get { return lastpos_; }
@@ -104,10 +114,11 @@ namespace rglikeworknamelib.Creatures {
             var time = gt.ElapsedGameTime.TotalSeconds;
             reactionT += gt.ElapsedGameTime;
             sec += gt.ElapsedGameTime;
-            if (!Skipp) {
+            if (!Skipp || !ms.ready) {
                 sectoroffset_ = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
-                if (ms.Parent.GetBlock((int) GetWorldPositionInBlocks().X, (int) GetWorldPositionInBlocks().Y).Lightness ==
-                    Color.White && reactionT.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
+                Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
+                var block = ms.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
+                if (block != null && block.Lightness == Color.White && reactionT.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
                     remPos_ = hero.Position - WorldPosition() + Position;
                     MoveByMover(ms, time);
 
@@ -173,8 +184,12 @@ namespace rglikeworknamelib.Creatures {
                 }
             }
 
-            foreach (var buff in buffs) {
+            for (int i = 0; i < buffs.Count; i++) {
+                var buff = buffs[i];
                 buff.Update(gt);
+                if (!buff.Applied) {
+                    buffs.Remove(buff);
+                }
             }
         }
 
@@ -193,10 +208,13 @@ namespace rglikeworknamelib.Creatures {
                 var newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
                 var newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
 
-                if (BlockDataBase.Data[ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y).Id].IsWalkable) {
+                var blockDatas = BlockDataBase.Data;
+                var key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
+                if (key != null && key.Id != null && blockDatas[key.Id].IsWalkable) {
                     position_.X += mover.X;
                 }
-                if (BlockDataBase.Data[ms.Parent.GetBlock((int) newwposy.X, (int) newwposy.Y).Id].IsWalkable) {
+                key = ms.Parent.GetBlock((int) newwposy.X, (int) newwposy.Y);
+                if (key != null && (key.Id != null && blockDatas[key.Id].IsWalkable)) {
                     position_.Y += mover.Y;
                 }
             }

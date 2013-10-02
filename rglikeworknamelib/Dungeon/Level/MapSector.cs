@@ -109,19 +109,24 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public List<StorageBlock> GetStorageBlocks()
-        {
-            return (from a in Blocks
-                    where BlockDataBase.Data[a.Id].Prototype == typeof(StorageBlock)
-                    select a as StorageBlock).ToList();
+        public List<StorageBlock> GetStorageBlocks() {
+            List<StorageBlock> list = new List<StorageBlock>();
+            for (int i = 0; i < Blocks.Count; i++) {
+                IBlock a = Blocks[i];
+                if (BlockDataBase.Data[a.Id].Prototype == typeof (StorageBlock)) {
+                    list.Add(a as StorageBlock);
+                }
+            }
+            return list;
         }
 
         public void ResetLightingSources() {
             lights.Clear();
             int i = 0;
-            foreach (var block in Blocks) {
-                if(block is ILightSource) {
-                    lights.Add(GetLights(block, i / 32 * 32 + SectorOffsetX * 32 * 32, i % 32 * 32 + SectorOffsetY * 32 * 32));
+            for (int index = 0; index < Blocks.Count; index++) {
+                var block = Blocks[index];
+                if (block is ILightSource) {
+                    lights.Add(GetLights(block, i/32*32 + SectorOffsetX*32*32, i%32*32 + SectorOffsetY*32*32));
                 }
                 i++;
             }
@@ -149,7 +154,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="mapseed">глобальный сид карты</param>
         public void Rebuild(int mapseed) {
             Action<int> a = AsyncGeneration;
-            //a.BeginInvoke(mapseed, null, null);
             a(mapseed);
         }
 
@@ -273,21 +277,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         public IBlock GetBlock(int a)
         {
             return Blocks[a];
-        }
-
-        public bool IsExplored(int x, int y)
-        {
-            return Blocks[x * Ry + y].Explored;
-        }
-
-        public bool IsExplored(int a)
-        {
-            return Blocks[a].Explored;
-        }
-
-        public bool IsWalkable(int x, int y)
-        {
-            return BlockDataBase.Data[Blocks[x * Ry + y].Id].IsWalkable;
         }
 
         public void SetFloor(int x, int y, string id)

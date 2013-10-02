@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
+using IGameComponent = rglikeworknamelib.Window.IGameComponent;
 
 namespace jarg
 {
@@ -59,6 +62,9 @@ namespace jarg
         private Window WindowCaracterCration;
         private Button ButtonCaracterConfirm;
         private Button ButtonCaracterCancel;
+        private ListContainer PerksContainer;
+        private List<CheckBox> CheckBoxesPerks;
+        
 
         private Window WindowPickup;
 
@@ -100,6 +106,8 @@ namespace jarg
         private DoubleLabel LabelCaracterBag;
         private DoubleLabel LabelCaracterHp;
         private List<Label> LabelsAbilities;
+        private ListContainer EffectsContainer;
+        private List<LabelFixed> LabelsEffect; 
 
         private Window InfoWindow;
         private DoubleLabel InfoWindowLabel;
@@ -219,6 +227,18 @@ namespace jarg
             ButtonCaracterConfirm.onPressed += ButtonCaracterConfirm_onPressed;
             ButtonCaracterCancel = new Button(new Vector2(Settings.Resolution.X / 2 - Settings.Resolution.X / 4, Settings.Resolution.Y / 5 * 4), "Cancel", wp, sf, WindowCaracterCration);
             ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
+            PerksContainer = new ListContainer(new Rectangle(40, 40, 250, (int)(Settings.Resolution.Y / 3 * 2)), wp, sf, WindowCaracterCration);
+            CheckBoxesPerks = new List<CheckBox>();
+            for (int i = 0; i < PerkDataBase.Perks.Count; i++) {
+                var keyValuePair = PerkDataBase.Perks.ElementAt(i);
+                if (keyValuePair.Value.Initial) {
+                    var t = new CheckBox(Vector2.Zero, keyValuePair.Value.Name, wp, sf, PerksContainer) { Cheked = player_.Perks.IsSelected(keyValuePair.Key), Tag = keyValuePair.Key };
+                    PerksContainer.AddItem(t);
+                    t.onPressed += Game1_onPressed;
+
+                    CheckBoxesPerks.Add(t);
+                }
+            }
 
             WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
             ContainerInventoryItems = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
@@ -274,6 +294,8 @@ namespace jarg
                 ii++;
                 LabelsAbilities.Add(temp);
             }
+            EffectsContainer = new ListContainer(new Rectangle((int)WindowCaracter.Width / 2, (int)(WindowCaracter.Height / 2), (int)(WindowCaracter.Width / 2), (int)(WindowCaracter.Height / 2)-19), wp, sf, WindowCaracter);
+            LabelsEffect = new List<LabelFixed>();
 
             InfoWindow = new Window(new Vector2(200, 100), "Info", true, wp, sf, ws) { Visible = false };
             InfoWindowLabel = new DoubleLabel(new Vector2(20, 20), "some info", wp, sf, InfoWindow);
@@ -289,6 +311,12 @@ namespace jarg
             WindowRadio = new Window(new Rectangle((int)(Settings.Resolution.X/2 - Settings.Resolution.X/6), -23, (int)(Settings.Resolution.X/6 * 2), (int)(Settings.Resolution.Y / 15)), "radio", false, wp, sf, ws) {Moveable = false};
             LabelRadio = new RunningLabel(new Vector2(0, 8), "radio string radio string radio string radio string", ((int)(Settings.Resolution.X / 6 * 2) - 10)/9, wp, sf, WindowRadio);
             WindowRadio.CenterComponentHor(LabelRadio);
+        }
+
+        void Game1_onPressed(object sender, EventArgs e) {
+            var t = (string) ((IGameComponent) sender).Tag;
+
+            player_.Perks.SetPerk(t);
         }
 
         void ButtonRadioOff_onPressed(object sender, EventArgs e)
@@ -634,7 +662,7 @@ namespace jarg
                 LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
 
                 for (int i = 0; i < LabelsAbilities.Count; i++) {
-                    LabelsAbilities[i].Text = player_.Abilities.AllAbilities[i].Name+" "+player_.Abilities.AllAbilities[i];
+                    LabelsAbilities[i].Text = player_.Abilities.ToShow[i].Name + " " + player_.Abilities.ToShow[i];
                 }
             }
 
@@ -649,6 +677,8 @@ namespace jarg
                                                       whitepixel_, font1_, ListStatist));
                     }
                 }
+
+                UpdateCaracterWindowItems(null,null);
             }
         }
 
@@ -685,6 +715,23 @@ namespace jarg
             LabelCaracterMeele.Text2 = player_.ItemMeele != null
                                            ? ItemDataBase.Data[player_.ItemMeele.Id].Name
                                            : "";
+
+            EffectsContainer.Clear();
+            LabelsEffect.Clear();
+            for(int i=0; i<player_.buffs.Count;i++) {
+                LabelFixed label;
+                if (player_.buffs[i].Expiring) {
+                    label = new LabelFixed(Vector2.Zero, string.Format("{0} {1}", BuffDataBase.Data[player_.buffs[i].Id].Name, player_.buffs[i].Expire), 20, whitepixel_,
+                                        font1_, EffectsContainer);
+                }
+                else {
+                    label = new LabelFixed(Vector2.Zero, string.Format("{0}", BuffDataBase.Data[player_.buffs[i].Id].Name), 20, whitepixel_,
+                                            font1_, EffectsContainer);
+
+                }                    
+                LabelsEffect.Add(label);
+                EffectsContainer.AddItem(label);
+            }
         }
 
     }

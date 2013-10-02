@@ -1,10 +1,11 @@
 using System;
 
 namespace rglikeworknamelib.Creatures {
+    [Serializable]
     public class Ability {
         public static readonly int[] XpNeeds = new[] { 10, 25, 40, 60, 85, 115, 155, 200, 265, 340, 435, 555, 700, 890, 1120};
-        private int xpCurrent_;
-        public int XpLevel;
+        private int xpCurrent_ = 0;
+        public int XpLevel = 2;
         public string Name;
         public event EventHandler onLevelUp;
         public AbilityNameStyle nameStyle;
@@ -27,8 +28,9 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
+        
         public override string ToString() {
-            if (nameStyle == AbilityNameStyle.physical) {
+            //if (nameStyle == AbilityNameStyle.physical) {
                 switch (XpLevel) {
                     case 0:
                         return "ужасно";
@@ -52,7 +54,7 @@ namespace rglikeworknamelib.Creatures {
                         return "великий мастер";
                     case 10:
                         return "легенда";
-                }
+               // }
             }
 
             return XpCurrent.ToString();

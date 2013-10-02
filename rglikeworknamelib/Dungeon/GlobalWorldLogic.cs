@@ -24,19 +24,20 @@ namespace rglikeworknamelib.Dungeon
     public static class GlobalWorldLogic
     {
         public static DateTime CurrentTime = new DateTime(2020, 6, 1, 12, 0, 0);
-        private static TimeSpan elapse;
+        public static TimeSpan Elapse;
         public static float Temperature = 10;
         private static Seasons currentSeason_ = Seasons.Summer;
         public static DayPart dayPart_  = DayPart.Day;
         private static readonly long Hour3 = new TimeSpan(0,3,0,0).Ticks;
         private static float ler = 7;
+
         public static float GetCurrentSlen() {
             return ler;
         }
 
         public static void Update(GameTime gt) {
-            elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds*5);
-            CurrentTime += elapse;
+            Elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds*5);
+            CurrentTime += Elapse;
             Temperature -= Temperature * (float)gt.ElapsedGameTime.TotalMinutes;
             Temperature += GetNormalTemp(CurrentTime) * (float)gt.ElapsedGameTime.TotalMinutes;
 
@@ -90,7 +91,7 @@ namespace rglikeworknamelib.Dungeon
                     a = 7;
                     break;
             }
-            ler = Vector2.Lerp(new Vector2(ler, 0), new Vector2(a, 0), (float) elapse.TotalHours).X;
+            ler = Vector2.Lerp(new Vector2(ler, 0), new Vector2(a, 0), (float) Elapse.TotalHours).X;
              
 
             switch (currentSeason_) {

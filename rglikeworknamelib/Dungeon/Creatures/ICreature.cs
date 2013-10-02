@@ -21,5 +21,6 @@ namespace rglikeworknamelib.Creatures {
         event EventHandler onDamageRecieve;
         event EventHandler onDeath;
         List<IBuff> buffs { get; set; }
+        Abilities Abilities { get; set; }
     }
 }

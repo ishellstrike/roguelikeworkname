@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,7 +36,7 @@ namespace rglikeworknamelib.Creatures {
         public Item ItemAmmo;
         public Item ItemBag;
 
-        public AbilitiesPlayer Abilities = new AbilitiesPlayer();
+        public PerksSystem Perks;
 
         /// <summary>
         /// Experience for abilities. From rest
@@ -49,11 +48,9 @@ namespace rglikeworknamelib.Creatures {
             Font = font;
             Tex = tex;
             Position = new Vector2(1, 1);
+            Perks = new PerksSystem(this);
         }
 
-        public Player()
-        {
-        }
 
         public void EquipItem(Item i, InventorySystem ins) {
             switch (ItemDataBase.Data[i.Id].SType) {
@@ -140,52 +137,54 @@ namespace rglikeworknamelib.Creatures {
 
         public override void Update(GameTime gt, MapSector ms, Player hero)
         {
-            var time = (float)gt.ElapsedGameTime.TotalSeconds;
+            if (ms != null) {
+                var time = (float) gt.ElapsedGameTime.TotalSeconds;
 
-            var tpos = Position;
-            tpos.X += Velocity.X;
-            var tpos2 = Position;
-            tpos2.Y += Velocity.Y;
+                var tpos = Position;
+                tpos.X += Velocity.X;
+                var tpos2 = Position;
+                tpos2.Y += Velocity.Y;
 
-            int a = (int)(tpos.X / 32.0);
-            int b = (int)(tpos.Y / 32.0);
+                int a = (int) (tpos.X/32.0);
+                int b = (int) (tpos.Y/32.0);
 
-            int c = (int)(tpos2.X / 32.0);
-            int d = (int)(tpos2.Y / 32.0);
+                int c = (int) (tpos2.X/32.0);
+                int d = (int) (tpos2.Y/32.0);
 
-            if (tpos.X < 0) a--;
-            if (tpos.Y < 0) b--;
-            if (tpos2.X < 0) c--;
-            if (tpos2.Y < 0) d--;
+                if (tpos.X < 0) a--;
+                if (tpos.Y < 0) b--;
+                if (tpos2.X < 0) c--;
+                if (tpos2.Y < 0) d--;
 
-            if (!ms.Parent.IsWalkable(a, b))
-            {
-                Velocity.X = 0;
-                if (BlockDataBase.Data[ms.Parent.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose)
-                {
-                    ms.Parent.OpenCloseDoor(a, b);
+                if (!ms.Parent.IsWalkable(a, b)) {
+                    Velocity.X = 0;
+                    if (BlockDataBase.Data[ms.Parent.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
+                        ms.Parent.OpenCloseDoor(a, b);
+                    }
                 }
-            }
-            if (!ms.Parent.IsWalkable(c, d))
-            {
-                Velocity.Y = 0;
-                if (BlockDataBase.Data[ms.Parent.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose)
-                {
-                    ms.Parent.OpenCloseDoor(c, d);
+                if (!ms.Parent.IsWalkable(c, d)) {
+                    Velocity.Y = 0;
+                    if (BlockDataBase.Data[ms.Parent.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose) {
+                        ms.Parent.OpenCloseDoor(c, d);
+                    }
                 }
-            }
 
-            Position += Velocity * time * 20; /////////
+                Position += Velocity*time*20; /////////
+                Achievements.Stat["walk"].Count += (Velocity*time*20/32).Length();
 
-            if (time != 0)
-            {
-                Velocity /= Settings.H() / time;
-            }
+                if (time != 0) {
+                    Velocity /= Settings.H()/time;
+                }
 
-            secShoot_ += gt.ElapsedGameTime;
+                secShoot_ += gt.ElapsedGameTime;
 
-            foreach (var buff in buffs) {
-                buff.Update(gt);
+                for (int i = 0; i < buffs.Count; i++) {
+                    var buff = buffs[i];
+                    buff.Update(gt);
+                    if (!buff.Applied) {
+                        buffs.Remove(buff);
+                    }
+                }
             }
         }
 
