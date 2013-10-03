@@ -26,15 +26,16 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly SpriteBatch spriteBatch_;
         private readonly GraphicsDevice gd_;
         private readonly SpriteFont font_;
-        private readonly LevelWorker lw_;
+        public LevelWorker lw_;
 
         public bool MapJustUpdated;
 
         private RenderTarget2D minimap_;
         private RenderTarget2D map_;
         private Dictionary<Tuple<int, int>, SectorBiom> globalMap = new Dictionary<Tuple<int, int>, SectorBiom>();
+        public HashSet<Tuple<int, int>> RoadSectors = new HashSet<Tuple<int, int>>();
 
-        #region Constructor
+            #region Constructor
         Effect be_;
         public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd, LevelWorker lw)
         {
@@ -66,6 +67,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             lw_ = lw;
 
+            LoadRoadmap();
             LoadMap();
         }
 
@@ -319,9 +321,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private TimeSpan sec;
-        public void KillFarSectors(Creature cara, GameTime gt) {
+        public void KillFarSectors(Creature cara, GameTime gt, bool ignore = false) {
             sec += gt.ElapsedGameTime;
-            if (sec.TotalMilliseconds >= 500) {
+            if (sec.TotalMilliseconds >= 500 || ignore) {
                 sec = TimeSpan.Zero;
                 for (int i = 0; i < sectors_.Count; i++) {
                     var a = sectors_.ElementAt(i);
@@ -406,6 +408,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                     break;
                 case SectorBiom.House:
                     a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.White);
+                    break;
+                case SectorBiom.RoadCross:
+                case SectorBiom.RoadHevt:
+                case SectorBiom.RoadHor:
+                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["cross1"], Color.Gray);
                     break;
                 default:
                     a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["nothing1"], Color.White);
@@ -714,15 +721,13 @@ namespace rglikeworknamelib.Dungeon.Level {
             return sectors_.Count;
         }
 
-        public void SaveAll(Game game1) {
-            Action<Game> a = SaveAllAsync;
-            if (game1 != null) {
-                a.BeginInvoke(null, null, game1);
-            }
+        public void SaveAll() {
+            Action a = SaveAllAsync;
+            a.BeginInvoke(null, null);
         }
 
         private bool all_saved;
-        private void SaveAllAsync(Game game) {
+        private void SaveAllAsync() {
             Settings.NTS1 = "Saving Map";
             Settings.NeedToShowInfoWindow = true;
             SaveMap();
@@ -765,6 +770,31 @@ namespace rglikeworknamelib.Dungeon.Level {
                                    FileMode.Open);
                 gZipStream_ = new GZipStream(fileStream_, CompressionMode.Decompress);
                 globalMap = (Dictionary<Tuple<int, int>, SectorBiom>) binaryFormatter_.Deserialize(gZipStream_);
+                gZipStream_.Close();
+                fileStream_.Close();
+            }
+        }
+
+        private void LoadRoadmap()
+        {
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("roadmap.rlm")))
+            {
+                var binaryFormatter = new BinaryFormatter();
+
+                var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("roadmap.rlm"),
+                                                        FileMode.Open);
+                GZipStream gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+                RoadSectors = (HashSet<Tuple<int, int>>)binaryFormatter.Deserialize(gZipStream);
+                gZipStream.Close();
+                fileStream.Close();
+            } else {
+                RoadSectors = MapGenerators.GenerateRoadmap(MapSeed);
+                var binaryFormatter = new BinaryFormatter();
+
+                var fileStream_ = new FileStream(Settings.GetWorldsDirectory() + string.Format("roadmap.rlm"),
+                                                        FileMode.Create);
+                var gZipStream_ = new GZipStream(fileStream_, CompressionMode.Compress);
+                    binaryFormatter.Serialize(gZipStream_, RoadSectors);
                 gZipStream_.Close();
                 fileStream_.Close();
             }

@@ -157,7 +157,7 @@ namespace rglikeworknamelib.Creatures {
                 if (tpos2.Y < 0) d--;
 
                 if (!ms.Parent.IsWalkable(a, b)) {
-                    Velocity.X = 0;
+                   // Velocity.X = 0;
                     var key = ms.Parent.GetBlock(a, b);
                     if(key == null) {
                         return;
@@ -167,7 +167,7 @@ namespace rglikeworknamelib.Creatures {
                     }
                 }
                 if (!ms.Parent.IsWalkable(c, d)) {
-                    Velocity.Y = 0;
+                   // Velocity.Y = 0;
                     var block = ms.Parent.GetBlock(c, d);
                     if (block != null && BlockDataBase.Data[block.Id].SmartAction == SmartAction.ActionOpenClose)
                     {
@@ -175,7 +175,7 @@ namespace rglikeworknamelib.Creatures {
                     }
                 }
 
-                Position += Velocity*time*20; /////////
+                Position += Velocity*time*200; /////////
                 Achievements.Stat["walk"].Count += (Velocity*time*20/32).Length();
 
                 if (time != 0) {

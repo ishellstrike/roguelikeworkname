@@ -8,6 +8,18 @@ MTex=0
 Name="Кирпичная кладка"
 MTex=1
 
+~Block,asfalt
+Name="Асфальт"
+MTex=asfalt
+IsWalkable=true
+IsTransparent=true
+
+~Block,asfalt_br
+Name="Разделительная полоса"
+MTex=asfalt_br
+IsWalkable=true
+IsTransparent=true
+
 ~StorageBlock,2
 Name="Шкаф"
 SmartAction=ActionOpenContainer

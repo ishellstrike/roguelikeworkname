@@ -63,6 +63,8 @@ namespace jarg
         private Effect EffectOmnilight;
         private Effect lig3;
         private Effect lig4;
+        private Texture2D arup, ardown, gear;
+        private Color lwstatus_color = new Color(1,1,1,0.2f);
 
         private RenderTarget2D colorMapRenderTarget_;
         private RenderTarget2D depthMapRenderTarget_;
@@ -97,6 +99,7 @@ namespace jarg
             myProcess.Start();
             myProcess.WaitForExit(3000);
 #endif
+            Application.ApplicationExit += Application_ApplicationExit;
 
             if (File.Exists("JARGLog_previous.txt"))
             {
@@ -116,6 +119,13 @@ namespace jarg
             }
         }
 
+        void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            if (currentFloor_.SectorCount() > 0) {
+                currentFloor_.SaveAll();
+            }
+        }
+
         private static Form gameWindowForm_;
         private WindowsMediaPlayer WMPs;
         protected override void Initialize()
@@ -130,8 +140,7 @@ namespace jarg
             graphics_.PreferredBackBufferHeight = (int)Settings.Resolution.Y;
             graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
-            InactiveSleepTime = TimeSpan.FromMilliseconds(100);
-            TargetElapsedTime = TimeSpan.FromMilliseconds(33);
+            InactiveSleepTime = TimeSpan.FromMilliseconds(500);
 
             IsFixedTimeStep = true;
             IsMouseVisible = true;
@@ -226,6 +235,10 @@ namespace jarg
             lig4 = Content.Load<Effect>(@"Effects/Effect111");
             toWhite_ = Content.Load<Effect>(@"Effects/ToWhite");
 
+            arup = Content.Load<Texture2D>(@"Textures/arrow_up");
+            ardown = Content.Load<Texture2D>(@"Textures/arrow_down");
+            gear = Content.Load<Texture2D>(@"Textures/gear");
+
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
             ws_ = new WindowSystem(whitepixel_, font1_);
@@ -263,11 +276,12 @@ namespace jarg
         private void InitialGeneration() {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            levelWorker_ = new LevelWorker();
-            Action lw_ = levelWorker_.Run;
-            lw_.BeginInvoke(null, null);
             ShowInfoWindow("Initial map generation", "");
             currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice, levelWorker_);
+            levelWorker_ = new LevelWorker(currentFloor_);
+            Action lw_ = levelWorker_.Run;
+            lw_.BeginInvoke(null, null);
+            currentFloor_.lw_ = levelWorker_;
             ps_ = new ParticleSystem(spriteBatch_,
                                      ParsersCore.LoadTexturesInOrder(
                                          Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
@@ -363,15 +377,23 @@ namespace jarg
                 sw_update.Restart();
             }
 
-            if (ErrorExit) Exit();
+            if (ErrorExit || Settings.NeedExit) Exit();
+
+            if (Settings.NeedToShowInfoWindow)
+            {
+                ShowInfoWindow(Settings.NTS1, Settings.NTS2);
+                Settings.NeedToShowInfoWindow = false;
+            }
 
             base.Update(gameTime);
 
             WindowsUpdate(gameTime);
             ws_.Update(gameTime, ms_, lms_, ks_, lks_, false);
 
-            KeyboardUpdate(gameTime);
-            MouseUpdate(gameTime);
+            if (IsActive) {
+                KeyboardUpdate(gameTime);
+                MouseUpdate(gameTime);
+            }
 
             if (player_last_pos != player_.Position || time_walks) {
                 UpdateAction(gameTime);
@@ -462,15 +484,6 @@ namespace jarg
             GlobalWorldLogic.Update(gameTime);
 
             currentFloor_.UpdateCreatures(gameTime, player_);
-
-            if(Settings.NeedToShowInfoWindow) {
-                ShowInfoWindow(Settings.NTS1, Settings.NTS2);
-                Settings.NeedToShowInfoWindow = false;
-            }
-
-            if(Settings.NeedExit) {
-                Exit();
-            }
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
@@ -580,13 +593,17 @@ namespace jarg
                 Settings.DebugInfo = !Settings.DebugInfo;
             }
 
-            if (ks_[Keys.F5] == KeyState.Down && lks_[Keys.F5] == KeyState.Up)
-            {
-                for (int i = -6; i < 6; i++) {
-                    for (int j = -6; j < 6; j++) {
-                        currentFloor_.GetSector(i, j);
+            if (ks_[Keys.F5] == KeyState.Down && lks_[Keys.F5] == KeyState.Up) {
+                var x = (int)player_.GetPositionInBlocks().X/16;
+                var y = (int)player_.GetPositionInBlocks().Y/16;
+                for (int i = -12; i < 12; i++) {
+                    for (int j = -12; j < 12; j++) {
+                        currentFloor_.GetSector(i + x, j + y);
                     }
                 }
+                currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
+                ImageGlobal.image = currentFloor_.GetMap();
+                currentFloor_.KillFarSectors(player_, gameTime, true);
             }
 
             if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up)
@@ -650,7 +667,7 @@ namespace jarg
 
                 WindowIngameHint.Visible = false;
 
-                if (player_ != null && !currentFloor_.IsCreatureMeele((int) containerOn.X, (int) containerOn.Y, player_)) {
+                if (player_ != null && currentFloor_ != null && !currentFloor_.IsCreatureMeele((int) containerOn.X, (int) containerOn.Y, player_)) {
                     WindowContainer.Visible = false;
                 }
 
@@ -747,6 +764,19 @@ namespace jarg
 
                 FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int) Settings.Resolution.X,
                                       (int) Settings.Resolution.Y, sw_draw, sw_update);
+                if (levelWorker_ != null) {
+                    spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+                    if (levelWorker_.Generating) {
+                        spriteBatch_.Draw(gear, new Vector2(10, 10), lwstatus_color);
+                    }
+                    if (levelWorker_.Loading) {
+                        spriteBatch_.Draw(arup, new Vector2(42, 10), lwstatus_color);
+                    }
+                    if (levelWorker_.Saving) {
+                        spriteBatch_.Draw(ardown, new Vector2(74, 10), lwstatus_color);
+                    }
+                    spriteBatch_.End();
+                }
         }
 
         private bool Flashlight = true;

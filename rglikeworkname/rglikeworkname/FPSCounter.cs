@@ -143,7 +143,6 @@ namespace Mork
                 sb.DrawString(fnt, fps, position2_ + Vector2.One, Color.Black);
                 sb.DrawString(fnt, fps, position2_, Color.White);
             }
-
             sb.End();
         }
     }

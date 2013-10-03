@@ -30,36 +30,6 @@ namespace rglikeworknamelib.Generation
 
     public static class MapGenerators
     {
-        public static void GenerateStreetGrid(MapSector ms, Vector2[] initialNodes, Random rnd) {
-            int gg = rnd.Next(1, 10);
-            for (int i = 0; i < initialNodes.Length; i++) {
-                if (gg < 8) {
-                    if (initialNodes[i].X == MapSector.Rx - 1 || initialNodes[i].X == 0) {
-                        FillFromTo(ms, new Vector2(MapSector.Rx - 1, initialNodes[i].Y - 1), new Vector2(0, initialNodes[i].Y + 1), "2");
-                        ms.AddInitialNode(0, initialNodes[i].Y);
-                    }
-                    if (initialNodes[i].Y == MapSector.Ry - 1 || initialNodes[i].Y == 0) {
-                        FillFromTo(ms, new Vector2(initialNodes[i].X - 1, MapSector.Ry - 1), new Vector2(initialNodes[i].X + 1, 0), "2");
-                        ms.AddInitialNode(initialNodes[i].X, 0);
-                    }          
-                } else {
-                    //if (initialNodes[i].X == MapSector.Rx - 1 || initialNodes[i].X == 0) {
-                    //    FillFromTo(ms, new Vector2(initialNodes[i].X, initialNodes[i].Y - 1), new Vector2(MapSector.Rx/2, initialNodes[i].Y + 1), 2);
-                    //}
-                    //if (initialNodes[i].Y == MapSector.Ry - 1 || initialNodes[i].Y == 0) {
-                    //    FillFromTo(ms, new Vector2(initialNodes[i].X - 1, initialNodes[i].Y), new Vector2(initialNodes[i].X + 1, MapSector.Ry/2), 2);
-                    //}
-                }
-            }
-            if (gg == 4) {
-
-                    ms.AddInitialNode(MapSector.Rx - 1, rnd.Next(1, MapSector.Ry-2)); 
-                    ms.AddInitialNode(0, rnd.Next(1, MapSector.Ry - 2));
-                    ms.AddInitialNode(rnd.Next(1, MapSector.Rx - 2), MapSector.Ry - 1);
-                    ms.AddInitialNode(rnd.Next(1, MapSector.Rx - 2), 0);
-            }
-        }
-
         public static void FillFromTo(MapSector ms, Vector2 from, Vector2 to, string id) {
             if (from.X > to.X) {
                 float a = from.X;
@@ -91,19 +61,12 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        private static int GetRandomCoordInCenter(int rx, Random rnd)
-        {
-            return rnd.Next(-rx/10,rx/10)+rx/2;
-        }
-
         internal static void PlaceScheme(MapSector gl, Schemes scheme, int x, int y)
         {
-            var i1 = gl.SectorOffsetX * MapSector.Rx;
-            var i2 = gl.SectorOffsetY * MapSector.Ry;
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
-                        if (scheme.data[i * scheme.y + j] != "0") {
-                            gl.Parent.SetBlock(x + i+i1, y + j+i2, scheme.data[i * scheme.y + j]);
+                        if (scheme.data[i * scheme.y + j] != "0" && x+i < MapSector.Rx && y+j < MapSector.Ry) {
+                            gl.SetBlock(x + i, y + j, scheme.data[i * scheme.y + j]);
                         }
                     
                 }
@@ -116,7 +79,6 @@ namespace rglikeworknamelib.Generation
             switch (schemeType) {
                 case SchemesType.house:
                     a = SchemesDataBase.Houses;
-                    mapSector.biom = SectorBiom.House;
                     break;
 
                 default:
@@ -141,9 +103,9 @@ namespace rglikeworknamelib.Generation
                     scheme.TransVer();
                 }
                 var aa = GetInnerFloorArrayWithId(scheme, "conk_base");
-                FillFloorFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 1, 1);
-                ClearBlocksFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 1, 1);
-                PlaceScheme(mapSector, scheme, 1, 1);
+                FillFloorFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 0, 0);
+                ClearBlocksFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 0, 0);
+                PlaceScheme(mapSector, scheme, 0, 0);
             }
         }
 
@@ -182,12 +144,11 @@ namespace rglikeworknamelib.Generation
         }
 
         public static void FillFloorFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy) {
-            var i1 = gl.SectorOffsetX * MapSector.Rx;
-            var i2 = gl.SectorOffsetY * MapSector.Ry;
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    if(arr[i*y+j] != "0") {
-                        gl.Parent.SetFloor(sx + i +i1, sy + j+i2, arr[i * y + j]);
+                    if (arr[i * y + j] != "0" && sx + i < MapSector.Rx && sy + j < MapSector.Ry)
+                    {
+                        gl.SetFloor(sx + i, sy + j, arr[i * y + j]);
                     }
                 }
             }
@@ -195,13 +156,12 @@ namespace rglikeworknamelib.Generation
 
         public static void ClearBlocksFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy)
         {
-            var i1 = gl.SectorOffsetX*MapSector.Rx;
-            var i2 = gl.SectorOffsetY * MapSector.Ry;
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    if (arr[i * y + j] != "0") {
+                    if (arr[i * y + j] != "0" && sx + i < MapSector.Rx && sy + j < MapSector.Ry)
+                    {
                         
-                        gl.Parent.SetBlock(sx + i + i1, sy + j + i2, "0");
+                        gl.SetBlock(sx + i, sy + j, "0");
                     }
                 }
             }
@@ -389,6 +349,210 @@ namespace rglikeworknamelib.Generation
                 }
             }
         }
+
+        public static HashSet<Tuple<int, int>> GenerateRoadmap(int seed) {
+            var rand = new Random(seed);
+            HashSet<Tuple<int, int>> set = new HashSet<Tuple<int, int>>();
+            Tuple<int, int> temp = new Tuple<int, int>(0,0);
+            int o = 0;
+            while (o < 10000)
+            {
+                
+                set.Add(temp);
+                var adder = rand.Next(1, 5);
+                int addx = 0, addy = 0;
+                switch (adder) {
+                    case 1:
+                        addx = -1;
+                        break;
+                    case 2:
+                        addx = 1;
+                        break;
+                    case 3:
+                        addy = -1;
+                        break;
+                    case 4:
+                        addy = 1;
+                        break;
+                }
+                var len = rand.Next(1, 20);
+                    for (int j = 0; j < len; j++) {
+                        temp = new Tuple<int, int>(temp.Item1 + addx, temp.Item2 + addy);
+                        set.Add(new Tuple<int, int>(temp.Item1, temp.Item2));
+                    }
+
+                    var newroad = rand.Next(1, 10);
+                    if (newroad == 1) {
+                        temp = new Tuple<int, int>(rand.Next(-1000, 1000), rand.Next(-1000, 1000));
+                    }
+                    o++;
+            }
+            return set;
+        } 
+
+        public static string GetMost(int offX, int offY)
+        {
+            double[] a =
+    PostEffect(
+        SmoothNoiseMap(
+            SmoothNoiseMap(NoiseMap(offX, offY, MapSector.Rx,
+                                    MapSector.Ry, 0.05))), 5, 2.5);
+            int grass_count = 0;
+            int dirt_ground = 0;
+            for (int i = 0; i < MapSector.Rx; i++)
+            {
+                for (int j = 0; j < MapSector.Ry; j++)
+                {
+                    double t = a[i * MapSector.Ry + j];
+                    if (t > 0.7)
+                    {
+                        dirt_ground++;
+                    }
+                    else
+                    {
+                        if (t > 0.5)
+                        {
+                            dirt_ground++;
+                        }
+                        else
+                        {
+                            grass_count++;
+                        }
+                    }
+                }
+            }
+
+            return grass_count > dirt_ground ? "grass_base" : "1";
+        }
+
+
+        public static void GenerateRoad(MapSector ms, SectorBiom rnd) {
+            switch (rnd) {
+                case SectorBiom.RoadCross:
+                    FillFloorFromArrayAndOffset(ms, 16, 16, shosse_cross, 0, 0);
+                    break;
+                case SectorBiom.RoadHevt:
+                    FillFloorFromArrayAndOffset(ms, 16, 16, shosse_vertical, 0, 0);
+                    break;
+                case SectorBiom.RoadHor:
+                    FillFloorFromArrayAndOffset(ms, 16, 16, shosse_hor, 0, 0);
+                    break;
+            }
+        }
+
+        private static string[] shosse_vertical = new[] {
+                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                                                            "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                            "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br"
+                                                            , "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br",
+                                                            "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br"
+                                                            , "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br",
+                                                            "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br"
+                                                            , "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt"
+                                                            , "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0", "0", "0",
+                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
+                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"
+                                                        };
+
+        private static string[] shosse_hor = new[] {
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
+                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
+                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0"
+                                                   };
+
+        private static string[] shosse_cross = new[] {
+                                                         "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
+                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
+                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
+                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
+                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
+                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
+                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
+                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
+                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0"
+                                                     };
     }
 
    public class MathGenerators {

@@ -1,11 +1,14 @@
 namespace rglikeworknamelib.Dungeon.Level {
-    enum SectorBiom {
+    public enum SectorBiom {
         Forest,
         WildForest,
         SuperWildForest,
         Field,
         AgroField,
         Bushland,
-        House
+        House,
+        RoadHevt,
+        RoadHor,
+        RoadCross
     }
 }

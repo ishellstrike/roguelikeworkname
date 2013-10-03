@@ -14,14 +14,19 @@ namespace rglikeworknamelib.Dungeon.Level
         private List<Tuple<Point,MapSector>> onSave_;
         private List<Tuple<Point, GameLevel>> onLoad_;
         private List<Tuple<Point, GameLevel>> onGeneration_;
-        public List<Tuple<Point, MapSector>> Ready; 
+        public List<Tuple<Point, MapSector>> Ready;
+        private GameLevel gl;
+
+        public bool Loading, Saving, Generating;
+
         private bool exit;
 
-        public LevelWorker() {
+        public LevelWorker(GameLevel g) {
             onLoad_ = new List<Tuple<Point, GameLevel>>();
             onGeneration_ = new List<Tuple<Point, GameLevel>>();
             onSave_ = new List<Tuple<Point, MapSector>>();
             Ready = new List<Tuple<Point, MapSector>>();
+            gl = g;
         }
 
         public void Run() {
@@ -32,9 +37,14 @@ namespace rglikeworknamelib.Dungeon.Level
                     onSave_.Remove(t);
                 }
 
+                Loading = onLoad_.Count > 0;
+                Saving = onSave_.Count > 0;
+                Generating = onGeneration_.Count > 0;
+
                 if (onLoad_.Count > 0) {
                     var t = onLoad_.First();
                     Ready.Add(new Tuple<Point, MapSector>(new Point(t.Item1.X, t.Item1.Y), LoadSector(t.Item1.X, t.Item1.Y, t.Item2)));
+                    //gl.GetSector(t.Item1.X, t.Item1.Y);
                     onLoad_.Remove(t);
                 }
 
@@ -43,10 +53,13 @@ namespace rglikeworknamelib.Dungeon.Level
                     var ms = new MapSector(tt.Item2, tt.Item1.X, tt.Item1.Y);
                     ms.Rebuild(tt.Item2.MapSeed);
                     Ready.Add(new Tuple<Point, MapSector>(new Point(tt.Item1.X, tt.Item1.Y), ms));
+                    //gl.GetSector(tt.Item1.X, tt.Item1.Y);
                     onGeneration_.Remove(tt);
                 }
 
-                Thread.Sleep(100);
+                if (!Loading && !Saving && !Generating) {
+                    Thread.Sleep(500);
+                }
             }
         }
 
@@ -107,7 +120,6 @@ namespace rglikeworknamelib.Dungeon.Level
             binaryFormatter_.Serialize(gZipStream_, a.SectorOffsetY);
             binaryFormatter_.Serialize(gZipStream_, a.Blocks);
             binaryFormatter_.Serialize(gZipStream_, a.Floors);
-            binaryFormatter_.Serialize(gZipStream_, a.initialNodes);
             binaryFormatter_.Serialize(gZipStream_, a.biom);
             binaryFormatter_.Serialize(gZipStream_, a.creatures);
             binaryFormatter_.Serialize(gZipStream_, a.decals);
@@ -136,10 +148,9 @@ namespace rglikeworknamelib.Dungeon.Level
                 var q5 = binaryFormatter_.Deserialize(gZipStream_);
                 var q6 = binaryFormatter_.Deserialize(gZipStream_);
                 var q7 = binaryFormatter_.Deserialize(gZipStream_);
-                var q8 = binaryFormatter_.Deserialize(gZipStream_);
                 gZipStream_.Close();
                 fileStream_.Close();
-                var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7, q8);
+                var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7);
                 t.ready = true;
                 return t;
             }

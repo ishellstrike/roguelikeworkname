@@ -445,7 +445,7 @@ namespace jarg
 
         void ButtonIngameExit_onPressed(object sender, EventArgs e)
         {
-            currentFloor_.SaveAll(this);
+            currentFloor_.SaveAll();
         }
 
         void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)

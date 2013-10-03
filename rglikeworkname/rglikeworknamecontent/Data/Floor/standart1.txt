@@ -3,6 +3,16 @@ Name="???"
 mmcol="black"
 MTex=0
 
+~Floor,asfalt
+Name="Асфальт"
+MTex=asfalt
+Walkable=true
+
+~Floor,asfalt_br
+Name="Разделительная полоса"
+MTex=asfalt_br
+Walkable=true
+
 ~Floor,1
 Name="Земля"
 mmcol="brown"
