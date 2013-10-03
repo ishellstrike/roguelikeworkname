@@ -325,8 +325,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                 sec = TimeSpan.Zero;
                 for (int i = 0; i < sectors_.Count; i++) {
                     var a = sectors_.ElementAt(i);
-                    if (Math.Abs((a.Value.SectorOffsetX + 0.5) * MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 64 ||
-                        Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 64)
+                    if (Math.Abs((a.Value.SectorOffsetX + 0.5) * MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 32 ||
+                        Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 32)
                     {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
                         lw_.Save(a.Value);
@@ -403,6 +403,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 case SectorBiom.WildForest:
                 case SectorBiom.SuperWildForest:
                     a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["forest1"], Color.Green);
+                    break;
+                case SectorBiom.House:
+                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.White);
                     break;
                 default:
                     a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["nothing1"], Color.White);

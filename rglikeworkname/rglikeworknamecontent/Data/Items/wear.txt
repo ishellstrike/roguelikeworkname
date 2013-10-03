@@ -1,0 +1,45 @@
+~Item,kitty_collar
+Name=Кошачий ошейник
+Weight=50
+
+~Item,socks
+Name=Носки
+Weight=50
+
+~Item,wool_socks
+Name=Шерстяные носки
+Weight=100
+
+~Item,sneakers
+Name=Кросовки
+SType=Boots
+Weight=400
+
+~Item,boots
+Name=Кожаные ботинки
+SType=Boots
+
+~Item,steeltoed_boots
+Name=Ботинки с металическим носком
+Weight=1000
+SType=Boots
+
+~Item,military_boots
+Name=Военные ботинки
+Weight=1300
+SType=Boots
+
+~Item,winter_boots
+Name=Зимние ботинки
+SType=Boots
+Weight=1000
+
+~Item,baseball_hat
+Name=Бейсболка
+SType=Hat
+Weight=100
+
+~Item,sun_glasses
+Name=Солнцезащитные очки
+SType=Glaces
+Weight=50

@@ -354,6 +354,7 @@ namespace jarg
         public TimeSpan sec = TimeSpan.Zero;
         public int jji=-2, jjj=-2;
         private Action<GameTime> UpdateAction = x => { };
+        private Vector2 player_last_pos;
         protected override void Update(GameTime gameTime) {
             SecondTimespan += gameTime.ElapsedGameTime;
             //first
@@ -372,7 +373,15 @@ namespace jarg
             KeyboardUpdate(gameTime);
             MouseUpdate(gameTime);
 
-            UpdateAction(gameTime);
+            if (player_last_pos != player_.Position || time_walks) {
+                UpdateAction(gameTime);
+                time_walks = false;
+            }
+
+            if (ps_ != null)
+            {
+                ps_.Update(gameTime);
+            }
 
             FrameRateCounter.Update(gameTime);
 
@@ -380,6 +389,8 @@ namespace jarg
                 PlayerSeeAngle =
                     (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
             }
+
+            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 4);
 
             if (Settings.DebugInfo)
             {
@@ -395,6 +406,9 @@ namespace jarg
             if(needChangeSesolution) {
                 needChangeSesolution = false;
                 ResolutionChanging();
+            }
+            if (player_ != null) {
+                player_last_pos = player_.Position;
             }
         }
 
@@ -443,14 +457,11 @@ namespace jarg
             var aa = currentFloor_.GetInSectorPosition(player_.GetPositionInBlocks());
             player_.Update(gameTime, currentFloor_.GetSector((int)aa.X, (int)aa.Y), player_);
             currentFloor_.KillFarSectors(player_, gameTime);
-            ps_.Update(gameTime);
             bs_.Update(gameTime);
             currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
 
             currentFloor_.UpdateCreatures(gameTime, player_);
-
-            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 4);
 
             if(Settings.NeedToShowInfoWindow) {
                 ShowInfoWindow(Settings.NTS1, Settings.NTS2);
@@ -468,25 +479,26 @@ namespace jarg
         Vector2 acS = new Vector2(0, 10); 
         Vector2 acA = new Vector2(-10, 0);
         Vector2 acD = new Vector2(10, 0);
+        private bool time_walks;
         private void KeyboardUpdate(GameTime gameTime)
         {
             lks_ = ks_;
             ks_ = Keyboard.GetState();
             if (!ws_.Keyboardhook) {
                 if (ks_[Keys.W] == KeyState.Down) {
-                    
+                    time_walks = true;
                     player_.Accelerate(acW);
                 }
                 if (ks_[Keys.S] == KeyState.Down) {
-                    
+                    time_walks = true;
                     player_.Accelerate(acS);
                 }
                 if (ks_[Keys.A] == KeyState.Down) {
-                   
+                    time_walks = true;
                     player_.Accelerate(acA);
                 }
                 if (ks_[Keys.D] == KeyState.Down) {
-                    
+                    time_walks = true;
                     player_.Accelerate(acD);
                 }
 
@@ -566,6 +578,15 @@ namespace jarg
             if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up)
             {
                 Settings.DebugInfo = !Settings.DebugInfo;
+            }
+
+            if (ks_[Keys.F5] == KeyState.Down && lks_[Keys.F5] == KeyState.Up)
+            {
+                for (int i = -6; i < 6; i++) {
+                    for (int j = -6; j < 6; j++) {
+                        currentFloor_.GetSector(i, j);
+                    }
+                }
             }
 
             if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up)
@@ -684,6 +705,7 @@ namespace jarg
                     if((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot_) {
                         player_.TryShoot(bs_, PlayerSeeAngle);
                         rememberShoot_ = true;
+                        time_walks = true;
                     }
                 }
             }
@@ -704,29 +726,27 @@ namespace jarg
                 sw_draw.Restart();
             }
 
-            GraphicsDevice.Clear(Color.Black);
+           // GraphicsDevice.Clear(Color.Black);
 
-            drawAction_(gameTime);
+                drawAction_(gameTime);
 
-            base.Draw(gameTime);
+                base.Draw(gameTime);
 
-            ws_.Draw(spriteBatch_, lig1, gameTime);
+                ws_.Draw(spriteBatch_, lig1, gameTime);
 
-            lineBatch_.Draw();
-            lineBatch_.Clear();
+                lineBatch_.Draw();
+                lineBatch_.Clear();
 
-            if (Settings.DebugInfo)
-            {
-                sw_draw.Stop();
-            }
+                if (Settings.DebugInfo) {
+                    sw_draw.Stop();
+                }
 
-            if (Settings.DebugInfo)
-            {
-                DebugInfoDraw(gameTime);
-            }
+                if (Settings.DebugInfo) {
+                    DebugInfoDraw(gameTime);
+                }
 
-            FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int)Settings.Resolution.X,
-                                  (int)Settings.Resolution.Y, sw_draw, sw_update);
+                FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int) Settings.Resolution.X,
+                                      (int) Settings.Resolution.Y, sw_draw, sw_update);
         }
 
         private bool Flashlight = true;

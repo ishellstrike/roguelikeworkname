@@ -171,12 +171,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\food1.txt">
-      <Name>food1</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Dungeon\Items\can1.png">
       <Name>can1</Name>
       <Importer>TextureImporter</Importer>
@@ -581,26 +575,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\crafting1.txt">
-      <Name>crafting1</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Items\medicine1.txt">
-      <Name>medicine1</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Data\Items\Spawnlists\house.txt">
       <Name>house</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Items\misc1.txt">
-      <Name>misc1</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -639,12 +615,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Items\weapon_guns1.txt">
-      <Name>weapon_guns1</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Items\weapon_ammo.txt">
@@ -770,12 +740,6 @@
   <ItemGroup>
     <None Include="Data\Effects\basic1.txt">
       <Name>basic1</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Items\test_items1.txt">
-      <Name>test_items1</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -979,6 +943,51 @@
     </None>
     <None Include="Data\Schemes\store2.txt">
       <Name>store2</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Schemes\houseArray1.txt">
+      <Name>houseArray1</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Items\wear.txt">
+      <Name>wear</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Minimap\house1.png">
+      <Name>house1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Items\crafting.txt">
+      <Name>crafting</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Items\food.txt">
+      <Name>food</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Items\medicine.txt">
+      <Name>medicine</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Items\misc.txt">
+      <Name>misc</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Items\test_items.txt">
+      <Name>test_items</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Items\weapon_guns.txt">
+      <Name>weapon_guns</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

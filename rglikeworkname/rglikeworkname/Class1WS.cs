@@ -10,6 +10,7 @@ using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
 using IGameComponent = rglikeworknamelib.Window.IGameComponent;
@@ -400,9 +401,9 @@ namespace jarg
                     pp.X = (int)pp.X;
                     pp.Y = (int)pp.Y;
                     var ppp = currentFloor_.GetInSectorPosition(pp);
-                    var i = (int)(player_.Position.X - (int)ppp.X * 32 * 32);
-                    var i1 = (int)(player_.Position.Y - (int)ppp.Y * 32 * 32);
-                    currentFloor_.GetSector((int)ppp.X, (int)ppp.Y).Spawn(ss, i/32, i1/32);
+                    var i = (int)(player_.Position.X - (int)ppp.X * MapSector.Rx * 32);
+                    var i1 = (int)(player_.Position.Y - (int)ppp.Y * MapSector.Ry * 32);
+                    currentFloor_.GetSector((int)ppp.X, (int)ppp.Y).Spawn(ss, i / MapSector.Rx, i1 / MapSector.Ry);
                     EventLog.Add(string.Format("Creature {0} spawn at ({1}, {2}), in ({3}, {4})", ss, i, i1, (int)ppp.X, (int)ppp.Y), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                 } else {
                 EventLog.Add(string.Format("Creature {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
@@ -414,8 +415,8 @@ namespace jarg
                 pp.X = (int)pp.X;
                 pp.Y = (int)pp.Y;
                 var ppp = currentFloor_.GetInSectorPosition(pp);
-                var i = (int)(player_.Position.X - (int)ppp.X * 32 * 32);
-                var i1 = (int)(player_.Position.Y - (int)ppp.Y * 32 * 32);
+                var i = (int)(player_.Position.X - (int)ppp.X * MapSector.Rx * 32);
+                var i1 = (int)(player_.Position.Y - (int)ppp.Y * MapSector.Ry * 32);
                 EventLog.Add(string.Format("Player position {4} or ({0}, {1}) in sector ({2}, {3})", i, i1, (int)ppp.X, (int)ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
             }
         }

@@ -72,9 +72,12 @@ namespace rglikeworknamelib.Generation
                 to.Y = a;
             }
 
+            var i1 = ms.SectorOffsetX * MapSector.Rx;
+            var i2 = ms.SectorOffsetY * MapSector.Ry;
+
             for (int i = (int)from.X; i <= to.X; i++) {
                 for (int j = (int)from.Y; j <= to.Y; j++) {
-                    ms.SetFloor(i, j, id);
+                    ms.Parent.SetFloor(i+i1, j+i2, id);
                 }
             }
         }
@@ -95,10 +98,12 @@ namespace rglikeworknamelib.Generation
 
         internal static void PlaceScheme(MapSector gl, Schemes scheme, int x, int y)
         {
+            var i1 = gl.SectorOffsetX * MapSector.Rx;
+            var i2 = gl.SectorOffsetY * MapSector.Ry;
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
                         if (scheme.data[i * scheme.y + j] != "0") {
-                            gl.SetBlock(x + i, y + j, scheme.data[i * scheme.y + j]);
+                            gl.Parent.SetBlock(x + i+i1, y + j+i2, scheme.data[i * scheme.y + j]);
                         }
                     
                 }
@@ -111,6 +116,7 @@ namespace rglikeworknamelib.Generation
             switch (schemeType) {
                 case SchemesType.house:
                     a = SchemesDataBase.Houses;
+                    mapSector.biom = SectorBiom.House;
                     break;
 
                 default:
@@ -176,10 +182,12 @@ namespace rglikeworknamelib.Generation
         }
 
         public static void FillFloorFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy) {
+            var i1 = gl.SectorOffsetX * MapSector.Rx;
+            var i2 = gl.SectorOffsetY * MapSector.Ry;
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
                     if(arr[i*y+j] != "0") {
-                        gl.SetFloor(sx + i, sy + j, arr[i * y + j]);
+                        gl.Parent.SetFloor(sx + i +i1, sy + j+i2, arr[i * y + j]);
                     }
                 }
             }
@@ -187,10 +195,13 @@ namespace rglikeworknamelib.Generation
 
         public static void ClearBlocksFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy)
         {
+            var i1 = gl.SectorOffsetX*MapSector.Rx;
+            var i2 = gl.SectorOffsetY * MapSector.Ry;
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
                     if (arr[i * y + j] != "0") {
-                        gl.SetBlock(sx + i, sy + j, "0");
+                        
+                        gl.Parent.SetBlock(sx + i + i1, sy + j + i2, "0");
                     }
                 }
             }

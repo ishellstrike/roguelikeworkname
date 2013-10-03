@@ -158,13 +158,19 @@ namespace rglikeworknamelib.Creatures {
 
                 if (!ms.Parent.IsWalkable(a, b)) {
                     Velocity.X = 0;
-                    if (BlockDataBase.Data[ms.Parent.GetBlock(a, b).Id].SmartAction == SmartAction.ActionOpenClose) {
+                    var key = ms.Parent.GetBlock(a, b);
+                    if(key == null) {
+                        return;
+                    }
+                    if (BlockDataBase.Data[key.Id].SmartAction == SmartAction.ActionOpenClose) {
                         ms.Parent.OpenCloseDoor(a, b);
                     }
                 }
                 if (!ms.Parent.IsWalkable(c, d)) {
                     Velocity.Y = 0;
-                    if (BlockDataBase.Data[ms.Parent.GetBlock(c, d).Id].SmartAction == SmartAction.ActionOpenClose) {
+                    var block = ms.Parent.GetBlock(c, d);
+                    if (block != null && BlockDataBase.Data[block.Id].SmartAction == SmartAction.ActionOpenClose)
+                    {
                         ms.Parent.OpenCloseDoor(c, d);
                     }
                 }

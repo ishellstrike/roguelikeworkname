@@ -16,12 +16,12 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <summary>
         /// Sector ox size
         /// </summary>
-        public const int Rx = 32;
+        public const int Rx = 16;
 
         /// <summary>
         /// Sectro oy size
         /// </summary>
-        public const int Ry = 32;
+        public const int Ry = 16;
 
         public bool ready;
 
@@ -126,7 +126,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             for (int index = 0; index < Blocks.Count; index++) {
                 var block = Blocks[index];
                 if (block is ILightSource) {
-                    lights.Add(GetLights(block, i/32*32 + SectorOffsetX*32*32, i%32*32 + SectorOffsetY*32*32));
+                    lights.Add(GetLights(block, i/Ry*32 + SectorOffsetX*Rx*32, i%Ry*32 + SectorOffsetY*Ry*32));
                 }
                 i++;
             }
@@ -230,8 +230,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                     break;
             }
 
-            for (int i = 0; i < 1; i++) {
-                MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0,Rx-1),rand.Next(0,Ry-1), rand);
+            if (rand.Next(1, 6) > 4) {
+                for (int i = 0; i < 1; i++) {
+                    MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0, Rx - 1),
+                                                          rand.Next(0, Ry - 1), rand);
+                }
             }
 
             var sb = GetStorageBlocks();

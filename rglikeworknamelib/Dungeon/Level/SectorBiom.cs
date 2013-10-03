@@ -5,6 +5,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         SuperWildForest,
         Field,
         AgroField,
-        Bushland
+        Bushland,
+        House
     }
 }

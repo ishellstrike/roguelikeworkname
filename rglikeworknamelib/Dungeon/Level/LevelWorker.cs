@@ -46,7 +46,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     onGeneration_.Remove(tt);
                 }
 
-                Thread.Sleep(500);
+                Thread.Sleep(100);
             }
         }
 

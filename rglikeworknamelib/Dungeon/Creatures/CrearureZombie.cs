@@ -14,10 +14,6 @@ namespace rglikeworknamelib.Creatures {
         public Dress Tshort = new Dress("t-short1", new Color(Settings.rnd.Next() % 255, Settings.rnd.Next() % 255, Settings.rnd.Next() % 255));
         public Dress Pants = new Dress("pants1", new Color(Settings.rnd.Next() % 255, Settings.rnd.Next() % 255, Settings.rnd.Next() % 255));
 
-        public void Update(GameTime gt, MapSector ms, Creature hero) {
-            throw new NotImplementedException();
-        }
-
         public override void Kill(MapSector ms)
         {
             Hp = new Stat(0, 0);

@@ -130,6 +130,7 @@ Content\Effects\ShadersLightningShadow.xnb
 Content\Effects\ShadersLightningCombined.xnb
 Content\Effects\ToWhite.xnb
 Content\Textures\Dungeon\Normals\bricks.xnb
+Content\Textures\Dungeon\Minimap\house1.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README
@@ -158,6 +159,8 @@ Content\Data\Schemes\hzchto.txt
 Content\Data\Schemes\eliteHouse1.txt
 Content\Data\Schemes\store1.txt
 Content\Data\Schemes\store2.txt
+Content\Data\Schemes\houseArray1.txt
+Content\Data\Items\wear.txt
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord

@@ -133,40 +133,41 @@ namespace rglikeworknamelib.Creatures {
                     MoveByMover(ms, time);
                 }
 
-                if (Position.Y >= 1024) {
+                if (Position.Y >= 32*MapSector.Ry) {
                     var t = ms.Parent.GetDownN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
                         ms.creatures.Remove(this);
                         t.creatures.Add(this);
-                        position_.Y = position_.Y - 1024;
+                        position_.Y = position_.Y - 32 * MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.Y = 1023;
+                        position_.Y = 32 * MapSector.Ry-1;
                     }
                 }
                 else if (Position.Y < 0) {
                     var t = ms.Parent.GetUpN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
                         ms.creatures.Remove(this);
-                        t.creatures.Add(this); 
-                        position_.Y = position_.Y + 1024;
+                        t.creatures.Add(this);
+                        position_.Y = position_.Y + 32 * MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
                         position_.Y = 0;
                     }
                 }
-                if (Position.X >= 1024) {
+                if (Position.X >= 32 * MapSector.Rx)
+                {
                     var t = ms.Parent.GetRightN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
                         ms.creatures.Remove(this);
                         t.creatures.Add(this);
-                        position_.X = position_.X - 1024;
+                        position_.X = position_.X - 32 * MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.X = 1023;
+                        position_.X = 32 * MapSector.Rx - 1;
                     }
                 }
                 else if (Position.X < 0) {
@@ -175,7 +176,7 @@ namespace rglikeworknamelib.Creatures {
                     if (t != null) {
                         ms.creatures.Remove(this);
                         t.creatures.Add(this);
-                        position_.X = position_.X + 1024;
+                        position_.X = position_.X + 32 * MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
