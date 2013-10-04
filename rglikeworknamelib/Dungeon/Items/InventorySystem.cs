@@ -122,5 +122,9 @@ namespace rglikeworknamelib.Dungeon.Item
                 AddItem(item);
             }
         }
+
+        public Item ContainsID(string itemData) {
+            return items_.FirstOrDefault(x => x.Id == itemData);
+        }
     }
 }

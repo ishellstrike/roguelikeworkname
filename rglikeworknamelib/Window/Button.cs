@@ -6,15 +6,15 @@ using Microsoft.Xna.Framework.Input;
 namespace rglikeworknamelib.Window {
     public class Button : IGameComponent
     {
-        private Rectangle locate_;
+        protected Rectangle locate_;
         public String Text;
-        private bool aimed_;
-        private IGameContainer Parent;
+        protected bool aimed_;
+        protected IGameContainer Parent;
 
-        private readonly Texture2D whitepixel_;
-        private readonly SpriteFont font1_;
-        private TimeSpan lastPressed;
-        private bool firstPress = true;
+        protected readonly Texture2D whitepixel_;
+        protected readonly SpriteFont font1_;
+        protected TimeSpan lastPressed;
+        protected bool firstPress = true;
 
         public bool Visible
         {
@@ -44,13 +44,13 @@ namespace rglikeworknamelib.Window {
 
         public event EventHandler onPressed;
 
-        void PressButton() {
+        protected void PressButton() {
             if (onPressed != null) {
                 onPressed(this, null);
             }
         }
 
-        public void Draw(SpriteBatch sb)
+        public virtual void Draw(SpriteBatch sb)
         {
             if (Visible) {
                 Vector2 realpos = GetPosition();
@@ -70,7 +70,7 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
+        public virtual void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
             if (Visible) {
                 Vector2 realpos = GetPosition();

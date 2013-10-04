@@ -53,6 +53,7 @@ namespace rglikeworknamelib.Creatures {
 
 
         public void EquipItem(Item i, InventorySystem ins) {
+            Settings.InventoryUpdate = true;
             switch (ItemDataBase.Data[i.Id].SType) {
                     case ItemType.Hat:
                         EquipExact(i, ins, ref ItemHat);
@@ -162,20 +163,20 @@ namespace rglikeworknamelib.Creatures {
                     if(key == null) {
                         return;
                     }
-                    if (BlockDataBase.Data[key.Id].SmartAction == SmartAction.ActionOpenClose) {
+                    if (key.Data.SmartAction == SmartAction.ActionOpenClose) {
                         ms.Parent.OpenCloseDoor(a, b);
                     }
                 }
                 if (!ms.Parent.IsWalkable(c, d)) {
                    // Velocity.Y = 0;
                     var block = ms.Parent.GetBlock(c, d);
-                    if (block != null && BlockDataBase.Data[block.Id].SmartAction == SmartAction.ActionOpenClose)
+                    if (block != null && block.Data.SmartAction == SmartAction.ActionOpenClose)
                     {
                         ms.Parent.OpenCloseDoor(c, d);
                     }
                 }
 
-                Position += Velocity*time*200; /////////
+                Position += Velocity*time*20; /////////
                 Achievements.Stat["walk"].Count += (Velocity*time*20/32).Length();
 
                 if (time != 0) {
@@ -213,7 +214,7 @@ namespace rglikeworknamelib.Creatures {
         public event EventHandler onUpdatedEquip;
         public event EventHandler onShoot;
 
-        public void TryShoot(BulletSystem bs, float playerSeeAngle) {
+        public void TryShoot(BulletSystem bs, InventorySystem ins, float playerSeeAngle) {
             if (ItemGun != null) {
                 if (secShoot_.TotalMilliseconds > ItemDataBase.Data[ItemGun.Id].FireRate) {
                     if ((ItemDataBase.Data[ItemGun.Id].Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemDataBase.Data[ItemGun.Id].Ammo) || ItemDataBase.Data[ItemGun.Id].Ammo == null) {
@@ -235,6 +236,7 @@ namespace rglikeworknamelib.Creatures {
                         }
                     } else {
                         if (secShoot_.TotalMilliseconds > 1000) {
+                            EquipItem(ins.ContainsID(ItemDataBase.Data[ItemGun.Id].Ammo), ins);
                             EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
                             secShoot_ = TimeSpan.Zero;
                         }

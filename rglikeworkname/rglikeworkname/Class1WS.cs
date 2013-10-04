@@ -52,6 +52,9 @@ namespace jarg
         private Button ButtonIngameMenuSettings;
         private Button ButtonIngameExit;
 
+        private Window WindowUIButtons;
+        private ImageButton IBInv, IBCaracter, IBBag;
+
         private Window WindowMainMenu;
         private Label LabelMainMenu;
         private Button ButtonNewGame;
@@ -137,8 +140,16 @@ namespace jarg
             for (int i = 1; i < 20; i++)
                 contaiter1.AddItem(new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), wp, sf, WindowStats));
 
-            WindowMinimap = new Window(new Rectangle((int)Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40), "minimap", true, wp, sf, ws) { Closable = false, hides = true };
+            WindowMinimap = new Window(new Rectangle((int)Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40), "minimap", false, wp, sf, ws) { NoBorder = true, Moveable = false};
             ImageMinimap = new Image(new Vector2(10, 10), new Texture2D(GraphicsDevice, 88, 88), Color.White, WindowMinimap);
+
+            WindowUIButtons = new Window(new Rectangle((int)Settings.Resolution.X-32,(int)Settings.Resolution.Y/2-32, 32, 32*3+20), "", false, wp, sf, ws) {NoBorder = true, Moveable = false};
+            IBBag = new ImageButton(new Vector2(0,0), "", wp, bag, sf, WindowUIButtons);
+            IBBag.onPressed += IBBag_onPressed;
+            IBCaracter = new ImageButton(new Vector2(0,32), "", wp, caracter, sf, WindowUIButtons);
+            IBCaracter.onPressed += IBCaracter_onPressed;
+            IBInv = new ImageButton(new Vector2(0,64), "", wp, map, sf, WindowUIButtons);
+            IBInv.onPressed += IBInv_onPressed;
 
             WindowSettings =
                 new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y),
@@ -314,6 +325,28 @@ namespace jarg
             WindowRadio.CenterComponentHor(LabelRadio);
         }
 
+        void IBInv_onPressed(object sender, EventArgs e)
+        {
+            WindowGlobal.Visible = !WindowGlobal.Visible;
+            if (WindowGlobal.Visible) {
+                WindowGlobal.OnTop();
+            }
+        }
+
+        private void IBCaracter_onPressed(object sender, EventArgs e) {
+            WindowCaracter.Visible = !WindowCaracter.Visible;
+            if (WindowCaracter.Visible) {
+                WindowCaracter.OnTop();
+            }
+        }
+
+        void IBBag_onPressed(object sender, EventArgs e) {
+            WindowInventory.Visible = !WindowInventory.Visible;
+            if (WindowInventory.Visible) {
+                WindowInventory.OnTop();
+            }
+        }
+
         void Game1_onPressed(object sender, EventArgs e) {
             var t = (string) ((IGameComponent) sender).Tag;
 
@@ -439,8 +472,6 @@ namespace jarg
         {
             inventory_.UseItem(selectedItem, player_);
             UpdateInventoryContainer();
-            selectedItem = null;
-            InventoryMoreInfo.Text = "";
         }
 
         void ButtonIngameExit_onPressed(object sender, EventArgs e)
@@ -501,6 +532,9 @@ namespace jarg
         private List<Item> inInv_ = new List<Item>();
         void UpdateInventoryContainer()
         {
+            selectedItem = null;
+            InventoryMoreInfo.Text = "";
+
             var a = inventory_.FilterByType(nowSort_);
             inInv_ = a;
 
@@ -665,6 +699,10 @@ namespace jarg
                 for (int i = 0; i < LabelsAbilities.Count; i++) {
                     LabelsAbilities[i].Text = player_.Abilities.ToShow[i].Name + " " + player_.Abilities.ToShow[i];
                 }
+            }
+            if(Settings.InventoryUpdate) {
+                UpdateInventoryContainer();
+                Settings.InventoryUpdate = false;
             }
 
             if (SecondTimespan.TotalSeconds >= 1)

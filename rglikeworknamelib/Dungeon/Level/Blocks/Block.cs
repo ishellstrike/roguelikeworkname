@@ -7,6 +7,12 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]
     public class Block : IBlock {
         public string Id { get; set; }
+
+        [NonSerialized] internal BlockData data;
+        public BlockData Data
+        {
+            get { return data; }
+        }
         public Color Lightness { get; set; }
         public bool Explored { get; set; }
         public Rectangle Source { get; set;}

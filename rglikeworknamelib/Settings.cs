@@ -80,6 +80,7 @@ namespace rglikeworknamelib {
         public static bool IsAMDM;
         public static SpriteFont Font;
         public static bool NeedExit;
+        public static bool InventoryUpdate;
 
         public static Color HudСolor {
             get { return hcol_; }

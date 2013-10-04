@@ -211,11 +211,11 @@ namespace rglikeworknamelib.Creatures {
 
                 var blockDatas = BlockDataBase.Data;
                 var key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
-                if (key != null && key.Id != null && blockDatas[key.Id].IsWalkable) {
+                if (key != null && key.Id != null && key.Data.IsWalkable) {
                     position_.X += mover.X;
                 }
                 key = ms.Parent.GetBlock((int) newwposy.X, (int) newwposy.Y);
-                if (key != null && (key.Id != null && blockDatas[key.Id].IsWalkable)) {
+                if (key != null && (key.Id != null && key.Data.IsWalkable)) {
                     position_.Y += mover.Y;
                 }
             }

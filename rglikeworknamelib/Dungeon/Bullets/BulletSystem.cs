@@ -53,7 +53,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
 
                 var bl = level.GetBlock((int) bullet.GetPositionInBlocks().X, (int) bullet.GetPositionInBlocks().Y, true);
                 if (bl != null) {
-                    if (!BlockDataBase.Data[bl.Id].IsWalkable) {
+                    if (!bl.Data.IsWalkable) {
                         bullet.Life = TimeSpan.Zero;
                     }
 

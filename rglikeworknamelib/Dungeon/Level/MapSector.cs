@@ -108,7 +108,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             List<StorageBlock> list = new List<StorageBlock>();
             for (int i = 0; i < Blocks.Count; i++) {
                 IBlock a = Blocks[i];
-                if (BlockDataBase.Data[a.Id].Prototype == typeof (StorageBlock)) {
+                if (a.Id != "0" && a.Data.Prototype == typeof (StorageBlock)) {
                     list.Add(a as StorageBlock);
                 }
             }
@@ -297,6 +297,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void SetBlock(int oneDimCoord, string id) {
             Blocks[oneDimCoord] = (IBlock)Activator.CreateInstance(BlockDataBase.Data[id].Prototype);
             Blocks[oneDimCoord].Id = id;
+            ((Block)Blocks[oneDimCoord]).data = BlockDataBase.Data[id];
             string mTex ="";
             Blocks[oneDimCoord].Source = BlockDataBase.Data[id].RandomMtexFromAlters(ref mTex);
             Blocks[oneDimCoord].MTex = mTex;
@@ -310,8 +311,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void SetBlock(int oneDimCoord, IBlock bl)
         {
             Blocks[oneDimCoord] = bl;
+            ((Block)Blocks[oneDimCoord]).data = BlockDataBase.Data[bl.Id];
             string mTex ="";
-            Blocks[oneDimCoord].Source = BlockDataBase.Data[bl.Id].RandomMtexFromAlters(ref mTex);
+            Blocks[oneDimCoord].Source = bl.Data.RandomMtexFromAlters(ref mTex);
             Blocks[oneDimCoord].MTex = mTex;
         }
 
@@ -327,9 +329,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void OpenCloseDoor(int x, int y)
         {
-            if (BlockDataBase.Data[Blocks[x * Rx + y].Id].SmartAction == SmartAction.ActionOpenClose)
+            if (Blocks[x * Rx + y].Data.SmartAction == SmartAction.ActionOpenClose)
             {
-                SetBlock(x, y, BlockDataBase.Data[Blocks[x * Ry + y].Id].AfterDeathId);
+                SetBlock(x, y, Blocks[x * Ry + y].Data.AfterDeathId);
             }
         }
 

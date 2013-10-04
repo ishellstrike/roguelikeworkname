@@ -241,7 +241,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
             if(sect == null) return false;
-            return BlockDataBase.Data[sect.GetBlock(x-divx*MapSector.Rx, y-divy*MapSector.Ry).Id].IsWalkable;
+            return sect.GetBlock(x-divx*MapSector.Rx, y-divy*MapSector.Ry).Data.IsWalkable;
         }
 
         public string GetId(int x, int y) {
@@ -273,13 +273,18 @@ namespace rglikeworknamelib.Dungeon.Level {
                 if (BlockDataBase.Data[id].Prototype == typeof(Block))
                 {
 
-                    sect.SetBlock(braw, new Block{Id = id});
+                    sect.SetBlock(braw, new Block {
+                        Id = id,
+                        data = BlockDataBase.Data[id]
+                    });
                 }
                 if (BlockDataBase.Data[id].Prototype == typeof(StorageBlock))
                 {
                     sect.SetBlock(braw, new StorageBlock
                     {
-                        StoredItems=new List<Item.Item>(),Id=id
+                        StoredItems=new List<Item.Item>(),
+                        Id=id,
+                        data = BlockDataBase.Data[id]
                     });
                 }
                 MapJustUpdated = true;
@@ -307,15 +312,15 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void OpenCloseDoor(int x, int y) {
             var a = GetBlock(x, y);
-            if(BlockDataBase.Data[a.Id].SmartAction == SmartAction.ActionOpenClose) {
-                if (BlockDataBase.Data[a.Id].IsWalkable) {
+            if(a.Data.SmartAction == SmartAction.ActionOpenClose) {
+                if (a.Data.IsWalkable) {
                     EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.CurrentTime, Color.Gray, LogEntityType.OpenCloseDor);
                 }
                 else {
                     EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray, LogEntityType.OpenCloseDor);
                     Achievements.Stat["dooro"].Count++;
                 }
-                SetBlock(x, y, BlockDataBase.Data[GetBlock(x,y).Id].AfterDeathId);
+                SetBlock(x, y, GetBlock(x,y).Data.AfterDeathId);
                 MapJustUpdated = true;
             }
         }
@@ -486,7 +491,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 Vector2 checkPoint = start;
 
-                var blockDatas = BlockDataBase.Data;
                 if (Math.Abs(xDelta) > Math.Abs(yDelta)) {
                     if (end.X == 30 && end.Y == 37)
                         end.X = 30;
@@ -496,7 +500,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         checkPoint.X = start.X + (int) Math.Round(x*unitX, 2);
                         checkPoint.Y = start.Y + (int) Math.Round(x*uintY, 2);
                         var key = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
-                        if (key != null && !blockDatas[key.Id].IsTransparent) {
+                        if (key != null && !key.Data.IsTransparent) {
                             GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
                             return false;
                         }
@@ -519,7 +523,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                         var t = GetBlock((int) checkPoint.X, (int) checkPoint.Y);
 
-                        if (t!= null && t.Id != null && !blockDatas[t.Id].IsTransparent) {
+                        if (t!= null && t.Id != null && !t.Data.IsTransparent) {
                             GetBlock((int) checkPoint.X, (int) checkPoint.Y).Lightness = Color.White;
                             return false;
                         }
@@ -895,7 +899,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per)
         {
             var batlas = Atlases.BlockAtlas; // Make field's non-static
-            var bdb = BlockDataBase.Data;
             var rx = MapSector.Rx;
             var ry = MapSector.Ry;
             var ssx = Settings.FloorSpriteSize.X;
@@ -945,9 +948,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                             }
 
 
-                            if ((shad || MapJustUpdated) && !bdb[sector.GetBlock(a).Id].IsTransparent)
+                            if ((shad || MapJustUpdated) && !sector.GetBlock(a).Data.IsTransparent)
                             {
-                                AddShadowpointForBlock(camera, per, xpos, ypos, bdb[block.Id].swide);
+                                AddShadowpointForBlock(camera, per, xpos, ypos, block.Data.swide);
                             }
                         }
 

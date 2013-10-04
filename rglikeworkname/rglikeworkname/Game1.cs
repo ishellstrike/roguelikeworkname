@@ -63,7 +63,7 @@ namespace jarg
         private Effect EffectOmnilight;
         private Effect lig3;
         private Effect lig4;
-        private Texture2D arup, ardown, gear;
+        private Texture2D arup, ardown, gear, bag, map, caracter;
         private Color lwstatus_color = new Color(1,1,1,0.2f);
 
         private RenderTarget2D colorMapRenderTarget_;
@@ -238,6 +238,9 @@ namespace jarg
             arup = Content.Load<Texture2D>(@"Textures/arrow_up");
             ardown = Content.Load<Texture2D>(@"Textures/arrow_down");
             gear = Content.Load<Texture2D>(@"Textures/gear");
+            bag = Content.Load<Texture2D>(@"Textures/bag");
+            caracter = Content.Load<Texture2D>(@"Textures/caracter");
+            map = Content.Load<Texture2D>(@"Textures/map");
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
@@ -395,10 +398,7 @@ namespace jarg
                 MouseUpdate(gameTime);
             }
 
-            if (player_last_pos != player_.Position || time_walks) {
-                UpdateAction(gameTime);
-                time_walks = false;
-            }
+            UpdateAction(gameTime);
 
             if (ps_ != null)
             {
@@ -720,7 +720,7 @@ namespace jarg
                     }
                     
                     if((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot_) {
-                        player_.TryShoot(bs_, PlayerSeeAngle);
+                        player_.TryShoot(bs_, inventory_, PlayerSeeAngle);
                         rememberShoot_ = true;
                         time_walks = true;
                     }
@@ -920,7 +920,7 @@ namespace jarg
 
         private void DrawCombinedMaps()
         {
-            lightEffect2_.Parameters["ambient"].SetValue(7/4-GlobalWorldLogic.GetCurrentSlen()/3);
+            lightEffect2_.Parameters["ambient"].SetValue(7/4-GlobalWorldLogic.GetCurrentSlen()/3 + 0.2f);
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
             // This variable is used to boost to output of the light sources when they are combined

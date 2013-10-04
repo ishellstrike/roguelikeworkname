@@ -7,6 +7,7 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
     public interface IBlock {
         void Update(TimeSpan ts, Vector2 vector2);
         string Id { get; set; }
+        BlockData Data { get;}
         Color Lightness { get; set; }
         bool Explored { get; set; }
         Rectangle Source { get; set; }
