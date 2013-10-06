@@ -400,12 +400,7 @@ namespace jarg
 
             UpdateAction(gameTime);
 
-            if (ps_ != null)
-            {
-                ps_.Update(gameTime);
-            }
-
-            FrameRateCounter.Update(gameTime);
+            
 
             if (player_ != null) {
                 PlayerSeeAngle =
@@ -416,6 +411,7 @@ namespace jarg
 
             if (Settings.DebugInfo)
             {
+                FrameRateCounter.Update(gameTime);
                 sw_update.Stop();
             }
 
@@ -484,6 +480,8 @@ namespace jarg
             GlobalWorldLogic.Update(gameTime);
 
             currentFloor_.UpdateCreatures(gameTime, player_);
+
+            ps_.Update(gameTime);
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
