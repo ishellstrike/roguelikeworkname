@@ -123,7 +123,7 @@ namespace rglikeworknamelib.Dungeon.Item
             }
         }
 
-        public Item ContainsID(string itemData) {
+        public Item ContainsId(string itemData) {
             return items_.FirstOrDefault(x => x.Id == itemData);
         }
     }

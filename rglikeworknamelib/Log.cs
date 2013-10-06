@@ -35,20 +35,20 @@ namespace rglikeworknamelib
             type = t;
         }
 
-        public LogEntity(string mes, LogEntityType t = LogEntityType.Default)
+        public LogEntity(string mes, LogEntityType entity = LogEntityType.Default)
         {
             message = mes;
             col = Color.White;
-            type = t;
+            type = entity;
         }
     }
     public static class EventLog
     {
         public static List<LogEntity> log = new List<LogEntity>();
 
-        public static void Add(string s, DateTime t, Color c, LogEntityType type)
+        public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type)
         {
-            log.Add(new LogEntity(GlobalWorldLogic.GetTimeString(t) + " " + s, c, type));
+            log.Add(new LogEntity(GlobalWorldLogic.GetTimeString(globalDateTime) + " " + message, color, type));
 
             if (log.Count > 100) { 
                 log.RemoveAt(0);
@@ -58,11 +58,11 @@ namespace rglikeworknamelib
         }
 
         private static void UpdateEvent() {
-            if (onLogUpdate != null) {
-                    onLogUpdate(null, null);
+            if (OnLogUpdate != null) {
+                    OnLogUpdate(null, null);
                 }
         }
 
-        public static event EventHandler onLogUpdate;
+        public static event EventHandler OnLogUpdate;
     }
 }

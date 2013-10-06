@@ -13,19 +13,19 @@ namespace rglikeworknamelib.Window {
 
         private readonly Texture2D whitepixel_;
         private readonly SpriteFont font1_;
-        private TimeSpan spam;
-        private bool first, second;
-        public event EventHandler onEnter;
+        private TimeSpan spam_;
+        private bool first, second_;
+        public event EventHandler OnEnter;
 
-        public TextBox(Vector2 p, int length, Texture2D wp, SpriteFont wf, IGameContainer pa)
+        public TextBox(Vector2 position, int length, IGameContainer parent)
         {
-            whitepixel_ = wp;
-            font1_ = wf;
-            locate_.X = (int)p.X;
-            locate_.Y = (int)p.Y;
+            whitepixel_ = parent.whitepixel_;
+            font1_ = parent.font1_;
+            locate_.X = (int)position.X;
+            locate_.Y = (int)position.Y;
             locate_.Height = 20;
             locate_.Width = length;
-            Parent = pa;
+            Parent = parent;
             Parent.AddComponent(this);
             Visible = true;
         }
@@ -51,19 +51,19 @@ namespace rglikeworknamelib.Window {
         }
 
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
-            spam += gt.ElapsedGameTime;
+            spam_ += gt.ElapsedGameTime;
             if(ks.GetPressedKeys().Length == 0) {
                 first = false;
-                second = false;
+                second_ = false;
             }
 
             foreach (var key in ks.GetPressedKeys()) {
                 var a = key;
-                if (!lks.IsKeyDown(a) || (spam.TotalMilliseconds >= 300 && !second) || (spam.TotalMilliseconds >= 100 && second))
+                if (!lks.IsKeyDown(a) || (spam_.TotalMilliseconds >= 300 && !second_) || (spam_.TotalMilliseconds >= 100 && second_))
                 {
-                    spam = TimeSpan.Zero;
+                    spam_ = TimeSpan.Zero;
                     if(first) {
-                        second = true;
+                        second_ = true;
                     }
                     first = true;
                     switch (a) {
@@ -128,8 +128,8 @@ namespace rglikeworknamelib.Window {
                             Text += ".";
                             break;
                         case Keys.Enter:
-                            if(onEnter != null) {
-                                onEnter(this, null);
+                            if(OnEnter != null) {
+                                OnEnter(this, null);
                             }
                             break;
 

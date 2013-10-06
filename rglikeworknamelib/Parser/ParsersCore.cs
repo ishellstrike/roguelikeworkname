@@ -11,12 +11,12 @@ using NLog;
 
 namespace rglikeworknamelib.Parser {
     public static class ParsersCore {
-        public static Regex stringExtractor = new Regex("\".*\"");
-        public static Regex intextractor = new Regex("[0-9]+");
+        public static Regex StringExtractor = new Regex("\".*\"");
+        public static Regex Intextractor = new Regex("[0-9]+");
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public static Color ParseStringToColor(string s) {
-            string extractedstring = stringExtractor.Match(s).ToString();
+            string extractedstring = StringExtractor.Match(s).ToString();
             extractedstring = extractedstring.Substring(1, extractedstring.Length - 2);
             extractedstring = extractedstring.ToLower();
 
@@ -50,10 +50,11 @@ namespace rglikeworknamelib.Parser {
             }
         }
 
+        [Obsolete]
         public static Collection<Texture2D> LoadTexturesInOrder(string s, ContentManager content) {
-            Collection<Texture2D> temp = new Collection<Texture2D>();
+            var temp = new Collection<Texture2D>();
 
-            StreamReader sr = new StreamReader(s, Encoding.Default);
+            var sr = new StreamReader(s, Encoding.Default);
             while (true) {
                 string t = sr.ReadLine();
                 if (t == null || t.Length < 3) break;
@@ -64,9 +65,9 @@ namespace rglikeworknamelib.Parser {
         }
 
         public static Dictionary<string, Texture2D> LoadTexturesTagged(string s, ContentManager content) {
-            Dictionary<string, Texture2D> temp = new Dictionary<string, Texture2D>();
+            var temp = new Dictionary<string, Texture2D>();
 
-            StreamReader sr = new StreamReader(s, Encoding.Default);
+            var sr = new StreamReader(s, Encoding.Default);
             while (true) {
                 string t = sr.ReadLine();
                 if (t == null || t.Length < 3) break;
@@ -77,7 +78,8 @@ namespace rglikeworknamelib.Parser {
             return temp;
         }
 
-        public static List<T> ParseDirectory<T>(string patch, Func<string, List<T>> parser) {
+        [Obsolete]
+        public static List<T> ParseDirectory<T>(string patch, OldBaseParserDelegate<T> parser) {
             try {
                 string[] a = Directory.GetFiles(patch, "*.txt");
                 var temp = new List<T>();
@@ -92,7 +94,8 @@ namespace rglikeworknamelib.Parser {
             }
         }
 
-        public static List<T> ParseFile<T>(string patch, Func<string, List<T>> parser) {
+        [Obsolete]
+        public static List<T> ParseFile<T>(string patch, OldBaseParserDelegate<T> parser) {
             try {
                 var sr = new StreamReader(patch, Encoding.Default);
                 string a = sr.ReadToEnd();
@@ -105,8 +108,7 @@ namespace rglikeworknamelib.Parser {
             }
         }
 
-        public static List<T> UniversalParseDirectory<T>(string patch, Func<string, string, Type, List<T>> parser,
-                                                         Type baseType = null) {
+        public static List<T> UniversalParseDirectory<T>(string patch, BaseParserDelegate<T> parser, Type baseType = null) {
             try {
                 string[] a = Directory.GetFiles(patch, "*.txt");
                 var temp = new List<T>();
@@ -121,8 +123,7 @@ namespace rglikeworknamelib.Parser {
             }
         }
 
-        public static List<T> UnivarsalParseFile<T>(string patch, Func<string, string, Type, List<T>> parser,
-                                                    Type baseType = null) {
+        public static List<T> UnivarsalParseFile<T>(string patch, BaseParserDelegate<T> parser, Type baseType = null) {
             try {
                 var sr = new StreamReader(patch, Encoding.Default);
                 string a = sr.ReadToEnd();
@@ -136,11 +137,11 @@ namespace rglikeworknamelib.Parser {
         }
 
         public static T CreateFromString<T>(string stringToCreateFrom) {
-            T output = Activator.CreateInstance<T>();
-
-            output = (T) Enum.Parse(typeof (T), stringToCreateFrom, true);
-
-            return output;
+            return (T) Enum.Parse(typeof (T), stringToCreateFrom, true);
         }
     }
+
+    public delegate List<T> BaseParserDelegate<T>(string dataString, string filePos, Type baseType);
+    [Obsolete]
+    public delegate List<T> OldBaseParserDelegate<T>(string dataString);
 }

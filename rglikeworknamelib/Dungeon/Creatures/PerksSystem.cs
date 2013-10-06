@@ -8,23 +8,23 @@ namespace rglikeworknamelib.Creatures {
         private Dictionary<string, Perk> Perks;
         private ICreature Owner;
 
-        public bool IsSelected(string s) {
-            return Perks[s].selected_;
+        public bool IsSelected(string perkId) {
+            return Perks[perkId].selected_;
         }
 
-        public void SetPerk(string id, bool state) {
-            if(Perks[id].selected_ != state) {
-                Perks[id].selected_ = state;
-                PerkDataBase.Perks[id].AddRemove(state, Owner);
+        public void SetPerk(string perkId, bool state) {
+            if(Perks[perkId].selected_ != state) {
+                Perks[perkId].selected_ = state;
+                PerkDataBase.Perks[perkId].AddRemove(state, Owner);
             }
         }
 
-        public void SetPerk(string id)
+        public void SetPerk(string perkId)
         {
-            Perks[id].selected_ = !Perks[id].selected_;
-            var addRemove = PerkDataBase.Perks[id].AddRemove;
+            Perks[perkId].selected_ = !Perks[perkId].selected_;
+            var addRemove = PerkDataBase.Perks[perkId].AddRemove;
             if (addRemove != null) {
-                addRemove(Perks[id].selected_, Owner);
+                addRemove(Perks[perkId].selected_, Owner);
             }
         }
 

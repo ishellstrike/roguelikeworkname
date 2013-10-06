@@ -1,9 +1,9 @@
 namespace rglikeworknamelib.Dungeon.Level {
     public enum SchemesType
     {
-        house,
-        shop,
-        hospital,
-        storage
+        House,
+        Shop,
+        Hospital,
+        Storage
     }
 }

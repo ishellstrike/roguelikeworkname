@@ -5,15 +5,15 @@ namespace rglikeworknamelib.Creatures {
     public struct Stat {
         public float Current, Max;
 
-        public Stat(float a, float b) {
-            Current = a;
-            Max = b;
+        public Stat(float current, float max) {
+            Current = current;
+            Max = max;
         }
 
-        public Stat(float a)
+        public Stat(float sameValues)
         {
-            Current = a;
-            Max = a;
+            Current = sameValues;
+            Max = sameValues;
         }
     }
 }

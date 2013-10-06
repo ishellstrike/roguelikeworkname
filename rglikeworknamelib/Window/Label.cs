@@ -35,22 +35,22 @@ namespace rglikeworknamelib.Window {
             pos_ = pos;
         }
 
-        public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, IGameContainer win)
+        public Label(Vector2 position, string text, Color c, IGameContainer win)
         {
-            font1_ = wf;
-            pos_ = p;
-            Text = s;
+            font1_ = win.font1_;
+            pos_ = position;
+            Text = text;
             col_ = c;
             Parent = win;
             Parent.AddComponent(this);
             Visible = true;
         }
 
-        public Label(Vector2 p, string s, Texture2D wp, SpriteFont wf, IGameContainer win)
+        public Label(Vector2 position, string text, IGameContainer win)
         {
-            font1_ = wf;
-            pos_ = p;
-            Text = s;
+            font1_ = win.font1_;
+            pos_ = position;
+            Text = text;
             Parent = win;
             Parent.AddComponent(this);
             isHudColored = true;
@@ -60,7 +60,7 @@ namespace rglikeworknamelib.Window {
         public virtual void Draw(SpriteBatch sb)
         {
             if (Text != null && Visible) {
-                if (!aimed_ || onPressed == null) {
+                if (!aimed_ || OnPressed == null) {
                     if (isHudColored) {
                         sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Settings.Hud—olor);
                     }
@@ -100,13 +100,13 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public event EventHandler onPressed;
+        public event EventHandler OnPressed;
 
         void PressButton()
         {
-            if (onPressed != null)
+            if (OnPressed != null)
             {
-                onPressed(this, null);
+                OnPressed(this, null);
             }
         }
 
@@ -157,15 +157,15 @@ namespace rglikeworknamelib.Window {
         private IGameContainer Parent;
         private Texture2D wp_;
         public bool Cheked = true;
-        public CheckBox(Vector2 p, string s, Texture2D wp, SpriteFont wf, IGameContainer win)
+        public CheckBox(Vector2 p, string s, IGameContainer parent)
         {
-            font1_ = wf;
+            wp_ = parent.whitepixel_;
+            font1_ = parent.font1_;
             pos_ = p;
             Text = s;
-            Parent = win;
+            Parent = parent;
             Parent.AddComponent(this);
             Visible = true;
-            wp_ = wp;
         }
 
         private Vector2 mover = new Vector2(18,0);
@@ -232,13 +232,13 @@ namespace rglikeworknamelib.Window {
             pos_ = pos;
         }
 
-        public event EventHandler onPressed;
+        public event EventHandler OnPressed;
 
         void PressButton()
         {
-            if (onPressed != null)
+            if (OnPressed != null)
             {
-                onPressed(this, null);
+                OnPressed(this, null);
             }
         }
 

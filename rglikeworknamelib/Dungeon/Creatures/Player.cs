@@ -52,30 +52,30 @@ namespace rglikeworknamelib.Creatures {
         }
 
 
-        public void EquipItem(Item i, InventorySystem ins) {
+        public void EquipItem(Item item, InventorySystem ins) {
             Settings.InventoryUpdate = true;
-            switch (ItemDataBase.Data[i.Id].SType) {
+            switch (ItemDataBase.Data[item.Id].SType) {
                     case ItemType.Hat:
-                        EquipExact(i, ins, ref ItemHat);
+                        EquipExact(item, ins, ref ItemHat);
                     break;
                     case ItemType.Pants:
-                        EquipExact(i, ins, ref ItemPants);
+                        EquipExact(item, ins, ref ItemPants);
                     break;
                     case ItemType.Shirt:
-                        EquipExact(i, ins, ref ItemShirt);
+                        EquipExact(item, ins, ref ItemShirt);
                     break;
                     case ItemType.Gun:
-                        EquipExact(i, ins, ref ItemGun);
+                        EquipExact(item, ins, ref ItemGun);
                     break;
                     case ItemType.Meele:
-                        EquipExact(i, ins, ref ItemMeele);
+                        EquipExact(item, ins, ref ItemMeele);
                     break;
                     case ItemType.Ammo:
-                        EquipExact(i, ins, ref ItemAmmo);
+                        EquipExact(item, ins, ref ItemAmmo);
                     break;
             }
-            if (onUpdatedEquip != null) {
-                onUpdatedEquip(null, null);
+            if (OnUpdatedEquip != null) {
+                OnUpdatedEquip(null, null);
             }
         }
 
@@ -84,8 +84,8 @@ namespace rglikeworknamelib.Creatures {
                 if (ite != null) {
                     ins.AddItem(ite);
                     EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ItemDataBase.Data[ite.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
-                    foreach (var buff in ite.Buffs.Where(buff => buffs.Contains(buff))) {
-                        buffs.Remove(buff);
+                    foreach (var buff in ite.Buffs.Where(buff => Buffs.Contains(buff))) {
+                        Buffs.Remove(buff);
                         buff.RemoveFromTarget(this);
                     }
                 }
@@ -96,7 +96,7 @@ namespace rglikeworknamelib.Creatures {
                 EventLog.Add(string.Format("Вы экипировали {0}", ItemDataBase.Data[i.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Equip);
                 foreach (var buff in i.Buffs)
                 {
-                    buffs.Add(buff);
+                    Buffs.Add(buff);
                     buff.ApplyToTarget(this);
                 }
             }
@@ -185,11 +185,11 @@ namespace rglikeworknamelib.Creatures {
 
                 secShoot_ += gt.ElapsedGameTime;
 
-                for (int i = 0; i < buffs.Count; i++) {
-                    var buff = buffs[i];
+                for (int i = 0; i < Buffs.Count; i++) {
+                    var buff = Buffs[i];
                     buff.Update(gt);
                     if (!buff.Applied) {
-                        buffs.Remove(buff);
+                        Buffs.Remove(buff);
                     }
                 }
             }
@@ -211,8 +211,8 @@ namespace rglikeworknamelib.Creatures {
         }
 
         private TimeSpan secShoot_ = TimeSpan.Zero;
-        public event EventHandler onUpdatedEquip;
-        public event EventHandler onShoot;
+        public event EventHandler OnUpdatedEquip;
+        public event EventHandler OnShoot;
 
         public void TryShoot(BulletSystem bs, InventorySystem ins, float playerSeeAngle) {
             if (ItemGun != null) {
@@ -231,12 +231,12 @@ namespace rglikeworknamelib.Creatures {
                             }
                         }
                         Achievements.Stat["ammouse"].Count++;
-                        if(onShoot != null) {
-                            onShoot(null, null);
+                        if(OnShoot != null) {
+                            OnShoot(null, null);
                         }
                     } else {
                         if (secShoot_.TotalMilliseconds > 1000) {
-                            EquipItem(ins.ContainsID(ItemDataBase.Data[ItemGun.Id].Ammo), ins);
+                            EquipItem(ins.ContainsId(ItemDataBase.Data[ItemGun.Id].Ammo), ins);
                             EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
                             secShoot_ = TimeSpan.Zero;
                         }

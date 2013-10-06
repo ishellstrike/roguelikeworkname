@@ -76,11 +76,11 @@ namespace rglikeworknamelib.Creatures {
             return po;
         }
 
-        public event EventHandler onDamageRecieve;
-        public event EventHandler onDeath;
+        public event EventHandler OnDamageRecieve;
+        public event EventHandler OnDeath;
 
         private List<IBuff> buffs_ = new List<IBuff>();
-        public List<IBuff> buffs 
+        public List<IBuff> Buffs 
         {
             get
             {
@@ -108,24 +108,24 @@ namespace rglikeworknamelib.Creatures {
             set { lastpos_ = value; }
         }
 
-        private TimeSpan sec = TimeSpan.Zero;
-        private TimeSpan reactionT = TimeSpan.Zero;
+        private TimeSpan sec_ = TimeSpan.Zero;
+        private TimeSpan reactionT_ = TimeSpan.Zero;
         public virtual void Update(GameTime gt, MapSector ms, Player hero) {
             var time = gt.ElapsedGameTime.TotalSeconds;
-            reactionT += gt.ElapsedGameTime;
-            sec += gt.ElapsedGameTime;
+            reactionT_ += gt.ElapsedGameTime;
+            sec_ += gt.ElapsedGameTime;
             if (!Skipp || !ms.ready) {
                 sectoroffset_ = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
                 var block = ms.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
-                if (block != null && block.Lightness == Color.White && reactionT.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
+                if (block != null && block.Lightness == Color.White && reactionT_.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
                     remPos_ = hero.Position - WorldPosition() + Position;
                     MoveByMover(ms, time);
 
                     Col = Color.White;
-                    if(sec.TotalSeconds > 1 && ms.Parent.IsCreatureMeele(hero, this)) {
+                    if(sec_.TotalSeconds > 1 && ms.Parent.IsCreatureMeele(hero, this)) {
                         hero.GiveDamage(MonsterDataBase.Data[Id].Damage, DamageType.Default, ms);
-                        sec = TimeSpan.Zero;
+                        sec_ = TimeSpan.Zero;
                     }
                 }
                 else {
@@ -185,11 +185,11 @@ namespace rglikeworknamelib.Creatures {
                 }
             }
 
-            for (int i = 0; i < buffs.Count; i++) {
-                var buff = buffs[i];
+            for (int i = 0; i < Buffs.Count; i++) {
+                var buff = Buffs[i];
                 buff.Update(gt);
                 if (!buff.Applied) {
-                    buffs.Remove(buff);
+                    Buffs.Remove(buff);
                 }
             }
         }
@@ -245,8 +245,8 @@ namespace rglikeworknamelib.Creatures {
             Hp = new Stat(0, 0);
             isDead = true;
             ms.AddDecal(new Particle(WorldPosition(), 3) { Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0) });
-            if(onDeath != null) {
-                onDeath(null, null);
+            if(OnDeath != null) {
+                OnDeath(null, null);
             }
         }
 
@@ -263,8 +263,8 @@ namespace rglikeworknamelib.Creatures {
             ms.AddDecal(new Particle(WorldPosition() + adder, 3)
                         {Rotation = Settings.rnd.Next()%360, Life = new TimeSpan(0, 0, 1, 0)});
 
-            if(onDamageRecieve != null) {
-                onDamageRecieve(null, null);
+            if(OnDamageRecieve != null) {
+                OnDamageRecieve(null, null);
             }
         }
 

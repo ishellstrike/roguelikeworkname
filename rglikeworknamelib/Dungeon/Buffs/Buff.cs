@@ -13,9 +13,9 @@ namespace rglikeworknamelib.Dungeon.Buffs {
         public bool Expiring { get; set; }
 
         public string Id { get; set; }
-        public virtual bool RemoveFromTarget(Creature p) {
+        public virtual bool RemoveFromTarget(Creature target) {
             if(applied_) {
-                Target = p;
+                Target = target;
                 EventLog.Add(string.Format("Потерян эффект {0}", BuffDataBase.Data[Id].Name), GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Buff);
                 applied_ = false;
                 return true;
@@ -23,9 +23,9 @@ namespace rglikeworknamelib.Dungeon.Buffs {
             return false;
         }
 
-        public virtual bool ApplyToTarget(Creature p) {
+        public virtual bool ApplyToTarget(Creature target) {
             if(!applied_) {
-                Target = p;
+                Target = target;
                 if (BuffDataBase.Data[Id].Duration != -1) {
                     Expire = new TimeSpan(0,0,BuffDataBase.Data[Id].Duration,0,0);
                     Expiring = true;

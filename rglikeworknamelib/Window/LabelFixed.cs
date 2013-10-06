@@ -26,16 +26,16 @@ namespace rglikeworknamelib.Window {
             return result;
         }
 
-        public LabelFixed(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, int fixl, IGameContainer win)
-            : base(p, s, wp, wf, c, win)
+        public LabelFixed(Vector2 position, string text, Color c, int fixl, IGameContainer win)
+            : base(position, text, c, win)
         {
             fixLength = fixl;
-            Text = s;
+            Text = text;
         }
 
-        public LabelFixed(Vector2 p, string s, int fixl, Texture2D wp, SpriteFont wf, IGameContainer win) : base(p, s, wp, wf, win) {
+        public LabelFixed(Vector2 position, string text, int fixl, IGameContainer win) : base(position, text, win) {
             fixLength = fixl;
-            Text = s;
+            Text = text;
         }
     }
 }

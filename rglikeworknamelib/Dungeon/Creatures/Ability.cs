@@ -7,8 +7,8 @@ namespace rglikeworknamelib.Creatures {
         private int xpCurrent_ = 0;
         public int XpLevel = 2;
         public string Name;
-        public event EventHandler onLevelUp;
-        public AbilityNameStyle nameStyle;
+        public event EventHandler OnLevelUp;
+        public AbilityNameStyle NameStyle;
 
         public int XpCurrent
         {
@@ -21,8 +21,8 @@ namespace rglikeworknamelib.Creatures {
                 xpCurrent_ = value;
                 if (xpCurrent_ > XpNeeds[XpLevel]) {
                     XpLevel++;
-                    if (onLevelUp != null) {
-                        onLevelUp(null, null);
+                    if (OnLevelUp != null) {
+                        OnLevelUp(null, null);
                     }
                 }
             }

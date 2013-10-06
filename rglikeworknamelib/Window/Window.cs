@@ -38,8 +38,8 @@ namespace rglikeworknamelib.Window {
 
         public object Tag { get; set; }
 
-        private readonly Texture2D whitepixel_;
-        private readonly SpriteFont font1_;
+        public Texture2D whitepixel_ { get; set; }
+        public SpriteFont font1_ { get; set; }
         private bool hasTextbox_;
 
         public string Name;
@@ -53,10 +53,9 @@ namespace rglikeworknamelib.Window {
         /// <param name="wp"></param>
         /// <param name="wf"></param>
         /// <param name="parent"></param>
-        public Window(Rectangle location, string caption, bool closeable, Texture2D wp, SpriteFont wf,
-                      WindowSystem parent) {
-            whitepixel_ = wp;
-            font1_ = wf;
+        public Window(Rectangle location, string caption, bool closeable, WindowSystem parent) {
+            whitepixel_ = parent.whitepixel_;
+            font1_ = parent.font1_;
             parent_ = parent;
             Visible = true;
 
@@ -66,8 +65,8 @@ namespace rglikeworknamelib.Window {
             backtransparent_.A = 220;
             Closable = closeable;
 
-            closeButton_ = new Button(new Vector2(Locate.Width - 19, 0), "x", whitepixel_, font1_, this);
-            closeButton_.onPressed += closeButton__onPressed;
+            closeButton_ = new Button(new Vector2(Locate.Width - 19, 0), "x", this);
+            closeButton_.OnPressed += closeButton__onPressed;
             if (!Closable) {
                 closeButton_.Visible = false;
             }
@@ -84,9 +83,9 @@ namespace rglikeworknamelib.Window {
         /// <param name="wp"></param>
         /// <param name="wf"></param>
         /// <param name="parent"></param>
-        public Window(Vector2 size, string caption, bool closeable, Texture2D wp, SpriteFont wf, WindowSystem parent) {
-            whitepixel_ = wp;
-            font1_ = wf;
+        public Window(Vector2 size, string caption, bool closeable, WindowSystem parent) {
+            whitepixel_ = parent.whitepixel_;
+            font1_ = parent.font1_;
             parent_ = parent;
 
             Name = caption;
@@ -98,8 +97,8 @@ namespace rglikeworknamelib.Window {
 
             Visible = true;
 
-            closeButton_ = new Button(new Vector2(Locate.Width - 19, -20), "x", whitepixel_, font1_, this);
-            closeButton_.onPressed += closeButton__onPressed;
+            closeButton_ = new Button(new Vector2(Locate.Width - 19, -20), "x", this);
+            closeButton_.OnPressed += closeButton__onPressed;
             if (!Closable) {
                 closeButton_.Visible = false;
             }
@@ -107,15 +106,15 @@ namespace rglikeworknamelib.Window {
             parent.AddWindow(this);
         }
 
-        public void CenterComponentHor(IGameComponent a) {
-            var p = a.GetPosition();
-            a.SetPosition(new Vector2((Locate.Width/2 - a.Width/2), p.Y));
+        public void CenterComponentHor(IGameComponent component) {
+            var p = component.GetPosition();
+            component.SetPosition(new Vector2((Locate.Width/2 - component.Width/2), p.Y));
         }
 
         [Obsolete]
-        public void CenterComponentVert(IGameComponent a) {
-            var p = a.GetPosition();
-            a.SetPosition(new Vector2(p.X, (Locate.Height/2 + a.Width)/2));
+        public void CenterComponentVert(IGameComponent component) {
+            var p = component.GetPosition();
+            component.SetPosition(new Vector2(p.X, (Locate.Height/2 + component.Width)/2));
         }
 
         private void closeButton__onPressed(object sender, EventArgs e) {
@@ -182,7 +181,7 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
             aimed = false;
             if (Visible) {
@@ -191,7 +190,7 @@ namespace rglikeworknamelib.Window {
                 }
                 if (!parent_.Mopusehook && lms.X >= Locate.Left && lms.Y >= Locate.Top &&
                     lms.X <= Locate.Right && lms.Y <= Locate.Bottom) {
-                    h = true;
+                    mh = true;
                     parent_.Mopusehook = true;
                     aimed = true;
 
@@ -212,7 +211,7 @@ namespace rglikeworknamelib.Window {
                 }
                 for (int i = Components.Count - 1; i >= 0; i--) {
                     var component = Components[i];
-                    component.Update(gt, ms, lms, ks, lks, h);
+                    component.Update(gt, ms, lms, ks, lks, mh);
                 }
             }
         }

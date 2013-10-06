@@ -21,12 +21,13 @@ namespace rglikeworknamelib.Window {
 
         public int Progress = 0, Max = 100;
 
-        public ProgressBar(Rectangle r, string s, Texture2D whi, SpriteFont sf, Window pa) {
-            locate_ = r;
-            Text = s;
-            whitepixel_ = whi;
-            font1_ = sf;
-            Parent = pa;
+        public ProgressBar(Rectangle locate, string text, Window parent) {
+            whitepixel_ = parent.whitepixel_;
+            font1_ = parent.font1_;
+
+            locate_ = locate;
+            Text = text;
+            Parent = parent;
             Parent.AddComponent(this);
             Visible = true;
         }
@@ -43,7 +44,7 @@ namespace rglikeworknamelib.Window {
             sb.DrawString(font1_, string.Format("{0}/{1}", Progress, Max), realpos + new Vector2(5, 0), Settings.Hud—olor);
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
                 
         }

@@ -34,7 +34,7 @@ namespace rglikeworknamelib
             var t = text.Split('~');
             
             foreach (var s in t) {
-                if (s != "") {
+                if (!string.IsNullOrEmpty(s)) {
                     var tr = int.Parse(s.Substring(0, 3));
                     var tg = int.Parse(s.Substring(3, 3));
                     var tb = int.Parse(s.Substring(6, 3));

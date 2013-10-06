@@ -16,18 +16,16 @@ namespace rglikeworknamelib.Dungeon.Level
         private List<Tuple<Point, GameLevel>> onLoad_;
         private List<Tuple<Point, GameLevel>> onGeneration_;
         public List<Tuple<Point, MapSector>> Ready;
-        private GameLevel gl;
 
         public bool Loading, Saving, Generating;
 
         private bool exit;
 
-        public LevelWorker(GameLevel g) {
+        public LevelWorker() {
             onLoad_ = new List<Tuple<Point, GameLevel>>();
             onGeneration_ = new List<Tuple<Point, GameLevel>>();
             onSave_ = new List<Tuple<Point, MapSector>>();
             Ready = new List<Tuple<Point, MapSector>>();
-            gl = g;
         }
 
         public void Run() {

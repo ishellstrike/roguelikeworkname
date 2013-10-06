@@ -23,8 +23,8 @@ namespace rglikeworknamelib.Dungeon.Level
                 Data.Add((Schemes)pair);
             }
 
-            Houses = Data.Where(x => x.type == SchemesType.house).ToList();
-            Storages = Data.Where(x => x.type == SchemesType.storage).ToList();
+            Houses = Data.Where(x => x.type == SchemesType.House).ToList();
+            Storages = Data.Where(x => x.type == SchemesType.Storage).ToList();
         }
     }
 }

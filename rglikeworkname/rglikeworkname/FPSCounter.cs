@@ -7,13 +7,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib;
 
-namespace Mork 
-{
+namespace Mork {
     /// <summary>
     /// Displays the FPS
     /// </summary>
-    public static class FrameRateCounter 
-    {
+    public static class FrameRateCounter {
         private const int MAX_GR = 300;
         private static TimeSpan elapsedTime_ = TimeSpan.Zero, elapsedTime2_ = TimeSpan.Zero;
         private static int frameCounter_, frameCounter2_;
@@ -25,39 +23,36 @@ namespace Mork
         private static readonly int[] graph = new int[MAX_GR];
         private static int curent_;
         private static int max_ = 1, min_;
-        private static readonly int[] insec = new[] {6,6,6,6,6,6,6,6,6,6};
+        private static readonly int[] insec = new[] {6, 6, 6, 6, 6, 6, 6, 6, 6, 6};
         private static byte curinsec;
 
-        public static void Update(GameTime gameTime)
-        {
+        public static void Update(GameTime gameTime) {
             if (Settings.DebugInfo) {
                 elapsedTime_ += gameTime.ElapsedGameTime;
-                if (elapsedTime_ > TimeSpan.FromMilliseconds(100))
-                {
+                if (elapsedTime_ > TimeSpan.FromMilliseconds(100)) {
                     elapsedTime_ -= TimeSpan.FromMilliseconds(100);
                     frameRate_ = frameCounter_;
 
                     insec[curinsec] = frameRate_;
                     curinsec++;
-                    if (curinsec >= 10)
-                    {
+                    if (curinsec >= 10) {
                         curinsec = 0;
                     }
                     graph[curent_] = insec.Sum();
                     curent_++;
-                    if (curent_ >= MAX_GR)
-                    {
+                    if (curent_ >= MAX_GR) {
                         curent_ = 0;
                     }
 
                     max_ = graph.Max();
                     //min_ = graph.Min();
-                    if (max_ - min_ == 0) min_ -= 1;
+                    if (max_ - min_ == 0) {
+                        min_ -= 1;
+                    }
 
                     frameCounter_ = 0;
-                    if (curent_ % 10 == 0)
-                    {
-                        memo = (long)(Process.GetCurrentProcess().WorkingSet64 / 1024f / 1024f);
+                    if (curent_%10 == 0) {
+                        memo = (long) (Process.GetCurrentProcess().WorkingSet64/1024f/1024f);
                     }
                 }
             }
@@ -71,10 +66,8 @@ namespace Mork
             }
         }
 
-        private static double sr_up;
-        private static double sr_draw;
-
-        public static void Draw(GameTime gameTime, SpriteFont fnt, SpriteBatch sb, LineBatch lb, int resx, int resy, Stopwatch draw, Stopwatch update) {
+        public static void Draw(GameTime gameTime, SpriteFont fnt, SpriteBatch sb, LineBatch lb, int resx, int resy,
+                                Stopwatch draw, Stopwatch update) {
             frameCounter_++;
             frameCounter2_++;
 
@@ -138,7 +131,8 @@ namespace Mork
                 int average = graph.Sum();
                 average /= graph.Length;
                 sb.DrawString(fnt, string.Concat("average = ", average), new Vector2(10, 115) + offset, Color.Red);
-            } else {
+            }
+            else {
                 string fps = string.Format("{0}", frameRate2_);
                 sb.DrawString(fnt, fps, position2_ + Vector2.One, Color.Black);
                 sb.DrawString(fnt, fps, position2_, Color.White);

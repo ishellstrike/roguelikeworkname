@@ -5,12 +5,12 @@ namespace rglikeworknamelib.Dungeon.Buffs {
     [Serializable]
     class HealOnce : Buff
     {
-        public override bool ApplyToTarget(Creature p) {
-            p.hp_.Current += int.Parse(BuffDataBase.Data[Id].Value[0]);
-            if (p.hp_.Current > p.hp_.Max) {
-                p.hp_.Current = p.hp_.Max;
+        public override bool ApplyToTarget(Creature target) {
+            target.hp_.Current += int.Parse(BuffDataBase.Data[Id].Value[0]);
+            if (target.hp_.Current > target.hp_.Max) {
+                target.hp_.Current = target.hp_.Max;
             }
-            return base.ApplyToTarget(p);
+            return base.ApplyToTarget(target);
         }
     }
 }

@@ -15,20 +15,15 @@ namespace rglikeworknamelib.Window {
         public object Tag { get; set; }
 
         private readonly Texture2D whitepixel_;
-        private readonly SpriteFont font1_;
-
-        private Color c1 = Color.Blue;
-        private Color c2 = Color.Red;
 
         public int Progress = 0, Max = 100;
 
-        public VerticalProgressBar(Rectangle r, string s, Texture2D whi, SpriteFont sf, IGameContainer pa)
+        public VerticalProgressBar(Rectangle locate, string text, IGameContainer container)
         {
-            locate_ = r;
-            Text = s;
-            whitepixel_ = whi;
-            font1_ = sf;
-            Parent = pa;
+            locate_ = locate;
+            Text = text;
+            whitepixel_ = container.whitepixel_;
+            Parent = container;
             Parent.AddComponent(this);
             Visible = true;
         }
@@ -45,7 +40,7 @@ namespace rglikeworknamelib.Window {
             sb.Draw(whitepixel_, new Vector2(locate_.X + 3, locate_.Y + 3) + Parent.GetPosition(), null, Settings.Hud—olor, 0, Vector2.Zero, new Vector2((locate_.Width - 4), (locate_.Height - 4 - 20) * ((float)Progress / Max)), SpriteEffects.None, 0);
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
 
         }

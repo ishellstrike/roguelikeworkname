@@ -16,10 +16,10 @@ namespace rglikeworknamelib.Generation
             Max = new Vector2(a, b);
         }
 
-        public MinMax(Vector2 a, Vector2 b)
+        public MinMax(Vector2 min, Vector2 max)
         {
-            Min = a;
-            Max = b;
+            Min = min;
+            Max = max;
         }
 
         public Vector2 Min, Max;
@@ -77,7 +77,7 @@ namespace rglikeworknamelib.Generation
         {
             List<Schemes> a;
             switch (schemeType) {
-                case SchemesType.house:
+                case SchemesType.House:
                     a = SchemesDataBase.Houses;
                     break;
 
@@ -117,25 +117,25 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static string[] GetInnerFloorArrayWithId(Schemes a, string id) {
+        public static string[] GetInnerFloorArrayWithId(Schemes schema, string id) {
 
-            int[] visited = new int[a.data.Length];
+            int[] visited = new int[schema.data.Length];
             Queue<int> todo = new Queue<int>();
-            if (a.data[0] == "0") todo.Enqueue(0); // угол 0,0
-            if (a.data[(a.x - 1) * a.y] == "0") todo.Enqueue((a.x - 1) * a.y); //угол х,0
-            if (a.data[a.y - 1] == "0") todo.Enqueue(a.y - 1); //угол 0,у
-            if (a.data[a.y * a.x - 1] == "0") todo.Enqueue(a.y * a.x - 1); //угол х,у
+            if (schema.data[0] == "0") todo.Enqueue(0); // угол 0,0
+            if (schema.data[(schema.x - 1) * schema.y] == "0") todo.Enqueue((schema.x - 1) * schema.y); //угол х,0
+            if (schema.data[schema.y - 1] == "0") todo.Enqueue(schema.y - 1); //угол 0,у
+            if (schema.data[schema.y * schema.x - 1] == "0") todo.Enqueue(schema.y * schema.x - 1); //угол х,у
 
             while (todo.Count > 0) {
                 int t = todo.Dequeue();
-                if (t >= 0 && t <= a.y * a.x - 1) {
-                    if (visited[t] == 0 && a.data[t] == "0") {
+                if (t >= 0 && t <= schema.y * schema.x - 1) {
+                    if (visited[t] == 0 && schema.data[t] == "0") {
                         visited[t] = 1;
 
-                        if (t % a.y < a.x - 1) todo.Enqueue(t + 1);
-                        if (t % a.y > 0) todo.Enqueue(t - 1);
-                        if (t / a.y < a.y - 1) todo.Enqueue(t + a.y);
-                        if (t / a.y > 0) todo.Enqueue(t - a.y);
+                        if (t % schema.y < schema.x - 1) todo.Enqueue(t + 1);
+                        if (t % schema.y > 0) todo.Enqueue(t - 1);
+                        if (t / schema.y < schema.y - 1) todo.Enqueue(t + schema.y);
+                        if (t / schema.y > 0) todo.Enqueue(t - schema.y);
                     }
                 }
             }

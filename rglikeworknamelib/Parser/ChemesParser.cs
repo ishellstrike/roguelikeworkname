@@ -7,13 +7,13 @@ namespace rglikeworknamelib.Parser
 {
     class ChemesParser
     {
-        public static List<object> Parser(string s)
+        public static List<object> Parser(string dataString)
         {
             var temp = new List<object>();
 
-            s = Regex.Replace(s, "//.*", "");
+            dataString = Regex.Replace(dataString, "//.*", "");
 
-            string[] blocks = s.Split('~');
+            string[] blocks = dataString.Split('~');
             foreach (string block in blocks)
             {
                 if (block.Length != 0)
@@ -28,7 +28,7 @@ namespace rglikeworknamelib.Parser
                     switch (header[2])
                     {
                         case "house":
-                            cur.type = SchemesType.house;
+                            cur.type = SchemesType.House;
                             break;
                     }
                     //switch (header[0])

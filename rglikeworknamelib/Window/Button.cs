@@ -28,25 +28,25 @@ namespace rglikeworknamelib.Window {
             set;
         }
 
-        public Button(Vector2 p, string s, Texture2D wp, SpriteFont wf, IGameContainer pa)
+        public Button(Vector2 position, string text, IGameContainer parent)
         {
-            whitepixel_ = wp;
-            font1_ = wf;
-            locate_.X = (int)p.X;
-            locate_.Y = (int)p.Y;
+            whitepixel_ = parent.whitepixel_;
+            font1_ = parent.font1_;
+            locate_.X = (int)position.X;
+            locate_.Y = (int)position.Y;
             locate_.Height = 20;
-            locate_.Width = (int)(font1_.MeasureString(s).X + 10);
-            Text = s;
-            Parent = pa;
+            locate_.Width = (int)(font1_.MeasureString(text).X + 10);
+            Text = text;
+            Parent = parent;
             Parent.AddComponent(this);
             Visible = true;
         }
 
-        public event EventHandler onPressed;
+        public event EventHandler OnPressed;
 
         protected void PressButton() {
-            if (onPressed != null) {
-                onPressed(this, null);
+            if (OnPressed != null) {
+                OnPressed(this, null);
             }
         }
 

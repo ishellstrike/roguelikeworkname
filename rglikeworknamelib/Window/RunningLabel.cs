@@ -6,14 +6,14 @@ namespace rglikeworknamelib.Window {
     public class RunningLabel : Label {
         private float runStep;
         private int Size;
-        public RunningLabel(Vector2 p, string s, Texture2D wp, SpriteFont wf, Color c, int size, Window win) : base(p, s, wp, wf, c, win) {
+        public RunningLabel(Vector2 position, string text, Color c, int size, Window win) : base(position, text, c, win) {
             Size = size;
-            Text = s + " --- ";
+            Text = text + " --- ";
         }
 
-        public RunningLabel(Vector2 p, string s, int size, Texture2D wp, SpriteFont wf, Window win) : base(p, s, wp, wf, win) {
+        public RunningLabel(Vector2 position, string text, int size, Window win) : base(position, text, win) {
             Size = size;
-            Text = s + " --- ";
+            Text = text + " --- ";
         }
 
         public override void Draw(SpriteBatch sb) {
@@ -37,10 +37,10 @@ namespace rglikeworknamelib.Window {
             return (text.Remove(0, offset) + text.Remove(offset)).Substring(0,ss);
         }
 
-        public override void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        public override void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
             runStep += 5*(float)gt.ElapsedGameTime.TotalSeconds;
-            base.Update(gt, ms, lms, ks, lks, h);
+            base.Update(gt, ms, lms, ks, lks, mh);
         }
 
         public override float Width

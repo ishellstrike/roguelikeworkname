@@ -194,7 +194,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     break;
 
                 case SectorBiom.House:
-                    MapGenerators.PlaceRandomSchemeByType(this, SchemesType.house, rand.Next(0, Rx - 1),
+                    MapGenerators.PlaceRandomSchemeByType(this, SchemesType.House, rand.Next(0, Rx - 1),
                                                           rand.Next(0, Ry - 1), rand);
                     break;
 
@@ -252,14 +252,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             return biom;
         }
 
-        public void Spawn(string i, Random rnd) {
-            Spawn(i, rnd.Next(0, Rx), rnd.Next(0, Ry));
+        public void Spawn(string creatureId, Random rnd) {
+            Spawn(creatureId, rnd.Next(0, Rx), rnd.Next(0, Ry));
         }
 
-        public void Spawn(string i, int x, int y) {
-            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[i].Prototype);
+        public void Spawn(string creatureId, int x, int y) {
+            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[creatureId].Prototype);
             n.Position = new Vector2(x*32, y*32);
-            n.Id = i;
+            n.Id = creatureId;
             creatures.Add(n);
         }
 
@@ -273,10 +273,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             return Blocks[a];
         }
 
-        public void SetFloor(int x, int y, string id)
+        public void SetFloor(int x, int y, string floorId)
         {
-            Floors[x * Ry + y].Id = id;
-            Floors[x * Ry + y].Source = FloorDataBase.Data[id].RandomMtexFromAlters(ref Floors[x * Ry + y].MTex);
+            Floors[x * Ry + y].Id = floorId;
+            Floors[x * Ry + y].Source = FloorDataBase.Data[floorId].RandomMtexFromAlters(ref Floors[x * Ry + y].MTex);
         }
 
         public string GetId(int x, int y)
@@ -284,9 +284,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             return Blocks[x * Ry + y].Id;
         }
 
-        public string GetId(int a)
+        public string GetId(int oneDimCoord)
         {
-            return Blocks[a].Id;
+            return Blocks[oneDimCoord].Id;
         }
 
         /// <summary>

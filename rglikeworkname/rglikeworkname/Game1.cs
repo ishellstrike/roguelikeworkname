@@ -36,17 +36,15 @@ using ProgressBar = rglikeworknamelib.Window.ProgressBar;
 using Settings = rglikeworknamelib.Settings;
 using WMPLib;
 
-namespace jarg
-{
-    public partial class Game1 : Game
-    {
+namespace jarg {
+    public partial class Game1 : Game {
         private WindowSystem ws_;
         private ParticleSystem ps_;
         private BulletSystem bs_;
         private GameLevel currentFloor_;
         private InventorySystem inventory_;
         private LevelWorker levelWorker_;
-        
+
         private Player player_ = null;
 
         private GraphicsDeviceManager graphics_;
@@ -64,18 +62,16 @@ namespace jarg
         private Effect lig3;
         private Effect lig4;
         private Texture2D arup, ardown, gear, bag, map, caracter;
-        private Color lwstatus_color = new Color(1,1,1,0.2f);
+        private Color lwstatus_color = new Color(1, 1, 1, 0.2f);
 
         private RenderTarget2D colorMapRenderTarget_;
         private RenderTarget2D depthMapRenderTarget_;
         private RenderTarget2D normalMapRenderTarget_;
         private RenderTarget2D shadowMapRenderTarget_;
         private Texture2D shadowMapTexture_;
-        private VertexDeclaration vertexDeclaration_;
         private VertexPositionTexture[] vertices_;
         private Effect lightEffect1_;
         private Effect lightEffect2_;
-        private Effect toWhite_;
 
         private Achievements achievements_;
 
@@ -98,15 +94,15 @@ namespace jarg
                                             };
             myProcess.Start();
             myProcess.WaitForExit(3000);
+            myProcess.Close();
+            myProcess.Dispose();
 #endif
             Application.ApplicationExit += Application_ApplicationExit;
 
-            if (File.Exists("JARGLog_previous.txt"))
-            {
+            if (File.Exists("JARGLog_previous.txt")) {
                 File.Delete("JARGLog_previous.txt");
             }
-            if (File.Exists("JARGLog.txt"))
-            {
+            if (File.Exists("JARGLog.txt")) {
                 File.Move("JARGLog.txt", "JARGLog_previous.txt");
             }
 
@@ -119,8 +115,7 @@ namespace jarg
             }
         }
 
-        void Application_ApplicationExit(object sender, EventArgs e)
-        {
+        private void Application_ApplicationExit(object sender, EventArgs e) {
             if (currentFloor_.SectorCount() > 0) {
                 currentFloor_.SaveAll();
             }
@@ -128,17 +123,17 @@ namespace jarg
 
         private static Form gameWindowForm_;
         private WindowsMediaPlayer WMPs;
-        protected override void Initialize()
-        {
-            var gameWindowForm = (Form)Control.FromHandle(Window.Handle);
+
+        protected override void Initialize() {
+            var gameWindowForm = (Form) Control.FromHandle(Window.Handle);
             gameWindowForm.MinimumSize = new System.Drawing.Size(800, 600);
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
             Settings.Resolution = new Vector2(1024, 768);
             graphics_.IsFullScreen = false;
-            graphics_.PreferredBackBufferHeight = (int)Settings.Resolution.Y;
-            graphics_.PreferredBackBufferWidth = (int)Settings.Resolution.X;
+            graphics_.PreferredBackBufferHeight = (int) Settings.Resolution.Y;
+            graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
             InactiveSleepTime = TimeSpan.FromMilliseconds(500);
 
@@ -158,10 +153,10 @@ namespace jarg
             WMPs.MediaChange += WMPs_MediaChange;
         }
 
-        void WMPs_MediaChange(object Item) {
+        private void WMPs_MediaChange(object Item) {
             IWMPMedia a = Item as IWMPMedia;
             if (a != null) {
-                LabelRadio.Text = " --- "+ a.name + " --- from " + a.sourceURL;
+                LabelRadio.Text = " --- " + a.name + " --- from " + a.sourceURL;
                 LabelRadio.SetPosition(new Vector2(0, 8));
                 WindowRadio.CenterComponentHor(LabelRadio);
             }
@@ -172,14 +167,15 @@ namespace jarg
         }
 
         private bool needChangeSesolution;
-        void Window_ClientSizeChanged(object sender, EventArgs e) {
+
+        private void Window_ClientSizeChanged(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height);
             needChangeSesolution = true;
         }
 
         private void ResolutionChanging() {
-            var height = (int)Settings.Resolution.Y;
-            var width = (int)Settings.Resolution.X;
+            var height = (int) Settings.Resolution.Y;
+            var width = (int) Settings.Resolution.X;
 
             graphics_.PreferredBackBufferHeight = height;
             graphics_.PreferredBackBufferWidth = width;
@@ -187,17 +183,22 @@ namespace jarg
             var t = ws_.GetVisibleList();
             ws_.Clear();
             ws_ = new WindowSystem(whitepixel_, font1_);
-            CreateWindows(whitepixel_, font1_, ws_);
+            CreateWindows(ws_);
             ws_.SetVisibleList(t);
             UpdateTitle();
             UpdateInventoryContainer();
             UpdateCaracterWindowItems(null, null);
             EventLog_onLogUpdate(null, null);
-            rt2d = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth, graphics_.PreferredBackBufferHeight);
-            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            rt2d = new RenderTarget2D(GraphicsDevice, graphics_.PreferredBackBufferWidth,
+                                      graphics_.PreferredBackBufferHeight);
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                       DepthFormat.Depth24Stencil8);
+            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                       DepthFormat.Depth24Stencil8);
+            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                        DepthFormat.Depth24Stencil8);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                        DepthFormat.Depth24Stencil8);
             EffectOmnilight.Parameters["screenWidth"].SetValue(width);
             EffectOmnilight.Parameters["screenHeight"].SetValue(height);
             lineBatch_.UpdateProjection(GraphicsDevice);
@@ -205,7 +206,6 @@ namespace jarg
         }
 
         protected override void OnActivated(object sender, EventArgs args) {
-
             //IsFixedTimeStep = Settings.Framelimit;
             base.OnActivated(sender, args);
         }
@@ -214,8 +214,7 @@ namespace jarg
             base.OnDeactivated(sender, args);
         }
 
-        protected override void LoadContent()
-        {
+        protected override void LoadContent() {
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
 
@@ -233,7 +232,6 @@ namespace jarg
             EffectOmnilight = Content.Load<Effect>(@"Effects/Effect1");
             lig3 = Content.Load<Effect>(@"Effects/Effect11");
             lig4 = Content.Load<Effect>(@"Effects/Effect111");
-            toWhite_ = Content.Load<Effect>(@"Effects/ToWhite");
 
             arup = Content.Load<Texture2D>(@"Textures/arrow_up");
             ardown = Content.Load<Texture2D>(@"Textures/arrow_down");
@@ -245,23 +243,28 @@ namespace jarg
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
             ws_ = new WindowSystem(whitepixel_, font1_);
-            CreateWindows(whitepixel_, font1_, ws_);
+            CreateWindows(ws_);
 
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
 
             achievements_ = new Achievements();
 
-            rt2d = new RenderTarget2D(GraphicsDevice, (int)Settings.Resolution.X, (int)Settings.Resolution.Y, false, SurfaceFormat.Color, DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+            rt2d = new RenderTarget2D(GraphicsDevice, (int) Settings.Resolution.X, (int) Settings.Resolution.Y, false,
+                                      SurfaceFormat.Color, DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             int width = pp.BackBufferWidth;
             int height = pp.BackBufferHeight;
 
-            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                       DepthFormat.Depth24Stencil8);
+            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                       DepthFormat.Depth24Stencil8);
+            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                        DepthFormat.Depth24Stencil8);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+                                                        DepthFormat.Depth24Stencil8);
 
             lightEffect1_ = Content.Load<Effect>(@"Effects/ShadersLightningShadow");
             lightEffect2_ = Content.Load<Effect>(@"Effects/ShadersLightningCombined");
@@ -273,7 +276,8 @@ namespace jarg
             vertices_[3] = new VertexPositionTexture(new Vector3(1, -1, 0), new Vector2(1, 1));
 
             LightCollection = new List<Light>();
-            LightCollection.Add(new Light{Color = Color.Brown, LightRadius = 2000f, Position = Vector3.Zero, Power = 100});
+            LightCollection.Add(new Light
+                                {Color = Color.Brown, LightRadius = 2000f, Position = Vector3.Zero, Power = 100});
         }
 
         private void InitialGeneration() {
@@ -281,7 +285,7 @@ namespace jarg
             sw.Start();
             ShowInfoWindow("Initial map generation", "");
             currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice, levelWorker_);
-            levelWorker_ = new LevelWorker(currentFloor_);
+            levelWorker_ = new LevelWorker();
             Action lw_ = levelWorker_.Run;
             lw_.BeginInvoke(null, null);
             currentFloor_.lw_ = levelWorker_;
@@ -301,9 +305,9 @@ namespace jarg
             UpdateInventoryContainer();
             HideInfoWindow();
             sw.Stop();
-            logger.Info("Initial generation in {0}",sw.Elapsed);
-            player_.onUpdatedEquip += UpdateCaracterWindowItems;
-            player_.onShoot +=player__onShoot;
+            logger.Info("Initial generation in {0}", sw.Elapsed);
+            player_.OnUpdatedEquip += UpdateCaracterWindowItems;
+            player_.OnShoot += player__onShoot;
             RenderedFlashlight = GetRenderedFlashlight();
 
             RunRadioGhostBox();
@@ -311,12 +315,11 @@ namespace jarg
             WindowRadio.Visible = false;
         }
 
-        void player__onShoot(object sender, EventArgs e) {
-
-           //shootFlashTS = TimeSpan.Zero;
-           //lig2.Parameters["slen"].SetValue(GlobalWorldLogic.GetCurrentSlen()/2);
-           //lig2.Parameters["shine"].SetValue(1.5f);
-           //shootFlash = true;
+        private void player__onShoot(object sender, EventArgs e) {
+            //shootFlashTS = TimeSpan.Zero;
+            //lig2.Parameters["slen"].SetValue(GlobalWorldLogic.GetCurrentSlen()/2);
+            //lig2.Parameters["shine"].SetValue(1.5f);
+            //shootFlash = true;
         }
 
         private void DataBasesLoadAndThenInitialGeneration() {
@@ -340,25 +343,25 @@ namespace jarg
             new NameDataBase();
             HideInfoWindow();
             sw.Stop();
-            logger.Info("Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\nloaded in {0}", 
-                        sw.Elapsed, 
-                        MonsterDataBase.Data.Count, 
-                        BlockDataBase.Data.Count, 
-                        FloorDataBase.Data.Count, 
-                        ItemDataBase.Data.Count, 
-                        SchemesDataBase.Data.Count, 
-                        BuffDataBase.Data.Count, 
-                        DialogDataBase.data.Count, 
-                        NameDataBase.data.Count);
+            logger.Info(
+                "Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\nloaded in {0}",
+                sw.Elapsed,
+                MonsterDataBase.Data.Count,
+                BlockDataBase.Data.Count,
+                FloorDataBase.Data.Count,
+                ItemDataBase.Data.Count,
+                SchemesDataBase.Data.Count,
+                BuffDataBase.Data.Count,
+                DialogDataBase.data.Count,
+                NameDataBase.data.Count);
 
             Action igen = InitialGeneration;
             igen.BeginInvoke(null, null);
         }
 
-        protected override void UnloadContent()
-        {
-           WMPs.close();
-           levelWorker_.Stop();
+        protected override void UnloadContent() {
+            WMPs.close();
+            levelWorker_.Stop();
         }
 
         private Stopwatch sw_update = new Stopwatch();
@@ -369,21 +372,23 @@ namespace jarg
         public float seeAngleDeg = 60;
         public float PlayerSeeAngle;
         public TimeSpan sec = TimeSpan.Zero;
-        public int jji=-2, jjj=-2;
+        public int jji = -2, jjj = -2;
         private Action<GameTime> UpdateAction = x => { };
         private Vector2 player_last_pos;
+
         protected override void Update(GameTime gameTime) {
             SecondTimespan += gameTime.ElapsedGameTime;
             //first
 
-            if(Settings.DebugInfo) {
+            if (Settings.DebugInfo) {
                 sw_update.Restart();
             }
 
-            if (ErrorExit || Settings.NeedExit) Exit();
+            if (ErrorExit || Settings.NeedExit) {
+                Exit();
+            }
 
-            if (Settings.NeedToShowInfoWindow)
-            {
+            if (Settings.NeedToShowInfoWindow) {
                 ShowInfoWindow(Settings.NTS1, Settings.NTS2);
                 Settings.NeedToShowInfoWindow = false;
             }
@@ -400,28 +405,25 @@ namespace jarg
 
             UpdateAction(gameTime);
 
-            
 
             if (player_ != null) {
                 PlayerSeeAngle =
                     (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
             }
 
-            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 4);
+            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
 
-            if (Settings.DebugInfo)
-            {
+            if (Settings.DebugInfo) {
                 FrameRateCounter.Update(gameTime);
                 sw_update.Stop();
             }
 
             // last
-            if (SecondTimespan.TotalSeconds >= 1)
-            {
+            if (SecondTimespan.TotalSeconds >= 1) {
                 SecondTimespan = TimeSpan.Zero;
             }
 
-            if(needChangeSesolution) {
+            if (needChangeSesolution) {
                 needChangeSesolution = false;
                 ResolutionChanging();
             }
@@ -440,10 +442,10 @@ namespace jarg
             EffectOmnilight.Parameters["shine"].SetValue(aaa);
 
             if (sec >= TimeSpan.FromSeconds(0.5)) {
-               sec = TimeSpan.Zero;
+                sec = TimeSpan.Zero;
 
-               currentFloor_.GenerateMinimap(GraphicsDevice, spriteBatch_, player_);
-                if(WindowGlobal.Visible) {
+                currentFloor_.GenerateMinimap(GraphicsDevice, spriteBatch_, player_);
+                if (WindowGlobal.Visible) {
                     currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
                 }
             }
@@ -467,13 +469,13 @@ namespace jarg
                 }
             }
             currentFloor_.CalcWision(player_,
-                                        (float)
-                                        Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y,
+                                     (float)
+                                     Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y,
                                                 ms_.X - player_.Position.X + camera_.X),
-                                        seeAngleDeg);
+                                     seeAngleDeg);
 
             var aa = currentFloor_.GetInSectorPosition(player_.GetPositionInBlocks());
-            player_.Update(gameTime, currentFloor_.GetSector((int)aa.X, (int)aa.Y), player_);
+            player_.Update(gameTime, currentFloor_.GetSector((int) aa.X, (int) aa.Y), player_);
             currentFloor_.KillFarSectors(player_, gameTime);
             bs_.Update(gameTime);
             currentFloor_.UpdateBlocks(gameTime, camera_);
@@ -485,31 +487,26 @@ namespace jarg
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
-        
-        Vector2 acW = new Vector2(0, -10);
-        Vector2 acS = new Vector2(0, 10); 
-        Vector2 acA = new Vector2(-10, 0);
-        Vector2 acD = new Vector2(10, 0);
-        private bool time_walks;
-        private void KeyboardUpdate(GameTime gameTime)
-        {
+
+        private Vector2 acW = new Vector2(0, -10);
+        private Vector2 acS = new Vector2(0, 10);
+        private Vector2 acA = new Vector2(-10, 0);
+        private Vector2 acD = new Vector2(10, 0);
+
+        private void KeyboardUpdate(GameTime gameTime) {
             lks_ = ks_;
             ks_ = Keyboard.GetState();
             if (!ws_.Keyboardhook) {
                 if (ks_[Keys.W] == KeyState.Down) {
-                    time_walks = true;
                     player_.Accelerate(acW);
                 }
                 if (ks_[Keys.S] == KeyState.Down) {
-                    time_walks = true;
                     player_.Accelerate(acS);
                 }
                 if (ks_[Keys.A] == KeyState.Down) {
-                    time_walks = true;
                     player_.Accelerate(acA);
                 }
                 if (ks_[Keys.D] == KeyState.Down) {
-                    time_walks = true;
                     player_.Accelerate(acD);
                 }
 
@@ -523,7 +520,7 @@ namespace jarg
 
                 if (ks_[Keys.C] == KeyState.Down && lks_[Keys.C] == KeyState.Up) {
                     WindowCaracter.Visible = !WindowCaracter.Visible;
-                    UpdateCaracterWindowItems(null,null);
+                    UpdateCaracterWindowItems(null, null);
                 }
 
                 if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
@@ -555,8 +552,7 @@ namespace jarg
                     }
                 }
 
-                if (ks_[Keys.F] == KeyState.Down && lks_[Keys.F] == KeyState.Up)
-                {
+                if (ks_[Keys.F] == KeyState.Down && lks_[Keys.F] == KeyState.Up) {
                     Flashlight = !Flashlight;
                 }
 
@@ -570,30 +566,26 @@ namespace jarg
                 }
             }
 
-            if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up)
-            {
-                if (!ws_.CloseTop())
-                {
+            if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up) {
+                if (!ws_.CloseTop()) {
                     WindowIngameMenu.Visible = true;
                 }
             }
 
             if (ks_[Keys.OemTilde] == KeyState.Down && lks_[Keys.OemTilde] == KeyState.Up) {
                 ConsoleWindow.Visible = !ConsoleWindow.Visible;
-                if (ConsoleWindow.Visible)
-                {
+                if (ConsoleWindow.Visible) {
                     ConsoleWindow.OnTop();
                 }
             }
 
-            if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up)
-            {
+            if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
                 Settings.DebugInfo = !Settings.DebugInfo;
             }
 
             if (ks_[Keys.F5] == KeyState.Down && lks_[Keys.F5] == KeyState.Up) {
-                var x = (int)player_.GetPositionInBlocks().X/16;
-                var y = (int)player_.GetPositionInBlocks().Y/16;
+                var x = (int) player_.GetPositionInBlocks().X/16;
+                var y = (int) player_.GetPositionInBlocks().Y/16;
                 for (int i = -12; i < 12; i++) {
                     for (int j = -12; j < 12; j++) {
                         currentFloor_.GetSector(i + x, j + y);
@@ -604,17 +596,15 @@ namespace jarg
                 currentFloor_.KillFarSectors(player_, gameTime, true);
             }
 
-            if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up)
-            {
+            if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up) {
                 Settings.DebugWire = !Settings.DebugWire;
             }
 
-            if (ks_[Keys.F3] == KeyState.Down && lks_[Keys.F3] == KeyState.Up)
-            {
-                if(drawAction_ == GameDraw) {
+            if (ks_[Keys.F3] == KeyState.Down && lks_[Keys.F3] == KeyState.Up) {
+                if (drawAction_ == GameDraw) {
                     drawAction_ = DrawDebugRenderTargets;
-                } else if (drawAction_ == DrawDebugRenderTargets)
-                {
+                }
+                else if (drawAction_ == DrawDebugRenderTargets) {
                     drawAction_ = GameDraw;
                 }
             }
@@ -625,15 +615,16 @@ namespace jarg
         private bool firstclick_;
         private bool doubleclick_;
         private bool rememberShoot_;
-        private void MouseUpdate(GameTime gameTime)
-        {
+
+        private void MouseUpdate(GameTime gameTime) {
             lms_ = ms_;
             ms_ = Mouse.GetState();
 
             doubleclicktimer_ += gameTime.ElapsedGameTime;
 
             doubleclick_ = false;
-            if(firstclick_ && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released && doubleclicktimer_.TotalMilliseconds < 300) {
+            if (firstclick_ && ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released &&
+                doubleclicktimer_.TotalMilliseconds < 300) {
                 doubleclick_ = true;
                 firstclick_ = false;
             }
@@ -660,25 +651,33 @@ namespace jarg
                 int nx = (ms_.X + (int) camera_.X)/32;
                 int ny = (ms_.Y + (int) camera_.Y)/32;
 
-                if (ms_.X + camera_.X < 0) nx--;
-                if (ms_.Y + camera_.Y < 0) ny--;
+                if (ms_.X + camera_.X < 0) {
+                    nx--;
+                }
+                if (ms_.Y + camera_.Y < 0) {
+                    ny--;
+                }
 
                 WindowIngameHint.Visible = false;
 
-                if (player_ != null && currentFloor_ != null && !currentFloor_.IsCreatureMeele((int) containerOn.X, (int) containerOn.Y, player_)) {
+                if (player_ != null && currentFloor_ != null &&
+                    !currentFloor_.IsCreatureMeele((int) containerOn_.X, (int) containerOn_.Y, player_)) {
                     WindowContainer.Visible = false;
                 }
 
                 if (currentFloor_ != null) {
                     var nxny = currentFloor_.GetBlock(nx, ny);
                     bool nothingUndermouse = true;
-                    if (nxny != null && nxny.Lightness == Color.White && !rememberShoot_) // currentFloor_.IsExplored(aa))
+                    if (nxny != null && nxny.Lightness == Color.White && !rememberShoot_)
+                        // currentFloor_.IsExplored(aa))
                     {
                         var a = currentFloor_.GetBlock(nx, ny);
                         if (a != null) {
                             var b = BlockDataBase.Data[a.Id];
                             string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
-                            if (Settings.DebugInfo) s += " id" + a.Id + " tex" + b.MTex;
+                            if (Settings.DebugInfo) {
+                                s += " id" + a.Id + " tex" + b.MTex;
+                            }
 
                             if (currentFloor_.IsCreatureMeele(nx, ny, player_)) {
                                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
@@ -693,7 +692,7 @@ namespace jarg
                                             WindowContainer.Visible = true;
                                             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
                                             UpdateContainerContainer(((StorageBlock) a).StoredItems);
-                                            containerOn = new Vector2(nx, ny);
+                                            containerOn_ = new Vector2(nx, ny);
                                             break;
                                         case SmartAction.ActionOpenClose:
                                             currentFloor_.OpenCloseDoor(nx, ny);
@@ -716,15 +715,18 @@ namespace jarg
                             }
                         }
                     }
-                    
-                    if((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot_) {
+
+                    if ((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot_) {
                         player_.TryShoot(bs_, inventory_, PlayerSeeAngle);
                         rememberShoot_ = true;
-                        time_walks = true;
                     }
                 }
             }
         }
+
+        protected Vector2 containerOn_
+        {
+            get; set; }
 
 
         private Action<GameTime> drawAction_ = x => { };
@@ -734,104 +736,100 @@ namespace jarg
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
-            if (Settings.DebugInfo)
-            {
+        protected override void Draw(GameTime gameTime) {
+            if (Settings.DebugInfo) {
                 sw_draw.Restart();
             }
 
-           // GraphicsDevice.Clear(Color.Black);
+            // GraphicsDevice.Clear(Color.Black);
 
-                drawAction_(gameTime);
+            drawAction_(gameTime);
 
-                base.Draw(gameTime);
+            base.Draw(gameTime);
 
-                ws_.Draw(spriteBatch_, lig1, gameTime);
+            ws_.Draw(spriteBatch_, lig1, gameTime);
 
-                lineBatch_.Draw();
-                lineBatch_.Clear();
+            lineBatch_.Draw();
+            lineBatch_.Clear();
 
-                if (Settings.DebugInfo) {
-                    sw_draw.Stop();
+            if (Settings.DebugInfo) {
+                sw_draw.Stop();
+            }
+
+            if (Settings.DebugInfo) {
+                DebugInfoDraw(gameTime);
+            }
+
+            FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int) Settings.Resolution.X,
+                                  (int) Settings.Resolution.Y, sw_draw, sw_update);
+            if (levelWorker_ != null) {
+                spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+                if (levelWorker_.Generating) {
+                    spriteBatch_.Draw(gear, new Vector2(10, 10), lwstatus_color);
                 }
-
-                if (Settings.DebugInfo) {
-                    DebugInfoDraw(gameTime);
+                if (levelWorker_.Loading) {
+                    spriteBatch_.Draw(arup, new Vector2(42, 10), lwstatus_color);
                 }
-
-                FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int) Settings.Resolution.X,
-                                      (int) Settings.Resolution.Y, sw_draw, sw_update);
-                if (levelWorker_ != null) {
-                    spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-                    if (levelWorker_.Generating) {
-                        spriteBatch_.Draw(gear, new Vector2(10, 10), lwstatus_color);
-                    }
-                    if (levelWorker_.Loading) {
-                        spriteBatch_.Draw(arup, new Vector2(42, 10), lwstatus_color);
-                    }
-                    if (levelWorker_.Saving) {
-                        spriteBatch_.Draw(ardown, new Vector2(74, 10), lwstatus_color);
-                    }
-                    spriteBatch_.End();
+                if (levelWorker_.Saving) {
+                    spriteBatch_.Draw(ardown, new Vector2(74, 10), lwstatus_color);
                 }
+                spriteBatch_.End();
+            }
         }
 
         private bool Flashlight = true;
         private RenderTarget2D rt2d;
+
         private void GameDraw(GameTime gameTime) {
             LightCollection.Clear();
             LightCollection.AddRange(currentFloor_.GetLights());
             if (Flashlight) {
                 var hpos = new Vector3(player_.Position.X, player_.Position.Y, 0.5f);
                 Ray ray = new Ray(hpos, Vector3.Normalize(new Vector3(ms_.X + camera_.X, ms_.Y + camera_.Y, 1) - hpos));
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 30 * 3,
-                    Position = ray.Position + ray.Direction * 40,
-                    Power = 10
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 50 * 3,
-                    Position = ray.Position + ray.Direction * 90,
-                    Power = 50
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 80 * 3,
-                    Position = ray.Position + ray.Direction * 160,
-                    Power = 50
-                });
-                LightCollection.Add(new Light
-                {
-                    Color = Color.White,
-                    LightRadius = 90 * 3,
-                    Position = ray.Position + ray.Direction * 280,
-                    Power = 150
-                });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 30*3,
+                                                  Position = ray.Position + ray.Direction*40,
+                                                  Power = 10
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 50*3,
+                                                  Position = ray.Position + ray.Direction*90,
+                                                  Power = 50
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 80*3,
+                                                  Position = ray.Position + ray.Direction*160,
+                                                  Power = 50
+                                              });
+                LightCollection.Add(new Light {
+                                                  Color = Color.White,
+                                                  LightRadius = 90*3,
+                                                  Position = ray.Position + ray.Direction*280,
+                                                  Power = 150
+                                              });
             }
 
 
-            EffectOmnilight.Parameters["cpos"].SetValue(new[] { player_.Position.X - camera_.X, player_.Position.Y - camera_.Y });
+            EffectOmnilight.Parameters["cpos"].SetValue(new[]
+                                                        {player_.Position.X - camera_.X, player_.Position.Y - camera_.Y});
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             GraphicsDevice.Clear(Color.Black);
             //color maps
             spriteBatch_.Begin();
-                currentFloor_.DrawFloors(gameTime, camera_);
-                currentFloor_.DrawDecals(gameTime, camera_);
+            currentFloor_.DrawFloors(gameTime, camera_);
+            currentFloor_.DrawDecals(gameTime, camera_);
             spriteBatch_.End();
             currentFloor_.ShadowRender();
             spriteBatch_.Begin();
-                currentFloor_.DrawBlocks(gameTime, camera_, player_);
-                currentFloor_.DrawCreatures(gameTime, camera_);
-                player_.Draw(gameTime, camera_);
-                bs_.Draw(gameTime, camera_);
-                ps_.Draw(gameTime, camera_);
+            currentFloor_.DrawBlocks(gameTime, camera_, player_);
+            currentFloor_.DrawCreatures(gameTime, camera_);
+            player_.Draw(gameTime, camera_);
+            bs_.Draw(gameTime, camera_);
+            ps_.Draw(gameTime, camera_);
             spriteBatch_.End();
 
 
@@ -866,59 +864,58 @@ namespace jarg
             else {
                 GraphicsDevice.SetRenderTarget(null);
                 spriteBatch_.Begin();
-                    spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
+                spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
                 spriteBatch_.End();
             }
         }
 
         private Texture2D RenderedFlashlight;
+
         private Texture2D GetRenderedFlashlight() {
             return null;
         }
 
-        public void DrawDebugRenderTargets(GameTime time)
-        {
+        public void DrawDebugRenderTargets(GameTime time) {
             GameDraw(time);
             // Draw some debug textures
             GraphicsDevice.Clear(Color.DarkGreen);
             spriteBatch_.Begin();
 
-            Rectangle size = new Rectangle(0, 0, colorMapRenderTarget_.Width / 2, colorMapRenderTarget_.Height / 2);
+            Rectangle size = new Rectangle(0, 0, colorMapRenderTarget_.Width/2, colorMapRenderTarget_.Height/2);
             var position = new Vector2(0, GraphicsDevice.Viewport.Height - size.Height);
             spriteBatch_.Draw(
                 colorMapRenderTarget_,
-                new Rectangle(0,0,
-                    size.Width,
-                    size.Height),
+                new Rectangle(0, 0,
+                              size.Width,
+                              size.Height),
                 Color.White);
 
             spriteBatch_.Draw(
                 depthMapRenderTarget_,
-                new Rectangle( size.Width, 0,
-                    size.Width,
-                    size.Height),
+                new Rectangle(size.Width, 0,
+                              size.Width,
+                              size.Height),
                 Color.White);
 
             spriteBatch_.Draw(
                 normalMapRenderTarget_,
                 new Rectangle(size.Width, size.Height,
-                    size.Width,
-                    size.Height),
+                              size.Width,
+                              size.Height),
                 Color.White);
 
             spriteBatch_.Draw(
                 shadowMapRenderTarget_,
                 new Rectangle(0, size.Height,
-                    size.Width,
-                    size.Height),
+                              size.Width,
+                              size.Height),
                 Color.White);
 
             spriteBatch_.End();
         }
 
-        private void DrawCombinedMaps()
-        {
-            lightEffect2_.Parameters["ambient"].SetValue(7/4-GlobalWorldLogic.GetCurrentSlen()/3 + 0.2f);
+        private void DrawCombinedMaps() {
+            lightEffect2_.Parameters["ambient"].SetValue(7/4 - GlobalWorldLogic.GetCurrentSlen()/3 + 0.2f);
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
             // This variable is used to boost to output of the light sources when they are combined
@@ -928,9 +925,8 @@ namespace jarg
             lightEffect2_.Parameters["ShadingMap"].SetValue(shadowMapTexture_);
             lightEffect1_.Parameters["DepthMap"].SetValue(depthMapRenderTarget_);
 
-            spriteBatch_.Begin(SpriteSortMode.Immediate,BlendState.AlphaBlend);
-            foreach (var pass in lightEffect2_.CurrentTechnique.Passes)
-            {
+            spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            foreach (var pass in lightEffect2_.CurrentTechnique.Passes) {
                 pass.Apply();
                 spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
             }
@@ -938,19 +934,18 @@ namespace jarg
         }
 
         private List<Light> LightCollection;
-        private Texture2D GenerateShadowMap()
-        {
+
+        private Texture2D GenerateShadowMap() {
             //GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
             GraphicsDevice.Clear(Color.Black);
-            
+
             GraphicsDevice.BlendState = BlendState.Additive;
             //GraphicsDevice.BlendState = new BlendState{AlphaSourceBlend = Blend.Zero, AlphaDestinationBlend = Blend.One};
 
             // For every light inside the current scene, you can optimize this
             // list to only draw the lights that are visible a.t.m.
-            foreach (var light in LightCollection)
-            {
+            foreach (var light in LightCollection) {
                 lightEffect1_.CurrentTechnique = lightEffect1_.Techniques["DeferredPointLight"];
                 lightEffect1_.Parameters["lightStrength"].SetValue(light.Power);
                 lightEffect1_.Parameters["lightPosition"].SetValue(light.GetWorldPosition(camera_));
@@ -962,10 +957,9 @@ namespace jarg
                 lightEffect1_.Parameters["NormalMap"].SetValue(normalMapRenderTarget_);
                 lightEffect1_.Parameters["DepthMap"].SetValue(depthMapRenderTarget_);
 
-                foreach (var pass in lightEffect1_.CurrentTechnique.Passes)
-                {
+                foreach (var pass in lightEffect1_.CurrentTechnique.Passes) {
                     pass.Apply();
-                    
+
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices_, 0, 2);
                 }
             }
@@ -973,22 +967,29 @@ namespace jarg
             return shadowMapRenderTarget_;
         }
 
-        private void DebugInfoDraw(GameTime gameTime)
-        {
+        private void DebugInfoDraw(GameTime gameTime) {
             string ss =
-                string.Format("SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
-                              PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
-                              currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated, currentFloor_.GetShadowrenderCount() / 3, 7/4 - GlobalWorldLogic.GetCurrentSlen() / 3, GlobalWorldLogic.dayPart_, ws_.Mopusehook, ws_.Keyboardhook);
+                string.Format(
+                    "SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
+                    PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
+                    currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated,
+                    currentFloor_.GetShadowrenderCount()/3, 7/4 - GlobalWorldLogic.GetCurrentSlen()/3,
+                    GlobalWorldLogic.dayPart_, ws_.Mopusehook, ws_.Keyboardhook);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 
-            int nx = (int)((ms_.X + camera_.X) / 32.0);
-            int ny = (int)((ms_.Y + camera_.Y) / 32.0);
+            int nx = (int) ((ms_.X + camera_.X)/32.0);
+            int ny = (int) ((ms_.Y + camera_.Y)/32.0);
 
-            if (ms_.X + camera_.X < 0) nx--;
-            if (ms_.Y + camera_.Y < 0) ny--;
+            if (ms_.X + camera_.X < 0) {
+                nx--;
+            }
+            if (ms_.Y + camera_.Y < 0) {
+                ny--;
+            }
 
-            spriteBatch_.DrawString(font1_,string.Format("       {0} {1}", nx, ny), new Vector2(ms_.X, ms_.Y), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("       {0} {1}", nx, ny), new Vector2(ms_.X, ms_.Y),
+                                    Color.White);
 
             spriteBatch_.End();
         }

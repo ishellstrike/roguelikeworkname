@@ -257,14 +257,14 @@ namespace rglikeworknamelib.Dungeon
             return new TimeSpan();
         }
 
-        public static string GetTimeString(DateTime t) {
+        public static string GetTimeString(DateTime time) {
             if (Settings.IsAMDM)
             {
-                if (t.Hour == 0) return string.Format("PM {0}:{1:00}:{2:00}", 12, t.Minute, t.Second);
-                return t.Hour <= 12 ? string.Format("AM {0}:{1:00}:{2:00}", t.Hour, t.Minute, t.Second) : string.Format("PM {0}:{1:00}:{2:00}", t.Hour - 12, t.Minute, t.Second);
+                if (time.Hour == 0) return string.Format("PM {0}:{1:00}:{2:00}", 12, time.Minute, time.Second);
+                return time.Hour <= 12 ? string.Format("AM {0}:{1:00}:{2:00}", time.Hour, time.Minute, time.Second) : string.Format("PM {0}:{1:00}:{2:00}", time.Hour - 12, time.Minute, time.Second);
             }
             else {
-                return string.Format("{0}:{1:00}:{2:00}", t.Hour, t.Minute, t.Second);
+                return string.Format("{0}:{1:00}:{2:00}", time.Hour, time.Minute, time.Second);
             }
         }
     }

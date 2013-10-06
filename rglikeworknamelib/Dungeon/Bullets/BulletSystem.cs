@@ -10,16 +10,15 @@ using rglikeworknamelib.Dungeon.Particles;
 namespace rglikeworknamelib.Dungeon.Bullets {
     public class BulletSystem {
         private readonly Collection<Bullet> bullet_;
-        private readonly Collection<Texture2D> _bulletAtlas;
-        private readonly SpriteBatch _spriteBatch;
-        private ParticleSystem p;
+        private readonly Collection<Texture2D> bulletAtlas_;
+        private readonly SpriteBatch spriteBatch_;
         private GameLevel level;
         private SpriteFont font;
         private LineBatch lb ;
 
         public BulletSystem(SpriteBatch spr, Collection<Texture2D> atlas, GameLevel gl, SpriteFont fnt, LineBatch l) {
-            _bulletAtlas = atlas;
-            _spriteBatch = spr;
+            bulletAtlas_ = atlas;
+            spriteBatch_ = spr;
             bullet_ = new Collection<Bullet>();
             level = gl;
             font = fnt;
@@ -82,16 +81,16 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         public void Draw(GameTime gameTime, Vector2 cam) {
             bool b = Settings.DebugInfo;
             foreach (Bullet bullet in bullet_) {
-                _spriteBatch.Draw(_bulletAtlas[bullet.Mtex],
+                spriteBatch_.Draw(bulletAtlas_[bullet.Mtex],
                                   bullet.Pos - cam, null,
                                   Color.White, 0,
-                                  new Vector2(_bulletAtlas[bullet.Mtex].Width / 2,
-                                              _bulletAtlas[bullet.Mtex].Height / 2), 1, SpriteEffects.None, 0);
+                                  new Vector2(bulletAtlas_[bullet.Mtex].Width / 2,
+                                              bulletAtlas_[bullet.Mtex].Height / 2), 1, SpriteEffects.None, 0);
 
                  lb.AddLine(bullet.Start-cam, bullet.Pos-cam, Color.Yellow, 2);
                 
                 if (b) {
-                    _spriteBatch.DrawString(font, bullet.Pos.ToString(), bullet.Pos - cam, Color.White);
+                    spriteBatch_.DrawString(font, bullet.Pos.ToString(), bullet.Pos - cam, Color.White);
                 }
             }
         }

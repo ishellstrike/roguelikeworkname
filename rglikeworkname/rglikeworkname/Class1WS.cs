@@ -15,10 +15,8 @@ using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
 using IGameComponent = rglikeworknamelib.Window.IGameComponent;
 
-namespace jarg
-{
-    public partial class Game1
-    {
+namespace jarg {
+    public partial class Game1 {
         #region Windows Vars
 
         private Window WindowStats;
@@ -43,7 +41,12 @@ namespace jarg
         private Label LabelLight;
         private Button ButtonLightOn, ButtonLightOff;
         private Label LabelResolution;
-        private Button ButtonResolution800600, ButtonResolution1024768, ButtonResolution1280800, ButtonResolution19201024;
+
+        private Button ButtonResolution800600,
+                       ButtonResolution1024768,
+                       ButtonResolution1280800,
+                       ButtonResolution19201024;
+
         private Label LabelOnlineRadio;
         private Button ButtonRadioGB, ButtonRadioOff;
 
@@ -68,9 +71,6 @@ namespace jarg
         private Button ButtonCaracterCancel;
         private ListContainer PerksContainer;
         private List<CheckBox> CheckBoxesPerks;
-        
-
-        private Window WindowPickup;
 
         private Window WindowInventory;
         private ListContainer ContainerInventoryItems;
@@ -111,7 +111,7 @@ namespace jarg
         private DoubleLabel LabelCaracterHp;
         private List<Label> LabelsAbilities;
         private ListContainer EffectsContainer;
-        private List<LabelFixed> LabelsEffect; 
+        private List<LabelFixed> LabelsEffect;
 
         private Window InfoWindow;
         private DoubleLabel InfoWindowLabel;
@@ -124,209 +124,285 @@ namespace jarg
 
         private Window WindowRadio;
         private RunningLabel LabelRadio;
+
         #endregion
 
-        private void CreateWindows(Texture2D wp, SpriteFont sf, WindowSystem ws)
-        {
+        private void CreateWindows(WindowSystem ws) {
             Random rnd = new Random();
 
-            WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, wp, sf, ws) { Visible = false };
-            StatsHeat = new ProgressBar(new Rectangle(50, 50, 100, 20), "", wp, sf, WindowStats);
-            StatsJajda = new ProgressBar(new Rectangle(50, 50 + 30, 100, 20), "", wp, sf, WindowStats);
-            StatsHunger = new ProgressBar(new Rectangle(50, 50 + 30 * 2, 100, 20), "", wp, sf, WindowStats);
-            CloseAllTestButton = new Button(new Vector2(10, 100), "Close all", wp, sf, WindowStats);
-            CloseAllTestButton.onPressed += CloseAllTestButton_onPressed;
-            contaiter1 = new ListContainer(new Rectangle(200, 200, 100, 200), wp, sf, WindowStats);
-            for (int i = 1; i < 20; i++)
-                contaiter1.AddItem(new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), wp, sf, WindowStats));
+            WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, ws) {Visible = false};
+            StatsHeat = new ProgressBar(new Rectangle(50, 50, 100, 20), "", WindowStats);
+            StatsJajda = new ProgressBar(new Rectangle(50, 50 + 30, 100, 20), "", WindowStats);
+            StatsHunger = new ProgressBar(new Rectangle(50, 50 + 30*2, 100, 20), "", WindowStats);
+            CloseAllTestButton = new Button(new Vector2(10, 100), "Close all", WindowStats);
+            CloseAllTestButton.OnPressed += CloseAllTestButton_onPressed;
+            contaiter1 = new ListContainer(new Rectangle(200, 200, 100, 200), WindowStats);
+            for (int i = 1; i < 20; i++) {
+                contaiter1.AddItem(new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), WindowStats));
+            }
 
-            WindowMinimap = new Window(new Rectangle((int)Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40), "minimap", false, wp, sf, ws) { NoBorder = true, Moveable = false};
-            ImageMinimap = new Image(new Vector2(10, 10), new Texture2D(GraphicsDevice, 88, 88), Color.White, WindowMinimap);
+            WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40),
+                                       "minimap", false, ws) {NoBorder = true, Moveable = false};
+            ImageMinimap = new Image(new Vector2(10, 10), new Texture2D(GraphicsDevice, 88, 88), Color.White,
+                                     WindowMinimap);
 
-            WindowUIButtons = new Window(new Rectangle((int)Settings.Resolution.X-32,(int)Settings.Resolution.Y/2-32, 32, 32*3+20), "", false, wp, sf, ws) {NoBorder = true, Moveable = false};
-            IBBag = new ImageButton(new Vector2(0,0), "", wp, bag, sf, WindowUIButtons);
-            IBBag.onPressed += IBBag_onPressed;
-            IBCaracter = new ImageButton(new Vector2(0,32), "", wp, caracter, sf, WindowUIButtons);
-            IBCaracter.onPressed += IBCaracter_onPressed;
-            IBInv = new ImageButton(new Vector2(0,64), "", wp, map, sf, WindowUIButtons);
-            IBInv.onPressed += IBInv_onPressed;
+            WindowUIButtons =
+                new Window(
+                    new Rectangle((int) Settings.Resolution.X - 32, (int) Settings.Resolution.Y/2 - 32, 32, 32*3 + 20),
+                    "", false, ws) {NoBorder = true, Moveable = false};
+            IBBag = new ImageButton(new Vector2(0, 0), "", bag, WindowUIButtons);
+            IBBag.OnPressed += IBBag_onPressed;
+            IBCaracter = new ImageButton(new Vector2(0, 32), "", caracter, WindowUIButtons);
+            IBCaracter.OnPressed += IBCaracter_onPressed;
+            IBInv = new ImageButton(new Vector2(0, 64), "", map, WindowUIButtons);
+            IBInv.OnPressed += IBInv_onPressed;
 
             WindowSettings =
                 new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y),
-                    "Settings", true, wp, sf, ws) { Visible = false, Moveable = false };
-            LabelHudColor = new Label(new Vector2(10, 10), "HUD color", wp, sf, WindowSettings);
-            ButtonHudColor1 = new Button(new Vector2(10 + 50 + 40 * 1, 10), "1", wp, sf, WindowSettings);
-            ButtonHudColor1.onPressed += ButtonHudColor1_onPressed;
-            ButtonHudColor2 = new Button(new Vector2(10 + 50 + 40 * 2, 10), "2", wp, sf, WindowSettings);
-            ButtonHudColor2.onPressed += ButtonHudColor2_onPressed;
-            ButtonHudColor3 = new Button(new Vector2(10 + 50 + 40 * 3, 10), "3", wp, sf, WindowSettings);
-            ButtonHudColor3.onPressed += ButtonHudColor3_onPressed;
-            ButtonHudColor4 = new Button(new Vector2(10 + 50 + 40 * 4, 10), "4", wp, sf, WindowSettings);
-            ButtonHudColor4.onPressed += ButtonHudColor4_onPressed;
-            ButtonHudColor5 = new Button(new Vector2(10 + 50 + 40 * 5, 10), "5", wp, sf, WindowSettings);
-            ButtonHudColor5.onPressed += ButtonHudColor5_onPressed;
-            LabelHudColor = new Label(new Vector2(10, 10 + 40 * 1), "Time format", wp, sf, WindowSettings);
-            Button12h = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 1), "12h", wp, sf, WindowSettings);
-            Button12h.onPressed += Button12h_onPressed;
-            Button24h = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 1), "24h", wp, sf, WindowSettings);
-            Button24h.onPressed += Button24h_onPressed;
-            LabelFullscreen = new Label(new Vector2(10, 10 + 40 * 2), "Fullscreen", wp, sf, WindowSettings);
-            ButtonFullscreenOn = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 2), "On", wp, sf, WindowSettings);
-            ButtonFullscreenOn.onPressed += ButtonFullscreenOn_onPressed;
-            ButtonFullscreenOff = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 2), "Off", wp, sf, WindowSettings);
-            ButtonFullscreenOff.onPressed += ButtonFullscreenOff_onPressed;
-            LabelFramelimit = new Label(new Vector2(10, 10 + 40 * 3), "Framelimit", wp, sf, WindowSettings);
-            ButtonFramelimitOn = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 3), "On", wp, sf, WindowSettings);
-            ButtonFramelimitOn.onPressed += ButtonFramelimitOn_onPressed;
-            ButtonFramelimitOff = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 3), "Off", wp, sf, WindowSettings);
-            ButtonFramelimitOff.onPressed += ButtonFramelimitOff_onPressed;
-            LabelLight = new Label(new Vector2(10, 10 + 40 * 4), "Enable lighting", wp, sf, WindowSettings);
-            ButtonLightOn = new Button(new Vector2(10 + 50 + 40 * 2, 10 + 40 * 4), "On", wp, sf, WindowSettings);
-            ButtonLightOn.onPressed += ButtonLightOn_onPressed;
-            ButtonLightOff = new Button(new Vector2(10 + 50 + 40 * 3, 10 + 40 * 4), "Off", wp, sf, WindowSettings);
-            ButtonLightOff.onPressed += ButtonLightOff_onPressed;
-            LabelResolution = new Label(new Vector2(10, 10 + 40 * 5), "Resolution", wp, sf, WindowSettings);
-            ButtonResolution800600 = new Button(new Vector2(10 + 50 + 95 * 1, 10 + 40 * 5), " 800x600 ", wp, sf, WindowSettings);
-            ButtonResolution800600.onPressed += ButtonResolution800600_onPressed;
-            ButtonResolution1024768 = new Button(new Vector2(10 + 50 + 95 * 2, 10 + 40 * 5), "1024x768 ", wp, sf, WindowSettings);
-            ButtonResolution1024768.onPressed += ButtonResolution1024768_onPressed;
-            ButtonResolution1280800 = new Button(new Vector2(10 + 50 + 95 * 3, 10 + 40 * 5), "1280x800 ", wp, sf, WindowSettings);
-            ButtonResolution1280800.onPressed += ButtonResolution1280800_onPressed;
-            ButtonResolution19201024 = new Button(new Vector2(10 + 50 + 95 * 4, 10 + 40 * 5), "1920x1024", wp, sf, WindowSettings);
-            ButtonResolution19201024.onPressed += ButtonResolution19201024_onPressed;
-            LabelOnlineRadio = new Label(new Vector2(10, 10 + 40*6), "Resolution", wp, sf, WindowSettings);
-            ButtonRadioGB = new Button(new Vector2(10 + 50 + 95 * 1, 10 + 40 * 6), "GhostBox", wp, sf, WindowSettings);
-            ButtonRadioGB.onPressed += ButtonRadioGB_onPressed;
-            ButtonRadioOff = new Button(new Vector2(10 + 50 + 95 * 2, 10 + 40 * 6), "  Off   ", wp, sf, WindowSettings);
-            ButtonRadioOff.onPressed += new EventHandler(ButtonRadioOff_onPressed);
+                           "Settings", true, ws) {Visible = false, Moveable = false};
+            LabelHudColor = new Label(new Vector2(10, 10), "HUD color", WindowSettings);
+            ButtonHudColor1 = new Button(new Vector2(10 + 50 + 40*1, 10), "1", WindowSettings);
+            ButtonHudColor1.OnPressed += ButtonHudColor1_onPressed;
+            ButtonHudColor2 = new Button(new Vector2(10 + 50 + 40*2, 10), "2", WindowSettings);
+            ButtonHudColor2.OnPressed += ButtonHudColor2_onPressed;
+            ButtonHudColor3 = new Button(new Vector2(10 + 50 + 40*3, 10), "3", WindowSettings);
+            ButtonHudColor3.OnPressed += ButtonHudColor3_onPressed;
+            ButtonHudColor4 = new Button(new Vector2(10 + 50 + 40*4, 10), "4", WindowSettings);
+            ButtonHudColor4.OnPressed += ButtonHudColor4_onPressed;
+            ButtonHudColor5 = new Button(new Vector2(10 + 50 + 40*5, 10), "5", WindowSettings);
+            ButtonHudColor5.OnPressed += ButtonHudColor5_onPressed;
+            LabelHudColor = new Label(new Vector2(10, 10 + 40*1), "Time format", WindowSettings);
+            Button12h = new Button(new Vector2(10 + 50 + 40*2, 10 + 40*1), "12h", WindowSettings);
+            Button12h.OnPressed += Button12h_onPressed;
+            Button24h = new Button(new Vector2(10 + 50 + 40*3, 10 + 40*1), "24h", WindowSettings);
+            Button24h.OnPressed += Button24h_onPressed;
+            LabelFullscreen = new Label(new Vector2(10, 10 + 40*2), "Fullscreen", WindowSettings);
+            ButtonFullscreenOn = new Button(new Vector2(10 + 50 + 40*2, 10 + 40*2), "On", WindowSettings);
+            ButtonFullscreenOn.OnPressed += ButtonFullscreenOn_onPressed;
+            ButtonFullscreenOff = new Button(new Vector2(10 + 50 + 40*3, 10 + 40*2), "Off", WindowSettings);
+            ButtonFullscreenOff.OnPressed += ButtonFullscreenOff_onPressed;
+            LabelFramelimit = new Label(new Vector2(10, 10 + 40*3), "Framelimit", WindowSettings);
+            ButtonFramelimitOn = new Button(new Vector2(10 + 50 + 40*2, 10 + 40*3), "On", WindowSettings);
+            ButtonFramelimitOn.OnPressed += ButtonFramelimitOn_onPressed;
+            ButtonFramelimitOff = new Button(new Vector2(10 + 50 + 40*3, 10 + 40*3), "Off", WindowSettings);
+            ButtonFramelimitOff.OnPressed += ButtonFramelimitOff_onPressed;
+            LabelLight = new Label(new Vector2(10, 10 + 40*4), "Enable lighting", WindowSettings);
+            ButtonLightOn = new Button(new Vector2(10 + 50 + 40*2, 10 + 40*4), "On", WindowSettings);
+            ButtonLightOn.OnPressed += ButtonLightOn_onPressed;
+            ButtonLightOff = new Button(new Vector2(10 + 50 + 40*3, 10 + 40*4), "Off", WindowSettings);
+            ButtonLightOff.OnPressed += ButtonLightOff_onPressed;
+            LabelResolution = new Label(new Vector2(10, 10 + 40*5), "Resolution", WindowSettings);
+            ButtonResolution800600 = new Button(new Vector2(10 + 50 + 95*1, 10 + 40*5), " 800x600 ",
+                                                WindowSettings);
+            ButtonResolution800600.OnPressed += ButtonResolution800600_onPressed;
+            ButtonResolution1024768 = new Button(new Vector2(10 + 50 + 95*2, 10 + 40*5), "1024x768 ",
+                                                 WindowSettings);
+            ButtonResolution1024768.OnPressed += ButtonResolution1024768_onPressed;
+            ButtonResolution1280800 = new Button(new Vector2(10 + 50 + 95*3, 10 + 40*5), "1280x800 ",
+                                                 WindowSettings);
+            ButtonResolution1280800.OnPressed += ButtonResolution1280800_onPressed;
+            ButtonResolution19201024 = new Button(new Vector2(10 + 50 + 95*4, 10 + 40*5), "1920x1024",
+                                                  WindowSettings);
+            ButtonResolution19201024.OnPressed += ButtonResolution19201024_onPressed;
+            LabelOnlineRadio = new Label(new Vector2(10, 10 + 40*6), "Resolution", WindowSettings);
+            ButtonRadioGB = new Button(new Vector2(10 + 50 + 95*1, 10 + 40*6), "GhostBox", WindowSettings);
+            ButtonRadioGB.OnPressed += ButtonRadioGB_onPressed;
+            ButtonRadioOff = new Button(new Vector2(10 + 50 + 95*2, 10 + 40*6), "  Off   ", WindowSettings);
+            ButtonRadioOff.OnPressed += new EventHandler(ButtonRadioOff_onPressed);
 
-            WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, wp, sf, ws) { Visible = false };
-            ButtonIngameMenuSettings = new Button(new Vector2(20, 100), "Settings", wp, sf, WindowIngameMenu);
-            ButtonIngameMenuSettings.onPressed += ButtonIngameMenuSettings_onPressed;
-            ButtonIngameExit = new Button(new Vector2(20, 100 + 30 * 3), "Exit game", wp, sf, WindowIngameMenu);
-            ButtonIngameExit.onPressed += ButtonIngameExit_onPressed;
+            WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, ws) {Visible = false};
+            ButtonIngameMenuSettings = new Button(new Vector2(20, 100), "Settings", WindowIngameMenu);
+            ButtonIngameMenuSettings.OnPressed += ButtonIngameMenuSettings_onPressed;
+            ButtonIngameExit = new Button(new Vector2(20, 100 + 30*3), "Exit game", WindowIngameMenu);
+            ButtonIngameExit.OnPressed += ButtonIngameExit_onPressed;
 
             WindowMainMenu = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y), "MAIN MENU",
-                                        false, wp, sf, ws) { NoBorder = true, Moveable = false };
-            LabelMainMenu = new Label(new Vector2(10, 10), @"     __                      
+                                        false, ws) {NoBorder = true, Moveable = false};
+            LabelMainMenu = new Label(new Vector2(10, 10),
+                                      @"     __                      
     |__|____ _______  ____  
     |  \__  \\_  __ \/ ___\ 
     |  |/ __ \|  | \/ /_/  >
 /\__|  (____  /__|  \___  / 
-\______|    \/     /_____/", wp, sf, WindowMainMenu);
-            labelMainVer_ = new Label(new Vector2(10, LabelMainMenu.Height + 10), Version.GetShort(), wp, sf, Color.Gray, WindowMainMenu);
+\______|    \/     /_____/"
+                                      , WindowMainMenu);
+            labelMainVer_ = new Label(new Vector2(10, LabelMainMenu.Height + 10), Version.GetShort(), Color.Gray,
+                                      WindowMainMenu);
             WindowMainMenu.CenterComponentHor(LabelMainMenu);
             WindowMainMenu.CenterComponentHor(labelMainVer_);
-            ButtonNewGame = new Button(new Vector2(10, 120 + 40 * 1), "New game", wp, sf, WindowMainMenu);
-            ButtonNewGame.onPressed += ButtonNewGame_onPressed;
+            ButtonNewGame = new Button(new Vector2(10, 120 + 40*1), "New game", WindowMainMenu);
+            ButtonNewGame.OnPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
 
-            ButtonSettings = new Button(new Vector2(10, 100 + 40 * 5), "Settings", wp, sf, WindowMainMenu);
+            ButtonSettings = new Button(new Vector2(10, 100 + 40*5), "Settings", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ButtonSettings);
-            ButtonSettings.onPressed += ButtonIngameMenuSettings_onPressed;
-            RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y / 2 - 50), "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.", 50, wp, sf, WindowMainMenu);
+            ButtonSettings.OnPressed += ButtonIngameMenuSettings_onPressed;
+            RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y/2 - 50),
+                                           "Jarg now in early development. It's tottaly free and opensource. Please send your suggestions to ishellstrike@gmail.com or github.com/ishellstrike/roguelikeworkname/issues.",
+                                           50, WindowMainMenu);
             WindowMainMenu.CenterComponentHor(RunningMotd);
-            LabelControls = new Label(new Vector2(10, Settings.Resolution.Y / 2 + 10), "I-inventory C-caracter page L-event log M-map WASD-moving LMB-shooting F1-debug info" + Environment.NewLine +
-                                                                                     "O-statistic P-achievements", wp, sf, WindowMainMenu);
+            LabelControls = new Label(new Vector2(10, Settings.Resolution.Y/2 + 10),
+                                      "I-inventory C-caracter page L-event log M-map WASD-moving LMB-shooting F1-debug info" +
+                                      Environment.NewLine +
+                                      "O-statistic P-achievements", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(LabelControls);
-            ButtonOpenGit = new Button(new Vector2(10, Settings.Resolution.Y / 2 - 20), "Open in browser", wp, sf, WindowMainMenu);
-            ButtonOpenGit.onPressed += ButtonOpenGit_onPressed;
+            ButtonOpenGit = new Button(new Vector2(10, Settings.Resolution.Y/2 - 20), "Open in browser",
+                                       WindowMainMenu);
+            ButtonOpenGit.OnPressed += ButtonOpenGit_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonOpenGit);
 
-            WindowCaracterCration = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y), "CARACTER CREATION",
-                                        false, wp, sf, ws) { NoBorder = true, Moveable = false, Visible = false };
-            ButtonCaracterConfirm = new Button(new Vector2(Settings.Resolution.X / 2 + Settings.Resolution.X / 4, Settings.Resolution.Y / 5 * 4), "Continue", wp, sf, WindowCaracterCration);
-            ButtonCaracterConfirm.onPressed += ButtonCaracterConfirm_onPressed;
-            ButtonCaracterCancel = new Button(new Vector2(Settings.Resolution.X / 2 - Settings.Resolution.X / 4, Settings.Resolution.Y / 5 * 4), "Cancel", wp, sf, WindowCaracterCration);
-            ButtonCaracterCancel.onPressed += ButtonCaracterCancel_onPressed;
-            PerksContainer = new ListContainer(new Rectangle(40, 40, 250, (int)(Settings.Resolution.Y / 3 * 2)), wp, sf, WindowCaracterCration);
+            WindowCaracterCration = new Window(new Vector2(Settings.Resolution.X, Settings.Resolution.Y),
+                                               "CARACTER CREATION",
+                                               false, ws) {NoBorder = true, Moveable = false, Visible = false};
+            ButtonCaracterConfirm =
+                new Button(new Vector2(Settings.Resolution.X/2 + Settings.Resolution.X/4, Settings.Resolution.Y/5*4),
+                           "Continue", WindowCaracterCration);
+            ButtonCaracterConfirm.OnPressed += ButtonCaracterConfirm_onPressed;
+            ButtonCaracterCancel =
+                new Button(new Vector2(Settings.Resolution.X/2 - Settings.Resolution.X/4, Settings.Resolution.Y/5*4),
+                           "Cancel", WindowCaracterCration);
+            ButtonCaracterCancel.OnPressed += ButtonCaracterCancel_onPressed;
+            PerksContainer = new ListContainer(new Rectangle(40, 40, 250, (int) (Settings.Resolution.Y/3*2)),
+                                               WindowCaracterCration);
             CheckBoxesPerks = new List<CheckBox>();
             for (int i = 0; i < PerkDataBase.Perks.Count; i++) {
                 var keyValuePair = PerkDataBase.Perks.ElementAt(i);
                 if (keyValuePair.Value.Initial) {
-                    var t = new CheckBox(Vector2.Zero, keyValuePair.Value.Name, wp, sf, PerksContainer) { Cheked = player_.Perks.IsSelected(keyValuePair.Key), Tag = keyValuePair.Key };
+                    var t = new CheckBox(Vector2.Zero, keyValuePair.Value.Name, PerksContainer)
+                            {Cheked = player_.Perks.IsSelected(keyValuePair.Key), Tag = keyValuePair.Key};
                     PerksContainer.AddItem(t);
-                    t.onPressed += Game1_onPressed;
+                    t.OnPressed += Game1_onPressed;
 
                     CheckBoxesPerks.Add(t);
                 }
             }
 
-            WindowInventory = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Inventory", true, wp, sf, ws) { Visible = false };
-            ContainerInventoryItems = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowInventory);
-            InventoryMoreInfo = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowInventory);
-            InventorySortAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All", wp, sf, WindowInventory);
-            InventorySortAll.onPressed += InventorySortAll_onPressed;
-            InventorySortMedicine = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30), "Medicine", wp, sf, WindowInventory);
-            InventorySortMedicine.onPressed += InventorySortMedicine_onPressed;
-            InventorySortFood = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30 * 2), "Food", wp, sf, WindowInventory);
-            InventorySortFood.onPressed += InventorySortFood_onPressed;
-            IntentoryEquip = new Button(new Vector2(WindowInventory.Locate.Width - 100, WindowInventory.Locate.Height - 200 + 30 * 2), "Equip", wp, sf, WindowInventory);
-            IntentoryEquip.onPressed += IntentoryEquip_onPressed;
+            WindowInventory =
+                new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
+                           "Inventory", true, ws) {Visible = false};
+            ContainerInventoryItems =
+                new ListContainer(
+                    new Rectangle(10, 10, WindowInventory.Locate.Width/2, WindowInventory.Locate.Height - 40),
+                    WindowInventory);
+            InventoryMoreInfo = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20,
+                                               WindowInventory);
+            InventorySortAll =
+                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All", WindowInventory);
+            InventorySortAll.OnPressed += InventorySortAll_onPressed;
+            InventorySortMedicine =
+                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30),
+                           "Medicine", WindowInventory);
+            InventorySortMedicine.OnPressed += InventorySortMedicine_onPressed;
+            InventorySortFood =
+                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2),
+                           "Food", WindowInventory);
+            InventorySortFood.OnPressed += InventorySortFood_onPressed;
+            IntentoryEquip =
+                new Button(new Vector2(WindowInventory.Locate.Width - 100, WindowInventory.Locate.Height - 200 + 30*2),
+                           "Equip", WindowInventory);
+            IntentoryEquip.OnPressed += IntentoryEquip_onPressed;
             InventoryTotalWV =
                 new Label(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*3),
-                          "some weight" + Environment.NewLine + "some volume", wp, sf, WindowInventory);
+                          "some weight" + Environment.NewLine + "some volume", WindowInventory);
 
-            WindowContainer = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Container", true, wp, sf, ws) { Visible = false };
-            WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
-            ContainerContainer = new ListContainer(new Rectangle(10, 10, WindowInventory.Locate.Width / 2, WindowInventory.Locate.Height - 40), wp, sf, WindowContainer);
-            LabelContainer = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20, wp, sf, WindowContainer);
-            ButtonContainerTakeAll = new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30 * 2), "Take All (R)", wp, sf, WindowContainer);
-            ButtonContainerTakeAll.onPressed += ButtonContainerTakeAll_onPressed;
+            WindowContainer =
+                new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
+                           "Container", true, ws) {Visible = false};
+            WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
+            ContainerContainer =
+                new ListContainer(
+                    new Rectangle(10, 10, WindowInventory.Locate.Width/2, WindowInventory.Locate.Height - 40),
+                    WindowContainer);
+            LabelContainer = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20,
+                                            WindowContainer);
+            ButtonContainerTakeAll =
+                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2),
+                           "Take All (R)", WindowContainer);
+            ButtonContainerTakeAll.OnPressed += ButtonContainerTakeAll_onPressed;
 
-            WindowEventLog = new Window(new Rectangle(3, 570, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4), "Log", true, wp, sf, ws_) { Visible = false, Closable = false, hides = true };
-            ContainerEventLog = new ListContainer(new Rectangle(0, 0, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4 - 20), wp, sf, WindowEventLog);
-            EventLog.onLogUpdate += EventLog_onLogUpdate;
+            WindowEventLog =
+                new Window(new Rectangle(3, 570, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/4), "Log",
+                           true, ws_) {Visible = false, Closable = false, hides = true};
+            ContainerEventLog =
+                new ListContainer(
+                    new Rectangle(0, 0, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/4 - 20),
+                    WindowEventLog);
+            EventLog.OnLogUpdate += EventLog_onLogUpdate;
 
-            WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, wp, sf, ws) { NoBorder = true, Visible = false};
-            LabelIngameHint = new Label(new Vector2(10, 3), "a-ha", wp, sf, WindowIngameHint);
+            WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, ws)
+                               {NoBorder = true, Visible = false};
+            LabelIngameHint = new Label(new Vector2(10, 3), "a-ha", WindowIngameHint);
 
-            WindowGlobal = new Window(new Vector2(Settings.Resolution.X - 100, Settings.Resolution.Y - 50), "Map", true, wp, sf, ws) { Visible = false };
-            ImageGlobal = new Image(new Vector2(10, 10), new Texture2D(GraphicsDevice, 10, 10), Color.White, WindowGlobal);
+            WindowGlobal = new Window(new Vector2(Settings.Resolution.X - 100, Settings.Resolution.Y - 50), "Map", true, ws) {Visible = false};
+            ImageGlobal = new Image(new Vector2(10, 10), new Texture2D(GraphicsDevice, 10, 10), Color.White,
+                                    WindowGlobal);
 
             int ii = 0;
-            WindowCaracter = new Window(new Vector2(Settings.Resolution.X / 2, Settings.Resolution.Y - Settings.Resolution.Y / 10), "Caracter info", true, wp, sf, ws) { Visible = false };
-            LabelCaracterHat = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Hat : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterGlaces = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Glaces : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterHelmet = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Helmet : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterChest = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Chest Armor : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterShirt = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Shirt : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterPants = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Pants : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterGloves = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Gloves : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterBoots = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Boots : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterGun = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Ranged Weapon : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterMeele = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Meele Weapon : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterAmmo = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Ammo : ", wp, sf, WindowCaracter); ii++;
-            LabelCaracterBag = new DoubleLabel(new Vector2(10, 10 + 15 * ii), "Bag : ", wp, sf, WindowCaracter);
+            WindowCaracter =
+                new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
+                           "Caracter info", true, ws) {Visible = false};
+            LabelCaracterHat = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Hat : ", WindowCaracter);
+            ii++;
+            LabelCaracterGlaces = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Glaces : ", WindowCaracter);
+            ii++;
+            LabelCaracterHelmet = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Helmet : ", WindowCaracter);
+            ii++;
+            LabelCaracterChest = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Chest Armor : ", WindowCaracter);
+            ii++;
+            LabelCaracterShirt = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Shirt : ", WindowCaracter);
+            ii++;
+            LabelCaracterPants = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Pants : ", WindowCaracter);
+            ii++;
+            LabelCaracterGloves = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Gloves : ", WindowCaracter);
+            ii++;
+            LabelCaracterBoots = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Boots : ", WindowCaracter);
+            ii++;
+            LabelCaracterGun = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ranged Weapon : ", WindowCaracter);
+            ii++;
+            LabelCaracterMeele = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Meele Weapon : ", WindowCaracter);
+            ii++;
+            LabelCaracterAmmo = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ammo : ", WindowCaracter);
+            ii++;
+            LabelCaracterBag = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Bag : ", WindowCaracter);
             ii = 0;
-            LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15 * ii), "HP : ", wp, sf, WindowCaracter);
+            LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15*ii), "HP : ", WindowCaracter);
             LabelsAbilities = new List<Label>();
             for (int i = 0; i < 11; i++) {
-                Label temp = new Label(new Vector2(10, 400 + 15 * ii), "", wp, sf, WindowCaracter);
+                Label temp = new Label(new Vector2(10, 400 + 15*ii), "", WindowCaracter);
                 ii++;
                 LabelsAbilities.Add(temp);
             }
-            EffectsContainer = new ListContainer(new Rectangle((int)WindowCaracter.Width / 2, (int)(WindowCaracter.Height / 2), (int)(WindowCaracter.Width / 2), (int)(WindowCaracter.Height / 2)-19), wp, sf, WindowCaracter);
+            EffectsContainer =
+                new ListContainer(
+                    new Rectangle((int) WindowCaracter.Width/2, (int) (WindowCaracter.Height/2),
+                                  (int) (WindowCaracter.Width/2), (int) (WindowCaracter.Height/2) - 19),
+                    WindowCaracter);
             LabelsEffect = new List<LabelFixed>();
 
-            InfoWindow = new Window(new Vector2(200, 100), "Info", true, wp, sf, ws) { Visible = false };
-            InfoWindowLabel = new DoubleLabel(new Vector2(20, 20), "some info", wp, sf, InfoWindow);
+            InfoWindow = new Window(new Vector2(200, 100), "Info", true, ws) {Visible = false};
+            InfoWindowLabel = new DoubleLabel(new Vector2(20, 20), "some info", InfoWindow);
 
-            WindowStatist = new Window(new Vector2(Settings.Resolution.X / 3, Settings.Resolution.Y / 3), "Statistic", true, wp, sf, ws) { Visible = false };
-            ListStatist = new ListContainer(new Rectangle(0, 0, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 3 - 20), wp, sf, WindowStatist);
+            WindowStatist = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Statistic", true, ws) {Visible = false};
+            ListStatist =
+                new ListContainer(
+                    new Rectangle(0, 0, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/3 - 20),
+                    WindowStatist);
 
-            ConsoleWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Concole", true, wp, sf, ws) {Visible = false};
-            ConsoleTB = new TextBox(new Vector2(10,100), 200, wp, sf, ConsoleWindow);
-            ConsoleTB.onEnter += ConsoleTB_onEnter;
+            ConsoleWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Concole", true, ws) {Visible = false};
+            ConsoleTB = new TextBox(new Vector2(10, 100), 200, ConsoleWindow);
+            ConsoleTB.OnEnter += ConsoleTB_onEnter;
             ConsoleWindow.CenterComponentHor(ConsoleTB);
 
-            WindowRadio = new Window(new Rectangle((int)(Settings.Resolution.X/2 - Settings.Resolution.X/6), -23, (int)(Settings.Resolution.X/6 * 2), (int)(Settings.Resolution.Y / 15)), "radio", false, wp, sf, ws) {Moveable = false};
-            LabelRadio = new RunningLabel(new Vector2(0, 8), "radio string radio string radio string radio string", ((int)(Settings.Resolution.X / 6 * 2) - 10)/9, wp, sf, WindowRadio);
+            WindowRadio =
+                new Window(
+                    new Rectangle((int) (Settings.Resolution.X/2 - Settings.Resolution.X/6), -23,
+                                  (int) (Settings.Resolution.X/6*2), (int) (Settings.Resolution.Y/15)), "radio", false, ws) {Moveable = false};
+            LabelRadio = new RunningLabel(new Vector2(0, 8), "radio string radio string radio string radio string",
+                                          ((int) (Settings.Resolution.X/6*2) - 10)/9, WindowRadio);
             WindowRadio.CenterComponentHor(LabelRadio);
         }
 
-        void IBInv_onPressed(object sender, EventArgs e)
-        {
+        private void IBInv_onPressed(object sender, EventArgs e) {
             WindowGlobal.Visible = !WindowGlobal.Visible;
             if (WindowGlobal.Visible) {
                 WindowGlobal.OnTop();
@@ -340,31 +416,28 @@ namespace jarg
             }
         }
 
-        void IBBag_onPressed(object sender, EventArgs e) {
+        private void IBBag_onPressed(object sender, EventArgs e) {
             WindowInventory.Visible = !WindowInventory.Visible;
             if (WindowInventory.Visible) {
                 WindowInventory.OnTop();
             }
         }
 
-        void Game1_onPressed(object sender, EventArgs e) {
+        private void Game1_onPressed(object sender, EventArgs e) {
             var t = (string) ((IGameComponent) sender).Tag;
 
             player_.Perks.SetPerk(t);
         }
 
-        void ButtonRadioOff_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonRadioOff_onPressed(object sender, EventArgs e) {
             WMPs.controls.stop();
             WindowRadio.Visible = false;
         }
 
-        void ButtonRadioGB_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonRadioGB_onPressed(object sender, EventArgs e) {
             WMPs.controls.play();
             WindowRadio.Visible = true;
         }
-
 
 
         private void ButtonLightOff_onPressed(object sender, EventArgs e) {
@@ -383,79 +456,78 @@ namespace jarg
             IsFixedTimeStep = true;
         }
 
-        void ButtonResolution19201024_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution19201024_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(1920, 1024);
             ResolutionChanging();
         }
 
-        void ButtonResolution1280800_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution1280800_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(1280, 800);
             ResolutionChanging();
         }
 
-        void ButtonResolution1024768_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution1024768_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(1024, 768);
             ResolutionChanging();
         }
 
-        void ButtonResolution800600_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution800600_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(800, 600);
             ResolutionChanging();
         }
 
-        void ButtonFullscreenOff_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonFullscreenOff_onPressed(object sender, EventArgs e) {
             if (graphics_.IsFullScreen) {
                 graphics_.ToggleFullScreen();
             }
             ResolutionChanging();
         }
 
-        void ButtonFullscreenOn_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonFullscreenOn_onPressed(object sender, EventArgs e) {
             if (!graphics_.IsFullScreen) {
                 graphics_.ToggleFullScreen();
             }
             ResolutionChanging();
         }
 
-        void ConsoleTB_onEnter(object sender, EventArgs e) {
+        private void ConsoleTB_onEnter(object sender, EventArgs e) {
             string s = ConsoleTB.Text;
             ConsoleTB.Tag = "";
 
-            if(s.Contains("spawn c ")) {
+            if (s.Contains("spawn c ")) {
                 string ss = s.Substring(8);
-                if(MonsterDataBase.Data.ContainsKey(ss)) {
+                if (MonsterDataBase.Data.ContainsKey(ss)) {
                     var pp = player_.GetWorldPositionInBlocks();
-                    pp.X = (int)pp.X;
-                    pp.Y = (int)pp.Y;
+                    pp.X = (int) pp.X;
+                    pp.Y = (int) pp.Y;
                     var ppp = currentFloor_.GetInSectorPosition(pp);
-                    var i = (int)(player_.Position.X - (int)ppp.X * MapSector.Rx * 32);
-                    var i1 = (int)(player_.Position.Y - (int)ppp.Y * MapSector.Ry * 32);
-                    currentFloor_.GetSector((int)ppp.X, (int)ppp.Y).Spawn(ss, i / MapSector.Rx, i1 / MapSector.Ry);
-                    EventLog.Add(string.Format("Creature {0} spawn at ({1}, {2}), in ({3}, {4})", ss, i, i1, (int)ppp.X, (int)ppp.Y), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
-                } else {
-                EventLog.Add(string.Format("Creature {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                    var i = (int) (player_.Position.X - (int) ppp.X*MapSector.Rx*32);
+                    var i1 = (int) (player_.Position.Y - (int) ppp.Y*MapSector.Ry*32);
+                    currentFloor_.GetSector((int) ppp.X, (int) ppp.Y).Spawn(ss, i/MapSector.Rx, i1/MapSector.Ry);
+                    EventLog.Add(
+                        string.Format("Creature {0} spawn at ({1}, {2}), in ({3}, {4})", ss, i, i1, (int) ppp.X,
+                                      (int) ppp.Y), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                }
+                else {
+                    EventLog.Add(string.Format("Creature {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                                 LogEntityType.Console);
+                }
             }
-            }
-            if (s.Contains("mypos"))
-            {
+            if (s.Contains("mypos")) {
                 var pp = player_.GetWorldPositionInBlocks();
-                pp.X = (int)pp.X;
-                pp.Y = (int)pp.Y;
+                pp.X = (int) pp.X;
+                pp.Y = (int) pp.Y;
                 var ppp = currentFloor_.GetInSectorPosition(pp);
-                var i = (int)(player_.Position.X - (int)ppp.X * MapSector.Rx * 32);
-                var i1 = (int)(player_.Position.Y - (int)ppp.Y * MapSector.Ry * 32);
-                EventLog.Add(string.Format("Player position {4} or ({0}, {1}) in sector ({2}, {3})", i, i1, (int)ppp.X, (int)ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                var i = (int) (player_.Position.X - (int) ppp.X*MapSector.Rx*32);
+                var i1 = (int) (player_.Position.Y - (int) ppp.Y*MapSector.Ry*32);
+                EventLog.Add(
+                    string.Format("Player position {4} or ({0}, {1}) in sector ({2}, {3})", i, i1, (int) ppp.X,
+                                  (int) ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                    LogEntityType.Console);
             }
         }
 
-        void ShowInfoWindow(string s1, string s2)
-        {
+        private void ShowInfoWindow(string s1, string s2) {
             InfoWindowLabel.Text = s1;
             InfoWindowLabel.Text2 = s2;
             // InfoWindow.CenterComponentHor(InfoWindowLabel);
@@ -463,24 +535,20 @@ namespace jarg
             InfoWindow.OnTop();
         }
 
-        void HideInfoWindow()
-        {
+        private void HideInfoWindow() {
             InfoWindow.Visible = false;
         }
 
-        void IntentoryEquip_onPressed(object sender, EventArgs e)
-        {
+        private void IntentoryEquip_onPressed(object sender, EventArgs e) {
             inventory_.UseItem(selectedItem, player_);
             UpdateInventoryContainer();
         }
 
-        void ButtonIngameExit_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonIngameExit_onPressed(object sender, EventArgs e) {
             currentFloor_.SaveAll();
         }
 
-        void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonContainerTakeAll_onPressed(object sender, EventArgs e) {
             inventory_.AddItemRange(inContainer_);
             inContainer_.Clear();
             inventory_.StackSimilar();
@@ -488,50 +556,44 @@ namespace jarg
             UpdateInventoryContainer();
         }
 
-        void Button24h_onPressed(object sender, EventArgs e)
-        {
+        private void Button24h_onPressed(object sender, EventArgs e) {
             Settings.IsAMDM = false;
         }
 
-        void Button12h_onPressed(object sender, EventArgs e)
-        {
+        private void Button12h_onPressed(object sender, EventArgs e) {
             Settings.IsAMDM = true;
         }
 
-        void EventLog_onLogUpdate(object sender, EventArgs e)
-        {
+        private void EventLog_onLogUpdate(object sender, EventArgs e) {
             ContainerEventLog.Clear();
             int i = 0;
-            foreach (var ss in EventLog.log)
-            {
-                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss.message, whitepixel_, font1_, ss.col, 35, ContainerEventLog));
+            foreach (var ss in EventLog.log) {
+                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss.message, ss.col, 35,
+                                                         ContainerEventLog));
                 i++;
             }
             ContainerEventLog.ScrollBottom();
         }
 
-        void InventorySortFood_onPressed(object sender, EventArgs e)
-        {
+        private void InventorySortFood_onPressed(object sender, EventArgs e) {
             nowSort_ = ItemType.Food;
             UpdateInventoryContainer();
         }
 
-        void InventorySortMedicine_onPressed(object sender, EventArgs e)
-        {
+        private void InventorySortMedicine_onPressed(object sender, EventArgs e) {
             nowSort_ = ItemType.Medicine;
             UpdateInventoryContainer();
         }
 
-        void InventorySortAll_onPressed(object sender, EventArgs e)
-        {
+        private void InventorySortAll_onPressed(object sender, EventArgs e) {
             nowSort_ = ItemType.Nothing;
             UpdateInventoryContainer();
         }
 
         private ItemType nowSort_ = ItemType.Nothing;
         private List<Item> inInv_ = new List<Item>();
-        void UpdateInventoryContainer()
-        {
+
+        private void UpdateInventoryContainer() {
             selectedItem = null;
             InventoryMoreInfo.Text = "";
 
@@ -541,66 +603,61 @@ namespace jarg
             ContainerInventoryItems.Clear();
 
             int cou = 0;
-            foreach (var item in a)
-            {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerInventoryItems);
+            foreach (var item in a) {
+                var i = new LabelFixed(Vector2.Zero,
+                                       string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, ContainerInventoryItems);
                 i.Tag = cou;
-                i.onPressed += PressInInventory;
+                i.OnPressed += PressInInventory;
                 cou++;
                 ContainerInventoryItems.AddItem(i);
             }
-            InventoryTotalWV.Text = string.Format("Weight {0}/{1}{2}Volume {3}/{4}", inventory_.TotalWeight, player_.MaxWeight, Environment.NewLine,
-                                             inventory_.TotalVolume, player_.MaxVolume);
+            InventoryTotalWV.Text = string.Format("Weight {0}/{1}{2}Volume {3}/{4}", inventory_.TotalWeight,
+                                                  player_.MaxWeight, Environment.NewLine,
+                                                  inventory_.TotalVolume, player_.MaxVolume);
         }
 
-        private ItemType nowSortContainer_ = ItemType.Nothing;
         private List<Item> inContainer_ = new List<Item>();
-        private Vector2 containerOn = new Vector2();
-        void UpdateContainerContainer(List<Item> a)
-        {
+        private Vector2 containerOn ;
+
+        private void UpdateContainerContainer(List<Item> a) {
             inContainer_ = a;
 
             ContainerContainer.Clear();
 
             int cou = 0;
-            foreach (var item in a)
-            {
-                var i = new LabelFixed(Vector2.Zero, string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, whitepixel_, font1_, ContainerContainer);
+            foreach (var item in a) {
+                var i = new LabelFixed(Vector2.Zero,
+                                       string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, ContainerContainer);
                 i.Tag = cou;
-                i.onPressed += PressInContainer;
+                i.OnPressed += PressInContainer;
                 cou++;
                 ContainerContainer.AddItem(i);
             }
         }
 
         private Item selectedItem;
-        void PressInInventory(object sender, EventArgs e)
-        {
-            var a = (int)(sender as Label).Tag;
+
+        private void PressInInventory(object sender, EventArgs e) {
+            var a = (int) (sender as Label).Tag;
             selectedItem = inInv_[a];
 
-            if (!doubleclick_)
-            {
+            if (!doubleclick_) {
                 InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
             }
-            else
-            {
+            else {
                 IntentoryEquip_onPressed(null, null);
             }
         }
 
         private Item ContainerSelected;
-        void PressInContainer(object sender, EventArgs e)
-        {
-            var a = (int)(sender as Label).Tag;
-            if (inInv_.Count > a)
-            {
+
+        private void PressInContainer(object sender, EventArgs e) {
+            var a = (int) (sender as Label).Tag;
+            if (inInv_.Count > a) {
                 ContainerSelected = inContainer_[a];
                 LabelContainer.Text = ItemDataBase.GetItemFullDescription(ContainerSelected);
-                if (doubleclick_)
-                {
-                    if (inContainer_.Contains(ContainerSelected))
-                    {
+                if (doubleclick_) {
+                    if (inContainer_.Contains(ContainerSelected)) {
                         inventory_.AddItem(ContainerSelected);
                         inContainer_.Remove(ContainerSelected);
                         inventory_.StackSimilar();
@@ -611,85 +668,71 @@ namespace jarg
             }
         }
 
-        void ButtonCaracterCancel_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonCaracterCancel_onPressed(object sender, EventArgs e) {
             WindowMainMenu.Visible = true;
             WindowCaracterCration.Visible = false;
         }
 
-        void ButtonCaracterConfirm_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonCaracterConfirm_onPressed(object sender, EventArgs e) {
             WindowCaracterCration.Visible = false;
             drawAction_ = GameDraw;
             UpdateAction = GameUpdate;
             WindowEventLog.Visible = true;
         }
 
-        void ButtonNewGame_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonNewGame_onPressed(object sender, EventArgs e) {
             WindowMainMenu.Visible = false;
             WindowCaracterCration.Visible = true;
         }
 
-        void ButtonOpenGit_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonOpenGit_onPressed(object sender, EventArgs e) {
             Process.Start("https://github.com/ishellstrike/roguelikeworkname/issues");
         }
 
-        void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e) {
             WindowSettings.Visible = true;
             WindowSettings.OnTop();
         }
 
-        private void ButtonHudColor3_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor3_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.DarkGray;
         }
 
-        private void ButtonHudColor5_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor5_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.LightGreen;
         }
 
-        private void ButtonHudColor4_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor4_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.DarkOrange;
         }
 
-        private void ButtonHudColor2_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor2_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.LightGray;
         }
 
-        void ButtonHudColor1_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor1_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.White;
         }
 
-        void CloseAllTestButton_onPressed(object sender, EventArgs e)
-        {
+        private void CloseAllTestButton_onPressed(object sender, EventArgs e) {
             player_.Hunger.Current--;
         }
 
         private TimeSpan SecondTimespan;
-        private void WindowsUpdate(GameTime gt)
-        {
 
-            if (WindowStats.Visible)
-            {
-                StatsHeat.Max = (int)player_.Heat.Max;
-                StatsHeat.Progress = (int)player_.Heat.Current;
+        private void WindowsUpdate(GameTime gt) {
+            if (WindowStats.Visible) {
+                StatsHeat.Max = (int) player_.Heat.Max;
+                StatsHeat.Progress = (int) player_.Heat.Current;
 
-                StatsJajda.Max = (int)player_.Thirst.Max;
-                StatsJajda.Progress = (int)player_.Thirst.Current;
+                StatsJajda.Max = (int) player_.Thirst.Max;
+                StatsJajda.Progress = (int) player_.Thirst.Current;
 
-                StatsHunger.Max = (int)player_.Hunger.Max;
-                StatsHunger.Progress = (int)player_.Heat.Current;
+                StatsHunger.Max = (int) player_.Hunger.Max;
+                StatsHunger.Progress = (int) player_.Heat.Current;
             }
 
-            if (currentFloor_ != null && WindowMinimap.Visible)
-            {
+            if (currentFloor_ != null && WindowMinimap.Visible) {
                 ImageMinimap.image = currentFloor_.GetMinimap();
             }
 
@@ -700,29 +743,24 @@ namespace jarg
                     LabelsAbilities[i].Text = player_.Abilities.ToShow[i].Name + " " + player_.Abilities.ToShow[i];
                 }
             }
-            if(Settings.InventoryUpdate) {
+            if (Settings.InventoryUpdate) {
                 UpdateInventoryContainer();
                 Settings.InventoryUpdate = false;
             }
 
-            if (SecondTimespan.TotalSeconds >= 1)
-            {
+            if (SecondTimespan.TotalSeconds >= 1) {
                 ListStatist.Clear();
-                foreach (var statist in Achievements.Stat)
-                {
-                    if (statist.Value.Count != 0)
-                    {
-                        ListStatist.AddItem(new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count,
-                                                      whitepixel_, font1_, ListStatist));
+                foreach (var statist in Achievements.Stat) {
+                    if (statist.Value.Count != 0) {
+                        ListStatist.AddItem(new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count, ListStatist));
                     }
                 }
 
-                UpdateCaracterWindowItems(null,null);
+                UpdateCaracterWindowItems(null, null);
             }
         }
 
-        private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs)
-        {
+        private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs) {
             LabelCaracterGun.Text2 = player_.ItemGun != null ? ItemDataBase.Data[player_.ItemGun.Id].Name : "";
             LabelCaracterHat.Text2 = player_.ItemHat != null ? ItemDataBase.Data[player_.ItemHat.Id].Name : "";
             LabelCaracterAmmo.Text2 = player_.ItemAmmo != null
@@ -757,21 +795,20 @@ namespace jarg
 
             EffectsContainer.Clear();
             LabelsEffect.Clear();
-            for(int i=0; i<player_.buffs.Count;i++) {
+            for (int i = 0; i < player_.Buffs.Count; i++) {
                 LabelFixed label;
-                if (player_.buffs[i].Expiring) {
-                    label = new LabelFixed(Vector2.Zero, string.Format("{0} {1}", BuffDataBase.Data[player_.buffs[i].Id].Name, player_.buffs[i].Expire), 20, whitepixel_,
-                                        font1_, EffectsContainer);
+                if (player_.Buffs[i].Expiring) {
+                    label = new LabelFixed(Vector2.Zero,
+                                           string.Format("{0} {1}", BuffDataBase.Data[player_.Buffs[i].Id].Name,
+                                                         player_.Buffs[i].Expire), 20, EffectsContainer);
                 }
                 else {
-                    label = new LabelFixed(Vector2.Zero, string.Format("{0}", BuffDataBase.Data[player_.buffs[i].Id].Name), 20, whitepixel_,
-                                            font1_, EffectsContainer);
-
-                }                    
+                    label = new LabelFixed(Vector2.Zero,
+                                           string.Format("{0}", BuffDataBase.Data[player_.Buffs[i].Id].Name), 20, EffectsContainer);
+                }
                 LabelsEffect.Add(label);
                 EffectsContainer.AddItem(label);
             }
         }
-
     }
 }

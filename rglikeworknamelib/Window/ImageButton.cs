@@ -6,7 +6,7 @@ namespace rglikeworknamelib.Window {
     public class ImageButton : Button {
         private Texture2D Im;
         private Color col = new Color(1,1,1,0.5f);
-        public ImageButton(Vector2 p, string s, Texture2D wp, Texture2D im, SpriteFont wf, Window ow) : base(p, s, wp, wf, ow) {
+        public ImageButton(Vector2 position, string text, Texture2D im, Window ow) : base(position, text, ow) {
             Im = im;
             locate_.Height = im.Height;
             locate_.Width = im.Width;

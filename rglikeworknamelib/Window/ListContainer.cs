@@ -10,8 +10,8 @@ namespace rglikeworknamelib.Window {
         public List<IGameComponent> Items = new List<IGameComponent>();
         private List<IGameComponent> Components = new List<IGameComponent>(); 
         public int FromI;
-        private readonly Texture2D whitepixel_;
-        private readonly SpriteFont font1_;
+        public Texture2D whitepixel_ { get;set; }
+        public SpriteFont font1_ { get;set; }
         private IGameContainer parent_;
         public bool Visible { get; set; }
 
@@ -20,29 +20,29 @@ namespace rglikeworknamelib.Window {
         private Button buttonUp_, buttonDown_;
         private VerticalProgressBar progress_;
 
-        public ListContainer(Rectangle loc, Texture2D wp, SpriteFont sf, IGameContainer win)
+        public ListContainer(Rectangle loc, IGameContainer parent)
         {
             location_ = loc;
-            whitepixel_ = wp;
-            font1_ = sf;
-            parent_ = win;
+            whitepixel_ = parent.whitepixel_;
+            font1_ = parent.font1_;
+            parent_ = parent;
             parent_.AddComponent(this);
 
             Visible = true;
 
 
 
-            buttonUp_ = new Button(Vector2.Zero, "^", wp, sf, this);
+            buttonUp_ = new Button(Vector2.Zero, "^", this);
             Vector2 bup = new Vector2(Width - buttonUp_.Width, 0);
             buttonUp_.SetPosition(bup);
-            buttonUp_.onPressed += buttonUp__onPressed;
+            buttonUp_.OnPressed += buttonUp__onPressed;
 
-            buttonDown_ = new Button(Vector2.Zero, "v", wp, sf, this);
+            buttonDown_ = new Button(Vector2.Zero, "v", this);
             Vector2 bdow = new Vector2(Width - buttonDown_.Width, location_.Height - buttonDown_.Height);
             buttonDown_.SetPosition(bdow);
-            buttonDown_.onPressed += buttonDown__onPressed;
+            buttonDown_.OnPressed += buttonDown__onPressed;
 
-            progress_ = new VerticalProgressBar(new Rectangle((int)bup.X, (int)(bup.Y + buttonUp_.Height), (int)buttonUp_.Width, (int)(bdow.Y - bup.Y)), "", wp, font1_, this);
+            progress_ = new VerticalProgressBar(new Rectangle((int)bup.X, (int)(bup.Y + buttonUp_.Height), (int)buttonUp_.Width, (int)(bdow.Y - bup.Y)), "", this);
         
             RecalcContainer();
         }
@@ -170,11 +170,11 @@ namespace rglikeworknamelib.Window {
             return lastN - FromI;
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
             if (Visible) {
                 for (int i = 0; i < Components.Count; i++) {
-                    Components[i].Update(gt, ms, lms, ks, lks, h);
+                    Components[i].Update(gt, ms, lms, ks, lks, mh);
                 }
             }
         }
@@ -249,11 +249,11 @@ namespace rglikeworknamelib.Window {
             RecalcContainer();
         }
 
-        public void CenterComponentHor(IGameComponent a) {
+        public void CenterComponentHor(IGameComponent component) {
            
         }
 
-        public void CenterComponentVert(IGameComponent a) {
+        public void CenterComponentVert(IGameComponent component) {
            
         }
 

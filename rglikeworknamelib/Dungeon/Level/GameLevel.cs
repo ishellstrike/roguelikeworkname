@@ -251,18 +251,18 @@ namespace rglikeworknamelib.Dungeon.Level {
             return sect.GetBlock(x - divx*MapSector.Rx, y - divy*MapSector.Ry).Id;
         }
 
-        public void SetFloor(int x, int y, string id)
+        public void SetFloor(int x, int y, string floorId)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
             var sect = GetSector(divx, divy);
 
             if (sect != null) {
-                sect.SetFloor(x - divx*MapSector.Rx, y - divy*MapSector.Ry, id);
+                sect.SetFloor(x - divx*MapSector.Rx, y - divy*MapSector.Ry, floorId);
             }
         }
 
-        public void SetBlock(int x, int y, string id)
+        public void SetBlock(int x, int y, string blockId)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
@@ -270,21 +270,21 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (sect != null)
             {
                 var braw = (x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry;
-                if (BlockDataBase.Data[id].Prototype == typeof(Block))
+                if (BlockDataBase.Data[blockId].Prototype == typeof(Block))
                 {
 
                     sect.SetBlock(braw, new Block {
-                        Id = id,
-                        data = BlockDataBase.Data[id]
+                        Id = blockId,
+                        data = BlockDataBase.Data[blockId]
                     });
                 }
-                if (BlockDataBase.Data[id].Prototype == typeof(StorageBlock))
+                if (BlockDataBase.Data[blockId].Prototype == typeof(StorageBlock))
                 {
                     sect.SetBlock(braw, new StorageBlock
                     {
                         StoredItems=new List<Item.Item>(),
-                        Id=id,
-                        data = BlockDataBase.Data[id]
+                        Id=blockId,
+                        data = BlockDataBase.Data[blockId]
                     });
                 }
                 MapJustUpdated = true;

@@ -5,27 +5,27 @@ namespace rglikeworknamelib.Dungeon.Buffs
 {
     [Serializable]
     class BuffHpUp : Buff {
-        public override bool ApplyToTarget(Creature p) {
+        public override bool ApplyToTarget(Creature target) {
             if (!applied_) {
-                Target = p;
+                Target = target;
                 Target.hp_.Max = Target.hp_.Max + int.Parse(BuffDataBase.Data[Id].Value[0]);
             }
             else {
                 return false;
             }
-            return base.ApplyToTarget(p);
+            return base.ApplyToTarget(target);
         }
 
-        public override bool RemoveFromTarget(Creature p)
+        public override bool RemoveFromTarget(Creature target)
         {
             if (applied_) {
-                Target = p;
+                Target = target;
                 Target.hp_.Max = Target.hp_.Max - int.Parse(BuffDataBase.Data[Id].Value[0]);
             }
             else {
                 return false;
             }
-            return base.RemoveFromTarget(p);
+            return base.RemoveFromTarget(target);
         }
     }
 }

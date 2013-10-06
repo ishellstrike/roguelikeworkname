@@ -16,13 +16,11 @@ namespace rglikeworknamelib.Window {
 
         public object Tag { get; set; }
 
-        private readonly SpriteFont font1_;
-
-        public Image(Vector2 p, Texture2D im, Color c, IGameContainer win)
+        public Image(Vector2 position, Texture2D image, Color color, IGameContainer win)
         {
-            pos_ = p;
-            col_ = c;
-            image = im;
+            pos_ = position;
+            col_ = color;
+            this.image = image;
 
             Parent = win;
             Parent.AddComponent(this);
@@ -34,7 +32,7 @@ namespace rglikeworknamelib.Window {
             sb.Draw(image, Parent.GetPosition() + pos_, col_);
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool h)
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
 
         }

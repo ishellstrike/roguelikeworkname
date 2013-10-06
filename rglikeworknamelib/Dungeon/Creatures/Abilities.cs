@@ -14,72 +14,72 @@ namespace rglikeworknamelib.Creatures {
             list.Add("survive", new Ability
             {
                 Name = "Выживание",
-                nameStyle = AbilityNameStyle.physical
+                NameStyle = AbilityNameStyle.physical
             });
             list.Add("atlet", new Ability
             {
                 Name = "Атлетика",
-                nameStyle = AbilityNameStyle.physical
+                NameStyle = AbilityNameStyle.physical
             });
             list.Add("shoot", new Ability
             {
                 Name = "Стрельба",
-                nameStyle = AbilityNameStyle.physical
+                NameStyle = AbilityNameStyle.physical
             });
             list.Add("martial", new Ability
             {
                 Name = "Ближний бой",
-                nameStyle = AbilityNameStyle.physical
+                NameStyle = AbilityNameStyle.physical
             });
             list.Add("coock", new Ability
             {
                 Name = "Готовка",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("chem", new Ability
             {
                 Name = "Химия",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("phys", new Ability
             {
                 Name = "Физика",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("bio", new Ability
             {
                 Name = "Биология",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("it", new Ability
             {
                 Name = "IT",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("tailor", new Ability
             {
                 Name = "Шитье",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("read", new Ability
             {
                 Name = "Чтение",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("lockpick", new Ability
             {
                 Name = "Взлом",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("pickpocket", new Ability
             {
                 Name = "Карманная кража",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
             list.Add("talk", new Ability
             {
                 Name = "Убеждение",
-                nameStyle = AbilityNameStyle.mental
+                NameStyle = AbilityNameStyle.mental
             });
 
             ToShow = new List<Ability>();

@@ -15,8 +15,8 @@ namespace rglikeworknamelib.Window {
 
         public object Tag { get; set; }
 
-        private readonly Texture2D whitepixel_;
-        private readonly SpriteFont font1_;
+        internal readonly Texture2D whitepixel_;
+        internal readonly SpriteFont font1_;
 
         public WindowSystem(Texture2D wp, SpriteFont f1) {
             whitepixel_ = wp;
@@ -77,9 +77,9 @@ namespace rglikeworknamelib.Window {
             Windows.Insert(Windows.Count, win);
         }
 
-        public void AddWindow(Window w) {
-            w.Id = Windows.Count;
-            Windows.Add(w);
+        public void AddWindow(Window window) {
+            window.Id = Windows.Count;
+            Windows.Add(window);
         }
 
         public Window GetWindowById(int id) {

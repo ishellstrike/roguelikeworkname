@@ -18,9 +18,9 @@ namespace rglikeworknamelib.Creatures {
         void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms);
         Vector2 WorldPosition();
         Vector2 GetWorldPositionInBlocks();
-        event EventHandler onDamageRecieve;
-        event EventHandler onDeath;
-        List<IBuff> buffs { get; set; }
+        event EventHandler OnDamageRecieve;
+        event EventHandler OnDeath;
+        List<IBuff> Buffs { get; set; }
         Abilities Abilities { get; set; }
     }
 }

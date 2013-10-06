@@ -18,19 +18,20 @@ namespace rglikeworknamelib.Parser {
         /// <summary>
         /// Universal jarg data file parser
         /// </summary>
-        /// <param name="s">Readed data file</param>
+        /// <param name="dataString">Readed data file</param>
+        /// <param name="filePos">way to data file (for log)</param>
         /// <param name="basetype">Basic type of parsing objects (for Prototype Parser) (e.g. typeof(Block) (null if you have no Prototype in parsed data))</param>
         /// <returns>List of data of type KeyValuePair&lt;string (id), object (parseof type)&gt;</returns>
-        public static List<KeyValuePair<string, object>> Parser<T>(string s, string filePos, Type basetype = null)
+        public static List<KeyValuePair<string, object>> Parser<T>(string dataString, string filePos, Type basetype = null)
         {
             var temp = new List<KeyValuePair<string, object>>();
 
-            s = s.Remove(0, s.IndexOf('~'));
+            dataString = dataString.Remove(0, dataString.IndexOf('~'));
 
-            s = Regex.Replace(s, "//.*\r\n", "");
-            s = Regex.Replace(s, "//.*", "");
+            dataString = Regex.Replace(dataString, "//.*\r\n", "");
+            dataString = Regex.Replace(dataString, "//.*", "");
 
-            string[] blocks = s.Split('~');
+            string[] blocks = dataString.Split('~');
             foreach (string block in blocks)
             {
                 if (block.Length != 0)
@@ -44,7 +45,7 @@ namespace rglikeworknamelib.Parser {
                     if (basetype != null) { //Prototype parser
                         string prototypeNamespace = basetype.ToString();
                         prototypeNamespace = prototypeNamespace.Substring(0, prototypeNamespace.LastIndexOf('.')+1);
-                        if (prototypeNamespace != "") {
+                        if (!string.IsNullOrEmpty(prototypeNamespace)){
 
                             Type type = Type.GetType(prototypeNamespace + header[0]); //create base type namespace (e.g. "rglikeworknamelib.Dungeon.Buffs.")
                             if (type == null) {
@@ -80,24 +81,17 @@ namespace rglikeworknamelib.Parser {
                             if (finfo != null)
                             {
                                 var converter = TypeDescriptor.GetConverter(finfo.FieldType);
-                                if (converter != null)
+                                if (extracted.StartsWith("{")) //Array parser
                                 {
-                                    if (extracted.StartsWith("{")) //Array parser
-                                    {
-                                        extracted = extracted.Substring(1, extracted.Length - 2);
-                                        var arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
-                                        var ar = arrayextractor.ToArray();
-                                        finfo.SetValue(cur.Value, ar);
-                                    }
-                                    else
-                                    {
-                                        var converted = converter.ConvertFromString(extracted);
-                                        finfo.SetValue(cur.Value, converted);
-                                    }
+                                    extracted = extracted.Substring(1, extracted.Length - 2);
+                                    var arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
+                                    var ar = arrayextractor.ToArray();
+                                    finfo.SetValue(cur.Value, ar);
                                 }
                                 else
                                 {
-                                    logger.Error("Could't convert \"" + extracted + "\" to " + finfo + " to ID " + header[0]);
+                                    var converted = converter.ConvertFromString(extracted);
+                                    finfo.SetValue(cur.Value, converted);
                                 }
                             }
                             else
@@ -112,16 +106,16 @@ namespace rglikeworknamelib.Parser {
             return temp;
         }
 
-        public static List<object> NoIdParser<T>(string s, string filePos, Type basetype = null)
+        public static List<object> NoIdParser<T>(string dataString, string filePos, Type basetype = null)
         {
             var temp = new List<object>();
 
-            s = s.Remove(0, s.IndexOf('~'));
+            dataString = dataString.Remove(0, dataString.IndexOf('~'));
 
-            s = Regex.Replace(s, "//.*\r\n", "");
-            s = Regex.Replace(s, "//.*", "");
+            dataString = Regex.Replace(dataString, "//.*\r\n", "");
+            dataString = Regex.Replace(dataString, "//.*", "");
 
-            string[] blocks = s.Split('~');
+            string[] blocks = dataString.Split('~');
             foreach (string block in blocks)
             {
                 if (block.Length != 0)
@@ -136,7 +130,7 @@ namespace rglikeworknamelib.Parser {
                     { //Prototype parser
                         string prototypeNamespace = basetype.ToString();
                         prototypeNamespace = prototypeNamespace.Substring(0, prototypeNamespace.LastIndexOf('.') + 1);
-                        if (prototypeNamespace != "")
+                        if (!string.IsNullOrEmpty(prototypeNamespace))
                         {
 
                             Type type = Type.GetType(prototypeNamespace + header[0]); //create base type namespace (e.g. "rglikeworknamelib.Dungeon.Buffs.")
