@@ -516,6 +516,11 @@ namespace jarg {
                 Settings.Noclip = !Settings.Noclip;
                 EventLog.Add(string.Format("Noclip = {0}", Settings.Noclip), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
             }
+            if (s.Contains("killall"))
+            {
+                var t = currentFloor_.KillAllCreatures();
+                EventLog.Add(string.Format("{0} creatures in active sector killed!", t), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+            }
             ConsoleTB.Text = string.Empty;
         }
 
@@ -537,7 +542,7 @@ namespace jarg {
         }
 
         private void ButtonIngameExit_onPressed(object sender, EventArgs e) {
-            currentFloor_.SaveAll();
+            currentFloor_.SaveAllAndExit();
         }
 
         private void ButtonContainerTakeAll_onPressed(object sender, EventArgs e) {

@@ -140,32 +140,33 @@ namespace rglikeworknamelib.Dungeon.Level
                 binaryFormatter.Serialize(gZipStream, a.Creatures);
                 binaryFormatter.Serialize(gZipStream, a.Decals);
             gZipStream.Close();
+            gZipStream.Dispose();
             fileStream.Close();
+            fileStream.Dispose();
         }
 
         private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY, GameLevel gl)
         {
             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY)))
             {
-                BinaryFormatter binaryFormatter_ = new BinaryFormatter();
-                FileStream fileStream_;
-                GZipStream gZipStream_;
+                var binaryFormatter = new BinaryFormatter();
 
-                fileStream_ =
-                new FileStream(
+                var fileStream = new FileStream(
                     Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY),
                     FileMode.Open);
 
-                gZipStream_ = new GZipStream(fileStream_, CompressionMode.Decompress);
-                    var q1 = binaryFormatter_.Deserialize(gZipStream_);
-                    var q2 = binaryFormatter_.Deserialize(gZipStream_);
-                    var q3 = binaryFormatter_.Deserialize(gZipStream_);
-                    var q4 = binaryFormatter_.Deserialize(gZipStream_);
-                    var q5 = binaryFormatter_.Deserialize(gZipStream_);
-                    var q6 = binaryFormatter_.Deserialize(gZipStream_);
-                    var q7 = binaryFormatter_.Deserialize(gZipStream_);
-                gZipStream_.Close();
-                fileStream_.Close();
+                var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+                    var q1 = binaryFormatter.Deserialize(gZipStream);//SectorOffsetX
+                    var q2 = binaryFormatter.Deserialize(gZipStream);//SectorOffsetY
+                    var q3 = binaryFormatter.Deserialize(gZipStream);//Blocks
+                    var q4 = binaryFormatter.Deserialize(gZipStream);//Floors
+                    var q5 = binaryFormatter.Deserialize(gZipStream);//Biom
+                    var q6 = binaryFormatter.Deserialize(gZipStream);//Creatures
+                    var q7 = binaryFormatter.Deserialize(gZipStream);//Decals
+                gZipStream.Close();
+                gZipStream.Dispose();
+                fileStream.Close();
+                fileStream.Dispose();
                 var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7);
                 foreach (var block in t.Blocks) {
                     ((Block)block).data = BlockDataBase.Data[block.Id];

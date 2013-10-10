@@ -117,7 +117,7 @@ namespace jarg {
 
         private void Application_ApplicationExit(object sender, EventArgs e) {
             if (currentFloor_.SectorCount() > 0) {
-                currentFloor_.SaveAll();
+                currentFloor_.SaveAllAndExit();
             }
         }
 
@@ -310,6 +310,8 @@ namespace jarg {
             player_.OnShoot += player__onShoot;
             RenderedFlashlight = GetRenderedFlashlight();
 
+            currentFloor_.MegaMapPreload();
+
             var inv = new Action<int, int>(currentFloor_.GenerateMegaSector);
             inv.BeginInvoke(0, 0, null, null);
         }
@@ -412,6 +414,7 @@ namespace jarg {
             // last
             if (SecondTimespan.TotalSeconds >= 1) {
                 SecondTimespan = TimeSpan.Zero;
+                InfoWindow.Visible = false;
             }
 
             if (needChangeSesolution_) {

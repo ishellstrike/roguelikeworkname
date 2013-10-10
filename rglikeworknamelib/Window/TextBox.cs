@@ -50,6 +50,7 @@ namespace rglikeworknamelib.Window {
             }
         }
 
+        private string last = string.Empty;
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
             spam_ += gt.ElapsedGameTime;
             if(ks.GetPressedKeys().Length == 0) {
@@ -128,9 +129,16 @@ namespace rglikeworknamelib.Window {
                             Text += ".";
                             break;
                         case Keys.Enter:
+                            if(!string.IsNullOrEmpty(Text)) {
+                                last = Text;
+                            }
                             if(OnEnter != null) {
                                 OnEnter(this, null);
                             }
+                            Text = string.Empty;
+                            break;
+                        case Keys.Up:
+                            Text = last;
                             break;
 
                     }

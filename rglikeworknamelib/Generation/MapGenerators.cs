@@ -30,7 +30,7 @@ namespace rglikeworknamelib.Generation
 
     public static class MapGenerators
     {
-        public static void FillFromTo(MapSector ms, Vector2 from, Vector2 to, string id) {
+        public static void FillFromTo(GameLevel ms, Vector2 from, Vector2 to, string id) {
             if (from.X > to.X) {
                 float a = from.X;
                 from.X = to.X;
@@ -42,12 +42,9 @@ namespace rglikeworknamelib.Generation
                 to.Y = a;
             }
 
-            var i1 = ms.SectorOffsetX * MapSector.Rx;
-            var i2 = ms.SectorOffsetY * MapSector.Ry;
-
             for (int i = (int)from.X; i <= to.X; i++) {
                 for (int j = (int)from.Y; j <= to.Y; j++) {
-                    ms.Parent.SetFloor(i+i1, j+i2, id);
+                    ms.SetFloorSync(i, j, id);
                 }
             }
         }
@@ -564,6 +561,29 @@ namespace rglikeworknamelib.Generation
                                                          "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
                                                          "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0"
                                                      };
+
+        public static void ClearBlocksFromTo(GameLevel ms, Vector2 from, Vector2 to) {
+            if (from.X > to.X)
+            {
+                float a = from.X;
+                from.X = to.X;
+                to.X = a;
+            }
+            if (from.Y > to.Y)
+            {
+                float a = from.Y;
+                from.Y = to.Y;
+                to.Y = a;
+            }
+
+            for (int i = (int)from.X; i <= to.X; i++)
+            {
+                for (int j = (int)from.Y; j <= to.Y; j++)
+                {
+                    ms.SetBlockSync(i, j, "0");
+                }
+            }
+        }
     }
 
    public class MathGenerators {
