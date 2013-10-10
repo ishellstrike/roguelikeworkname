@@ -58,6 +58,7 @@ namespace rglikeworknamelib {
 
         public static Vector2 FloorSpriteSize = new Vector2(32, 32);
         public static Vector2 Sqeezer = new Vector2(1, 1);
+        public static bool GamePause;
         public static string GetWorldsDirectory() {
             return @"Worlds\";
         }
@@ -81,6 +82,8 @@ namespace rglikeworknamelib {
         public static SpriteFont Font;
         public static bool NeedExit;
         public static bool InventoryUpdate;
+        public static bool SeeAll = true;
+        public static bool Noclip;
 
         public static Color HudСolor {
             get { return hcol_; }

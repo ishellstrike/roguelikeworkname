@@ -2,19 +2,6 @@ namespace rglikeworknamelib.Dungeon.Item {
     public enum ItemType
     {
         Nothing,
-
-        Hat,
-        Glaces,
-        Helmet,
-
-        Chest,
-        Shirt,
-
-        Pants,
-
-        Gloves,
-
-        Boots,
         
         Gun,
         Meele,
@@ -27,7 +14,8 @@ namespace rglikeworknamelib.Dungeon.Item {
 
         Craft,
 
-        Currency
+        Currency,
+        Wear
     }
 
     public enum UpgradeType {

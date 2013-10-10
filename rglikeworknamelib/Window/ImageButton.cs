@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Input;
 namespace rglikeworknamelib.Window {
     public class ImageButton : Button {
         private Texture2D Im;
-        private Color col = new Color(1,1,1,0.5f);
+        private Color cola = new Color(1,1,1,0.5f);
         public ImageButton(Vector2 position, string text, Texture2D im, Window ow) : base(position, text, ow) {
             Im = im;
             locate_.Height = im.Height;
@@ -26,7 +26,7 @@ namespace rglikeworknamelib.Window {
                         Vector2.Zero, new Vector2(2, locate_.Height + 2), SpriteEffects.None, 0);
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Bottom) + position, null, col, 0,
                         Vector2.Zero, new Vector2(locate_.Width + 2, 2), SpriteEffects.None, 0);
-                sb.Draw(Im, new Vector2(locate_.X, locate_.Y) + position, Color.White);
+                sb.Draw(Im, new Vector2(locate_.X, locate_.Y) + position, col);
 
                 sb.DrawString(font1_, Text, realpos + new Vector2(5, 0), col);
             }

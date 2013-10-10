@@ -3,14 +3,14 @@ using System;
 namespace rglikeworknamelib.Creatures {
     [Serializable]
     public class Ability {
-        public static readonly int[] XpNeeds = new[] { 10, 25, 40, 60, 85, 115, 155, 200, 265, 340, 435, 555, 700, 890, 1120};
-        private int xpCurrent_ = 0;
+        public static readonly int[] XpNeeds = new[] { 10, 25, 40, 60, 85, 115, 155, 200, 265, 340, 435, 555, 700, 890, 1120, 9999};
+        private double xpCurrent_ = 0;
         public int XpLevel = 2;
         public string Name;
         public event EventHandler OnLevelUp;
         public AbilityNameStyle NameStyle;
 
-        public int XpCurrent
+        public double XpCurrent
         {
             get
             {
@@ -19,7 +19,8 @@ namespace rglikeworknamelib.Creatures {
             set
             {
                 xpCurrent_ = value;
-                if (xpCurrent_ > XpNeeds[XpLevel]) {
+                if (xpCurrent_ > XpNeeds[XpLevel] && XpLevel < 10) {
+                    xpCurrent_ -= XpNeeds[XpLevel];
                     XpLevel++;
                     if (OnLevelUp != null) {
                         OnLevelUp(null, null);

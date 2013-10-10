@@ -16,7 +16,7 @@ using EventLog = rglikeworknamelib.EventLog;
 using IGameComponent = rglikeworknamelib.Window.IGameComponent;
 
 namespace jarg {
-    public partial class Game1 {
+    public partial class JargMain {
         #region Windows Vars
 
         private Window WindowStats;
@@ -96,19 +96,13 @@ namespace jarg {
         private Image ImageGlobal;
 
         private Window WindowCaracter;
-        private DoubleLabel LabelCaracterHat;
-        private DoubleLabel LabelCaracterGlaces;
-        private DoubleLabel LabelCaracterHelmet;
-        private DoubleLabel LabelCaracterChest;
-        private DoubleLabel LabelCaracterShirt;
-        private DoubleLabel LabelCaracterPants;
-        private DoubleLabel LabelCaracterGloves;
-        private DoubleLabel LabelCaracterBoots;
         private DoubleLabel LabelCaracterGun;
         private DoubleLabel LabelCaracterMeele;
         private DoubleLabel LabelCaracterAmmo;
-        private DoubleLabel LabelCaracterBag;
         private DoubleLabel LabelCaracterHp;
+        private ListContainer ContainerWearList;
+        private Label LabelWearCaption;
+        private List<Label> LabelsWeared; 
         private List<Label> LabelsAbilities;
         private ListContainer EffectsContainer;
         private List<LabelFixed> LabelsEffect;
@@ -339,31 +333,19 @@ namespace jarg {
 
             int ii = 0;
             WindowCaracter =
-                new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
+                new Window(new Vector2(Settings.Resolution.X/3*2, Settings.Resolution.Y - Settings.Resolution.Y/10),
                            "Caracter info", true, ws) {Visible = false};
-            LabelCaracterHat = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Hat : ", WindowCaracter);
-            ii++;
-            LabelCaracterGlaces = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Glaces : ", WindowCaracter);
-            ii++;
-            LabelCaracterHelmet = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Helmet : ", WindowCaracter);
-            ii++;
-            LabelCaracterChest = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Chest Armor : ", WindowCaracter);
-            ii++;
-            LabelCaracterShirt = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Shirt : ", WindowCaracter);
-            ii++;
-            LabelCaracterPants = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Pants : ", WindowCaracter);
-            ii++;
-            LabelCaracterGloves = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Gloves : ", WindowCaracter);
-            ii++;
-            LabelCaracterBoots = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Boots : ", WindowCaracter);
             ii++;
             LabelCaracterGun = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ranged Weapon : ", WindowCaracter);
             ii++;
             LabelCaracterMeele = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Meele Weapon : ", WindowCaracter);
             ii++;
             LabelCaracterAmmo = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ammo : ", WindowCaracter);
-            ii++;
-            LabelCaracterBag = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Bag : ", WindowCaracter);
+            ii+=2;
+            LabelWearCaption = new Label(new Vector2(10, 10 + 15 * ii), "Wear", WindowCaracter);
+            ii+=2;
+            ContainerWearList = new ListContainer(new Rectangle(0, 10 + 15 * ii, (int)WindowCaracter.Width / 2, (int)WindowCaracter.Height / 2 - (10 + 15 * ii)), WindowCaracter);
+            LabelsWeared = new List<Label>();
             ii = 0;
             LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15*ii), "HP : ", WindowCaracter);
             LabelsAbilities = new List<Label>();
@@ -378,6 +360,7 @@ namespace jarg {
                                   (int) (WindowCaracter.Width/2), (int) (WindowCaracter.Height/2) - 19),
                     WindowCaracter);
             LabelsEffect = new List<LabelFixed>();
+            
 
             InfoWindow = new Window(new Vector2(200, 100), "Info", true, ws) {Visible = false};
             InfoWindowLabel = new DoubleLabel(new Vector2(20, 20), "some info", InfoWindow);
@@ -518,13 +501,22 @@ namespace jarg {
                 pp.X = (int) pp.X;
                 pp.Y = (int) pp.Y;
                 var ppp = currentFloor_.GetInSectorPosition(pp);
-                var i = (int) (player_.Position.X - (int) ppp.X*MapSector.Rx*32);
-                var i1 = (int) (player_.Position.Y - (int) ppp.Y*MapSector.Ry*32);
+                var i = (int)(player_.Position.X - (int)ppp.X * MapSector.Rx * 32);
+                var i1 = (int)(player_.Position.Y - (int)ppp.Y * MapSector.Ry * 32);
                 EventLog.Add(
                     string.Format("Player position {4} or ({0}, {1}) in sector ({2}, {3})", i, i1, (int) ppp.X,
                                   (int) ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan,
                     LogEntityType.Console);
             }
+            if (s.Contains("fastwalk")) {
+                acmodifer = acmodifer == 1 ? 4 : 1;
+                EventLog.Add(string.Format("walk x{0}", acmodifer), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+            }
+            if (s.Contains("noclip")) {
+                Settings.Noclip = !Settings.Noclip;
+                EventLog.Add(string.Format("Noclip = {0}", Settings.Noclip), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+            }
+            ConsoleTB.Text = string.Empty;
         }
 
         private void ShowInfoWindow(string s1, string s2) {
@@ -736,13 +728,6 @@ namespace jarg {
                 ImageMinimap.image = currentFloor_.GetMinimap();
             }
 
-            if (WindowCaracter.Visible) {
-                LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
-
-                for (int i = 0; i < LabelsAbilities.Count; i++) {
-                    LabelsAbilities[i].Text = player_.Abilities.ToShow[i].Name + " " + player_.Abilities.ToShow[i];
-                }
-            }
             if (Settings.InventoryUpdate) {
                 UpdateInventoryContainer();
                 Settings.InventoryUpdate = false;
@@ -756,39 +741,27 @@ namespace jarg {
                     }
                 }
 
-                UpdateCaracterWindowItems(null, null);
+                if (WindowCaracter.Visible)
+                {
+                    UpdateCaracterWindowItems(null, null);
+                }
+                
             }
         }
 
         private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs) {
+            LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
+
+            for (int i = 0; i < LabelsAbilities.Count; i++)
+            {
+                LabelsAbilities[i].Text = string.Format("{0} {1} ({2}/{3})", player_.Abilities.ToShow[i].Name, player_.Abilities.ToShow[i], (int)player_.Abilities.ToShow[i].XpCurrent, Ability.XpNeeds[player_.Abilities.ToShow[i].XpLevel]);
+            }
+
             LabelCaracterGun.Text2 = player_.ItemGun != null ? ItemDataBase.Data[player_.ItemGun.Id].Name : "";
-            LabelCaracterHat.Text2 = player_.ItemHat != null ? ItemDataBase.Data[player_.ItemHat.Id].Name : "";
             LabelCaracterAmmo.Text2 = player_.ItemAmmo != null
                                           ? ItemDataBase.Data[player_.ItemAmmo.Id].Name + " x" +
                                             player_.ItemAmmo.Count
                                           : "";
-            LabelCaracterPants.Text2 = player_.ItemPants != null
-                                           ? ItemDataBase.Data[player_.ItemPants.Id].Name
-                                           : "";
-            LabelCaracterChest.Text2 = player_.ItemChest != null
-                                           ? ItemDataBase.Data[player_.ItemChest.Id].Name
-                                           : "";
-            LabelCaracterBag.Text2 = player_.ItemBag != null ? ItemDataBase.Data[player_.ItemBag.Id].Name : "";
-            LabelCaracterGlaces.Text2 = player_.ItemGlaces != null
-                                            ? ItemDataBase.Data[player_.ItemGlaces.Id].Name
-                                            : "";
-            LabelCaracterHelmet.Text2 = player_.ItemHelmet != null
-                                            ? ItemDataBase.Data[player_.ItemHelmet.Id].Name
-                                            : "";
-            LabelCaracterShirt.Text2 = player_.ItemShirt != null
-                                           ? ItemDataBase.Data[player_.ItemShirt.Id].Name
-                                           : "";
-            LabelCaracterGloves.Text2 = player_.ItemGloves != null
-                                            ? ItemDataBase.Data[player_.ItemGloves.Id].Name
-                                            : "";
-            LabelCaracterBoots.Text2 = player_.ItemBoots != null
-                                           ? ItemDataBase.Data[player_.ItemBoots.Id].Name
-                                           : "";
             LabelCaracterMeele.Text2 = player_.ItemMeele != null
                                            ? ItemDataBase.Data[player_.ItemMeele.Id].Name
                                            : "";
@@ -808,6 +781,14 @@ namespace jarg {
                 }
                 LabelsEffect.Add(label);
                 EffectsContainer.AddItem(label);
+            }
+
+            ContainerWearList.Clear();
+            LabelsWeared.Clear();
+            foreach (var item in player_.Weared) {
+                var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), 20, ContainerWearList);
+                LabelsWeared.Add(label);
+                ContainerWearList.AddItem(label);
             }
         }
     }

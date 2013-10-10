@@ -1,45 +1,48 @@
 ~Item,kitty_collar
 Name=Кошачий ошейник
 Weight=50
+SType=Wear
 
 ~Item,socks
 Name=Носки
 Weight=50
+SType=Wear
 
 ~Item,wool_socks
 Name=Шерстяные носки
 Weight=100
+SType=Wear
 
 ~Item,sneakers
 Name=Кросовки
-SType=Boots
+SType=Wear
 Weight=400
 
 ~Item,boots
 Name=Кожаные ботинки
-SType=Boots
+SType=Wear
 
 ~Item,steeltoed_boots
 Name=Ботинки с металическим носком
 Weight=1000
-SType=Boots
+SType=Wear
 
 ~Item,military_boots
 Name=Военные ботинки
 Weight=1300
-SType=Boots
+SType=Wear
 
 ~Item,winter_boots
 Name=Зимние ботинки
-SType=Boots
+SType=Wear
 Weight=1000
 
 ~Item,baseball_hat
 Name=Бейсболка
-SType=Hat
+SType=Wear
 Weight=100
 
 ~Item,sun_glasses
 Name=Солнцезащитные очки
-SType=Glaces
+SType=Wear
 Weight=50

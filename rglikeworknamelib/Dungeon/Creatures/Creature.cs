@@ -114,7 +114,7 @@ namespace rglikeworknamelib.Creatures {
             var time = gt.ElapsedGameTime.TotalSeconds;
             reactionT_ += gt.ElapsedGameTime;
             sec_ += gt.ElapsedGameTime;
-            if (!Skipp || !ms.ready) {
+            if (!Skipp || !ms.Ready) {
                 sectoroffset_ = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
                 var block = ms.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
@@ -136,8 +136,8 @@ namespace rglikeworknamelib.Creatures {
                 if (Position.Y >= 32*MapSector.Ry) {
                     var t = ms.Parent.GetDownN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove(this);
-                        t.creatures.Add(this);
+                        ms.Creatures.Remove(this);
+                        t.Creatures.Add(this);
                         position_.Y = position_.Y - 32 * MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
@@ -148,8 +148,8 @@ namespace rglikeworknamelib.Creatures {
                 else if (Position.Y < 0) {
                     var t = ms.Parent.GetUpN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove(this);
-                        t.creatures.Add(this);
+                        ms.Creatures.Remove(this);
+                        t.Creatures.Add(this);
                         position_.Y = position_.Y + 32 * MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
@@ -161,8 +161,8 @@ namespace rglikeworknamelib.Creatures {
                 {
                     var t = ms.Parent.GetRightN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove(this);
-                        t.creatures.Add(this);
+                        ms.Creatures.Remove(this);
+                        t.Creatures.Add(this);
                         position_.X = position_.X - 32 * MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
@@ -174,8 +174,8 @@ namespace rglikeworknamelib.Creatures {
                     
                     var t = ms.Parent.GetLeftN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
-                        ms.creatures.Remove(this);
-                        t.creatures.Add(this);
+                        ms.Creatures.Remove(this);
+                        t.Creatures.Add(this);
                         position_.X = position_.X + 32 * MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }

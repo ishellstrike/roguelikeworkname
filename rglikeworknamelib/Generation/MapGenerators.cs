@@ -61,19 +61,28 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        internal static void PlaceScheme(MapSector gl, Schemes scheme, int x, int y)
+        internal static void PlaceScheme(GameLevel gl, Schemes scheme, int x, int y)
         {
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
-                        if (scheme.data[i * scheme.y + j] != "0" && x+i < MapSector.Rx && y+j < MapSector.Ry) {
-                            gl.SetBlock(x + i, y + j, scheme.data[i * scheme.y + j]);
+                        if (scheme.data[i * scheme.y + j] != "0") {
+                            gl.SetBlockSync(x + i, y + j, scheme.data[i * scheme.y + j]);
                         }
                     
                 }
             }
         }
 
-        internal static void PlaceRandomSchemeByType(MapSector mapSector, SchemesType schemeType, int posX, int posY, Random rnd)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapSector">sector from where offset starts</param>
+        /// <param name="schemeType"></param>
+        /// <param name="posX">offset x</param>
+        /// <param name="posY">offser y</param>
+        /// <param name="rnd">seeded random</param>
+        /// <returns>Size of placed scheme</returns>
+        internal static Point PlaceRandomSchemeByType(GameLevel gl, SchemesType schemeType, int posX, int posY, Random rnd)
         {
             List<Schemes> a;
             switch (schemeType) {
@@ -103,10 +112,12 @@ namespace rglikeworknamelib.Generation
                     scheme.TransVer();
                 }
                 var aa = GetInnerFloorArrayWithId(scheme, "conk_base");
-                FillFloorFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 0, 0);
-                ClearBlocksFromArrayAndOffset(mapSector, scheme.x, scheme.y, aa, 0, 0);
-                PlaceScheme(mapSector, scheme, 0, 0);
+                FillFloorFromArrayAndOffset(gl, scheme.x, scheme.y, aa, posX, posY);
+                ClearBlocksFromArrayAndOffset(gl, scheme.x, scheme.y, aa, posX, posX);
+                PlaceScheme(gl, scheme, posX, posY);
+                return new Point(scheme.x, scheme.y);
             }
+            return Point.Zero;
         }
 
         public static void ClearBlocks(MapSector gameLevel) {
@@ -143,25 +154,25 @@ namespace rglikeworknamelib.Generation
             return converted;
         }
 
-        public static void FillFloorFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy) {
+        public static void FillFloorFromArrayAndOffset(GameLevel gl, int x, int y, string[] arr, int sx, int sy) {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    if (arr[i * y + j] != "0" && sx + i < MapSector.Rx && sy + j < MapSector.Ry)
-                    {
-                        gl.SetFloor(sx + i, sy + j, arr[i * y + j]);
+                    if (arr[i * y + j] != "0" && sx + i < MapSector.Rx && sy + j < MapSector.Ry) {
+                        
+                        gl.SetFloorSync(sx + i, sy + j, arr[i * y + j]);
                     }
                 }
             }
         }
 
-        public static void ClearBlocksFromArrayAndOffset(MapSector gl, int x, int y, string[] arr, int sx, int sy)
+        public static void ClearBlocksFromArrayAndOffset(GameLevel gl, int x, int y, string[] arr, int sx, int sy)
         {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
                     if (arr[i * y + j] != "0" && sx + i < MapSector.Rx && sy + j < MapSector.Ry)
                     {
-                        
-                        gl.SetBlock(sx + i, sy + j, "0");
+
+                        gl.SetBlockSync(sx + i, sy + j, "0");
                     }
                 }
             }
@@ -426,7 +437,7 @@ namespace rglikeworknamelib.Generation
         }
 
 
-        public static void GenerateRoad(MapSector ms, SectorBiom rnd) {
+        public static void GenerateRoad(GameLevel ms, SectorBiom rnd) {
             switch (rnd) {
                 case SectorBiom.RoadCross:
                     FillFloorFromArrayAndOffset(ms, 16, 16, shosse_cross, 0, 0);

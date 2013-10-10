@@ -23,20 +23,19 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// </summary>
         public const int Ry = 16;
 
-        public bool ready;
+        public bool Ready;
 
         public GameLevel Parent;
-        private BackgroundWorker bw;
 
         public int SectorOffsetX, SectorOffsetY;
 
         internal List<IBlock> Blocks;
         internal Floor[] Floors;
-        internal List<ICreature> creatures;
-        internal List<Particle> decals;
-        internal SectorBiom biom;
+        internal List<ICreature> Creatures;
+        internal List<Particle> Decals;
+        internal SectorBiom Biom;
 
-        internal List<Light> lights; 
+        internal List<Light> Lights; 
 
         public MapSector(int sectorOffsetX, int sectorOffsetY) {
             SectorOffsetX = sectorOffsetX;
@@ -44,7 +43,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
-            creatures = new List<ICreature>();
+            Creatures = new List<ICreature>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
@@ -61,27 +60,28 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = new List<IBlock>(Rx * Ry);
             Floors = new Floor[Rx * Ry];
-            creatures = new List<ICreature>();
-            decals = new List<Particle>();
+            Creatures = new List<ICreature>();
+            Decals = new List<Particle>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
                 Floors[i] = new Floor();
                 Blocks.Add(new Block());
             }
-            lights = new List<Light>();
+            Lights = new List<Light>();
         }
 
         /// <summary>
         /// Map from just serialized data
         /// </summary>
-        /// <param name="bdb"></param>
-        /// <param name="fdb"></param>
-        /// <param name="sdb"></param>
+        /// <param name="parent"></param>
         /// <param name="sectorOffsetX"></param>
         /// <param name="sectorOffsetY"></param>
         /// <param name="blocksArray"></param>
         /// <param name="floorsArray"></param>
+        /// <param name="obiom"></param>
+        /// <param name="creat"></param>
+        /// <param name="decal"></param>
         public MapSector(GameLevel parent, object sectorOffsetX, object sectorOffsetY, object blocksArray, object floorsArray, object obiom, object creat, object decal)
         {
             SectorOffsetX = (int)sectorOffsetX;
@@ -90,10 +90,10 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Blocks = blocksArray as List<IBlock>;
             Floors = floorsArray as Floor[];
-            biom = (SectorBiom)obiom;
-            creatures = (List<ICreature>)creat;
-            decals = (List<Particle>)decal;
-            lights = new List<Light>();
+            Biom = (SectorBiom)obiom;
+            Creatures = (List<ICreature>)creat;
+            Decals = (List<Particle>)decal;
+            Lights = new List<Light>();
             ResetLightingSources();
 
             foreach (var block in Blocks) {
@@ -105,23 +105,16 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public List<StorageBlock> GetStorageBlocks() {
-            List<StorageBlock> list = new List<StorageBlock>();
-            for (int i = 0; i < Blocks.Count; i++) {
-                IBlock a = Blocks[i];
-                if (a.Id != "0" && a.Data.Prototype == typeof (StorageBlock)) {
-                    list.Add(a as StorageBlock);
-                }
-            }
-            return list;
+            return (from a in Blocks where a.Id != "0" && a.Data.Prototype == typeof (StorageBlock) select a as StorageBlock).ToList();
         }
 
         public void ResetLightingSources() {
-            lights.Clear();
+            Lights.Clear();
             int i = 0;
             for (int index = 0; index < Blocks.Count; index++) {
                 var block = Blocks[index];
                 if (block is ILightSource) {
-                    lights.Add(GetLights(block, i/Ry*32 + SectorOffsetX*Rx*32, i%Ry*32 + SectorOffsetY*Ry*32));
+                    Lights.Add(GetLights(block, i/Ry*32 + SectorOffsetX*Rx*32, i%Ry*32 + SectorOffsetY*Ry*32));
                 }
                 i++;
             }
@@ -160,48 +153,40 @@ namespace rglikeworknamelib.Dungeon.Level {
             int s = (int) (MapGenerators.Noise2D(SectorOffsetX, SectorOffsetY)*int.MaxValue);
             Random rand = new Random(s);
 
-            biom = GetBiom(SectorOffsetX, SectorOffsetY, Parent);
+            Biom = GetBiom(SectorOffsetX, SectorOffsetY, Parent);
+            if(Biom == SectorBiom.House) {
+                Biom = SectorBiom.Field;
+            }
 
             MapGenerators.FillTest1(this, "1");
             MapGenerators.ClearBlocks(this);
             MapGenerators.FloorPerlin(this);
 
-            switch (biom) {
+            switch (Biom) {
                 case SectorBiom.Bushland:
                     int next = rand.Next(1, 3);
                     for (int i = 0; i < next; i++ ) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "bbochka");
                     break;
 
                 case SectorBiom.Forest:
-                    var aa = rand.Next(5, 10);
+                    var aa = rand.Next(2, 5);
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
                     break;
 
                 case SectorBiom.WildForest:
-                    aa = rand.Next(20, 40);
+                    aa = rand.Next(10, 20);
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
                     break;
 
                 case SectorBiom.SuperWildForest:
-                    aa = rand.Next(60, 80);
+                    aa = rand.Next(30, 40);
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
                     for (int i = 0; i < aa; i++) SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
-                    break;
-
-                case SectorBiom.House:
-                    MapGenerators.PlaceRandomSchemeByType(this, SchemesType.House, rand.Next(0, Rx - 1),
-                                                          rand.Next(0, Ry - 1), rand);
-                    break;
-
-                case SectorBiom.RoadHevt:
-                case SectorBiom.RoadCross:
-                case SectorBiom.RoadHor:
-                    MapGenerators.GenerateRoad(this, biom);
                     break;
             }
 
@@ -226,7 +211,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             ResetLightingSources();
 
             Parent.generated++;
-            ready = true;
+            Ready = true;
         }
 
         public static SectorBiom GetBiom(int offX, int offY, GameLevel gl) {
@@ -245,10 +230,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
 
-            if(gl.RoadSectors.Contains(new Tuple<int, int>(offX, offY))) {
-                biom = SectorBiom.RoadCross;
-            }
-
             return biom;
         }
 
@@ -260,7 +241,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[creatureId].Prototype);
             n.Position = new Vector2(x*32, y*32);
             n.Id = creatureId;
-            creatures.Add(n);
+            Creatures.Add(n);
         }
 
         public IBlock GetBlock(int x, int y)
@@ -304,27 +285,14 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         /// <summary>
-        /// Base advansed block setter
+        /// Base standart block setter
         /// </summary>
-        /// <param name="oneDimCoord"></param>
+        /// <param name="posX"></param>
+        /// <param name="posY"></param>
         /// <param name="id"></param>
-        public void SetBlock(int oneDimCoord, IBlock bl)
-        {
-            Blocks[oneDimCoord] = bl;
-            ((Block)Blocks[oneDimCoord]).data = BlockDataBase.Data[bl.Id];
-            string mTex ="";
-            Blocks[oneDimCoord].Source = bl.Data.RandomMtexFromAlters(ref mTex);
-            Blocks[oneDimCoord].MTex = mTex;
-        }
-
         public void SetBlock(int posX, int posY, string id)
         {
             SetBlock(posX * Ry + posY, id);
-        }
-
-        public void SetBlock(Vector2 pos, string id)
-        {
-            SetBlock((int)pos.X, (int)pos.Y, id);
         }
 
         public void OpenCloseDoor(int x, int y)
@@ -347,9 +315,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void AddDecal(Particle particle) {
-            decals.Add(particle);
-            if(decals.Count > 256) {
-                decals.RemoveAt(0);
+            Decals.Add(particle);
+            if(Decals.Count > 256) {
+                Decals.RemoveAt(0);
             }
         }
     }

@@ -83,15 +83,15 @@ namespace rglikeworknamelib.Dungeon.Items {
 
         public static string GetItemDescription(Item.Item i)
         {
-            return Data[i.Id].Description;
+            return i.Data.Description;
         }
 
         public static string GetItemFullDescription(Item.Item i) {
             var item = Data[i.Id];
             StringBuilder sb = new StringBuilder();
             sb.Append(item.Name);
-            if (Data[i.Id].Description != null) {
-                sb.Append(Environment.NewLine + Environment.NewLine + Data[i.Id].Description);
+            if (i.Data.Description != null) {
+                sb.Append(Environment.NewLine + Environment.NewLine + i.Data.Description);
             }
             sb.Append(Environment.NewLine + string.Format("{0} г", item.Weight));
             sb.Append(Environment.NewLine + string.Format("{0} места", item.Volume));

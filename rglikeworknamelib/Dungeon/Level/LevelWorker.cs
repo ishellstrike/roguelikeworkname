@@ -12,91 +12,111 @@ using rglikeworknamelib.Dungeon.Level.Blocks;
 namespace rglikeworknamelib.Dungeon.Level
 {
     public class LevelWorker {
-        private List<Tuple<Point,MapSector>> onSave_;
-        private List<Tuple<Point, GameLevel>> onLoad_;
-        private List<Tuple<Point, GameLevel>> onGeneration_;
-        public List<Tuple<Point, MapSector>> Ready;
+        private Dictionary<Point,MapSector> onSave_;
+        private Dictionary<Point, GameLevel> onLoad_;
+        private Dictionary<Point, GameLevel> onGeneration_;
+        public Dictionary<Point, MapSector> Ready;
 
-        public bool Loading, Saving, Generating;
+        public bool Loading() {
+            return onLoad_.Count > 0;
+        }
+
+        public bool Saving() {
+            return onSave_.Count > 0;
+        }
+
+        public bool Generating() {
+            return onGeneration_.Count > 0;
+        }
 
         private bool exit;
 
         public LevelWorker() {
-            onLoad_ = new List<Tuple<Point, GameLevel>>();
-            onGeneration_ = new List<Tuple<Point, GameLevel>>();
-            onSave_ = new List<Tuple<Point, MapSector>>();
-            Ready = new List<Tuple<Point, MapSector>>();
+            onLoad_ = new Dictionary<Point, GameLevel>();
+            onGeneration_ = new Dictionary<Point, GameLevel>();
+            onSave_ = new Dictionary<Point, MapSector>();
+            Ready = new Dictionary<Point, MapSector>();
+        }
+
+        public int LoadCount() {
+            return onLoad_.Count;
+        }
+
+        public int GenerationCount() {
+            return onGeneration_.Count;
+        }
+
+        public int SaveCount() {
+            return onSave_.Count;
         }
 
         public void Run() {
             while (!exit) {
                 if (onSave_.Count > 0) {
                     var t = onSave_.First();
-                    SaveSector(t.Item2);
-                    onSave_.Remove(t);
+                    SaveSector(t.Value);
+                    onSave_.Remove(t.Key);
                 }
-
-                Loading = onLoad_.Count > 0;
-                Saving = onSave_.Count > 0;
-                Generating = onGeneration_.Count > 0;
 
                 if (onLoad_.Count > 0) {
                     var t = onLoad_.First();
-                    Ready.Add(new Tuple<Point, MapSector>(new Point(t.Item1.X, t.Item1.Y), LoadSector(t.Item1.X, t.Item1.Y, t.Item2)));
+                    if(Ready.ContainsKey(t.Key)) {
+                        Ready.Remove(t.Key);
+                    }
+                    Ready.Add(t.Key, LoadSector(t.Key.X, t.Key.Y, t.Value));
                     //gl.GetSector(t.Item1.X, t.Item1.Y);
-                    onLoad_.Remove(t);
+                    onLoad_.Remove(t.Key);
                 }
 
                 if (onGeneration_.Count > 0) {
                     var tt = onGeneration_.First();
-                    var ms = new MapSector(tt.Item2, tt.Item1.X, tt.Item1.Y);
-                    ms.Rebuild(tt.Item2.MapSeed);
-                    Ready.Add(new Tuple<Point, MapSector>(new Point(tt.Item1.X, tt.Item1.Y), ms));
+                    var ms = new MapSector(tt.Value, tt.Key.X, tt.Key.Y);
+                    ms.Rebuild(tt.Value.MapSeed);
+                    if (Ready.ContainsKey(tt.Key))
+                    {
+                        Ready.Remove(tt.Key);
+                    }
+                    Ready.Add(tt.Key, ms);
                     //gl.GetSector(tt.Item1.X, tt.Item1.Y);
-                    onGeneration_.Remove(tt);
+                    onGeneration_.Remove(tt.Key);
                 }
 
-                if (!Loading && !Saving && !Generating) {
-                    Thread.Sleep(500);
+                if (!Loading() && !Saving() && !Generating()) {
+                    Thread.Sleep(1000);
                 }
             }
         }
 
         public void Generate(Point p, GameLevel gl) {
-            var tuple = new Tuple<Point, GameLevel>(p, gl);
-            if (!onGeneration_.Contains(tuple)) {
-                onGeneration_.Add(tuple);
+            if (!onGeneration_.ContainsKey(p)) {
+                onGeneration_.Add(p, gl);
             }
         }
 
         public void Load(Point p, GameLevel gl) {
-            var tuple = new Tuple<Point, GameLevel>(p, gl);
-            if(!onLoad_.Contains(tuple)) {
-                onLoad_.Add(tuple);
+            if(!onLoad_.ContainsKey(p)) {
+                onLoad_.Add(p, gl);
             }
         }
 
         public void Save(MapSector ms) {
             var p = new Point(ms.SectorOffsetX, ms.SectorOffsetY);
-            onSave_.Add(new Tuple<Point, MapSector>(p, ms));
+            if (onSave_.ContainsKey(p)) {
+                onSave_.Remove(p);
+            }
+            onSave_.Add(p, ms);
         }
 
         public MapSector TryGet(Point p, GameLevel gl) {
-            Tuple<Point, MapSector> first = null;
-            for (int i = 0; i < Ready.Count; i++) {
-                Tuple<Point, MapSector> x = Ready[i];
-                if (x.Item1 == p) {
-                    first = x;
-                    break;
-                }
-            }
-            if(first != null) {
-                return first.Item2;
+            if(Ready.ContainsKey(p)) {
+                return Ready[p];
             }
 
             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", p.X, p.Y))) {
                 Load(p, gl);
-            } else { Generate(p, gl); }
+            } else {
+                Generate(p, gl);
+            }
 
             return null;
         }
@@ -107,23 +127,20 @@ namespace rglikeworknamelib.Dungeon.Level
         /// <param name="a"></param>
         internal void SaveSector(MapSector a)
         {
-            BinaryFormatter binaryFormatter_ = new BinaryFormatter();
-            FileStream fileStream_;
-            GZipStream gZipStream_;
+            var binaryFormatter = new BinaryFormatter();
 
-            fileStream_ =
-                new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", a.SectorOffsetX, a.SectorOffsetY),
-                               FileMode.Create);
-            gZipStream_ = new GZipStream(fileStream_, CompressionMode.Compress);
-            binaryFormatter_.Serialize(gZipStream_, a.SectorOffsetX);
-            binaryFormatter_.Serialize(gZipStream_, a.SectorOffsetY);
-            binaryFormatter_.Serialize(gZipStream_, a.Blocks);
-            binaryFormatter_.Serialize(gZipStream_, a.Floors);
-            binaryFormatter_.Serialize(gZipStream_, a.biom);
-            binaryFormatter_.Serialize(gZipStream_, a.creatures);
-            binaryFormatter_.Serialize(gZipStream_, a.decals);
-            gZipStream_.Close();
-            fileStream_.Close();
+            var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", a.SectorOffsetX, a.SectorOffsetY),
+                                                    FileMode.Create);
+            var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
+                binaryFormatter.Serialize(gZipStream, a.SectorOffsetX);
+                binaryFormatter.Serialize(gZipStream, a.SectorOffsetY);
+                binaryFormatter.Serialize(gZipStream, a.Blocks);
+                binaryFormatter.Serialize(gZipStream, a.Floors);
+                binaryFormatter.Serialize(gZipStream, a.Biom);
+                binaryFormatter.Serialize(gZipStream, a.Creatures);
+                binaryFormatter.Serialize(gZipStream, a.Decals);
+            gZipStream.Close();
+            fileStream.Close();
         }
 
         private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY, GameLevel gl)
@@ -140,20 +157,20 @@ namespace rglikeworknamelib.Dungeon.Level
                     FileMode.Open);
 
                 gZipStream_ = new GZipStream(fileStream_, CompressionMode.Decompress);
-                var q1 = binaryFormatter_.Deserialize(gZipStream_);
-                var q2 = binaryFormatter_.Deserialize(gZipStream_);
-                var q3 = binaryFormatter_.Deserialize(gZipStream_);
-                var q4 = binaryFormatter_.Deserialize(gZipStream_);
-                var q5 = binaryFormatter_.Deserialize(gZipStream_);
-                var q6 = binaryFormatter_.Deserialize(gZipStream_);
-                var q7 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q1 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q2 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q3 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q4 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q5 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q6 = binaryFormatter_.Deserialize(gZipStream_);
+                    var q7 = binaryFormatter_.Deserialize(gZipStream_);
                 gZipStream_.Close();
                 fileStream_.Close();
                 var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7);
                 foreach (var block in t.Blocks) {
                     ((Block)block).data = BlockDataBase.Data[block.Id];
                 }
-                t.ready = true;
+                t.Ready = true;
                 return t;
             }
             return null;

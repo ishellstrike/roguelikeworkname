@@ -10,12 +10,14 @@ namespace rglikeworknamelib.Dungeon.Item
     public class Item
     {
         public string Id;
+        [NonSerializedAttribute]public ItemData Data;
         public int Count;
         public int Uid;
         public List<IBuff> Buffs;
 
         public Item(string i, int co) {
             Id = i;
+            Data = ItemDataBase.Data[i];
             Count = co;
             Uid = UniqueIds.GetNewItemId();
             Buffs = new List<IBuff>();
@@ -32,12 +34,13 @@ namespace rglikeworknamelib.Dungeon.Item
 
         public Item(Item item) {
             Id = item.Id;
+            Data = ItemDataBase.Data[Id];
             Count = item.Count;
             Uid = item.Uid;
             Buffs = new List<IBuff>();
-            if (ItemDataBase.Data[Id].Buff != null)
+            if (Data.Buff != null)
             {
-                foreach (var buff in ItemDataBase.Data[Id].Buff) {
+                foreach (var buff in Data.Buff) {
                     var a = (IBuff) Activator.CreateInstance(BuffDataBase.Data[buff].Prototype);
                     a.Id = buff;
                     Buffs.Add(a);

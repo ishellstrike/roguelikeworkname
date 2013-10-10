@@ -14,8 +14,7 @@ namespace rglikeworknamelib.Dungeon.Item
 
         public int TotalWeight {
             get {
-                var db = ItemDataBase.Data;
-                return items_.Select(x => db[x.Id].Weight).Sum();
+                return items_.Select(x => x.Data.Weight).Sum();
             }
         }
 
@@ -23,14 +22,13 @@ namespace rglikeworknamelib.Dungeon.Item
         {
             get
             {
-                var db = ItemDataBase.Data;
-                return items_.Select(x => db[x.Id].Volume).Sum();
+                return items_.Select(x => x.Data.Volume).Sum();
             }
         }
 
         public void AddItem(Item it) {
             items_.Add(it);
-            switch (ItemDataBase.Data[it.Id].SType) {
+            switch (it.Data.SType) {
                     case ItemType.Ammo:
                     Achievements.Stat["ammototal"].Count += it.Count;
                     break;
@@ -52,7 +50,7 @@ namespace rglikeworknamelib.Dungeon.Item
         }
 
         public List<Item> FilterByType(ItemType it) {
-            return it == ItemType.Nothing ? items_ : items_.Where(item => ItemDataBase.Data[item.Id].SType == it).ToList();
+            return it == ItemType.Nothing ? items_ : items_.Where(item => item.Data.SType == it).ToList();
         }
 
         public void StackSimilar() {
@@ -88,23 +86,17 @@ namespace rglikeworknamelib.Dungeon.Item
             if (selectedItem == null || player == null) {
                 return;
             }
-            switch (ItemDataBase.Data[selectedItem.Id].SType)
+            switch (selectedItem.Data.SType)
             {
-                case ItemType.Hat:
-                case ItemType.Pants:
-                case ItemType.Helmet:
+                case ItemType.Wear:
                 case ItemType.Meele:
-                case ItemType.Shirt:
                 case ItemType.Ammo:
                 case ItemType.Bag:
-                case ItemType.Boots:
-                case ItemType.Glaces:
-                case ItemType.Gloves:
                 case ItemType.Gun:
                     player.EquipItem(selectedItem, this);
                     break;
                 case ItemType.Food:
-                    EventLog.Add(string.Format("Вы употребили {0}", ItemDataBase.Data[selectedItem.Id].Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
+                    EventLog.Add(string.Format("Вы употребили {0}", selectedItem.Data.Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
                     foreach (var buff in selectedItem.Buffs)
                     {
                         buff.ApplyToTarget(player);

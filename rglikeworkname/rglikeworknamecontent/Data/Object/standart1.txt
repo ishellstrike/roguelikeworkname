@@ -132,7 +132,7 @@ MTex=42
 Name="Молодой кустарник"
 IsTransparent=false
 IsWalkable=true
-swide=8
+IsTransparent=true
 MTex=mbush1
 AlterMtex={mbush2,mbush3}
 
@@ -140,7 +140,7 @@ AlterMtex={mbush2,mbush3}
 ~Block,kustbig
 Name="Густой кустарник"
 IsWalkable=true
-swide=16
+IsTransparent=true
 MTex=bush
 
 ~BlockButningBochka,bbochka

@@ -27,12 +27,12 @@ namespace rglikeworknamelib.Dungeon
         public static TimeSpan Elapse;
         public static float Temperature = 10;
         private static Seasons currentSeason_ = Seasons.Summer;
-        public static DayPart dayPart_  = DayPart.Day;
+        public static DayPart DayPart  = DayPart.Day;
         private static readonly long Hour3 = new TimeSpan(0,3,0,0).Ticks;
-        private static float ler = 7;
+        private static float ler_ = 7;
 
         public static float GetCurrentSlen() {
-            return ler;
+            return ler_;
         }
 
         public static void Update(GameTime gt) {
@@ -41,10 +41,10 @@ namespace rglikeworknamelib.Dungeon
             Temperature -= Temperature * (float)gt.ElapsedGameTime.TotalMinutes;
             Temperature += GetNormalTemp(CurrentTime) * (float)gt.ElapsedGameTime.TotalMinutes;
 
-            switch (dayPart_) {
+            switch (DayPart) {
                 case DayPart.Day:
                     if (CurrentTime.TimeOfDay.Ticks > GetSunsetTime(CurrentTime).Ticks - Hour3) {
-                        dayPart_ = DayPart.Vecher;
+                        DayPart = DayPart.Vecher;
                         if(onVecherBegins != null) {
                             onVecherBegins(null, null);
                         }
@@ -52,7 +52,7 @@ namespace rglikeworknamelib.Dungeon
                     break;
                 case DayPart.Morning:
                     if (CurrentTime.TimeOfDay.Ticks > GetSunriseTime(CurrentTime).Ticks + Hour3) {
-                        dayPart_ = DayPart.Day;
+                        DayPart = DayPart.Day;
                         if(onDayBegins != null) {
                             onDayBegins(null, null);
                         }
@@ -60,7 +60,7 @@ namespace rglikeworknamelib.Dungeon
                     break;
                 case DayPart.Night:
                     if(CurrentTime.TimeOfDay.Ticks > GetSunriseTime(CurrentTime).Ticks) {
-                        dayPart_ = DayPart.Morning;
+                        DayPart = DayPart.Morning;
                         if(onMorningBegins != null) {
                             onMorningBegins(null, null);
                         }
@@ -68,7 +68,7 @@ namespace rglikeworknamelib.Dungeon
                     break;
                 case DayPart.Vecher:
                     if(CurrentTime.TimeOfDay.Ticks > GetSunsetTime(CurrentTime).Ticks) {
-                        dayPart_ = DayPart.Night;
+                        DayPart = DayPart.Night;
                         if(onNightBegins != null) {
                             onNightBegins(null, null);
                         }
@@ -77,7 +77,7 @@ namespace rglikeworknamelib.Dungeon
             }
 
             float a = 3;
-            switch (dayPart_) {
+            switch (DayPart) {
                     case DayPart.Day:
                     a = 0.1f;
                     break;
@@ -91,7 +91,7 @@ namespace rglikeworknamelib.Dungeon
                     a = 7;
                     break;
             }
-            ler = Vector2.Lerp(new Vector2(ler, 0), new Vector2(a, 0), (float) Elapse.TotalHours).X;
+            ler_ = Vector2.Lerp(new Vector2(ler_, 0), new Vector2(a, 0), (float) Elapse.TotalHours).X;
              
 
             switch (currentSeason_) {
@@ -186,12 +186,12 @@ namespace rglikeworknamelib.Dungeon
 
         public static bool IsNight(DateTime cur)
         {
-            return dayPart_ == DayPart.Night;
+            return DayPart == DayPart.Night;
         }
 
         public static bool IsDay(DateTime cur)
         {
-            return dayPart_ == DayPart.Day ;
+            return DayPart == DayPart.Day ;
         }
 
         public static TimeSpan GetSunriseTime(DateTime cur)

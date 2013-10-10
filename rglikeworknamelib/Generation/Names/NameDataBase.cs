@@ -22,12 +22,17 @@ namespace rglikeworknamelib.Generation.Names
         public static List<NameClass> data = new List<NameClass>();
 
 
+
         public NameDataBase() {
             var temp = ParsersCore.UniversalParseDirectory(Settings.GetNamesDataDirectory(), UniversalParser.NoIdParser<NameClass>);
 
             foreach (var o in temp) {
                 data.Add((NameClass)o);
             }
+        }
+
+        public static string GetRandom(Random rnd) {
+            return data[rnd.Next(0, data.Count + 1)].Name;
         }
     }
 }

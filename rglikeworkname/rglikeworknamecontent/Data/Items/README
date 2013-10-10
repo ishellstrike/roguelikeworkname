@@ -1,4 +1,4 @@
-//some string or int Field=Value ""not required
+//some string or int Field=Value "" not required
 //some array Field={value1,value2}
 
 int stackNo;
@@ -31,14 +31,7 @@ Microsoft.Xna.Framework.Color MMCol; // nothing
 
 int Volume;// range of sound then using in blocks
 ItemType SType;{        
-		Hat,
-        	Glaces,
-      	 	Helmet,
-      		Chest,
-     		Shirt,
-        	Pants,
-        	Gloves,
-        	Boots,     
+		Wear,
         	Gun,
         	Meele,
         	Ammo,
