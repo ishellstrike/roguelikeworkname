@@ -521,6 +521,17 @@ namespace jarg {
                 var t = currentFloor_.KillAllCreatures();
                 EventLog.Add(string.Format("{0} creatures in active sector killed!", t), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
             }
+            if(s.Contains("spawn i ")) {
+                string ss = s.Substring(8);
+                if (ItemDataBase.Data.ContainsKey(ss)) {
+                    inventory_.AddItem(new Item(ss, 1));
+                    inventory_.StackSimilar();
+                    UpdateInventoryContainer();
+                } else {
+                    EventLog.Add(string.Format("Item {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                                 LogEntityType.Console);
+                }
+            }
             ConsoleTB.Text = string.Empty;
         }
 
@@ -542,7 +553,7 @@ namespace jarg {
         }
 
         private void ButtonIngameExit_onPressed(object sender, EventArgs e) {
-            currentFloor_.SaveAllAndExit();
+            currentFloor_.SaveAllAndExit(player_);
         }
 
         private void ButtonContainerTakeAll_onPressed(object sender, EventArgs e) {
@@ -601,8 +612,7 @@ namespace jarg {
 
             int cou = 0;
             foreach (var item in a) {
-                var i = new LabelFixed(Vector2.Zero,
-                                       string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, ContainerInventoryItems);
+                var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                 i.Tag = cou;
                 i.OnPressed += PressInInventory;
                 cou++;
@@ -623,8 +633,7 @@ namespace jarg {
 
             int cou = 0;
             foreach (var item in a) {
-                var i = new LabelFixed(Vector2.Zero,
-                                       string.Format("{0} x{1}", ItemDataBase.Data[item.Id].Name, item.Count), 22, ContainerContainer);
+                var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerContainer);
                 i.Tag = cou;
                 i.OnPressed += PressInContainer;
                 cou++;

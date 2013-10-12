@@ -1,6 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
@@ -23,6 +26,13 @@ namespace rglikeworknamelib.Creatures {
         public Dress DressHat = new Dress("haer1", Color.White);
         public Dress DressTshort = new Dress("t-short1", Color.DarkRed);
         public Dress DressPants = new Dress("pants1", Color.DarkBlue);
+
+
+        public Stat Hunger = new Stat(100);
+        public Stat Thirst = new Stat(100);
+        public Stat Heat = new Stat(100);
+        public Stat Sleep = new Stat(100);
+        public Stat Morale = new Stat(100);
 
         public Item ItemGun;
         public Item ItemMeele;
@@ -205,6 +215,11 @@ namespace rglikeworknamelib.Creatures {
                     Velocity /= Settings.H()/time;
                 }
 
+                var elapsetGWL = GlobalWorldLogic.Elapse;
+                Hunger.Current -= (float)elapsetGWL.TotalDays / 4 * 100;
+                Thirst.Current -= (float)elapsetGWL.TotalDays * 100;
+                Sleep.Current -= (float)elapsetGWL.TotalDays / 1.5f * 100;
+
                 secShoot_ += gt.ElapsedGameTime;
 
                 for (int i = 0; i < Buffs.Count; i++) {
@@ -228,7 +243,7 @@ namespace rglikeworknamelib.Creatures {
 
             if (Settings.DebugInfo)
             {
-                sb_.DrawString(Font, string.Format("{0}", Position), new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
+                sb_.DrawString(Font, string.Format("Po:{0}{5}Hu:{1} Th:{2}{5}Sl:{3} He:{4}", Position, Hunger, Thirst, Sleep, Heat, Environment.NewLine), new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
             }
         }
 
@@ -271,6 +286,71 @@ namespace rglikeworknamelib.Creatures {
                     secShoot_ = TimeSpan.Zero;
                 }
             }
+        }
+
+        public bool EatItem(Item selectedItem) {
+            if(Hunger.Current >= Hunger.Max || Thirst.Current >= Thirst.Max) {
+                return false;
+            }
+            //25 -- 2500 ml per day / 100 percent
+            Hunger.Current += selectedItem.Data.NutCal/25f/selectedItem.Data.Doses;
+            Thirst.Current += selectedItem.Data.NutH2O/25f/selectedItem.Data.Doses;
+            return true;
+        }
+
+        public void Load()
+        {
+            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"))) {
+            //    var binaryFormatter = new BinaryFormatter();
+
+            //    var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"),
+            //                                    FileMode.Open);
+            //    var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+            //        Perks = (PerksSystem)binaryFormatter.Deserialize(gZipStream);
+            //        Perks.Owner = this;
+            //        Weared = (Collection<Item>)binaryFormatter.Deserialize(gZipStream);
+            //        ItemAmmo = (Item) binaryFormatter.Deserialize(gZipStream);
+            //        ItemGun = (Item) binaryFormatter.Deserialize(gZipStream);
+            //        ItemMeele = (Item) binaryFormatter.Deserialize(gZipStream);
+            //        DressHat = (Dress) binaryFormatter.Deserialize(gZipStream);
+            //        DressPants = (Dress) binaryFormatter.Deserialize(gZipStream);
+            //        DressTshort = (Dress) binaryFormatter.Deserialize(gZipStream);
+            //        Hunger = (Stat) binaryFormatter.Deserialize(gZipStream);
+            //        Thirst = (Stat) binaryFormatter.Deserialize(gZipStream);
+            //        Heat = (Stat) binaryFormatter.Deserialize(gZipStream); 
+            //        Sleep = (Stat) binaryFormatter.Deserialize(gZipStream);
+            //        Morale = (Stat) binaryFormatter.Deserialize(gZipStream);
+            //        XpPool= (int) binaryFormatter.Deserialize(gZipStream);
+            //    gZipStream.Close();
+            //    gZipStream.Dispose();
+            //    fileStream.Close();
+            //    fileStream.Dispose(); 
+            //}
+        }
+
+        public void Save() {
+            //var binaryFormatter = new BinaryFormatter();
+
+            //var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"), FileMode.Create);
+            //var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
+            //    binaryFormatter.Serialize(gZipStream, Perks);
+            //    binaryFormatter.Serialize(gZipStream, Weared);
+            //    binaryFormatter.Serialize(gZipStream, ItemAmmo);
+            //    binaryFormatter.Serialize(gZipStream, ItemGun);
+            //    binaryFormatter.Serialize(gZipStream, ItemMeele);
+            //    binaryFormatter.Serialize(gZipStream, DressHat);
+            //    binaryFormatter.Serialize(gZipStream, DressPants);
+            //    binaryFormatter.Serialize(gZipStream, DressTshort);
+            //    binaryFormatter.Serialize(gZipStream, Hunger);
+            //    binaryFormatter.Serialize(gZipStream, Thirst);
+            //    binaryFormatter.Serialize(gZipStream, Heat);
+            //    binaryFormatter.Serialize(gZipStream, Sleep);
+            //    binaryFormatter.Serialize(gZipStream, Morale);
+            //    binaryFormatter.Serialize(gZipStream, XpPool);
+            //gZipStream.Close();
+            //gZipStream.Dispose();
+            //fileStream.Close();
+            //fileStream.Dispose();
         }
     }
 }

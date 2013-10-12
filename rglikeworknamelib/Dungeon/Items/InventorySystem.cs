@@ -54,32 +54,21 @@ namespace rglikeworknamelib.Dungeon.Item
         }
 
         public void StackSimilar() {
-            var a = TakeDistinctItems();
-
-            foreach (var item in items_) {
-                FindById(a, item.Id).Count += item.Count;
-            }
-
-            items_ = a;
-        }
-
-        private static Item FindById(IEnumerable<Item> list, string id) {
-            return list.FirstOrDefault(item => item.Id == id);
-        }
-
-        private List<Item> TakeDistinctItems() {
             var a = new List<Item>();
 
             foreach (var item in items_) {
-                Item item1 = item;
-                if(a.Select(x => x.Id == item1.Id).All(y => y == false)) a.Add(new Item(item));
+                Item it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses != 0);
+                if(it != null) {
+                    it.Count += item.Count;
+                }
+                a.Add(item);
             }
 
-            foreach (var item in a) {
-                item.Count = 0;
-            }
+            //foreach (var item in items_) {
+            //    FindById(a, item.Id).Count += item.Count;
+            //}
 
-            return a;
+            items_ = a;
         }
 
         public void UseItem(Item selectedItem, Player player) {
@@ -95,15 +84,25 @@ namespace rglikeworknamelib.Dungeon.Item
                 case ItemType.Gun:
                     player.EquipItem(selectedItem, this);
                     break;
+                case ItemType.Medicine:
                 case ItemType.Food:
-                    EventLog.Add(string.Format("Вы употребили {0}", selectedItem.Data.Name), GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
-                    foreach (var buff in selectedItem.Buffs)
-                    {
-                        buff.ApplyToTarget(player);
+                    if(player.EatItem(selectedItem)) {
+                        EventLog.Add(
+                            string.Format("{1} {0}", selectedItem.Data.Name,
+                                          selectedItem.Data.SType == ItemType.Medicine ? "Вы приняли" : "Вы употребили"),
+                            GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
+                        foreach (var buff in selectedItem.Buffs) {
+                            buff.ApplyToTarget(player);
+                        }
+                        selectedItem.Doses--;
+                        if (selectedItem.Doses <= 0 && items_.Contains(selectedItem)) {
+                            items_.Remove(selectedItem);
+                        }
                     }
-                    if (items_.Contains(selectedItem))
-                    {
-                        items_.Remove(selectedItem);
+                    else {
+                        EventLog.Add(
+                            string.Format("Вы не можете съесть больше"),
+                            GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
                     }
                     break;
             }

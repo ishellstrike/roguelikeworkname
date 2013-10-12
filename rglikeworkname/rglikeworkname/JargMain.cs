@@ -117,7 +117,7 @@ namespace jarg {
 
         private void Application_ApplicationExit(object sender, EventArgs e) {
             if (currentFloor_.SectorCount() > 0) {
-                currentFloor_.SaveAllAndExit();
+                currentFloor_.SaveAllAndExit(player_);
             }
         }
 
@@ -309,6 +309,8 @@ namespace jarg {
             player_.OnUpdatedEquip += UpdateCaracterWindowItems;
             player_.OnShoot += player__onShoot;
             RenderedFlashlight = GetRenderedFlashlight();
+
+            player_.Load();
 
             currentFloor_.MegaMapPreload();
 

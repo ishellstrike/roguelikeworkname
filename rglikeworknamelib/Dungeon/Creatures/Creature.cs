@@ -21,16 +21,6 @@ namespace rglikeworknamelib.Creatures {
 
         internal float Percenter = (float)Settings.rnd.NextDouble()/5f + 0.8f;
 
-        public bool IsWarmCloth() {
-            return true;
-        }
-
-        public Stat Hunger  = new Stat(100);
-
-        public Stat Thirst = new Stat(100);
-
-        public Stat Heat = new Stat(36);
-
         internal Vector2 position_;
         public Vector2 Position  {
             get { return position_; }

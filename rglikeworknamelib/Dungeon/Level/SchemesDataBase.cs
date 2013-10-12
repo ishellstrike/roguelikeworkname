@@ -17,7 +17,7 @@ namespace rglikeworknamelib.Dungeon.Level
         public SchemesDataBase()
         {
             Data = new List<Schemes>();
-            var a = ParsersCore.ParseDirectory<object>(Directory.GetCurrentDirectory() + @"\Content\Data\Schemes\", ChemesParser.Parser);
+            var a = ParsersCore.ParseDirectory<Schemes>(Directory.GetCurrentDirectory() + @"\Content\Data\Schemes\", ChemesParser.Parser);
             foreach (var pair in a)
             {
                 Data.Add((Schemes)pair);

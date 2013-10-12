@@ -6,58 +6,60 @@ Name=Кола
 Nameret=Банка
 NutH2O=500
 Weight=500
-NutCal=50
+NutCal=20
 AfteruseId=emptycan
 SType=Food
-Buff={heal5}
 
 ~Item,fishcan1
 Name=Банка сардин
 Nameret=Банка с едой
 AfteruseId=emptycan
 SType=Food
-Buff={heal5}
+Weight=100
+NutCal=500
+Doses=2
 
 ~Item,lapsha1
 Name=Пакет лапши
 Weight=100
-NutCal=80
+NutCal=400
 Nameret=Пакет с едой
 SType=Food
-Buff={heal5}
 
 ~Item,cookie1
 Name=Коробка галет
 Weight=300
-NutCal=100
+NutCal=700
 Nameret=Коробка с едой
+Doses=20
 SType=Food
-Buff={heal5}
 
 ~Item,meatcan1
 Name=Банка тушеной говядины
 Nameret=Банка с едой
 Weight=300
-NutCal=200
+NutCal=800
+Doses=2
 AfteruseId=emptycan
 SType=Food
-Buff={heal5}
 
 ~Item,meatcan2
 Name=Банка паштета
 Nameret=Банка с едой
 Weight=300
-NutCal=200
+NutCal=600
+Doses=2
 AfteruseId=emptycan
 SType=Food
-Buff={heal5}
 
 ~Item,milk1
 Name=Пакет молока
 Weight=1000
+NutCal=250
+NutH2O=1000
 AfteruseId=13
+Doses=10
 SType=Food
-Buff={heal5}
 
 
 ~Item,emptycan
@@ -70,16 +72,14 @@ Weight=600
 NutH2O=500
 AfteruseId=14
 SType=Food
-Buff={heal5}
 
 ~Item,10
 Name=Аварийный рацион питания
 Nameret=Странная коробка
 Weight=500
-NutCal=500
+NutCal=1000
 AfteruseId=13
 SType=Food
-Buff={heal5}
 
 ~Item,watercons
 Name=Вода консервированая
@@ -88,7 +88,6 @@ NutH2O=500
 Weight=500
 AfteruseId=12
 SType=Food
-Buff={heal5}
 
 ~Item,12
 Name=Пустой пакет

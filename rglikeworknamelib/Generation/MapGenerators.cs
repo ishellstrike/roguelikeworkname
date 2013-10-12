@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using System.Linq;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 
 namespace rglikeworknamelib.Generation
 {
@@ -64,8 +66,14 @@ namespace rglikeworknamelib.Generation
                 for (int j = 0; j < scheme.y; j++) {
                         if (scheme.data[i * scheme.y + j] != "0") {
                             gl.SetBlockSync(x + i, y + j, scheme.data[i * scheme.y + j]);
+
+                            if(BlockDataBase.Data[scheme.data[i * scheme.y + j]].Prototype == typeof(StorageBlock)) {
+                                var r = Settings.rnd.Next(1, 4);
+                                for (int k = 0; k < r; k++) {
+                                    ((StorageBlock)gl.GetBlock(x + i, y + j)).StoredItems.Add(new Item(ItemDataBase.Data.ElementAt(Settings.rnd.Next(1, ItemDataBase.Data.Count)).Key, 1));
+                                }
+                            }
                         }
-                    
                 }
             }
         }

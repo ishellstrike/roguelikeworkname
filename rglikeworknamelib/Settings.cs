@@ -13,7 +13,7 @@ namespace rglikeworknamelib {
 
         public static bool DebugInfo;
         public static bool DebugWire;
-        public static bool Lighting = true;
+        public static bool Lighting = false;
 
         public static bool NeedToShowInfoWindow;
         public static string NTS1, NTS2;
@@ -82,7 +82,7 @@ namespace rglikeworknamelib {
         public static SpriteFont Font;
         public static bool NeedExit;
         public static bool InventoryUpdate;
-        public static bool SeeAll = true;
+        public static bool SeeAll = false;
         public static bool Noclip;
 
         public static Color HudСolor {

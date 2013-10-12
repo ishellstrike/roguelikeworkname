@@ -90,8 +90,8 @@ namespace rglikeworknamelib.Dungeon.Items {
             var item = Data[i.Id];
             StringBuilder sb = new StringBuilder();
             sb.Append(item.Name);
-            if (i.Data.Description != null) {
-                sb.Append(Environment.NewLine + Environment.NewLine + i.Data.Description);
+            if (item.Description != null) {
+                sb.Append(Environment.NewLine + Environment.NewLine + item.Description);
             }
             sb.Append(Environment.NewLine + string.Format("{0} г", item.Weight));
             sb.Append(Environment.NewLine + string.Format("{0} места", item.Volume));

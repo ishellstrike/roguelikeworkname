@@ -787,13 +787,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             return sectors_.Count;
         }
 
-        public void SaveAllAndExit() {
-            Action a = SaveAllAsyncAndExit;
-            a.BeginInvoke(null, null);
+        public void SaveAllAndExit(Player pl) {
+            Action<Player> a = SaveAllAsyncAndExit;
+            a.BeginInvoke(pl, null, null);
         }
 
         private bool all_saved;
-        private void SaveAllAsyncAndExit() {
+        private void SaveAllAsyncAndExit(Player pl) {
+            pl.Save();
             Settings.NTS1 = "Saving Map";
             Settings.NeedToShowInfoWindow = true;
             SaveMap();
@@ -807,6 +808,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     lw_.SaveSector(sectors_.ElementAt(i).Value); 
                 }
             }
+
             Settings.NeedExit = true;
         }
 
@@ -851,17 +853,16 @@ namespace rglikeworknamelib.Dungeon.Level {
                         for (int k = 0; k < 5; k++) {
                             //var tt = GetSectorSync(a.SectorPos.X, a.SectorPos.Y);
                             //tt.Biom = SectorBiom.House;
-                            Point where = new Point(10, 0);
-                            //var where = MapGenerators.PlaceRandomSchemeByType(this, SchemesType.House,
-                            //                                                  size.X + a.SectorPos.X*MapSector.Rx,
-                            //                                                  size.Y + a.SectorPos.Y*MapSector.Ry, rand);
-                            //SetBiomAtBlock(size.X + a.SectorPos.X*MapSector.Rx, size.Y + a.SectorPos.Y*MapSector.Ry,
-                            //               SectorBiom.House);
-                            var poss = new Vector2(size.X + a.SectorPos.X * MapSector.Rx, size.Y + a.SectorPos.Y * MapSector.Ry);
-                            MapGenerators.ClearBlocksFromTo(this, poss, poss + new Vector2(10, 9));
-                            MapGenerators.FillFromTo(this, poss, poss + new Vector2(10, 9), "asfalt");
-                            MapGenerators.FillFromTo(this, poss + new Vector2(0, 4), poss + new Vector2(10, 5), "asfalt_br");
-                            size.X += 10;
+                            var where = MapGenerators.PlaceRandomSchemeByType(this, SchemesType.House,
+                                                                              size.X + a.SectorPos.X * MapSector.Rx,
+                                                                              size.Y + a.SectorPos.Y * MapSector.Ry, rand);
+                            SetBiomAtBlock(size.X + a.SectorPos.X * MapSector.Rx, size.Y + a.SectorPos.Y * MapSector.Ry,
+                                           SectorBiom.House);
+                            //var poss = new Vector2(size.X + a.SectorPos.X * MapSector.Rx, size.Y + a.SectorPos.Y * MapSector.Ry);
+                            //MapGenerators.ClearBlocksFromTo(this, poss, poss + new Vector2(10, 9));
+                            //MapGenerators.FillFromTo(this, poss, poss + new Vector2(10, 9), "asfalt");
+                            //MapGenerators.FillFromTo(this, poss + new Vector2(0, 4), poss + new Vector2(10, 5), "asfalt_br");
+                            size.X += where.X + 3;
                             max = Math.Max(max, where.Y);
 
                             Settings.NeedToShowInfoWindow = true;
@@ -869,7 +870,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                             Settings.NTS2 = i*5*5 + (k*5) + j + "/" + interestCount*5*5;
                         }
                         size.X = 0;
-                        size.Y += 26;
+                        size.Y += max + 3;
                     }
                 }
 

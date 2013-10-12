@@ -12,6 +12,7 @@ namespace rglikeworknamelib.Dungeon.Item
         public string Id;
         [NonSerializedAttribute]public ItemData Data;
         public int Count;
+        public int Doses;
         public int Uid;
         public List<IBuff> Buffs;
 
@@ -21,6 +22,7 @@ namespace rglikeworknamelib.Dungeon.Item
             Count = co;
             Uid = UniqueIds.GetNewItemId();
             Buffs = new List<IBuff>();
+            Doses = Data.Doses;
             if (ItemDataBase.Data[i].Buff != null)
             {
                 foreach (var buff in ItemDataBase.Data[i].Buff)
@@ -37,6 +39,7 @@ namespace rglikeworknamelib.Dungeon.Item
             Data = ItemDataBase.Data[Id];
             Count = item.Count;
             Uid = item.Uid;
+            Doses = Data.Doses;
             Buffs = new List<IBuff>();
             if (Data.Buff != null)
             {
@@ -46,6 +49,10 @@ namespace rglikeworknamelib.Dungeon.Item
                     Buffs.Add(a);
                 }
             }
+        }
+
+        public override string ToString() {
+            return Doses != 0 ? string.Format("{0} ({1})", ItemDataBase.Data[Id].Name, Doses) : string.Format("{0} x{1}", ItemDataBase.Data[Id].Name, Count);
         }
 
         //public static bool operator == (Item a, Item b) {

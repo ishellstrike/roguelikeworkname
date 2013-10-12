@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 
 namespace rglikeworknamelib.Dungeon.Level
@@ -170,6 +171,12 @@ namespace rglikeworknamelib.Dungeon.Level
                 var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7);
                 foreach (var block in t.Blocks) {
                     ((Block)block).data = BlockDataBase.Data[block.Id];
+                    if(block.Data.Prototype == typeof(StorageBlock)) {
+                        foreach (var item in ((StorageBlock)block).StoredItems) {
+                            item.Data = ItemDataBase.Data[item.Id];
+                        }
+                       
+                    }
                 }
                 t.Ready = true;
                 return t;

@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
+using rglikeworknamelib.Parser;
 using Image = System.Drawing.Image;
 
 namespace SchemesEditor
@@ -97,18 +98,13 @@ namespace SchemesEditor
         {
             StreamReader sw = new StreamReader(openFileDialog1.FileName);
             sw.Read();
-            string[] s = sw.ReadLine().Split(',');
-            int x = int.Parse(s[0]), y = int.Parse(s[1]);
-            textBox1.Text = s[2];
-           // gl = new GameLevel(x, y);
-            char[] sep = {' '};
-            String[] b = sw.ReadToEnd().Split(sep).Select(r=>r.Trim('\n').Trim('\r')).ToArray();
-            gl = new SchemesMap(x,y);
-            gl.CreateAllMapFromArray(b);
+            var a = ChemesParser.Parser(sw.ReadToEnd());
+            gl = new SchemesMap(a[0].x, a[0].y);
+            gl.CreateAllMapFromArray(a[0].data);
             sw.Close();
 
-            numericUpDown1.Value = x;
-            numericUpDown2.Value = y;
+            numericUpDown1.Value = a[0].x;
+            numericUpDown2.Value = a[0].y;
         }
 
         private void button2_Click(object sender, EventArgs e) {
@@ -119,11 +115,29 @@ namespace SchemesEditor
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             StreamWriter sw = new StreamWriter(saveFileDialog1.FileName);
+            sw.Write("#version = 1" + Environment.NewLine);
             sw.Write("~" + gl.rx + "," + gl.ry + "," + textBox1.Text + Environment.NewLine);
-            for (int i = 0; i < gl.rx * gl.ry - 1; i++)
-            {
-                    sw.Write(gl.block[i/gl.ry,i%gl.ry].Id.Trim()+" ");
+            for (int i = 0; i < gl.rx * gl.ry - 1; i++) {
+                var id = gl.block[i/gl.ry, i%gl.ry].Id;
+                int count = 1;
+                for (int j = i + 1; j < gl.rx * gl.ry - 1; j++) {
+                    if (gl.block[j/gl.ry, j%gl.ry].Id == id) {
+                        count++;
+                    } else {
+                        break;
+                    }
                 }
+
+                if(count > 2) {
+                        sw.Write(string.Format("!{0}!{1} ", id, count));
+                    }
+                    else {
+                        for (int k = 0; k < count; k++) {
+                            sw.Write(id+" ");
+                        }
+                    }
+                i += count - 1;
+            }
             sw.Write(gl.block[gl.rx - 1, gl.ry - 1].Id.Trim());
 
             sw.Write("\n");

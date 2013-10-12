@@ -6,7 +6,7 @@ namespace rglikeworknamelib.Creatures {
     [Serializable]
     public class PerksSystem {
         private Dictionary<string, Perk> Perks;
-        private ICreature Owner;
+        [NonSerialized] internal ICreature Owner;
 
         public bool IsSelected(string perkId) {
             return Perks[perkId].selected_;
