@@ -13,7 +13,7 @@ namespace rglikeworknamelib.Parser {
     }
 
     internal class UniversalParser {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetLogger("UniversalParser");
 
         /// <summary>
         /// Universal jarg data file parser

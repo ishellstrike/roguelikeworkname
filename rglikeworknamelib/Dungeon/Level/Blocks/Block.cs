@@ -6,12 +6,19 @@ using Microsoft.Xna.Framework.Graphics;
 namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]
     public class Block : IBlock {
-        public string Id { get; set; }
+        private string id_;
+        public string Id {
+            get { return id_; }
+            set {
+                data_ = BlockDataBase.Data[value];
+                id_ = value;
+            }
+        }
 
-        [NonSerialized] internal BlockData data;
+        [NonSerialized] private BlockData data_;
         public BlockData Data
         {
-            get { return data; }
+            get { return data_; }
         }
 
         [NonSerialized]private Color lightness_;
@@ -25,10 +32,22 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         [NonSerialized]private Rectangle source_;
         public Rectangle Source {
             get { return source_; }
-            set { source_ = value; }
         }
 
-        public string MTex { get; set; }
+        private string mTex_;
+        public string MTex {
+            get { return mTex_; }
+            set
+            {
+                source_ = BlockData.GetSource(value);
+                mTex_ = value;
+            }
+        }
+
+        public void OnLoad() {
+            source_ = BlockData.GetSource(MTex);
+            data_ = BlockDataBase.Data[id_];
+        }
 
         public static string GetSmartActionName(SmartAction smartAction)
         {

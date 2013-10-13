@@ -121,6 +121,7 @@
     <Compile Include="Dungeon\Level\Blocks\StorageBlock.cs" />
     <Compile Include="Dungeon\Level\StreetOld__.cs" />
     <Compile Include="Dungeon\Particles\Particles.cs" />
+    <Compile Include="Dungeon\Vehicles\Vehicle.cs" />
     <Compile Include="Generation\MapGenerators.cs" />
     <Compile Include="Generation\Names\NameDataBase.cs" />
     <Compile Include="LineBatch.cs" />

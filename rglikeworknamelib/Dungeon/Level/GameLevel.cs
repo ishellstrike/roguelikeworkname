@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NLog;
 using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level.Blocks;
+using rglikeworknamelib.Dungeon.Vehicles;
 using rglikeworknamelib.Generation;
 using rglikeworknamelib.Generation.Names;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class GameLevel
     {
+        private static Logger logger = LogManager.GetLogger("GameLevel");
         public int MapSeed = 23142455;
 
         private Texture2D whitepixel;
@@ -603,7 +607,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// Main loop creature update
         /// </summary>
         /// <param name="gt"></param>
-        public void UpdateCreatures(GameTime gt, Player hero) {
+        public void UpdateCreatures(GameTime gt, Player hero, GraphicsDevice gd) {
             for (int k = 0; k < sectors_.Count; k++) {
                 var sector = sectors_.ElementAt(k).Value;
                 for (int m = 0; m < sector.Creatures.Count; m++) {
@@ -624,6 +628,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                     }
 
                     crea.Update(gt, sector, hero);
+                }
+                foreach (var veh in sector.Vehicles) {
+                    if(!veh.Prerendered) {
+                        veh.Prerender(spriteBatch_, gd);
+                    }
                 }
             }
         }
@@ -795,6 +804,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private bool all_saved;
         private void SaveAllAsyncAndExit(Player pl, InventorySystem inv) {
+            lw_.Stop();
             pl.Save();
             inv.Save();
             Settings.NTS1 = "Saving Map";
@@ -832,6 +842,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// Warning! Sync generation
         /// </summary>
         public void GenerateMegaSector(int megaOffsetX, int megaOffsettY) {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             var point = new Point(megaOffsetX, megaOffsettY);
             if (!megaMap.ContainsKey(point)) {
                 int s = (int) (MapGenerators.Noise2D(megaOffsetX, megaOffsettY)*int.MaxValue);
@@ -894,6 +906,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 KillFarSectors(null, null, true);
             }
+            sw.Stop();
+            logger.Info(string.Format("megamap sector {0} generation in {1}", point, sw.Elapsed));
         }
 
         private void SetBiomAtBlock(int i, int j, SectorBiom biom) {
@@ -913,7 +927,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
             binaryFormatter.Serialize(gZipStream, globalMap);
             gZipStream.Close();
+            gZipStream.Dispose();
             fileStream.Close();
+            fileStream.Dispose();
         }
 
         private void LoadMap()
@@ -926,7 +942,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
                 globalMap = (Dictionary<Tuple<int, int>, SectorBiom>) binaryFormatter.Deserialize(gZipStream);
                 gZipStream.Close();
+                gZipStream.Dispose();
                 fileStream.Close();
+                fileStream.Dispose();
             }
         }
 
@@ -1111,8 +1129,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public void DrawCreatures(GameTime gameTime, Vector2 camera)
+        /// <summary>
+        /// Draw creatires and vehicles
+        /// </summary>
+        /// <param name="gameTime"></param>
+        /// <param name="camera"></param>
+        public void DrawEntities(GameTime gameTime, Vector2 camera)
         {
+            spriteBatch_.Begin();
             bool b = Settings.DebugInfo;
             for (int k = 0; k < sectors_.Count; k++)
             {
@@ -1126,6 +1150,15 @@ namespace rglikeworknamelib.Dungeon.Level {
                     crea.Draw(spriteBatch_, camera, sector);
                 }
             }
+            foreach (var mapSector in sectors_)
+            {
+                foreach (var vehicle in mapSector.Value.Vehicles)
+                {
+                    vehicle.Draw(spriteBatch_, camera);
+                }
+            }
+            spriteBatch_.End();
+            
         }
 #endregion
 
@@ -1163,6 +1196,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
             return a;
+        }
+
+        public Vehicle CreateTestCar() {
+            var t = new TestVehicle(sectors_[new Point(0,0)]);
+            sectors_[new Point(0,0)].Vehicles.Add(t);
+            return t;
         }
     }
 

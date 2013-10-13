@@ -24,6 +24,7 @@ using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
+using rglikeworknamelib.Dungeon.Vehicles;
 using rglikeworknamelib.Generation.Names;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Window;
@@ -77,7 +78,7 @@ namespace jarg {
 
         private Texture2D whitepixel_;
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetLogger("JargMain");
 
         public JargMain() {
 #if DEBUG
@@ -127,6 +128,7 @@ namespace jarg {
         protected override void Initialize() {
             var gameWindowForm = (Form) Control.FromHandle(Window.Handle);
             gameWindowForm.MinimumSize = new System.Drawing.Size(800, 600);
+            gameWindowForm.FormClosing += new FormClosingEventHandler(gameWindowForm_FormClosing);
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += Window_ClientSizeChanged;
 
@@ -143,6 +145,11 @@ namespace jarg {
             UpdateTitle();
 
             base.Initialize();
+        }
+
+        void gameWindowForm_FormClosing(object sender, FormClosingEventArgs e) {
+            e.Cancel = !Settings.NeedExit;
+            currentFloor_.SaveAllAndExit(player_, inventory_);
         }
 
         private void RunRadioGhostBox() {
@@ -459,13 +466,16 @@ namespace jarg {
                                      seeAngleDeg);
 
             var aa = currentFloor_.GetInSectorPosition(player_.GetPositionInBlocks());
+            if (car != null) {
+                car.Update(gameTime, player_);
+            }
             player_.Update(gameTime, currentFloor_.GetSector((int) aa.X, (int) aa.Y), player_);
             currentFloor_.KillFarSectors(player_, gameTime);
             bs_.Update(gameTime);
             currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
 
-            currentFloor_.UpdateCreatures(gameTime, player_);
+            currentFloor_.UpdateCreatures(gameTime, player_, GraphicsDevice);
 
             ps_.Update(gameTime);
 
@@ -558,8 +568,10 @@ namespace jarg {
             currentFloor_.ShadowRender();
             spriteBatch_.Begin();
                 currentFloor_.DrawBlocks(gameTime, camera_, player_);
-                currentFloor_.DrawCreatures(gameTime, camera_);
                 player_.Draw(gameTime, camera_);
+            spriteBatch_.End();
+                currentFloor_.DrawEntities(gameTime, camera_);
+            spriteBatch_.Begin();
                 bs_.Draw(gameTime, camera_);
                 ps_.Draw(gameTime, camera_);
             spriteBatch_.End();

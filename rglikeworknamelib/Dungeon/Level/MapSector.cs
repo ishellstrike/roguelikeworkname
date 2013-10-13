@@ -8,6 +8,7 @@ using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
+using rglikeworknamelib.Dungeon.Vehicles;
 using rglikeworknamelib.Generation;
 
 namespace rglikeworknamelib.Dungeon.Level {
@@ -34,6 +35,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         internal List<ICreature> Creatures;
         internal List<Particle> Decals;
         internal SectorBiom Biom;
+        internal List<Vehicle> Vehicles;
 
         internal List<Light> Lights; 
 
@@ -62,6 +64,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             Floors = new Floor[Rx * Ry];
             Creatures = new List<ICreature>();
             Decals = new List<Particle>();
+            Vehicles = new List<Vehicle>();
 
             int i = Rx * Ry;
             while (i-- != 0) {
@@ -94,10 +97,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             Creatures = (List<ICreature>)creat;
             Decals = (List<Particle>)decal;
             Lights = new List<Light>();
+            Vehicles = new List<Vehicle>();
             ResetLightingSources();
 
             foreach (var block in Blocks) {
-                block.Source = BlockData.GetSource(block.MTex);
+                block.OnLoad();
             }
             foreach (var floor in Floors) {
                 floor.Source = FloorData.GetSource(floor.MTex);
@@ -277,11 +281,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="id"></param>
         public void SetBlock(int oneDimCoord, string id) {
             Blocks[oneDimCoord] = (IBlock)Activator.CreateInstance(BlockDataBase.Data[id].Prototype);
-            Blocks[oneDimCoord].Id = id;
-            ((Block)Blocks[oneDimCoord]).data = BlockDataBase.Data[id];
-            string mTex ="";
-            Blocks[oneDimCoord].Source = BlockDataBase.Data[id].RandomMtexFromAlters(ref mTex);
-            Blocks[oneDimCoord].MTex = mTex;
+            var block = Blocks[oneDimCoord];
+            block.Id = id;
+            block.MTex = block.Data.RandomMtexFromAlters();
         }
 
         /// <summary>

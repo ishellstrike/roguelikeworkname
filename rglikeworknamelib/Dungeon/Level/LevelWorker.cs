@@ -7,12 +7,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework;
+using NLog;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 
 namespace rglikeworknamelib.Dungeon.Level
 {
     public class LevelWorker {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<Point,MapSector> onSave_;
         private Dictionary<Point, GameLevel> onLoad_;
         private Dictionary<Point, GameLevel> onGeneration_;
@@ -82,8 +84,10 @@ namespace rglikeworknamelib.Dungeon.Level
                     onGeneration_.Remove(tt.Key);
                 }
 
+                lastTry = new Point(-999, -999);
+
                 if (!Loading() && !Saving() && !Generating()) {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                 }
             }
         }
@@ -108,7 +112,11 @@ namespace rglikeworknamelib.Dungeon.Level
             onSave_.Add(p, ms);
         }
 
+        private Point lastTry;
         public MapSector TryGet(Point p, GameLevel gl) {
+            if (lastTry == p) {
+                return null;
+            }
             if(Ready.ContainsKey(p)) {
                 return Ready[p];
             }
@@ -119,6 +127,8 @@ namespace rglikeworknamelib.Dungeon.Level
                 Generate(p, gl);
             }
 
+            lastTry = p;
+
             return null;
         }
 
@@ -128,6 +138,7 @@ namespace rglikeworknamelib.Dungeon.Level
         /// <param name="a"></param>
         internal void SaveSector(MapSector a)
         {
+            try {
             var binaryFormatter = new BinaryFormatter();
 
             var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", a.SectorOffsetX, a.SectorOffsetY),
@@ -144,44 +155,56 @@ namespace rglikeworknamelib.Dungeon.Level
             gZipStream.Dispose();
             fileStream.Close();
             fileStream.Dispose();
+            } catch (Exception e) {
+                logger.Error(e.ToString);
+                return;
+            }
         }
 
         private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY, GameLevel gl)
         {
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY)))
-            {
-                var binaryFormatter = new BinaryFormatter();
+            try {
+                if (
+                    File.Exists(Settings.GetWorldsDirectory() +
+                                string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY))) {
+                    var binaryFormatter = new BinaryFormatter();
 
-                var fileStream = new FileStream(
-                    Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY),
-                    FileMode.Open);
+                    var fileStream = new FileStream(
+                        Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY),
+                        FileMode.Open);
 
-                var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                    var q1 = binaryFormatter.Deserialize(gZipStream);//SectorOffsetX
-                    var q2 = binaryFormatter.Deserialize(gZipStream);//SectorOffsetY
-                    var q3 = binaryFormatter.Deserialize(gZipStream);//Blocks
-                    var q4 = binaryFormatter.Deserialize(gZipStream);//Floors
-                    var q5 = binaryFormatter.Deserialize(gZipStream);//Biom
-                    var q6 = binaryFormatter.Deserialize(gZipStream);//Creatures
-                    var q7 = binaryFormatter.Deserialize(gZipStream);//Decals
-                gZipStream.Close();
-                gZipStream.Dispose();
-                fileStream.Close();
-                fileStream.Dispose();
-                var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7);
-                foreach (var block in t.Blocks) {
-                    ((Block)block).data = BlockDataBase.Data[block.Id];
-                    if(block.Data.Prototype == typeof(StorageBlock)) {
-                        foreach (var item in ((StorageBlock)block).StoredItems) {
-                            item.UpdateData();
+                    var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+                    var q1 = binaryFormatter.Deserialize(gZipStream); //SectorOffsetX
+                    var q2 = binaryFormatter.Deserialize(gZipStream); //SectorOffsetY
+                    var q3 = binaryFormatter.Deserialize(gZipStream); //Blocks
+                    var q4 = binaryFormatter.Deserialize(gZipStream); //Floors
+                    var q5 = binaryFormatter.Deserialize(gZipStream); //Biom
+                    var q6 = binaryFormatter.Deserialize(gZipStream); //Creatures
+                    var q7 = binaryFormatter.Deserialize(gZipStream); //Decals
+                    gZipStream.Close();
+                    gZipStream.Dispose();
+                    fileStream.Close();
+                    fileStream.Dispose();
+                    var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7);
+                    foreach (var block in t.Blocks) {
+                        ((Block) block).OnLoad();
+                        if (block.Data.Prototype == typeof (StorageBlock)) {
+                            foreach (var item in ((StorageBlock) block).StoredItems) {
+                                item.UpdateData();
+                            }
+
                         }
-                       
                     }
+                    t.Ready = true;
+                    return t;
                 }
-                t.Ready = true;
+                return null;
+            }  catch (Exception e) {
+                logger.Error(e.ToString);
+                var t = new MapSector(gl, sectorOffsetX, sectorOffsetY);
+                t.Rebuild(gl.MapSeed);
                 return t;
             }
-            return null;
         }
 
         public void Stop() {

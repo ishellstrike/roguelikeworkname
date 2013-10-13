@@ -137,6 +137,10 @@
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Textures\Dungeon\Vehicle\textureloadorder.ord">
+      <Name>textureloadorder</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Textures\Particles\textureloadorder.ord">
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1045,6 +1049,53 @@
     </Compile>
     <Compile Include="Textures\map.png">
       <Name>map</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Vehicle\wheel1.png">
+      <Name>wheel1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Vehicle\plate1.png">
+      <Name>plate1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Vehicle\engine1.png">
+      <Name>engine1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Vehicle\seat1.png">
+      <Name>seat1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Vehicle\plate2.png">
+      <Name>plate2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Vehicle\plate3.png">
+      <Name>plate3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Vehicle\plate4.png">
+      <Name>plate4</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using rglikeworknamelib;
+using rglikeworknamelib.Dungeon.Vehicles;
 
 namespace jarg
 {
@@ -15,6 +16,8 @@ namespace jarg
         private Vector2 acA = new Vector2(-10, 0);
         private Vector2 acD = new Vector2(10, 0);
         private float acmodifer = 1;
+        Vehicle veh;
+        private int iii;
 
         private void UpdateKeyboard(GameTime gameTime) {
             lks_ = ks_;
@@ -131,6 +134,16 @@ namespace jarg
                     drawAction_ = GameDraw;
                 }
             }
+
+            if (ks_[Keys.F7] == KeyState.Down && lks_[Keys.F7] == KeyState.Up) {
+                veh = currentFloor_.CreateTestCar();
+            }
+
+            if (ks_[Keys.F8] == KeyState.Down) {
+                car = veh;
+            }
         }
+
+        private Vehicle car;
     }
 }
