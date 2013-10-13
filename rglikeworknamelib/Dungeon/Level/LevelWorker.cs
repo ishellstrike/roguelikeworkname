@@ -173,7 +173,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     ((Block)block).data = BlockDataBase.Data[block.Id];
                     if(block.Data.Prototype == typeof(StorageBlock)) {
                         foreach (var item in ((StorageBlock)block).StoredItems) {
-                            item.Data = ItemDataBase.Data[item.Id];
+                            item.UpdateData();
                         }
                        
                     }

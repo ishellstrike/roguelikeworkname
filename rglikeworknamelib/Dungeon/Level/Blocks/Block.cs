@@ -13,9 +13,21 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         {
             get { return data; }
         }
-        public Color Lightness { get; set; }
+
+        [NonSerialized]private Color lightness_;
+        public Color Lightness {
+            get { return lightness_; }
+            set { lightness_ = value; }
+        }
+
         public bool Explored { get; set; }
-        public Rectangle Source { get; set;}
+
+        [NonSerialized]private Rectangle source_;
+        public Rectangle Source {
+            get { return source_; }
+            set { source_ = value; }
+        }
+
         public string MTex { get; set; }
 
         public static string GetSmartActionName(SmartAction smartAction)

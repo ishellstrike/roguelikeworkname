@@ -553,7 +553,7 @@ namespace jarg {
         }
 
         private void ButtonIngameExit_onPressed(object sender, EventArgs e) {
-            currentFloor_.SaveAllAndExit(player_);
+            currentFloor_.SaveAllAndExit(player_, inventory_);
         }
 
         private void ButtonContainerTakeAll_onPressed(object sender, EventArgs e) {

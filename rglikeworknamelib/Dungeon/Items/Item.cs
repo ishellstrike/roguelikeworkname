@@ -10,15 +10,20 @@ namespace rglikeworknamelib.Dungeon.Item
     public class Item
     {
         public string Id;
-        [NonSerializedAttribute]public ItemData Data;
+        [NonSerializedAttribute] private ItemData data_;
+        public ItemData Data { get { return data_; } }
         public int Count;
         public int Doses;
         public int Uid;
         public List<IBuff> Buffs;
 
+        public void UpdateData() {
+            data_ = ItemDataBase.Data[Id];
+        }
+
         public Item(string i, int co) {
             Id = i;
-            Data = ItemDataBase.Data[i];
+            data_ = ItemDataBase.Data[i];
             Count = co;
             Uid = UniqueIds.GetNewItemId();
             Buffs = new List<IBuff>();
@@ -36,7 +41,7 @@ namespace rglikeworknamelib.Dungeon.Item
 
         public Item(Item item) {
             Id = item.Id;
-            Data = ItemDataBase.Data[Id];
+            data_ = ItemDataBase.Data[Id];
             Count = item.Count;
             Uid = item.Uid;
             Doses = Data.Doses;

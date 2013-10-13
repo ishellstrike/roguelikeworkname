@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
 using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Generation;
 using rglikeworknamelib.Generation.Names;
@@ -787,14 +788,15 @@ namespace rglikeworknamelib.Dungeon.Level {
             return sectors_.Count;
         }
 
-        public void SaveAllAndExit(Player pl) {
-            Action<Player> a = SaveAllAsyncAndExit;
-            a.BeginInvoke(pl, null, null);
+        public void SaveAllAndExit(Player pl, InventorySystem inv) {
+            Action<Player, InventorySystem> a = SaveAllAsyncAndExit;
+            a.BeginInvoke(pl, inv, null, null);
         }
 
         private bool all_saved;
-        private void SaveAllAsyncAndExit(Player pl) {
+        private void SaveAllAsyncAndExit(Player pl, InventorySystem inv) {
             pl.Save();
+            inv.Save();
             Settings.NTS1 = "Saving Map";
             Settings.NeedToShowInfoWindow = true;
             SaveMap();
@@ -817,7 +819,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             {
                 var bf = new BinaryFormatter();
                 var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("global.rlm"), FileMode.Open);
-                    megaMap = (Dictionary<Point, MegaMap>) bf.Deserialize(fileStream);
+                var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+                    megaMap = (Dictionary<Point, MegaMap>) bf.Deserialize(gZipStream);
+                gZipStream.Close();
+                gZipStream.Dispose();
                 fileStream.Close();
                 fileStream.Dispose();
             }
@@ -880,7 +885,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var bf = new BinaryFormatter();
                 var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("global.rlm"),
                                                 FileMode.Create);
-                bf.Serialize(fileStream, megaMap);
+                var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
+                    bf.Serialize(gZipStream, megaMap);
+                gZipStream.Close();
+                gZipStream.Dispose();
                 fileStream.Close();
                 fileStream.Dispose();
 

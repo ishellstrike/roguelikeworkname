@@ -7,7 +7,12 @@ using rglikeworknamelib.Dungeon.Items;
 namespace rglikeworknamelib.Dungeon.Buffs {
     [Serializable]
     public class Buff : IBuff {
-        public Creature Target { get; set; }
+        [NonSerialized]private Creature target_;
+        public Creature Target {
+            get { return target_; }
+            set { target_ = value; }
+        }
+
         public TimeSpan Expire { get; set; }
 
         public bool Expiring { get; set; }

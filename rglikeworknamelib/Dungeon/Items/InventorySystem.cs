@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using Microsoft.Xna.Framework;
 using jarg;
@@ -117,5 +121,35 @@ namespace rglikeworknamelib.Dungeon.Item
         public Item ContainsId(string itemData) {
             return items_.FirstOrDefault(x => x.Id == itemData);
         }
+
+        public void Save() {
+            var binaryFormatter = new BinaryFormatter();
+            var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"), FileMode.Create);
+            var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
+                binaryFormatter.Serialize(gZipStream, items_);
+            gZipStream.Close();
+            gZipStream.Dispose();
+            fileStream.Close();
+            fileStream.Dispose();
+        }
+
+        public void Load() {
+            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"))) {
+                var binaryFormatter = new BinaryFormatter();
+
+                var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
+                                                FileMode.Open);
+                var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+                    items_ = (List<Item>) binaryFormatter.Deserialize(gZipStream);
+                foreach (var item in items_) {
+                    item.UpdateData();
+                }
+                gZipStream.Close();
+                gZipStream.Dispose();
+                fileStream.Close();
+                fileStream.Dispose();
+            }
+        }
+
     }
 }

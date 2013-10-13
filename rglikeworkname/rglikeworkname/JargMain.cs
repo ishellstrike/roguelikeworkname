@@ -117,7 +117,7 @@ namespace jarg {
 
         private void Application_ApplicationExit(object sender, EventArgs e) {
             if (currentFloor_.SectorCount() > 0) {
-                currentFloor_.SaveAllAndExit(player_);
+                currentFloor_.SaveAllAndExit(player_, inventory_);
             }
         }
 
@@ -275,6 +275,7 @@ namespace jarg {
                                 {Color = Color.Brown, LightRadius = 2000f, Position = Vector3.Zero, Power = 100});
         }
 
+        //invoke after DataBasesLoadAndThenInitialGeneration
         private void InitialGeneration() {
 
             RunRadioGhostBox();
@@ -303,19 +304,27 @@ namespace jarg {
             inventory_.AddItem(new Item("a762", 100));
             inventory_.AddItem(new Item("a762", 100000));
             UpdateInventoryContainer();
-            HideInfoWindow();
-            sw.Stop();
-            logger.Info("Initial generation in {0}", sw.Elapsed);
+            
             player_.OnUpdatedEquip += UpdateCaracterWindowItems;
             player_.OnShoot += player__onShoot;
             RenderedFlashlight = GetRenderedFlashlight();
 
+            player_.ItemAmmo = new Item("0", 1);
+            player_.ItemGun = new Item("0", 1);
+            player_.ItemMeele = new Item("0", 1);
+
             player_.Load();
+            inventory_.Load();
+            UpdateInventoryContainer();
 
             currentFloor_.MegaMapPreload();
 
             var inv = new Action<int, int>(currentFloor_.GenerateMegaSector);
             inv.BeginInvoke(0, 0, null, null);
+
+            HideInfoWindow();
+            sw.Stop();
+            logger.Info("Initial generation in {0}", sw.Elapsed);
         }
 
         private void player__onShoot(object sender, EventArgs e) {
