@@ -8,7 +8,6 @@ namespace rglikeworknamelib.Creatures {
     public class PerksSystem {
         private Dictionary<string, Perk> Perks;
         [NonSerialized] internal ICreature Owner;
-        [NonSerialized] Lua lua = new Lua();
 
         public bool IsSelected(string perkId) {
             return Perks[perkId].selected_;

@@ -60,12 +60,34 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        internal static void PlaceScheme(GameLevel gl, Schemes scheme, int x, int y)
+        public static Schemes AlterCheme(Schemes scheme, Random rnd) {
+            int rr = rnd.Next(0, 4);
+            int rrr = rnd.Next(0, 2);
+            int rrrr = rnd.Next(0, 2);
+            if (rr > 0)
+            {
+                scheme.Rotate(rr);
+            }
+            if (rrr > 0)
+            {
+                scheme.TransHor();
+            }
+            if (rrrr > 0)
+            {
+                scheme.TransVer();
+            }
+
+            return scheme;
+        }
+
+        public static void PlaceScheme(GameLevel gl, Schemes scheme, int x, int y)
         {
+            
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
                         if (scheme.data[i * scheme.y + j] != "0") {
                             gl.SetBlockSync(x + i, y + j, scheme.data[i * scheme.y + j]);
+                            gl.SetBiomAtBlock(x + i, y + j, SectorBiom.House);
 
                             if(BlockDataBase.Data[scheme.data[i * scheme.y + j]].Prototype == typeof(StorageBlock)) {
                                 var r = Settings.rnd.Next(1, 4);
@@ -162,7 +184,7 @@ namespace rglikeworknamelib.Generation
         public static void FillFloorFromArrayAndOffset(GameLevel gl, int x, int y, string[] arr, int sx, int sy) {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    if (arr[i * y + j] != "0" && sx + i < MapSector.Rx && sy + j < MapSector.Ry) {
+                    if (arr[i * y + j] != "0") {
                         
                         gl.SetFloorSync(sx + i, sy + j, arr[i * y + j]);
                     }
@@ -174,7 +196,7 @@ namespace rglikeworknamelib.Generation
         {
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
-                    if (arr[i * y + j] != "0" && sx + i < MapSector.Rx && sy + j < MapSector.Ry)
+                    if (arr[i * y + j] != "0")
                     {
 
                         gl.SetBlockSync(sx + i, sy + j, "0");
@@ -183,18 +205,22 @@ namespace rglikeworknamelib.Generation
             }
         }
         
-        public static void PlaceRoad(GameLevel gl, Vector2 start, Vector2 end, int width) {
-            for (int i = (int)start.X - width; i < end.X + width; i++)
+        public static void PlaceRoad(GameLevel gl, int startx, int starty, int sizex, int sizey, int width, bool clear = false) {
+            for (int i = startx - width; i < startx + sizex + width; i++)
             {
-                for (int j = (int)start.Y - width; j < end.Y + width; j++)
+                for (int j = starty - width; j < starty + sizey + width; j++)
                 {
                     gl.SetFloorSync(i, j, "asfalt");
+                    gl.SetBiomAtBlock(i, j, SectorBiom.RoadHevt);
+                    if(clear) {
+                        gl.SetBlockSync(i, j, "0");
+                    }
                 }
             }
 
-            for (int i = (int)start.X; i < end.X; i++)
+            for (int i = startx; i < startx + sizex; i++)
             {
-                for (int j = (int)start.Y; j < end.Y; j++)
+                for (int j = starty; j < starty + sizey; j++)
                 {
                         gl.SetFloorSync(i, j, "asfalt_br");
                 }
@@ -384,45 +410,88 @@ namespace rglikeworknamelib.Generation
             }
         }
 
-        public static HashSet<Tuple<int, int>> GenerateRoadmap(int seed) {
-            var rand = new Random(seed);
-            HashSet<Tuple<int, int>> set = new HashSet<Tuple<int, int>>();
-            Tuple<int, int> temp = new Tuple<int, int>(0,0);
-            int o = 0;
-            while (o < 10000)
-            {
-                
-                set.Add(temp);
-                var adder = rand.Next(1, 5);
-                int addx = 0, addy = 0;
-                switch (adder) {
-                    case 1:
-                        addx = -1;
-                        break;
-                    case 2:
-                        addx = 1;
-                        break;
-                    case 3:
-                        addy = -1;
-                        break;
-                    case 4:
-                        addy = 1;
-                        break;
-                }
-                var len = rand.Next(1, 20);
-                    for (int j = 0; j < len; j++) {
-                        temp = new Tuple<int, int>(temp.Item1 + addx, temp.Item2 + addy);
-                        set.Add(new Tuple<int, int>(temp.Item1, temp.Item2));
-                    }
+        public static void GenerateCity(GameLevel gl, Random rnd, int mainW, int mainH, int posX, int posY) {
+            var t = GenerateRoads(gl, rnd, mainW, mainH, posX, posY, 10);
 
-                    var newroad = rand.Next(1, 10);
-                    if (newroad == 1) {
-                        temp = new Tuple<int, int>(rand.Next(-1000, 1000), rand.Next(-1000, 1000));
+            foreach (var rect in t) {
+                var ostx = rect.Width - 14;
+                var osty = rect.Height - 14;
+
+                Point off = new Point();
+                int maxx = 0;
+                while(true) {
+                    var ch = SchemesDataBase.Data[rnd.Next(SchemesDataBase.Data.Count)];
+                    if (off.X + ch.x > ostx) {
+                        break;
                     }
-                    o++;
+                    ch = AlterCheme(ch, rnd);
+                    var aa = GetInnerFloorArrayWithId(ch, "conk_base");
+                    FillFloorFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    off.X += ch.x;
+                    if (maxx < ch.x) maxx = ch.y;
+                    if(off.X > ostx) {
+                        break;
+                    }
+                }
+
+                off = new Point(0, maxx);
+                while (true) {
+                    var ch = SchemesDataBase.Data[rnd.Next(SchemesDataBase.Data.Count)];
+                    if (off.Y + ch.y > osty) {
+                        break;
+                    }
+                    ch = AlterCheme(ch, rnd);
+                    var aa = GetInnerFloorArrayWithId(ch, "conk_base");
+                    FillFloorFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    off.Y += ch.y;
+                }
             }
-            return set;
-        } 
+
+            foreach (var rect in t)
+            {
+                PlaceRoad(gl, rect.X, rect.Y, 0, rect.Height, 6, true);
+                PlaceRoad(gl, rect.X, rect.Y, rect.Width, 0, 6, true);
+                PlaceRoad(gl, rect.X + rect.Width, rect.Y, 0, rect.Height, 6, true);
+                PlaceRoad(gl, rect.X, rect.Y + rect.Height, rect.Width, 0, 6, true);
+            }
+        }
+
+        public static List<Rectangle> GenerateRoads(GameLevel gl, Random rnd, int mainW, int mainH, int posX, int posY, int splitter)
+        {
+            var t = new List<Rectangle>();
+            t.Add(new Rectangle(posX, posY, mainW, mainH));
+
+            //major road
+            //PlaceRoad(gl, posX, posY, posX + mainW, posY, 6, true);
+            //PlaceRoad(gl, posX, posY + mainH, posX + mainW, posY + mainH, 6, true);
+            //PlaceRoad(gl, posX, posY, posX, posY + mainH, 6, true);
+            //PlaceRoad(gl, posX + mainW, posY, posX + mainW, posY + mainH, 6, true);
+
+            for (int i = 0; i < splitter; i++) {
+                var A = t.Select(x => x.Height*x.Width).ToList();
+                var max = A.IndexOf(A.Max());
+                var a = t[max];
+
+                t.Remove(a);
+                var type = rnd.Next(0, 234234);
+                var middle = 0;
+                if(a.Width > a.Height) {
+                    middle = rnd.Next(a.Width/3, (a.Width/3)*2);
+                    t.Add(new Rectangle(a.X, a.Y, middle, a.Height));
+                    t.Add(new Rectangle(a.X + middle, a.Y, a.Width - middle, a.Height));
+                } else {
+                    middle = rnd.Next(a.Height / 3, (a.Height / 3) * 2);
+                    t.Add(new Rectangle(a.X, a.Y, a.Width, middle));
+                    t.Add(new Rectangle(a.X, a.Y + middle, a.Width, a.Height - middle));
+                }
+            }
+
+            return t;
+        }
 
         public static string GetMost(int offX, int offY)
         {
@@ -458,135 +527,6 @@ namespace rglikeworknamelib.Generation
 
             return grass_count > dirt_ground ? "grass_base" : "1";
         }
-
-
-        public static void GenerateRoad(GameLevel ms, SectorBiom rnd) {
-            switch (rnd) {
-                case SectorBiom.RoadCross:
-                    FillFloorFromArrayAndOffset(ms, 16, 16, shosse_cross, 0, 0);
-                    break;
-                case SectorBiom.RoadHevt:
-                    FillFloorFromArrayAndOffset(ms, 16, 16, shosse_vertical, 0, 0);
-                    break;
-                case SectorBiom.RoadHor:
-                    FillFloorFromArrayAndOffset(ms, 16, 16, shosse_hor, 0, 0);
-                    break;
-            }
-        }
-
-        private static string[] shosse_vertical = new[] {
-                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                                                            "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                            "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br"
-                                                            , "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br",
-                                                            "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br"
-                                                            , "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br",
-                                                            "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br", "asfalt_br"
-                                                            , "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt"
-                                                            , "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                            "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0", "0", "0",
-                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                                                            "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"
-                                                        };
-
-        private static string[] shosse_hor = new[] {
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0",
-                                                       "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt_br",
-                                                       "asfalt_br", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0"
-                                                   };
-
-        private static string[] shosse_cross = new[] {
-                                                         "0", "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
-                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
-                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
-                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
-                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
-                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
-                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0", "0"
-                                                         , "0", "asfalt", "asfalt", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt_br", "asfalt_br", "asfalt", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "0", "0", "0", "0", "asfalt", "asfalt",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt_br", "asfalt_br",
-                                                         "asfalt", "asfalt", "asfalt", "asfalt", "asfalt", "0", "0"
-                                                     };
 
         public static void ClearBlocksFromTo(GameLevel ms, Vector2 from, Vector2 to) {
             if (from.X > to.X)

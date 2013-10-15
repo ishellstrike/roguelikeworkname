@@ -54,7 +54,7 @@ namespace rglikeworknamelib.Dungeon.Vehicles
         }
 
         private MapSector ms;
-        private float vel;
+        public float Vel;
 
         public void Update(GameTime gt, Player driver)
         {
@@ -67,11 +67,11 @@ namespace rglikeworknamelib.Dungeon.Vehicles
             if (!Skipp || !ms.Ready)
             {
 
-                Roration += acceleration.X/500f*(-vel/10);
+                Roration += acceleration.X/500f*(-Vel/10);
                 angle_acc /= 1.1f;
 
-                vel = Vector2.Lerp(new Vector2(vel, vel), acceleration, (float)time).Y;
-                var mover = (vel*(float) time*40);
+                Vel = Vector2.Lerp(new Vector2(Vel, Vel), acceleration, (float)time).Y;
+                var mover = (Vel*(float) time*40);
                 position_.X += (float)(Math.Sin(-Roration - 3.14f / 4f) * mover + Math.Cos(-Roration - 3.14f / 4f) * mover);
                 position_.Y += (float)(Math.Cos(-Roration - 3.14f / 4f) * mover - Math.Sin(-Roration - 3.14f / 4f) * mover);
                 acceleration /= 1.1f;

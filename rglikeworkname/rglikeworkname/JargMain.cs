@@ -316,10 +316,6 @@ namespace jarg {
             player_.OnShoot += player__onShoot;
             RenderedFlashlight = GetRenderedFlashlight();
 
-            player_.ItemAmmo = new Item("0", 1);
-            player_.ItemGun = new Item("0", 1);
-            player_.ItemMeele = new Item("0", 1);
-
             player_.Load();
             inventory_.Load();
             UpdateInventoryContainer();
@@ -480,6 +476,10 @@ namespace jarg {
             ps_.Update(gameTime);
 
             PlayerSeeAngle = (float)Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
+            if(car != null) {
+                var f = -car.Roration - 3.14f / 4f;
+                pivotpoint_ += new Vector2((float)(Math.Cos(f) * car.Vel + Math.Sin(f) * car.Vel) * 50, (float)(-Math.Sin(f) * car.Vel + Math.Cos(f) * car.Vel) * 50 / GraphicsDevice.DisplayMode.AspectRatio);
+            }
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float)gameTime.ElapsedGameTime.TotalSeconds * 4);
             player_last_pos = player_.Position;
 

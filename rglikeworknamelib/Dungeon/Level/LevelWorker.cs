@@ -87,7 +87,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 lastTry = new Point(-999, -999);
 
                 if (!Loading() && !Saving() && !Generating()) {
-                    Thread.Sleep(500);
+                    Thread.Sleep(300);
                 }
             }
         }

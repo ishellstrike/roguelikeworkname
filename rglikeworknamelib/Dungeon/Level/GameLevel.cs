@@ -167,7 +167,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             var t = new MapSector(this, sectorOffsetX, sectorOffsetY);
             t.Rebuild(MapSeed);
-            GlobalMapAdd(t);
             sectors_.Add(new Point(t.SectorOffsetX, t.SectorOffsetY), t);
             return t;
         }
@@ -850,12 +849,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var rand = new Random(s);
 
                 //Interest generation
-                const int interestCount = 15;
+                const int interestCount = 1;
                 var mm = new MegaMap();
                 for (int i = 0; i < interestCount; i++) {
                     var a = new InterestPointCity {
                                                       Name = NameDataBase.GetRandom(rand),
-                                                      SectorPos = new Point(rand.Next(0, 30), rand.Next(0, 30)),
+                                                      SectorPos = new Point(rand.Next(0, 3), rand.Next(0, 3)),
                                                       Range = 10
                                                   };
                     mm.InterestPoints.Add(a);
@@ -866,31 +865,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                     var size = new Point(0, 0);
                     int max = 0;
-                    for (int j = 0; j < 5; j++) {
-                        for (int k = 0; k < 5; k++) {
-                            //var tt = GetSectorSync(a.SectorPos.X, a.SectorPos.Y);
-                            //tt.Biom = SectorBiom.House;
-                            var where = MapGenerators.PlaceRandomSchemeByType(this, SchemesType.House,
-                                                                              size.X + a.SectorPos.X * MapSector.Rx,
-                                                                              size.Y + a.SectorPos.Y * MapSector.Ry, rand);
-                            SetBiomAtBlock(size.X + a.SectorPos.X * MapSector.Rx, size.Y + a.SectorPos.Y * MapSector.Ry,
-                                           SectorBiom.House);
-                            //var poss = new Vector2(size.X + a.SectorPos.X * MapSector.Rx, size.Y + a.SectorPos.Y * MapSector.Ry);
-                            //MapGenerators.ClearBlocksFromTo(this, poss, poss + new Vector2(10, 9));
-                            //MapGenerators.FillFromTo(this, poss, poss + new Vector2(10, 9), "asfalt");
-                            //MapGenerators.FillFromTo(this, poss + new Vector2(0, 4), poss + new Vector2(10, 5), "asfalt_br");
-                            size.X += where.X + 3;
-                            max = Math.Max(max, where.Y);
-                            var vector2 = new Vector2(size.X + a.SectorPos.X * MapSector.Rx, size.Y + a.SectorPos.Y * MapSector.Ry);
-                            MapGenerators.PlaceRoad(this, vector2, vector2 + new Vector2(where.X, 0), 3);
 
-                            Settings.NeedToShowInfoWindow = true;
-                            Settings.NTS1 = "Generation : ";
-                            Settings.NTS2 = i*5*5 + (k*5) + j + "/" + interestCount*5*5;
-                        }
-                        size.X = 0;
-                        size.Y += max + 3;
-                    }
+                    MapGenerators.GenerateCity(this, rand, 500, 500, a.SectorPos.X - 25, a.SectorPos.Y - 25);
+
                 }
 
                 Settings.NeedToShowInfoWindow = false;
@@ -912,7 +889,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             logger.Info(string.Format("megamap sector {0} generation in {1}", point, sw.Elapsed));
         }
 
-        private void SetBiomAtBlock(int i, int j, SectorBiom biom) {
+        public void SetBiomAtBlock(int i, int j, SectorBiom biom) {
             int divx = i < 0 ? (i + 1) / MapSector.Rx - 1 : i / MapSector.Rx;
             int divy = j < 0 ? (j + 1) / MapSector.Ry - 1 : j / MapSector.Ry;
             var t =GetSectorSync(divx, divy);
@@ -1201,8 +1178,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public Vehicle CreateTestCar() {
-            var t = new TestVehicle(sectors_[new Point(0,0)]);
-            sectors_[new Point(0,0)].Vehicles.Add(t);
+            var sec = sectors_.ElementAt(0);
+            var t = new TestVehicle(sectors_[sec.Key]);
+            sectors_[sec.Key].Vehicles.Add(t);
             return t;
         }
     }

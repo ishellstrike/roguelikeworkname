@@ -317,21 +317,33 @@ namespace rglikeworknamelib.Creatures {
                         }
                         item.UpdateData();
                     }
-                    ItemAmmo = (Item)binaryFormatter.Deserialize(gZipStream);
-                    foreach (var buff in ItemAmmo.Buffs) {
-                        buff.Target = this;
+                    var t = (bool)binaryFormatter.Deserialize(gZipStream);
+                    if (t) {
+                        ItemAmmo = (Item) binaryFormatter.Deserialize(gZipStream);
+                        foreach (var buff in ItemAmmo.Buffs) {
+                            buff.Target = this;
+                        }
+                        ItemAmmo.UpdateData();
                     }
-                    ItemAmmo.UpdateData();
-                    ItemGun = (Item)binaryFormatter.Deserialize(gZipStream);
-                    foreach (var buff in ItemGun.Buffs) {
-                        buff.Target = this;
+
+                    t = (bool)binaryFormatter.Deserialize(gZipStream);
+                    if (t) {
+                        ItemGun = (Item) binaryFormatter.Deserialize(gZipStream);
+                        foreach (var buff in ItemGun.Buffs) {
+                            buff.Target = this;
+                        }
+                        ItemGun.UpdateData();
                     }
-                    ItemGun.UpdateData();
-                    ItemMeele = (Item)binaryFormatter.Deserialize(gZipStream);
-                    foreach (var buff in ItemMeele.Buffs) {
-                        buff.Target = this;
+
+                    t = (bool)binaryFormatter.Deserialize(gZipStream);
+                    if (t) {
+                        ItemMeele = (Item) binaryFormatter.Deserialize(gZipStream);
+                        foreach (var buff in ItemMeele.Buffs) {
+                            buff.Target = this;
+                        }
+                        ItemMeele.UpdateData();
                     }
-                    ItemMeele.UpdateData();
+
                     DressHat = (Dress)binaryFormatter.Deserialize(gZipStream);
                     DressPants = (Dress)binaryFormatter.Deserialize(gZipStream);
                     DressTshort = (Dress)binaryFormatter.Deserialize(gZipStream);
@@ -356,9 +368,21 @@ namespace rglikeworknamelib.Creatures {
             binaryFormatter.Serialize(gZipStream, Position);
             binaryFormatter.Serialize(gZipStream, Perks);
             binaryFormatter.Serialize(gZipStream, Weared);
-            binaryFormatter.Serialize(gZipStream, ItemAmmo);
-            binaryFormatter.Serialize(gZipStream, ItemGun);
-            binaryFormatter.Serialize(gZipStream, ItemMeele);
+            var t = ItemAmmo != null;
+            binaryFormatter.Serialize(gZipStream, t);
+            if (t) {
+                binaryFormatter.Serialize(gZipStream, ItemAmmo);
+            }
+            t = ItemGun != null;
+            binaryFormatter.Serialize(gZipStream, t);
+            if (t) {
+                binaryFormatter.Serialize(gZipStream, ItemGun);
+            }
+            t = ItemMeele != null;
+            binaryFormatter.Serialize(gZipStream, t);
+            if (t) {
+                binaryFormatter.Serialize(gZipStream, ItemMeele);
+            }
             binaryFormatter.Serialize(gZipStream, DressHat);
             binaryFormatter.Serialize(gZipStream, DressPants);
             binaryFormatter.Serialize(gZipStream, DressTshort);
