@@ -881,6 +881,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                             //MapGenerators.FillFromTo(this, poss + new Vector2(0, 4), poss + new Vector2(10, 5), "asfalt_br");
                             size.X += where.X + 3;
                             max = Math.Max(max, where.Y);
+                            var vector2 = new Vector2(size.X + a.SectorPos.X * MapSector.Rx, size.Y + a.SectorPos.Y * MapSector.Ry);
+                            MapGenerators.PlaceRoad(this, vector2, vector2 + new Vector2(where.X, 0), 3);
 
                             Settings.NeedToShowInfoWindow = true;
                             Settings.NTS1 = "Generation : ";

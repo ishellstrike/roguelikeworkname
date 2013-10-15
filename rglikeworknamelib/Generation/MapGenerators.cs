@@ -182,6 +182,24 @@ namespace rglikeworknamelib.Generation
                 }
             }
         }
+        
+        public static void PlaceRoad(GameLevel gl, Vector2 start, Vector2 end, int width) {
+            for (int i = (int)start.X - width; i < end.X + width; i++)
+            {
+                for (int j = (int)start.Y - width; j < end.Y + width; j++)
+                {
+                    gl.SetFloorSync(i, j, "asfalt");
+                }
+            }
+
+            for (int i = (int)start.X; i < end.X; i++)
+            {
+                for (int j = (int)start.Y; j < end.Y; j++)
+                {
+                        gl.SetFloorSync(i, j, "asfalt_br");
+                }
+            }
+        }
 
         public static int seed = 12345;
 

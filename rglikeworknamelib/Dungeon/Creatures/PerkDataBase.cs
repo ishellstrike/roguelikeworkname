@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LuaInterface;
 
 namespace rglikeworknamelib.Creatures {
     public static class PerkDataBase {
