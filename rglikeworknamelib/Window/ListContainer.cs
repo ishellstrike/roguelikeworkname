@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Input;
 namespace rglikeworknamelib.Window {
     public class ListContainer : IGameComponent, IGameContainer {
         private Rectangle location_;
-        public List<IGameComponent> Items = new List<IGameComponent>();
         private List<IGameComponent> Components = new List<IGameComponent>(); 
         public int FromI;
         public Texture2D whitepixel_ { get;set; }
@@ -19,6 +18,8 @@ namespace rglikeworknamelib.Window {
 
         private Button buttonUp_, buttonDown_;
         private VerticalProgressBar progress_;
+
+        private bool ready;
 
         public ListContainer(Rectangle loc, IGameContainer parent)
         {
@@ -43,7 +44,8 @@ namespace rglikeworknamelib.Window {
             buttonDown_.OnPressed += buttonDown__onPressed;
 
             progress_ = new VerticalProgressBar(new Rectangle((int)bup.X, (int)(bup.Y + buttonUp_.Height), (int)buttonUp_.Width, (int)(bdow.Y - bup.Y)), "", this);
-        
+
+            ready = true;
             RecalcContainer();
         }
 
@@ -62,55 +64,50 @@ namespace rglikeworknamelib.Window {
         }
 
         private void RecalcContainer() {
-            progress_.Max = Items.Count;
+            if (ready) {
+                progress_.Max = Components.Count;
 
-            var l = Vector2.Zero;
+                var l = Vector2.Zero;
 
-            foreach (var item in Items)
-            {
-                item.Visible = false;
-            }
-
-            float curBottom = 0;
-            int count = 0;
-            int fromNow = FromI;
-            if (fromNow < Items.Count)
-            {
-                while (true)
-                {
-                    if (curBottom + Items[fromNow].Height + 10 > location_.Bottom - location_.Top)
-                    {
-                        break;
+                foreach (var item in Components) {
+                    if(item == buttonUp_ || item == buttonDown_ || item == progress_) {
+                        continue;
                     }
-                    Items[fromNow].Visible = true;
-                    Items[fromNow].SetPosition(new Vector2(l.X + 10, curBottom));
-                    count++;
+                    item.Visible = false;
+                }
 
-                    curBottom += Items[fromNow].Height + 10;
-                    fromNow++;
-                    if (fromNow > Items.Count - 1)
-                    {
-                        break;
+                float curBottom = 0;
+                int count = 0;
+                int fromNow = FromI + 3;
+                if (fromNow < Components.Count) {
+                    while (true) {
+                        if (curBottom + Components[fromNow].Height + 10 > location_.Bottom - location_.Top) {
+                            break;
+                        }
+                        Components[fromNow].Visible = true;
+                        Components[fromNow].SetPosition(new Vector2(l.X + 10, curBottom));
+                        count++;
+
+                        curBottom += Components[fromNow].Height + 10;
+                        fromNow++;
+                        if (fromNow > Components.Count - 1) {
+                            break;
+                        }
                     }
                 }
-            }
 
-            progress_.Progress = FromI + count;
+                progress_.Progress = FromI + count;
+            }
         }
 
         public List<IGameComponent> GetItems() {
-            return Items;
-        }
-
-        public void AddItem(IGameComponent it) {
-            Items.Add(it);
-
-            RecalcContainer();
+            return Components;
         }
              
         public void RemoveItem(IGameComponent it) {
-            if(Items.Contains(it)) {
-                Items.Remove(it);
+            if (Components.Contains(it))
+            {
+                Components.Remove(it);
             }
 
             RecalcContainer();
@@ -119,7 +116,7 @@ namespace rglikeworknamelib.Window {
         public void Clear() {
             FromI = 0;
 
-            Items.Clear();
+            Components.Clear();
             Components.Clear();
 
             Components.Add(buttonUp_);
@@ -157,9 +154,9 @@ namespace rglikeworknamelib.Window {
         {
             float cur = location_.Top;
             int lastN = 0;
-            for (int i = FromI; i < Items.Count; i++)
+            for (int i = FromI; i < Components.Count; i++)
             {
-                cur += Items[i].Height + 10;
+                cur += Components[i].Height + 10;
                 if (cur > location_.Bottom)
                 {
                     break;
@@ -184,9 +181,9 @@ namespace rglikeworknamelib.Window {
 
             float cur = location_.Bottom;
             int lastN = 0;
-            for (int i = Items.Count - 1; i >= 0; i--)
+            for (int i = Components.Count - 1; i >= 0; i--)
             {
-                cur -= Items[i].Height + 10;
+                cur -= Components[i].Height + 10;
                 if (cur < location_.Top)
                 {
                     break;
@@ -237,8 +234,9 @@ namespace rglikeworknamelib.Window {
         public void ScrollBottom() {
             float cur = location_.Bottom;
             int lastN = 0;
-            for (int i = Items.Count - 1; i >= 0; i--) {
-                cur -= Items[i].Height+10;
+            for (int i = Components.Count - 1; i >= 0; i--)
+            {
+                cur -= Components[i].Height + 10;
                 if(cur < location_.Top) {
                     break;
                 }
@@ -259,6 +257,7 @@ namespace rglikeworknamelib.Window {
 
         public void AddComponent(IGameComponent component) {
             Components.Add(component);
+            RecalcContainer();
         }
 
         public bool MouseClickCatched { get; set; }

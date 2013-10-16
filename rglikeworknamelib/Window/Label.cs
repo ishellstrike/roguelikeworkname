@@ -199,7 +199,7 @@ namespace rglikeworknamelib.Window {
         }
 
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
-            if (Text != null) {
+            if (Text != null && mh) {
                 var locate = new Rectangle((int) (pos_.X - moverx.X), (int) pos_.Y, (int) (CalcWidth + moverx.X),
                                             (int) CalcHeight);
                  if (Visible) {
@@ -208,7 +208,7 @@ namespace rglikeworknamelib.Window {
                     realdl.X += locate.Width;
                     realdl.Y += locate.Height;
 
-                    if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y && mh)
+                    if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y)
                     {
                         aimed_ = true;
                         if (lms.LeftButton == ButtonState.Released && ms.LeftButton == ButtonState.Pressed)

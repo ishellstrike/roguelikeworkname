@@ -72,13 +72,13 @@ namespace rglikeworknamelib.Window {
 
         public virtual void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
-            if (Visible) {
+            if (Visible && mh) {
                 Vector2 realpos = GetPosition();
                 Vector2 realdl = realpos;
                 realdl.X += locate_.Width;
                 realdl.Y += locate_.Height;
 
-                if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y && mh)
+                if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y)
                 {
                     aimed_ = true;
                     if (firstPress) {

@@ -120,10 +120,6 @@ namespace jarg
                             else
                             {
                                 s += " (далеко)";
-                                if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released)
-                                {
-                                    WindowContainer.Visible = false;
-                                }
                             }
 
                             if (WindowIngameHint.Visible = a.Id != "0")
@@ -134,6 +130,10 @@ namespace jarg
                                 nothingUndermouse = false;
                             }
                         }
+                    }
+
+                    if(!currentFloor_.IsCreatureMeele((int)ContainerOn.X, (int)ContainerOn.Y, player_)) {
+                        WindowContainer.Visible = false;
                     }
 
                     if ((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot_)

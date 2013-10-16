@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,6 +63,7 @@ namespace jarg {
         private Label LabelMainMenu;
         private Button ButtonNewGame;
         private Button ButtonSettings;
+        private Button ModLoaderButton;
         private RunningLabel RunningMotd;
         private Label LabelControls;
         private Button ButtonOpenGit;
@@ -70,7 +72,6 @@ namespace jarg {
         private Button ButtonCaracterConfirm;
         private Button ButtonCaracterCancel;
         private ListContainer PerksContainer;
-        private List<CheckBox> CheckBoxesPerks;
 
         private Window WindowInventory;
         private ListContainer ContainerInventoryItems;
@@ -102,10 +103,8 @@ namespace jarg {
         private DoubleLabel LabelCaracterHp;
         private ListContainer ContainerWearList;
         private Label LabelWearCaption;
-        private List<Label> LabelsWeared; 
         private List<Label> LabelsAbilities;
         private ListContainer EffectsContainer;
-        private List<LabelFixed> LabelsEffect;
 
         private Window InfoWindow;
         private DoubleLabel InfoWindowLabel;
@@ -118,6 +117,9 @@ namespace jarg {
 
         private Window WindowRadio;
         private RunningLabel LabelRadio;
+
+        private Window ModLoaderWindow;
+        private ListContainer ModLoaderContainer;
 
         #endregion
 
@@ -132,7 +134,7 @@ namespace jarg {
             CloseAllTestButton.OnPressed += CloseAllTestButton_onPressed;
             contaiter1 = new ListContainer(new Rectangle(200, 200, 100, 200), WindowStats);
             for (int i = 1; i < 20; i++) {
-                contaiter1.AddItem(new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), WindowStats));
+                new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), contaiter1);
             }
 
             WindowMinimap = new Window(new Rectangle((int) Settings.Resolution.X - 180, 10, 128 + 20, 128 + 40),
@@ -202,7 +204,7 @@ namespace jarg {
             ButtonRadioGB = new Button(new Vector2(10 + 50 + 95*1, 10 + 40*6), "GhostBox", WindowSettings);
             ButtonRadioGB.OnPressed += ButtonRadioGB_onPressed;
             ButtonRadioOff = new Button(new Vector2(10 + 50 + 95*2, 10 + 40*6), "  Off   ", WindowSettings);
-            ButtonRadioOff.OnPressed += new EventHandler(ButtonRadioOff_onPressed);
+            ButtonRadioOff.OnPressed += ButtonRadioOff_onPressed;
 
             WindowIngameMenu = new Window(new Vector2(300, 400), "Pause", true, ws) {Visible = false};
             ButtonIngameMenuSettings = new Button(new Vector2(20, 100), "Settings", WindowIngameMenu);
@@ -228,7 +230,10 @@ namespace jarg {
             ButtonNewGame.OnPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
 
-            ButtonSettings = new Button(new Vector2(10, 100 + 40*5), "Settings", WindowMainMenu);
+            ModLoaderButton = new Button(new Vector2(10, 100 + 40 * 4), "ModLoader", WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(ModLoaderButton);
+            ModLoaderButton.OnPressed += ModLoaderButton_OnPressed;
+            ButtonSettings = new Button(new Vector2(10, 100 + 40 * 5), "Settings", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ButtonSettings);
             ButtonSettings.OnPressed += ButtonIngameMenuSettings_onPressed;
             RunningMotd = new RunningLabel(new Vector2(10, Settings.Resolution.Y/2 - 50),
@@ -258,16 +263,12 @@ namespace jarg {
             ButtonCaracterCancel.OnPressed += ButtonCaracterCancel_onPressed;
             PerksContainer = new ListContainer(new Rectangle(40, 40, 250, (int) (Settings.Resolution.Y/3*2)),
                                                WindowCaracterCration);
-            CheckBoxesPerks = new List<CheckBox>();
             for (int i = 0; i < PerkDataBase.Perks.Count; i++) {
                 var keyValuePair = PerkDataBase.Perks.ElementAt(i);
                 if (keyValuePair.Value.Initial) {
                     var t = new CheckBox(Vector2.Zero, keyValuePair.Value.Name, PerksContainer)
                             {Cheked = player_.Perks.IsSelected(keyValuePair.Key), Tag = keyValuePair.Key};
-                    PerksContainer.AddItem(t);
                     t.OnPressed += Game1_onPressed;
-
-                    CheckBoxesPerks.Add(t);
                 }
             }
 
@@ -345,7 +346,6 @@ namespace jarg {
             LabelWearCaption = new Label(new Vector2(10, 10 + 15 * ii), "Wear", WindowCaracter);
             ii+=2;
             ContainerWearList = new ListContainer(new Rectangle(0, 10 + 15 * ii, (int)WindowCaracter.Width / 2, (int)WindowCaracter.Height / 2 - (10 + 15 * ii)), WindowCaracter);
-            LabelsWeared = new List<Label>();
             ii = 0;
             LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15*ii), "HP : ", WindowCaracter);
             LabelsAbilities = new List<Label>();
@@ -359,7 +359,6 @@ namespace jarg {
                     new Rectangle((int) WindowCaracter.Width/2, (int) (WindowCaracter.Height/2),
                                   (int) (WindowCaracter.Width/2), (int) (WindowCaracter.Height/2) - 19),
                     WindowCaracter);
-            LabelsEffect = new List<LabelFixed>();
             
 
             InfoWindow = new Window(new Vector2(200, 100), "Info", true, ws) {Visible = false};
@@ -383,6 +382,49 @@ namespace jarg {
             LabelRadio = new RunningLabel(new Vector2(0, 8), "radio string radio string radio string radio string",
                                           ((int) (Settings.Resolution.X/6*2) - 10)/9, WindowRadio);
             WindowRadio.CenterComponentHor(LabelRadio);
+
+            ModLoaderWindow = new Window(new Vector2(Settings.Resolution.X/3*2, Settings.Resolution.Y/2), "ModLoader", true, ws) {Visible = false};
+            ModLoaderContainer = new ListContainer(new Rectangle(0,0,(int)(ModLoaderWindow.Width/3*2),(int)ModLoaderWindow.Height-20), ModLoaderWindow);
+            UpdateModLoader(null, null);
+        }
+
+        void ModLoaderButton_OnPressed(object sender, EventArgs e)
+        {
+            ModLoaderWindow.Visible = !ModLoaderWindow.Visible;
+            if (ModLoaderWindow.Visible) {
+                ModLoaderWindow.OnTop();
+            }
+        }
+
+        private void UpdateModLoader(object sender, EventArgs e) {
+            ModLoaderContainer.Clear();
+
+            new LabelFixed(Vector2.Zero, "Units", Color.Cyan, 20, ModLoaderContainer);
+            var f = Directory.GetFiles(Settings.GetDataDirectory() + @"\Units", "*.txt");
+            foreach (var s in f) {
+                new CheckBox(Vector2.Zero, s, ModLoaderContainer);
+            }
+
+            new LabelFixed(Vector2.Zero, "Blocks", Color.Cyan, 20, ModLoaderContainer);
+            f = Directory.GetFiles(Settings.GetObjectDataDirectory(), "*.txt");
+            foreach (var s in f)
+            {
+                new CheckBox(Vector2.Zero, s, ModLoaderContainer);
+            }
+
+            new LabelFixed(Vector2.Zero, "Items", Color.Cyan, 20, ModLoaderContainer);
+            f = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.txt");
+            foreach (var s in f)
+            {
+                new CheckBox(Vector2.Zero, s, ModLoaderContainer);
+            }
+
+            new LabelFixed(Vector2.Zero, "Buffs", Color.Cyan, 20, ModLoaderContainer);
+            f = Directory.GetFiles(Settings.GetEffectDataDirectory(), "*.txt");
+            foreach (var s in f)
+            {
+                new CheckBox(Vector2.Zero, s, ModLoaderContainer);
+            }
         }
 
         private void IBInv_onPressed(object sender, EventArgs e) {
@@ -532,6 +574,27 @@ namespace jarg {
                                  LogEntityType.Console);
                 }
             }
+            if (s.Contains("tp ")) {
+                var ss = s.Substring(3);
+                var parts = ss.Split(' ');
+                int x, y;
+                if (parts.Length == 2)
+                {
+                    if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y)) {
+                        player_.Position = new Vector2(x * MapSector.Rx * 32, y * MapSector.Ry * 32);
+                        EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y),
+                                     GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                    }
+                    else {
+                        EventLog.Add(string.Format("Wrong number to tp <x> <y>"),
+                                     GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                    }
+                }
+                else {
+                    EventLog.Add(string.Format("Wrong parameters for tp <x> <y>"),
+                                     GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                }
+            }
             ConsoleTB.Text = string.Empty;
         }
 
@@ -576,8 +639,7 @@ namespace jarg {
             ContainerEventLog.Clear();
             int i = 0;
             foreach (var ss in EventLog.log) {
-                ContainerEventLog.AddItem(new LabelFixed(Vector2.Zero, ss.message, ss.col, 35,
-                                                         ContainerEventLog));
+                new LabelFixed(Vector2.Zero, ss.message, ss.col, 35, ContainerEventLog);
                 i++;
             }
             ContainerEventLog.ScrollBottom();
@@ -610,21 +672,88 @@ namespace jarg {
 
             ContainerInventoryItems.Clear();
 
-            int cou = 0;
-            foreach (var item in a) {
-                var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
-                i.Tag = cou;
-                i.OnPressed += PressInInventory;
-                cou++;
-                ContainerInventoryItems.AddItem(i);
+            var weap = a.Where(x => x.Data.SType == ItemType.Gun).ToArray();
+            if (weap.Length > 0) {
+                new LabelFixed(Vector2.Zero, "Weapons", Color.Cyan, 22, ContainerInventoryItems);
+                foreach (var item in weap) {
+                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
+                    i.Tag = item;
+                    i.OnPressed += PressInInventory;
+                }
             }
+
+            weap = a.Where(x => x.Data.SType == ItemType.Ammo).ToArray();
+            if (weap.Length > 0)
+            {
+                new LabelFixed(Vector2.Zero, "Ammo", Color.Cyan, 22, ContainerInventoryItems);
+                foreach (var item in weap)
+                {
+                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
+                    i.Tag = item;
+                    i.OnPressed += PressInInventory;
+                }
+            }
+
+            weap = a.Where(x => x.Data.SType == ItemType.Wear).ToArray();
+            if (weap.Length > 0)
+            {
+                new LabelFixed(Vector2.Zero, "Wear", Color.Cyan, 22, ContainerInventoryItems);
+                foreach (var item in weap)
+                {
+                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
+                    i.Tag = item;
+                    i.OnPressed += PressInInventory;
+                }
+            }
+
+            weap = a.Where(x => x.Data.SType == ItemType.Medicine).ToArray();
+            if (weap.Length > 0)
+            {
+                new LabelFixed(Vector2.Zero, "Medicine", Color.Cyan, 22, ContainerInventoryItems);
+                foreach (var item in weap)
+                {
+                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
+                    i.Tag = item;
+                    i.OnPressed += PressInInventory;
+                }
+            }
+
+            weap = a.Where(x => x.Data.SType == ItemType.Food).ToArray();
+            if (weap.Length > 0)
+            {
+                new LabelFixed(Vector2.Zero, "Food", Color.Cyan, 22, ContainerInventoryItems);
+                foreach (var item in weap)
+                {
+                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
+                    i.Tag = item;
+                    i.OnPressed += PressInInventory;
+                }
+            }
+
+            weap = a.Where(x => x.Data.SType != ItemType.Food && x.Data.SType != ItemType.Medicine && x.Data.SType != ItemType.Ammo && x.Data.SType != ItemType.Gun && x.Data.SType != ItemType.Wear).ToArray();
+            if (weap.Length > 0)
+            {
+                new LabelFixed(Vector2.Zero, "Other", Color.Cyan, 22, ContainerInventoryItems);
+                foreach (var item in weap)
+                {
+                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
+                    i.Tag = item;
+                    i.OnPressed += PressInInventory;
+                }
+            }
+
+            //foreach (var item in a) {
+            //    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
+            //    i.Tag = cou;
+            //    i.OnPressed += PressInInventory;
+            //    cou++;
+            //}
             InventoryTotalWV.Text = string.Format("Weight {0}/{1}{2}Volume {3}/{4}", inventory_.TotalWeight,
                                                   player_.MaxWeight, Environment.NewLine,
                                                   inventory_.TotalVolume, player_.MaxVolume);
         }
 
         private List<Item> inContainer_ = new List<Item>();
-        private Vector2 containerOn ;
 
         private void UpdateContainerContainer(List<Item> a) {
             inContainer_ = a;
@@ -637,21 +766,23 @@ namespace jarg {
                 i.Tag = cou;
                 i.OnPressed += PressInContainer;
                 cou++;
-                ContainerContainer.AddItem(i);
             }
         }
 
         private Item selectedItem;
 
         private void PressInInventory(object sender, EventArgs e) {
-            var a = (int) (sender as Label).Tag;
-            selectedItem = inInv_[a];
+            var label = sender as Label;
+            if (label != null) {
+                var a = (Item) label.Tag;
+                selectedItem = a;
 
-            if (!doubleclick_) {
-                InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(inInv_[a]);
-            }
-            else {
-                IntentoryEquip_onPressed(null, null);
+                if (!doubleclick_) {
+                    InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(a);
+                }
+                else {
+                    IntentoryEquip_onPressed(null, null);
+                }
             }
         }
 
@@ -751,7 +882,7 @@ namespace jarg {
                 ListStatist.Clear();
                 foreach (var statist in Achievements.Stat) {
                     if (statist.Value.Count != 0) {
-                        ListStatist.AddItem(new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count, ListStatist));
+                        new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count, ListStatist);
                     }
                 }
 
@@ -781,7 +912,6 @@ namespace jarg {
                                            : "";
 
             EffectsContainer.Clear();
-            LabelsEffect.Clear();
             for (int i = 0; i < player_.Buffs.Count; i++) {
                 LabelFixed label;
                 if (player_.Buffs[i].Expiring) {
@@ -793,16 +923,11 @@ namespace jarg {
                     label = new LabelFixed(Vector2.Zero,
                                            string.Format("{0}", BuffDataBase.Data[player_.Buffs[i].Id].Name), 20, EffectsContainer);
                 }
-                LabelsEffect.Add(label);
-                EffectsContainer.AddItem(label);
             }
 
             ContainerWearList.Clear();
-            LabelsWeared.Clear();
             foreach (var item in player_.Weared) {
                 var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), 20, ContainerWearList);
-                LabelsWeared.Add(label);
-                ContainerWearList.AddItem(label);
             }
         }
     }

@@ -621,8 +621,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\weapon_ammo.txt">
-      <Name>weapon_ammo</Name>
+    <None Include="Data\Items\ammo_core.txt">
+      <Name>ammo_core</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -957,8 +957,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\wear.txt">
-      <Name>wear</Name>
+    <None Include="Data\Items\wear_core.txt">
+      <Name>wear_core</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -970,28 +970,28 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\crafting.txt">
-      <Name>crafting</Name>
+    <None Include="Data\Items\crafting_core.txt">
+      <Name>crafting_core</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\food.txt">
-      <Name>food</Name>
+    <None Include="Data\Items\food_core.txt">
+      <Name>food_core</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\medicine.txt">
-      <Name>medicine</Name>
+    <None Include="Data\Items\medicine_core.txt">
+      <Name>medicine_core</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\misc.txt">
-      <Name>misc</Name>
+    <None Include="Data\Items\misc_core.txt">
+      <Name>misc_core</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\Items\test_items.txt">
       <Name>test_items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Items\weapon_guns.txt">
-      <Name>weapon_guns</Name>
+    <None Include="Data\Items\guns_core.txt">
+      <Name>guns_core</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

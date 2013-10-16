@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Level;
 
@@ -75,6 +76,8 @@ namespace rglikeworknamelib.Dungeon.Vehicles
                 position_.X += (float)(Math.Sin(-Roration - 3.14f / 4f) * mover + Math.Cos(-Roration - 3.14f / 4f) * mover);
                 position_.Y += (float)(Math.Cos(-Roration - 3.14f / 4f) * mover - Math.Sin(-Roration - 3.14f / 4f) * mover);
                 acceleration /= 1.1f;
+
+                Achievements.Stat["drive"].Count += Math.Abs(mover/32);
 
                 if (position_.Y >= 32 * MapSector.Ry)
                 {

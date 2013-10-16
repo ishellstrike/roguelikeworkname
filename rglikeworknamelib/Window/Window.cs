@@ -184,7 +184,7 @@ namespace rglikeworknamelib.Window {
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
             aimed = false;
-            if (Visible) {
+            if (Visible && !mh) {
                 if (hasTextbox_) {
                     parent_.Keyboardhook  = true;
                 }

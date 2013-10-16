@@ -1,0 +1,67 @@
+//misc from 8000
+~Item,bag1
+Name=Рюкзак походный
+Weight=1000
+Volume=2000
+Container=65000
+SType=Bag
+
+~Item,bag2
+Name=Рюкзак туристический
+Weight=600
+Volume=1200
+Container=28000
+SType=Bag
+
+~Item,phone1
+Name=Мобильный телефон
+Weight=100
+
+~Item,paper
+Name=Лист бумаги
+Weight=5
+
+~Item,newspaper
+Name=Газета
+Weight=100
+
+~Item,nocigarets
+Name=Пачка из-под сигарет
+Weight=10
+
+~Item,cigarets
+Name=Пачка сигарет
+Doses=20
+Weight=20
+AfteruseId=nocigarets
+SType=Medicine
+
+~Item,cigarets10
+Name=Пачка сигарет
+Doses=10
+Weight=20
+AfteruseId=nocigarets
+SType=Medicine
+
+~Item,cigarets4
+Name=Пачка сигарет
+Doses=4
+Weight=20
+AfteruseId=nocigarets
+SType=Medicine
+
+~Item,brpencil
+Name=Сломаный карандаш
+Weight=10
+
+~Item,brpen
+Name=Сломаная шариковая ручка
+Weight=10
+
+~Item,brpaper
+Name=Скомканая бумага
+Weight=10
+
+~Item,brcloth
+Name=Обрывки ткани
+Weight=50

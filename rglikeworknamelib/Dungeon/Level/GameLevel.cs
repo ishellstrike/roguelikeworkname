@@ -781,7 +781,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public bool IsCreatureMeele(int nx, int ny, Player player) {
             return (Settings.GetMeeleActionRange() >=
-                    Vector2.Distance(new Vector2((nx + 0.5f)*32, (ny + 0.5f)*32), new Vector2(player.Position.X, player.Position.Y)));
+                    Vector2.Distance(new Vector2((nx + 0.5f)*32, (ny + 0.5f)*32), player.Position));
         }
 
         public Texture2D GetMinimap() {
@@ -798,7 +798,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SaveAllAndExit(Player pl, InventorySystem inv) {
             Action<Player, InventorySystem> a = SaveAllAsyncAndExit;
-            a.BeginInvoke(pl, inv, null, null);
+            a(pl, inv);
         }
 
         private bool all_saved;
@@ -919,7 +919,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"),
                                                         FileMode.Open);
                 var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                globalMap = (Dictionary<Tuple<int, int>, SectorBiom>) binaryFormatter.Deserialize(gZipStream);
+                    globalMap = (Dictionary<Tuple<int, int>, SectorBiom>) binaryFormatter.Deserialize(gZipStream);
                 gZipStream.Close();
                 gZipStream.Dispose();
                 fileStream.Close();

@@ -33,7 +33,7 @@ namespace rglikeworknamelib.Window {
         }
         public override void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
         {
-            if (Visible) {
+            if (Visible && mh) {
                 Vector2 realpos = GetPosition();
                 Vector2 realdl = realpos;
                 realdl.X += locate_.Width;
