@@ -361,7 +361,7 @@ namespace jarg {
                     WindowCaracter);
             
 
-            InfoWindow = new Window(new Vector2(200, 100), "Info", true, ws) {Visible = false};
+            InfoWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/6), "Info", true, ws) {Visible = false};
             InfoWindowLabel = new DoubleLabel(new Vector2(20, 20), "some info", InfoWindow);
 
             WindowStatist = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Statistic", true, ws) {Visible = false};
@@ -672,8 +672,37 @@ namespace jarg {
 
             ContainerInventoryItems.Clear();
 
-            var weap = a.Where(x => x.Data.SType == ItemType.Gun).ToArray();
-            if (weap.Length > 0) {
+            var weap = new List<Item>(); 
+            var ammo = new List<Item>(); 
+            var wear = new List<Item>(); 
+            var med = new List<Item>();  
+            var food = new List<Item>(); 
+            var other = new List<Item>();
+            foreach (var x in a) {
+                switch (x.Data.SType) {
+                    case ItemType.Gun:
+                        weap.Add(x);
+                        break;
+                    case ItemType.Ammo:
+                        ammo.Add(x);
+                        break;
+                    case ItemType.Wear:
+                        wear.Add(x);
+                        break;
+                    case ItemType.Medicine:
+                        med.Add(x);
+                        break;
+                    case ItemType.Food:
+                        food.Add(x);
+                        break;
+                    default:
+                        other.Add(x);
+                        break;
+                         }
+            }
+                         
+            
+            if (weap.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Weapons", Color.Cyan, 22, ContainerInventoryItems);
                 foreach (var item in weap) {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
@@ -682,11 +711,11 @@ namespace jarg {
                 }
             }
 
-            weap = a.Where(x => x.Data.SType == ItemType.Ammo).ToArray();
-            if (weap.Length > 0)
+
+            if (ammo.Count > 0)
             {
                 new LabelFixed(Vector2.Zero, "Ammo", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (var item in weap)
+                foreach (var item in ammo)
                 {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
@@ -694,11 +723,11 @@ namespace jarg {
                 }
             }
 
-            weap = a.Where(x => x.Data.SType == ItemType.Wear).ToArray();
-            if (weap.Length > 0)
+
+            if (wear.Count > 0)
             {
                 new LabelFixed(Vector2.Zero, "Wear", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (var item in weap)
+                foreach (var item in wear)
                 {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
@@ -706,11 +735,11 @@ namespace jarg {
                 }
             }
 
-            weap = a.Where(x => x.Data.SType == ItemType.Medicine).ToArray();
-            if (weap.Length > 0)
+
+            if (med.Count > 0)
             {
                 new LabelFixed(Vector2.Zero, "Medicine", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (var item in weap)
+                foreach (var item in med)
                 {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
@@ -718,11 +747,11 @@ namespace jarg {
                 }
             }
 
-            weap = a.Where(x => x.Data.SType == ItemType.Food).ToArray();
-            if (weap.Length > 0)
+
+            if (food.Count > 0)
             {
                 new LabelFixed(Vector2.Zero, "Food", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (var item in weap)
+                foreach (var item in food)
                 {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
@@ -730,11 +759,11 @@ namespace jarg {
                 }
             }
 
-            weap = a.Where(x => x.Data.SType != ItemType.Food && x.Data.SType != ItemType.Medicine && x.Data.SType != ItemType.Ammo && x.Data.SType != ItemType.Gun && x.Data.SType != ItemType.Wear).ToArray();
-            if (weap.Length > 0)
+
+            if (other.Count > 0)
             {
                 new LabelFixed(Vector2.Zero, "Other", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (var item in weap)
+                foreach (var item in other)
                 {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;

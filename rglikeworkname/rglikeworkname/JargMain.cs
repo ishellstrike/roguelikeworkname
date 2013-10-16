@@ -405,7 +405,9 @@ namespace jarg {
 
             if (Settings.NeedToShowInfoWindow) {
                 ShowInfoWindow(Settings.NTS1, Settings.NTS2);
-                Settings.NeedToShowInfoWindow = false;
+            }
+            else {
+                InfoWindow.Visible = false;
             }
 
             WindowsUpdate(gameTime);
@@ -426,11 +428,6 @@ namespace jarg {
             }
 
             // last
-            if (SecondTimespan.TotalSeconds >= 1) {
-                SecondTimespan = TimeSpan.Zero;
-                InfoWindow.Visible = false;
-            }
-
             if (needChangeSesolution_) {
                 needChangeSesolution_ = false;
                 ResolutionChanging();

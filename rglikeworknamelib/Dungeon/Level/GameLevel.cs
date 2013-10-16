@@ -798,7 +798,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SaveAllAndExit(Player pl, InventorySystem inv) {
             Action<Player, InventorySystem> a = SaveAllAsyncAndExit;
-            a(pl, inv);
+            SaveMap();
+            a.BeginInvoke(pl, inv, null, null);
         }
 
         private bool all_saved;
@@ -808,7 +809,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             inv.Save();
             Settings.NTS1 = "Saving Map";
             Settings.NeedToShowInfoWindow = true;
-            SaveMap();
             Settings.NeedToShowInfoWindow = true;
             Settings.NTS1 = "Saving : ";
             Settings.NTS2 = "";
@@ -854,7 +854,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 for (int i = 0; i < interestCount; i++) {
                     var a = new InterestPointCity {
                                                       Name = NameDataBase.GetRandom(rand),
-                                                      SectorPos = new Point(rand.Next(0, 3), rand.Next(0, 3)),
+                                                      SectorPos = new Point(rand.Next(0, 0), rand.Next(0, 0)),
                                                       Range = 10
                                                   };
                     mm.InterestPoints.Add(a);
@@ -866,7 +866,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                     var size = new Point(0, 0);
                     int max = 0;
 
-                    MapGenerators.GenerateCity(this, rand, 500, 500, a.SectorPos.X - 25, a.SectorPos.Y - 25);
+                    Settings.NTS1 = "Map generation :";
+                    Settings.NTS2 = string.Format("{0}/{1} ({2})", i, interestCount, sectors_.Count);
+                    Settings.NeedToShowInfoWindow = true;
+                    MapGenerators.GenerateCity(this, rand, 500, 500, a.SectorPos.X * MapSector.Rx - 2, a.SectorPos.Y * MapSector.Ry - 2);
 
                 }
 
@@ -882,8 +885,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                 gZipStream.Dispose();
                 fileStream.Close();
                 fileStream.Dispose();
-
-                KillFarSectors(null, null, true);
             }
             sw.Stop();
             logger.Info(string.Format("megamap sector {0} generation in {1}", point, sw.Elapsed));
@@ -913,6 +914,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private void LoadMap()
         {
+            try {
             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("map.rlm"))) {
                 var binaryFormatter = new BinaryFormatter();
 
@@ -924,6 +926,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                 gZipStream.Dispose();
                 fileStream.Close();
                 fileStream.Dispose();
+            }
+            }
+            catch (Exception)
+            {
+                globalMap = new Dictionary<Tuple<int, int>, SectorBiom>();
             }
         }
 
