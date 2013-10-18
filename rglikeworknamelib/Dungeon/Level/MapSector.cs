@@ -199,7 +199,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             foreach (var block in sb) {
                 int next = rand.Next(0, 3);
                 for (int i = 0; i < next; i++) {
-                    block.StoredItems.Add(new Item.Item(ItemDataBase.Data.ElementAt(rand.Next(0, ItemDataBase.Data.Count)).Key, rand.Next(1, 2)));
+                    block.StoredItems.Add(new Items.Item(ItemDataBase.Data.ElementAt(rand.Next(0, ItemDataBase.Data.Count)).Key, rand.Next(1, 2)));
                 }
             }
             var rnd1 = rand.Next(0, 5);

@@ -81,12 +81,12 @@ namespace rglikeworknamelib.Dungeon.Items {
             }
         }
 
-        public static string GetItemDescription(Item.Item i)
+        public static string GetItemDescription(Item i)
         {
             return i.Data.Description;
         }
 
-        public static string GetItemFullDescription(Item.Item i) {
+        public static string GetItemFullDescription(Item i) {
             var item = Data[i.Id];
             StringBuilder sb = new StringBuilder();
             sb.Append(item.Name);

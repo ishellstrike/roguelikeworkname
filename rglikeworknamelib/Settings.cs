@@ -133,5 +133,9 @@ namespace rglikeworknamelib {
         public static string GetVehicleTextureDirectory() {
             return GetTextureDirectory() + @"\Dungeon\Vehicle";
         }
+
+        public static string GetCraftsDirectory() {
+            return GetItemDataDirectory() + @"\Crafts";
+        }
     }
 }

@@ -95,6 +95,7 @@
     <Compile Include="Dungeon\Buffs\BuffDataBase.cs" />
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
+    <Compile Include="Dungeon\Items\Craft.cs" />
     <Compile Include="Dungeon\Items\InventorySystem.cs" />
     <Compile Include="Dungeon\Items\Item.cs" />
     <Compile Include="Dungeon\Items\ItemData.cs" />

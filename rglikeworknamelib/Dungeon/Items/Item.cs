@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Item;
 
-namespace rglikeworknamelib.Dungeon.Item
+namespace rglikeworknamelib.Dungeon.Items
 {
     [Serializable]
     public class Item

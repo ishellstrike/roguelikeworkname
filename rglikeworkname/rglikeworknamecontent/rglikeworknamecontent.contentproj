@@ -56,6 +56,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Data\Items\Crafts\" />
     <Folder Include="Textures\Effects\" />
   </ItemGroup>
   <ItemGroup>
