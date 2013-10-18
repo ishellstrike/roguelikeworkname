@@ -1,48 +1,72 @@
 //Craftings from 1000
-~Item,1000
+~Item,steelplate
 Name=Стальная пластина
 SType=Craft
+Weight=4000
 
-
-~Item,1001
-Name=Стальной прут
+~Item,copperwire
+Name=Моток медной проволоки
+Weight=100
+Doses=10
 SType=Craft
 
+~Item,steelbar
+Name=Стальной прут
+SType=Craft
+Weight=4000
+SType=Craft
 
-~Item,1002
+~Item,plank
 Name=Доска
 Fire=100
 SType=Craft
+Weight=2000
 
-
-~Item,1003
+~Item,stick
 Name=Палка
 Fire=30
+Weight=400
 SType=Craft
 
-~Item,1004
+~Item,skotch
+Name=Клейкая лента
+Weight=100
+Doses=100
+SType=Craft
+
+~Item,izolenta
+Name=Изолента
+Weight=70
+Doses=250
+SType=Craft
+
+~Item,opilki
 Name=Древесные опилки
 Fire=5
 SType=Craft
+Weight=100
 
 
-~Item,1005
+~Item,nail
 Name=Гвоздь
 SType=Craft
+Weight=10
 
-~Item,1006
+~Item,coal
 Name=Пакет угля
 Fire=2000
 SType=Craft
+Weight=1000
 
-~Item,1007
+~Item,log
 Name=Бревно
 Fire=500
 SType=Craft
+Weight=10000
 
-//Crafting instruments from 2000
-~Item,2000
+~Item,hammer
 Name=Молоток
 SType=Craft
+Weight=1000
 
 ~Item,2001

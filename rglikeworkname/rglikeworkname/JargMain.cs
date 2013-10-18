@@ -139,7 +139,8 @@ namespace jarg {
             graphics_.SynchronizeWithVerticalRetrace = false;
             InactiveSleepTime = TimeSpan.FromMilliseconds(500);
 
-            IsFixedTimeStep = true;
+            IsFixedTimeStep = false;
+            graphics_.SynchronizeWithVerticalRetrace = true;
             IsMouseVisible = true;
             graphics_.ApplyChanges();
             UpdateTitle();
@@ -340,26 +341,28 @@ namespace jarg {
         private void DataBasesLoadAndThenInitialGeneration() {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            ShowInfoWindow("Bases loading :", "1/8");
-            new MonsterDataBase();
-            ShowInfoWindow("Bases loading :", "2/8");
-            new BlockDataBase();
-            ShowInfoWindow("Bases loading :", "3/8");
-            new FloorDataBase();
-            ShowInfoWindow("Bases loading :", "4/8");
-            new ItemDataBase();
-            ShowInfoWindow("Bases loading :", "5/8");
-            new SchemesDataBase();
-            ShowInfoWindow("Bases loading :", "6/8");
-            new BuffDataBase();
-            ShowInfoWindow("Bases loading :", "7/8");
-            new DialogDataBase();
-            ShowInfoWindow("Bases loading :", "8/8");
+            ShowInfoWindow("Bases loading :", "1/9");
+            new MonsterDataBase();               
+            ShowInfoWindow("Bases loading :", "2/9");
+            new BlockDataBase();                 
+            ShowInfoWindow("Bases loading :", "3/9");
+            new FloorDataBase();                 
+            ShowInfoWindow("Bases loading :", "4/9");
+            new ItemDataBase();                  
+            ShowInfoWindow("Bases loading :", "5/9");
+            new SchemesDataBase();               
+            ShowInfoWindow("Bases loading :", "6/9");
+            new BuffDataBase();                  
+            ShowInfoWindow("Bases loading :", "7/9");
+            new DialogDataBase();                
+            ShowInfoWindow("Bases loading :", "8/9");
             new NameDataBase();
+            ShowInfoWindow("Bases loading :", "9/9");
+            new CraftDataBase();
             HideInfoWindow();
             sw.Stop();
             logger.Info(
-                "Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\nloaded in {0}",
+                "Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\nloaded in {0}",
                 sw.Elapsed,
                 MonsterDataBase.Data.Count,
                 BlockDataBase.Data.Count,
@@ -368,7 +371,8 @@ namespace jarg {
                 SchemesDataBase.Data.Count,
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,
-                NameDataBase.data.Count);
+                NameDataBase.data.Count,
+                CraftDataBase.Data.Count);
 
             Action igen = InitialGeneration;
             igen.BeginInvoke(null, null);

@@ -8,30 +8,40 @@ using rglikeworknamelib.Parser;
 namespace rglikeworknamelib.Dungeon.Items
 {
     public class CraftData {
-        public Item[] Input1;
-        public Item[] Input1Count;
+        public string[] Input1;
+        public string[] Input1Count;
 
-        public Item[] Input2;
-        public Item[] Input2Count;
+        public string[] Input2;
+        public string[] Input2Count;
 
-        public Item[] Input3;
-        public Item[] Input3Count;
+        public string[] Input3;
+        public string[] Input3Count;
 
-        public Item[] Input4;
-        public Item[] Input4Count;
+        public string[] Input4;
+        public string[] Input4Count;
 
-        public Item[] Output;
-        public Item[] OutputCount;
+        public string[] Output;
+        public string[] OutputCount;
+
+        public CraftType SType = CraftType.Other;
+    }
+
+    public enum CraftType {
+        Other,
+        Misc,
+        Food,
+        Medicine,
+        Weapon
     }
 
     public class CraftDataBase {
-        public static Dictionary<string, CraftData> Data;
+        public static Collection<CraftData> Data;
 
         public CraftDataBase() {
-            Data = new Dictionary<string, CraftData>();
-            var t = ParsersCore.UniversalParseDirectory(Settings.GetCraftsDirectory(), UniversalParser.Parser<CraftData>);
-            foreach (var pair in t) {
-                Data.Add(pair.Key, (CraftData)pair.Value);
+            Data = new Collection<CraftData>();
+            var t = ParsersCore.UniversalParseDirectory(Settings.GetCraftsDirectory(), UniversalParser.NoIdParser<CraftData>);
+            foreach (var value in t) {
+                Data.Add((CraftData)value);
             }
         }
     }

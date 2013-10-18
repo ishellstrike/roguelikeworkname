@@ -165,34 +165,19 @@ namespace rglikeworknamelib.Parser {
                             string extracted = lines[i].Substring(lines[i].IndexOf('=') + 1,
                                                                   lines[i].Length - (lines[i].IndexOf('=') + 1)).Replace("\"", "");
 
-                            if (finfo != null)
-                            {
+                            if (finfo != null) {
                                 var converter = TypeDescriptor.GetConverter(finfo.FieldType);
                                 if (extracted.StartsWith("{")) //Array parser
                                 {
                                     extracted = extracted.Substring(1, extracted.Length - 2);
                                     var arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
-
-                                    foreach (var arrextr in arrayextractor)
-                                    {
-
-                                    }
+                                    var ar = arrayextractor.ToArray();
+                                    finfo.SetValue(cur, ar);
+                                } else {
+                                    var converted = converter.ConvertFromString(extracted);
+                                    finfo.SetValue(cur, converted);
                                 }
-                                else
-                                {
-                                    if (converter != null)
-                                    {
-                                        var converted = converter.ConvertFromString(extracted);
-                                        finfo.SetValue(cur, converted);
-                                    }
-                                    else
-                                    {
-                                        logger.Error("Could't convert \"" + extracted + "\" to " + finfo + " to ID " + header[0]);
-                                    }
-                                }
-                            }
-                            else
-                            {
+                            } else {
                                 logger.Error(cur.GetType().Name + " didnt contains field \"" + sstart + "\", \"" + extracted + "\" didn't assigned to ID " + header[0]);
                             }
                         }

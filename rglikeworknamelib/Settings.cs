@@ -9,7 +9,6 @@ namespace rglikeworknamelib {
         }
 
         private static Vector2 _resolution;
-        public static int Framelimit;
 
         public static bool DebugInfo;
         public static bool DebugWire;

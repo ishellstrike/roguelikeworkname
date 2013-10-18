@@ -394,8 +394,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                 sec = TimeSpan.Zero;
                 for (int i = 0; i < sectors_.Count; i++) {
                     var a = sectors_.ElementAt(i);
-                    if (ignore || Math.Abs((a.Value.SectorOffsetX + 0.5) * MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 32 ||
-                        Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 32)
+                    if (ignore || Math.Abs((a.Value.SectorOffsetX + 0.5) * MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 64 ||
+                        Math.Abs((a.Value.SectorOffsetY + 0.5) * MapSector.Ry - cara.GetPositionInBlocks().Y) > 64)
                     {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
                         lw_.Save(a.Value);

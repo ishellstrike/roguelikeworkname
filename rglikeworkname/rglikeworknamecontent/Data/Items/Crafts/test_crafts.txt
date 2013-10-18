@@ -1,0 +1,9 @@
+~Craft
+Input1={knife}
+Input1Count={1}
+Input2={skotch,izolenta}
+Input2Count={10,15}
+Input3={stick}
+Input3Count={1}
+Output={spearknife}
+OutputCount={1}
