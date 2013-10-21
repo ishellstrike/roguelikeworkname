@@ -16,8 +16,6 @@ namespace rglikeworknamelib.Dungeon
 
     public enum DayPart {
         Day,
-        Morning,
-        Vecher,
         Night
     }
 
@@ -36,59 +34,20 @@ namespace rglikeworknamelib.Dungeon
         }
 
         public static void Update(GameTime gt) {
-            Elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds*5);
+            Elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds);
             CurrentTime += Elapse;
             Temperature -= Temperature * (float)gt.ElapsedGameTime.TotalMinutes;
             Temperature += GetNormalTemp(CurrentTime) * (float)gt.ElapsedGameTime.TotalMinutes;
 
-            switch (DayPart) {
-                case DayPart.Day:
-                    if (CurrentTime.TimeOfDay.Ticks > GetSunsetTime(CurrentTime).Ticks - Hour3) {
-                        DayPart = DayPart.Vecher;
-                        if(onVecherBegins != null) {
-                            onVecherBegins(null, null);
-                        }
-                    }
-                    break;
-                case DayPart.Morning:
-                    if (CurrentTime.TimeOfDay.Ticks > GetSunriseTime(CurrentTime).Ticks + Hour3) {
-                        DayPart = DayPart.Day;
-                        if(onDayBegins != null) {
-                            onDayBegins(null, null);
-                        }
-                    }
-                    break;
-                case DayPart.Night:
-                    if(CurrentTime.TimeOfDay.Ticks > GetSunriseTime(CurrentTime).Ticks) {
-                        DayPart = DayPart.Morning;
-                        if(onMorningBegins != null) {
-                            onMorningBegins(null, null);
-                        }
-                    }
-                    break;
-                case DayPart.Vecher:
-                    if(CurrentTime.TimeOfDay.Ticks > GetSunsetTime(CurrentTime).Ticks) {
-                        DayPart = DayPart.Night;
-                        if(onNightBegins != null) {
-                            onNightBegins(null, null);
-                        }
-                    }
-                    break;
-            }
+            DayPart = CurrentTime.Hour > 22 || CurrentTime.Hour < 7 ? DayPart.Night : DayPart.Day;
 
             float a = 3;
             switch (DayPart) {
                     case DayPart.Day:
-                    a = 0.1f;
-                    break;
-                    case DayPart.Morning:
-                    a = 1;
-                    break;
-                    case DayPart.Vecher:
-                    a = 4;
+                    a = 12f;
                     break;
                     case DayPart.Night:
-                    a = 7;
+                    a = 2f;
                     break;
             }
             ler_ = Vector2.Lerp(new Vector2(ler_, 0), new Vector2(a, 0), (float) Elapse.TotalHours).X;
@@ -194,78 +153,14 @@ namespace rglikeworknamelib.Dungeon
             return DayPart == DayPart.Day ;
         }
 
-        public static TimeSpan GetSunriseTime(DateTime cur)
+        public static string GetTimeString(DateTime time)
         {
-            switch (cur.Month) {
-                case 1:
-                    return new TimeSpan(9, 31, 0);
-                case 2:     
-                    return new TimeSpan(8, 23, 0);
-                case 3:       
-                    return new TimeSpan(7, 11, 0);
-                case 4:     
-                    return new TimeSpan(5, 53, 0);
-                case 5:        
-                    return new TimeSpan(4, 54, 0);
-                case 6:        
-                    return new TimeSpan(4, 47, 0);
-                case 7:        
-                    return new TimeSpan(5, 27, 0);
-                case 8:        
-                    return new TimeSpan(6, 26, 0);
-                case 9:        
-                    return new TimeSpan(7, 26, 0);
-                case 10:       
-                    return new TimeSpan(8, 27, 0);
-                case 11:       
-                    return new TimeSpan(9, 30, 0);
-                case 12:       
-                    return new TimeSpan(10, 0, 0);
-
-            }
-            return new TimeSpan();
-        }
-
-        public static TimeSpan GetSunsetTime(DateTime cur)
-        {
-            switch (cur.Month) {
-                case 1:
-                    return new TimeSpan(17, 55, 0);
-                case 2:        
-                    return new TimeSpan(19, 2, 0);
-                case 3:        
-                    return new TimeSpan(20, 0, 0);
-                case 4:        
-                    return new TimeSpan(21, 2, 0);
-                case 5:        
-                    return new TimeSpan(21, 57, 0);
-                case 6:        
-                    return new TimeSpan(22, 18, 0);
-                case 7:        
-                    return new TimeSpan(21, 44, 0);
-                case 8:        
-                    return new TimeSpan(20, 34, 0);
-                case 9:        
-                    return new TimeSpan(19, 30, 0);
-                case 10:       
-                    return new TimeSpan(17, 59, 0);
-                case 11:       
-                    return new TimeSpan(17, 5, 0);
-                case 12:       
-                    return new TimeSpan(17, 3, 0);
-            }
-            return new TimeSpan();
-        }
-
-        public static string GetTimeString(DateTime time) {
             if (Settings.IsAMDM)
             {
                 if (time.Hour == 0) return string.Format("PM {0}:{1:00}:{2:00}", 12, time.Minute, time.Second);
                 return time.Hour <= 12 ? string.Format("AM {0}:{1:00}:{2:00}", time.Hour, time.Minute, time.Second) : string.Format("PM {0}:{1:00}:{2:00}", time.Hour - 12, time.Minute, time.Second);
             }
-            else {
-                return string.Format("{0}:{1:00}:{2:00}", time.Hour, time.Minute, time.Second);
-            }
+            return string.Format("{0}:{1:00}:{2:00}", time.Hour, time.Minute, time.Second);
         }
     }
 }

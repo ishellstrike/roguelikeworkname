@@ -720,8 +720,7 @@ namespace jarg
 
         private void DrawCombinedMaps()
         {
-            float value = 7/4 - GlobalWorldLogic.GetCurrentSlen()/3 + 0.2f;
-            value = Math.Max(value, 0.1f);
+            float value = GlobalWorldLogic.GetCurrentSlen()/10;
             lightEffect2_.Parameters["ambient"].SetValue(value);
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
@@ -783,7 +782,7 @@ namespace jarg
                     "SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
                     PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
                     currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated,
-                    currentFloor_.GetShadowrenderCount()/3, 7/4 - GlobalWorldLogic.GetCurrentSlen()/3,
+                    currentFloor_.GetShadowrenderCount() / 3, GlobalWorldLogic.GetCurrentSlen() / 10,
                     GlobalWorldLogic.DayPart, ws_.Mopusehook, ws_.Keyboardhook);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
