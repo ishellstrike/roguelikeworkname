@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using rglikeworknamelib;
@@ -13,11 +10,12 @@ namespace jarg
 {
     public partial class JargMain
     {
-        private TimeSpan doubleclicktimer_ = TimeSpan.Zero;
-        private TimeSpan sec20glitch;
-        private bool firstclick_;
         private bool doubleclick_;
+        private TimeSpan doubleclicktimer_ = TimeSpan.Zero;
+        private bool firstclick_;
         private bool rememberShoot_;
+        private TimeSpan sec20glitch;
+
         private void UpdateMouse(GameTime gameTime)
         {
             lms_ = ms_;
@@ -56,8 +54,8 @@ namespace jarg
 
             if (!ws_.Mopusehook)
             {
-                int nx = (ms_.X + (int)camera_.X) / 32;
-                int ny = (ms_.Y + (int)camera_.Y) / 32;
+                int nx = (ms_.X + (int) camera_.X)/32;
+                int ny = (ms_.Y + (int) camera_.Y)/32;
 
                 if (ms_.X + camera_.X < 0)
                 {
@@ -71,22 +69,22 @@ namespace jarg
                 WindowIngameHint.Visible = false;
 
                 if (player_ != null && currentFloor_ != null &&
-                    !currentFloor_.IsCreatureMeele((int)ContainerOn.X, (int)ContainerOn.Y, player_))
+                    !currentFloor_.IsCreatureMeele((int) ContainerOn.X, (int) ContainerOn.Y, player_))
                 {
                     WindowContainer.Visible = false;
                 }
 
                 if (currentFloor_ != null)
                 {
-                    var nxny = currentFloor_.GetBlock(nx, ny);
+                    IBlock nxny = currentFloor_.GetBlock(nx, ny);
                     bool nothingUndermouse = true;
                     if (nxny != null && nxny.Lightness == Color.White && !rememberShoot_)
-                    // currentFloor_.IsExplored(aa))
+                        // currentFloor_.IsExplored(aa))
                     {
-                        var a = currentFloor_.GetBlock(nx, ny);
+                        IBlock a = currentFloor_.GetBlock(nx, ny);
                         if (a != null)
                         {
-                            var b = BlockDataBase.Data[a.Id];
+                            BlockData b = BlockDataBase.Data[a.Id];
                             string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
                             if (Settings.DebugInfo)
                             {
@@ -97,7 +95,7 @@ namespace jarg
                             {
                                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released)
                                 {
-                                    var undermouseblock = BlockDataBase.Data[a.Id];
+                                    BlockData undermouseblock = BlockDataBase.Data[a.Id];
                                     switch (undermouseblock.SmartAction)
                                     {
                                         case SmartAction.ActionSee:
@@ -107,8 +105,8 @@ namespace jarg
                                             break;
                                         case SmartAction.ActionOpenContainer:
                                             WindowContainer.Visible = true;
-                                            WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
-                                            UpdateContainerContainer(((StorageBlock)a).StoredItems);
+                                            WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
+                                            UpdateContainerContainer(((StorageBlock) a).StoredItems);
                                             ContainerOn = new Vector2(nx, ny);
                                             break;
                                         case SmartAction.ActionOpenClose:
@@ -125,14 +123,15 @@ namespace jarg
                             if (WindowIngameHint.Visible = a.Id != "0")
                             {
                                 LabelIngameHint.Text = s;
-                                WindowIngameHint.Locate.Width = (int)LabelIngameHint.Width + 20;
+                                WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
                                 WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));
                                 nothingUndermouse = false;
                             }
                         }
                     }
 
-                    if(!currentFloor_.IsCreatureMeele((int)ContainerOn.X, (int)ContainerOn.Y, player_)) {
+                    if (!currentFloor_.IsCreatureMeele((int) ContainerOn.X, (int) ContainerOn.Y, player_))
+                    {
                         WindowContainer.Visible = false;
                     }
 

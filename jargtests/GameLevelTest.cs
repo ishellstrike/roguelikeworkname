@@ -1,9 +1,4 @@
-﻿using rglikeworknamelib.Dungeon.Level;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using rglikeworknamelib.Creatures;
-using System.Collections.Generic;
-
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace jargtests
 {
     

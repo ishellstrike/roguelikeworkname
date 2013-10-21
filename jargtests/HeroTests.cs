@@ -1,12 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using rglikeworknamelib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Creatures;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace jargtests
 {
