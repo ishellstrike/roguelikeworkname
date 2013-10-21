@@ -131,6 +131,13 @@ Content\Textures\gear.xnb
 Content\Textures\bag.xnb
 Content\Textures\caracter.xnb
 Content\Textures\map.xnb
+Content\Textures\Dungeon\Vehicle\wheel1.xnb
+Content\Textures\Dungeon\Vehicle\plate1.xnb
+Content\Textures\Dungeon\Vehicle\engine1.xnb
+Content\Textures\Dungeon\Vehicle\seat1.xnb
+Content\Textures\Dungeon\Vehicle\plate2.xnb
+Content\Textures\Dungeon\Vehicle\plate3.xnb
+Content\Textures\Dungeon\Vehicle\plate4.xnb
 Content\Effects\reductionEffect.xnb
 Content\Effects\resolveShadowsEffect.xnb
 Content\Effects\Lighting1.xnb
@@ -141,13 +148,6 @@ Content\Effects\Effect111.xnb
 Content\Effects\ShadersLightningShadow.xnb
 Content\Effects\ShadersLightningCombined.xnb
 Content\Effects\ToWhite.xnb
-Content\Textures\Dungeon\Vehicle\wheel1.xnb
-Content\Textures\Dungeon\Vehicle\plate1.xnb
-Content\Textures\Dungeon\Vehicle\engine1.xnb
-Content\Textures\Dungeon\Vehicle\seat1.xnb
-Content\Textures\Dungeon\Vehicle\plate2.xnb
-Content\Textures\Dungeon\Vehicle\plate3.xnb
-Content\Textures\Dungeon\Vehicle\plate4.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README

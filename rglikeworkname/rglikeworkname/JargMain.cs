@@ -108,7 +108,8 @@ namespace jarg
             myProcess.WaitForExit(3000);
             myProcess.Close();
             myProcess.Dispose();
-#endif
+#endif 
+
             Application.ApplicationExit += Application_ApplicationExit;
 
             if (File.Exists("JARGLog_previous.txt"))
