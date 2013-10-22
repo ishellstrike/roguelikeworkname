@@ -1,8 +1,7 @@
 namespace rglikeworknamelib.Dungeon.Item {
-    public enum ItemType
-    {
+    public enum ItemType {
         Nothing,
-        
+
         Gun,
         Meele,
         Ammo,

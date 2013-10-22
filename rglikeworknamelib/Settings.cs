@@ -4,10 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace rglikeworknamelib {
     public static class Settings {
-        public static int GetFloorAtlasWidth() {
-            return 10;
-        }
-
         private static Vector2 _resolution;
 
         public static bool DebugInfo;
@@ -20,6 +16,36 @@ namespace rglikeworknamelib {
         public static Random rnd = new Random();
 
         public static Rectangle KillArea;
+
+        public static Vector2 FloorSpriteSize = new Vector2(32, 32);
+        public static Vector2 Sqeezer = new Vector2(1, 1);
+        public static bool GamePause;
+
+        private static Color hcol_ = Color.LightGray;
+        public static bool IsAMDM;
+        public static SpriteFont Font;
+        public static bool NeedExit;
+        public static bool InventoryUpdate;
+        public static bool SeeAll = false;
+        public static bool Noclip;
+
+        public static Vector2 Resolution {
+            set {
+                _resolution = value;
+                KillArea = new Rectangle(-50, -50, (int) _resolution.X + 50, (int) _resolution.Y + 50);
+                Sqeezer = new Vector2(_resolution.X/1080, _resolution.Y/1920);
+            }
+            get { return _resolution; }
+        }
+
+        public static Color HudСolor {
+            get { return hcol_; }
+            set { hcol_ = value; }
+        }
+
+        public static int GetFloorAtlasWidth() {
+            return 10;
+        }
 
         public static float G() {
             return 9.8f;
@@ -41,13 +67,11 @@ namespace rglikeworknamelib {
             return GetDataDirectory() + @"\Floor";
         }
 
-        public static string GetObjectDataDirectory()
-        {
+        public static string GetObjectDataDirectory() {
             return GetDataDirectory() + @"\Object";
         }
 
-        public static string GetItemDataDirectory()
-        {
+        public static string GetItemDataDirectory() {
             return GetDataDirectory() + @"\Items";
         }
 
@@ -55,38 +79,12 @@ namespace rglikeworknamelib {
             return 64;
         }
 
-        public static Vector2 FloorSpriteSize = new Vector2(32, 32);
-        public static Vector2 Sqeezer = new Vector2(1, 1);
-        public static bool GamePause;
         public static string GetWorldsDirectory() {
             return @"Worlds\";
-        }
-    
-
-        public static Vector2 Resolution {
-            set {
-                _resolution = value;
-                KillArea = new Rectangle(-50, -50, (int) _resolution.X + 50, (int) _resolution.Y + 50);
-                Sqeezer = new Vector2(_resolution.X / 1080, _resolution.Y / 1920);
-            }
-            get { return _resolution; }
         }
 
         public static void ChangeResolution(Vector2 res) {
             Resolution = res;
-        }
-
-        private static Color hcol_ = Color.LightGray;
-        public static bool IsAMDM;
-        public static SpriteFont Font;
-        public static bool NeedExit;
-        public static bool InventoryUpdate;
-        public static bool SeeAll = false;
-        public static bool Noclip;
-
-        public static Color HudСolor {
-            get { return hcol_; }
-            set { hcol_ = value; }
         }
 
         public static string GetParticleTextureDirectory() {

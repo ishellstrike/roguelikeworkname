@@ -154,9 +154,6 @@ Content\Data\Items\README
 Content\Textures\Dungeon\Floor\textureloadorder.ord
 Content\Textures\Dungeon\Items\textureloadorder.ord
 Content\Textures\Dungeon\Objects\textureloadorder.ord
-Content\Skins\Default.skin
-Content\Skins\Extended.skin
-Content\Skins\Green.skin
 Content\Textures\Dungeon\Vehicle\textureloadorder.ord
 Content\Data\Object\standart1.txt
 Content\Data\Schemes\houseSmall1.txt

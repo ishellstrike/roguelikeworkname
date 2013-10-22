@@ -12,6 +12,8 @@ namespace rglikeworknamelib.Creatures {
         bool isDead { get; }
         string Id { get; set; }
         bool Skipp { get; set; }
+        List<IBuff> Buffs { get; set; }
+        Abilities Abilities { get; set; }
         void Kill(MapSector ms);
         void GiveDamage(float value, DamageType type, MapSector ms);
         void Update(GameTime gt, MapSector ms, Player hero);
@@ -20,7 +22,5 @@ namespace rglikeworknamelib.Creatures {
         Vector2 GetWorldPositionInBlocks();
         event EventHandler OnDamageRecieve;
         event EventHandler OnDeath;
-        List<IBuff> Buffs { get; set; }
-        Abilities Abilities { get; set; }
     }
 }

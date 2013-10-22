@@ -1,10 +1,9 @@
 ﻿using System;
 using rglikeworknamelib.Creatures;
 
-namespace rglikeworknamelib.Dungeon.Buffs
-{
+namespace rglikeworknamelib.Dungeon.Buffs {
     [Serializable]
-    class BuffHpUp : Buff {
+    internal class BuffHpUp : Buff {
         public override bool ApplyToTarget(Creature target) {
             if (!applied_) {
                 Target = target;
@@ -16,8 +15,7 @@ namespace rglikeworknamelib.Dungeon.Buffs
             return base.ApplyToTarget(target);
         }
 
-        public override bool RemoveFromTarget(Creature target)
-        {
+        public override bool RemoveFromTarget(Creature target) {
             if (applied_) {
                 Target = target;
                 Target.hp_.Max = Target.hp_.Max - int.Parse(BuffDataBase.Data[Id].Value[0]);

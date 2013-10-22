@@ -1,12 +1,15 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]
     public class Block : IBlock {
+        [NonSerialized] private BlockData data_;
         private string id_;
+        [NonSerialized] private Color lightness_;
+        private string mTex_;
+        [NonSerialized] private Rectangle source_;
+
         public string Id {
             get { return id_; }
             set {
@@ -15,13 +18,10 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             }
         }
 
-        [NonSerialized] private BlockData data_;
-        public BlockData Data
-        {
+        public BlockData Data {
             get { return data_; }
         }
 
-        [NonSerialized]private Color lightness_;
         public Color Lightness {
             get { return lightness_; }
             set { lightness_ = value; }
@@ -29,16 +29,13 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
 
         public bool Explored { get; set; }
 
-        [NonSerialized]private Rectangle source_;
         public Rectangle Source {
             get { return source_; }
         }
 
-        private string mTex_;
         public string MTex {
             get { return mTex_; }
-            set
-            {
+            set {
                 source_ = BlockData.GetSource(value);
                 mTex_ = value;
             }
@@ -49,8 +46,10 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             data_ = BlockDataBase.Data[id_];
         }
 
-        public static string GetSmartActionName(SmartAction smartAction)
-        {
+        public virtual void Update(TimeSpan ts, Vector2 vector2) {
+        }
+
+        public static string GetSmartActionName(SmartAction smartAction) {
             switch (smartAction) {
                 case SmartAction.ActionOpenContainer:
                     return "Осмотреть содержимое";
@@ -63,11 +62,6 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
 
         public void SetLight(Color color) {
             Lightness = color;
-        }
-
-        public virtual void Update(TimeSpan ts, Vector2 vector2)
-        {
-            
         }
     }
 }

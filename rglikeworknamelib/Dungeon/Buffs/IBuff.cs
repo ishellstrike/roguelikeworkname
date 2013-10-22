@@ -8,9 +8,9 @@ namespace rglikeworknamelib.Dungeon.Effects {
         TimeSpan Expire { get; set; }
         bool Expiring { get; set; }
         string Id { get; set; }
+        bool Applied { get; }
         bool RemoveFromTarget(Creature target);
         bool ApplyToTarget(Creature target);
         void Update(GameTime gt);
-        bool Applied { get; }
     }
 }

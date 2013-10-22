@@ -1,54 +1,32 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace jargtests
-{
-    
-    
+
+namespace jargtests {
     /// <summary>
-    ///Это класс теста для GameLevelTest, в котором должны
-    ///находиться все модульные тесты GameLevelTest
-    ///</summary>
-    [TestClass()]
-    public class GameLevelTest
-    {
-
-
-        private TestContext testContextInstance;
-
+    ///     Это класс теста для GameLevelTest, в котором должны
+    ///     находиться все модульные тесты GameLevelTest
+    /// </summary>
+    [TestClass]
+    public class GameLevelTest {
         /// <summary>
-        ///Получает или устанавливает контекст теста, в котором предоставляются
-        ///сведения о текущем тестовом запуске и обеспечивается его функциональность.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
+        ///     Получает или устанавливает контекст теста, в котором предоставляются
+        ///     сведения о текущем тестовом запуске и обеспечивается его функциональность.
+        /// </summary>
+        public TestContext TestContext { get; set; }
 
         [ClassInitialize]
         public static void MyClassInitialize(TestContext testContext) {
         }
 
-        /// <summary>
-        ///Тест для ExploreAllMap
-        ///</summary>
         //[TestMethod()]
         //public void ExploreAllMapTest()
         //{
         //    var target = new GameLevel_Accessor(2, 2);
         //    target.ExploreAllMap();
-
         //    Assert.IsTrue(target.blocks_[0].explored);
         //    Assert.IsTrue(target.blocks_[1].explored);
         //    Assert.IsTrue(target.blocks_[2].explored);
         //    Assert.IsTrue(target.blocks_[3].explored);
         //}
-
         ///// <summary>
         /////Тест для GetBlock
         /////</summary>
@@ -56,12 +34,10 @@ namespace jargtests
         //public void GetBlockTest()
         //{
         //    var target = new GameLevel_Accessor(2, 2); 
-
         //    Block expected = target.blocks_[0];
         //    Block actual = target.GetBlock(0, 0);
         //    Assert.AreEqual(expected, actual);
         //}
-
         ///// <summary>
         /////Тест для GetId
         /////</summary>
@@ -74,7 +50,6 @@ namespace jargtests
         //    int actual = target.GetId(1, 1);
         //    Assert.AreEqual(expected, actual);
         //}
-
         ///// <summary>
         /////Тест для GetId
         /////</summary>
@@ -87,7 +62,6 @@ namespace jargtests
         //    int actual = target.GetId(4);
         //    Assert.AreEqual(expected, actual);
         //}
-
         ///// <summary>
         /////Тест для CreateAllMapFromArray
         /////</summary>
@@ -96,14 +70,12 @@ namespace jargtests
         //{
         //    var target = new GameLevel_Accessor(3, 3);
         //    target.blockDataBase = blockDataBase;
-            
         //    int[] arr = {0,0,0,0,1,0,0,0,0}; 
         //    target.CreateAllMapFromArray(arr);
         //    int expected = 1;
         //    int actual = target.blocks_[4].id;
         //    Assert.AreEqual(expected, actual);
         //}
-
         ///// <summary>
         /////Тест для IsExplored
         /////</summary>
@@ -114,7 +86,6 @@ namespace jargtests
         //    bool actual = target.IsExplored(0);
         //    Assert.IsFalse(actual);
         //}
-
         ///// <summary>
         /////Тест для IsExplored
         /////</summary>
@@ -125,23 +96,21 @@ namespace jargtests
         //    bool actual = target.IsExplored(0,0);
         //    Assert.IsFalse(actual);
         //}
-
         /// <summary>
-        ///Тест для IsCreatureMeele
-        ///</summary>
-        [TestMethod()]
-        public void IsCreatureMeeleTest()
-        {
-           
+        ///     Тест для ExploreAllMap
+        /// </summary>
+        /// <summary>
+        ///     Тест для IsCreatureMeele
+        /// </summary>
+        [TestMethod]
+        public void IsCreatureMeeleTest() {
         }
 
         /// <summary>
-        ///Тест для GetStorageBlocks
-        ///</summary>
-        [TestMethod()]
-        public void GetStorageBlocksTest()
-        {
-           
+        ///     Тест для GetStorageBlocks
+        /// </summary>
+        [TestMethod]
+        public void GetStorageBlocksTest() {
         }
 
         /// <summary>

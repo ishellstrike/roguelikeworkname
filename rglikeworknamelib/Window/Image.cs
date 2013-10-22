@@ -4,20 +4,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class Image : IGameComponent
-    {
-        private Vector2 pos_;
+    public class Image : IGameComponent {
+        private readonly IGameContainer Parent;
         public String Text;
         public Color col_;
         public Texture2D image;
-        private IGameContainer Parent;
+        private Vector2 pos_;
 
-        public bool Visible { get; set; }
-
-        public object Tag { get; set; }
-
-        public Image(Vector2 position, Texture2D image, Color color, IGameContainer win)
-        {
+        public Image(Vector2 position, Texture2D image, Color color, IGameContainer win) {
             pos_ = position;
             col_ = color;
             this.image = image;
@@ -27,19 +21,15 @@ namespace rglikeworknamelib.Window {
             Visible = true;
         }
 
-        public virtual void Draw(SpriteBatch sb)
-        {
+        public bool Visible { get; set; }
+
+        public object Tag { get; set; }
+
+        public virtual void Draw(SpriteBatch sb) {
             sb.Draw(image, Parent.GetPosition() + pos_, col_);
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
-        {
-
-        }
-
-        public Vector2 GetLocation()
-        {
-            return pos_;
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
         }
 
         public Vector2 GetPosition() {
@@ -56,6 +46,10 @@ namespace rglikeworknamelib.Window {
 
         public float Height {
             get { return image.Height; }
+        }
+
+        public Vector2 GetLocation() {
+            return pos_;
         }
     }
 }

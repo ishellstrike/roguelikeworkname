@@ -121,18 +121,6 @@
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Skins\Default.skin">
-      <Name>Default</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Skins\Extended.skin">
-      <Name>Extended</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Skins\Green.skin">
-      <Name>Green</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Textures\Dungeon\Minimap\textureloadorder.ord">
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

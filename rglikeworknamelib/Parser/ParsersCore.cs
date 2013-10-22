@@ -13,7 +13,7 @@ namespace rglikeworknamelib.Parser {
     public static class ParsersCore {
         public static Regex StringExtractor = new Regex("\".*\"");
         public static Regex Intextractor = new Regex("[0-9]+");
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public static Color ParseStringToColor(string s) {
             string extractedstring = StringExtractor.Match(s).ToString();
@@ -57,7 +57,9 @@ namespace rglikeworknamelib.Parser {
             var sr = new StreamReader(s, Encoding.Default);
             while (true) {
                 string t = sr.ReadLine();
-                if (t == null || t.Length < 3) break;
+                if (t == null || t.Length < 3) {
+                    break;
+                }
                 temp.Add(content.Load<Texture2D>(t));
             }
 
@@ -70,7 +72,9 @@ namespace rglikeworknamelib.Parser {
             var sr = new StreamReader(s, Encoding.Default);
             while (true) {
                 string t = sr.ReadLine();
-                if (t == null || t.Length < 3) break;
+                if (t == null || t.Length < 3) {
+                    break;
+                }
                 temp.Add(t.Substring(t.IndexOf(' ') + 1, t.Length - (t.IndexOf(' ') + 1)),
                          content.Load<Texture2D>(t.Substring(0, t.IndexOf(' '))));
             }
@@ -108,7 +112,8 @@ namespace rglikeworknamelib.Parser {
             }
         }
 
-        public static List<T> UniversalParseDirectory<T>(string patch, BaseParserDelegate<T> parser, Type baseType = null) {
+        public static List<T> UniversalParseDirectory<T>(string patch, BaseParserDelegate<T> parser,
+                                                         Type baseType = null) {
             try {
                 string[] a = Directory.GetFiles(patch, "*.txt");
                 var temp = new List<T>();
@@ -142,6 +147,7 @@ namespace rglikeworknamelib.Parser {
     }
 
     public delegate List<T> BaseParserDelegate<T>(string dataString, string filePos, Type baseType);
+
     [Obsolete]
     public delegate List<T> OldBaseParserDelegate<T>(string dataString);
 }

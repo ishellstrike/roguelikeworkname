@@ -1,6 +1,5 @@
 namespace rglikeworknamelib.Dungeon.Level {
-    public enum SmartAction 
-    {
+    public enum SmartAction {
         ActionSee,
         ActionLoot,
         ActionSmash,

@@ -10,8 +10,7 @@ namespace rglikeworknamelib.Creatures {
             Max = max;
         }
 
-        public Stat(float sameValues)
-        {
+        public Stat(float sameValues) {
             Current = sameValues;
             Max = sameValues;
         }

@@ -4,54 +4,34 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class Button : IGameComponent
-    {
-        protected Rectangle locate_;
+    public class Button : IGameComponent {
+        protected readonly SpriteFont font1_;
+        protected readonly Texture2D whitepixel_;
+        protected IGameContainer Parent;
         public String Text;
         protected bool aimed_;
-        protected IGameContainer Parent;
-
-        protected readonly Texture2D whitepixel_;
-        protected readonly SpriteFont font1_;
-        protected TimeSpan lastPressed;
         protected bool firstPress = true;
+        protected TimeSpan lastPressed;
+        protected Rectangle locate_;
 
-        public bool Visible
-        {
-            get;
-            set;
-        }
-
-        public object Tag
-        {
-            get;
-            set;
-        }
-
-        public Button(Vector2 position, string text, IGameContainer parent)
-        {
+        public Button(Vector2 position, string text, IGameContainer parent) {
             whitepixel_ = parent.whitepixel_;
             font1_ = parent.font1_;
-            locate_.X = (int)position.X;
-            locate_.Y = (int)position.Y;
+            locate_.X = (int) position.X;
+            locate_.Y = (int) position.Y;
             locate_.Height = 20;
-            locate_.Width = (int)(font1_.MeasureString(text).X + 10);
+            locate_.Width = (int) (font1_.MeasureString(text).X + 10);
             Text = text;
             Parent = parent;
             Parent.AddComponent(this);
             Visible = true;
         }
 
-        public event EventHandler OnPressed;
+        public bool Visible { get; set; }
 
-        protected void PressButton() {
-            if (OnPressed != null) {
-                OnPressed(this, null);
-            }
-        }
+        public object Tag { get; set; }
 
-        public virtual void Draw(SpriteBatch sb)
-        {
+        public virtual void Draw(SpriteBatch sb) {
             if (Visible) {
                 Vector2 realpos = GetPosition();
 
@@ -70,16 +50,15 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        public virtual void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
-        {
+        public virtual void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks,
+                                   bool mh) {
             if (Visible && mh) {
                 Vector2 realpos = GetPosition();
                 Vector2 realdl = realpos;
                 realdl.X += locate_.Width;
                 realdl.Y += locate_.Height;
 
-                if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y)
-                {
+                if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
                     aimed_ = true;
                     if (firstPress) {
                         if ((lms.LeftButton == ButtonState.Released ||
@@ -93,30 +72,30 @@ namespace rglikeworknamelib.Window {
                     else {
                         if ((lms.LeftButton == ButtonState.Released ||
                              gt.TotalGameTime.TotalMilliseconds - lastPressed.TotalMilliseconds > 100) &&
-                            ms.LeftButton == ButtonState.Pressed)
-                        {
+                            ms.LeftButton == ButtonState.Pressed) {
                             PressButton();
                             lastPressed = gt.TotalGameTime;
                             firstPress = false;
                         }
                     }
                 }
-                else
+                else {
                     aimed_ = false;
+                }
 
-                if (lms.LeftButton == ButtonState.Released) firstPress = true;
+                if (lms.LeftButton == ButtonState.Released) {
+                    firstPress = true;
+                }
             }
         }
 
-        public Vector2 GetPosition()
-        {
+        public Vector2 GetPosition() {
             return new Vector2(locate_.X, locate_.Y) + Parent.GetPosition();
         }
 
-        public void SetPosition(Vector2 pos)
-        {
-            locate_.X = (int)pos.X;
-            locate_.Y = (int)pos.Y;
+        public void SetPosition(Vector2 pos) {
+            locate_.X = (int) pos.X;
+            locate_.Y = (int) pos.Y;
         }
 
         public float Width {
@@ -125,6 +104,14 @@ namespace rglikeworknamelib.Window {
 
         public float Height {
             get { return locate_.Height; }
+        }
+
+        public event EventHandler OnPressed;
+
+        protected void PressButton() {
+            if (OnPressed != null) {
+                OnPressed(this, null);
+            }
         }
     }
 }

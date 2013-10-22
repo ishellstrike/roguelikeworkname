@@ -6,46 +6,26 @@ using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
     public class Window : IGameComponent, IGameContainer {
-        internal List<IGameComponent> Components = new List<IGameComponent>();
-
-        private readonly WindowSystem parent_;
-
-        public Rectangle Locate;
         private readonly Color backtransparent_;
 
         private readonly Button closeButton_;
+        private readonly WindowSystem parent_;
+        internal List<IGameComponent> Components = new List<IGameComponent>();
         public int Id;
-
-        private bool closable_ = true;
-
-        public bool Closable {
-            get { return closable_; }
-            set {
-                closable_ = value;
-                if (closeButton_ != null) {
-                    closeButton_.Visible = value;
-                }
-            }
-        }
+        public Rectangle Locate;
 
         public bool Moveable = true;
-        public bool NoBorder;
+        public string Name;
         public bool NoBody;
+        public bool NoBorder;
+        protected bool aimed;
+        private bool closable_ = true;
+        private bool hasTextbox_;
 
         public bool hides;
 
-        public bool Visible { get; set; }
-
-        public object Tag { get; set; }
-
-        public Texture2D whitepixel_ { get; set; }
-        public SpriteFont font1_ { get; set; }
-        private bool hasTextbox_;
-
-        public string Name;
-
         /// <summary>
-        /// Create window in exact position whith exact sise
+        ///     Create window in exact position whith exact sise
         /// </summary>
         /// <param name="location"></param>
         /// <param name="caption"></param>
@@ -75,7 +55,7 @@ namespace rglikeworknamelib.Window {
         }
 
         /// <summary>
-        /// Create window at center of screen
+        ///     Create window at center of screen
         /// </summary>
         /// <param name="size"></param>
         /// <param name="caption"></param>
@@ -106,43 +86,28 @@ namespace rglikeworknamelib.Window {
             parent.AddWindow(this);
         }
 
-        public void CenterComponentHor(IGameComponent component) {
-            var p = component.GetPosition();
-            component.SetPosition(new Vector2((Locate.Width/2 - component.Width/2), p.Y));
-        }
-
-        [Obsolete]
-        public void CenterComponentVert(IGameComponent component) {
-            var p = component.GetPosition();
-            component.SetPosition(new Vector2(p.X, (Locate.Height/2 + component.Width)/2));
-        }
-
-        private void closeButton__onPressed(object sender, EventArgs e) {
-            Close();
-        }
-
-        public void AddComponent(IGameComponent component) {
-            Components.Add(component);
-            if (component is TextBox) {
-                hasTextbox_ = true;
+        public bool Closable {
+            get { return closable_; }
+            set {
+                closable_ = value;
+                if (closeButton_ != null) {
+                    closeButton_.Visible = value;
+                }
             }
         }
 
-        public bool MouseClickCatched { get; set; }
+        public bool Visible { get; set; }
 
-        public void Close() {
-            Visible = false;
-        }
+        public object Tag { get; set; }
 
         public void Draw(SpriteBatch sb) {
             if (Visible) {
-                if(!NoBody) {
+                if (!NoBody) {
                     sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y + 20), null, backtransparent_, 0, Vector2.Zero,
                             new Vector2(Locate.Width, Locate.Height - 20), SpriteEffects.None, 0);
                 }
 
                 if (!NoBorder && (!hides || (hides && aimed))) {
-
                     sb.Draw(whitepixel_, new Vector2(Locate.X, Locate.Y), null, backtransparent_, 0, Vector2.Zero,
                             new Vector2(Locate.Width, 20), SpriteEffects.None, 0);
 
@@ -152,13 +117,13 @@ namespace rglikeworknamelib.Window {
                             Vector2.Zero,
                             new Vector2(Locate.Width, 2), SpriteEffects.None, 0);
 
-                    Vector2 textpos = new Vector2(Locate.X + Locate.Width/2 - 11 - font1_.MeasureString(Name).X/2,
-                                                  Locate.Y);
+                    var textpos = new Vector2(Locate.X + Locate.Width/2 - 11 - font1_.MeasureString(Name).X/2,
+                                              Locate.Y);
 
                     string compose = Name;
 
-                    if(Settings.DebugInfo) {
-                        compose = Locate.ToString()+Environment.NewLine+compose;
+                    if (Settings.DebugInfo) {
+                        compose = Locate.ToString() + Environment.NewLine + compose;
                     }
 
                     sb.DrawString(font1_, compose, textpos, Settings.HudСolor);
@@ -175,18 +140,17 @@ namespace rglikeworknamelib.Window {
                 }
 
                 for (int i = 0; i < Components.Count; i++) {
-                    var component = Components[i];
+                    IGameComponent component = Components[i];
                     component.Draw(sb);
                 }
             }
         }
 
-        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
-        {
+        public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
             aimed = false;
             if (Visible && !mh) {
                 if (hasTextbox_) {
-                    parent_.Keyboardhook  = true;
+                    parent_.Keyboardhook = true;
                 }
                 if (!parent_.Mopusehook && lms.X >= Locate.Left && lms.Y >= Locate.Top &&
                     lms.X <= Locate.Right && lms.Y <= Locate.Bottom) {
@@ -195,7 +159,6 @@ namespace rglikeworknamelib.Window {
                     aimed = true;
 
                     if (lms.LeftButton == ButtonState.Pressed || ms.RightButton == ButtonState.Pressed) {
-
                         parent_.ToTop(this);
                     }
 
@@ -203,23 +166,25 @@ namespace rglikeworknamelib.Window {
                         Locate.X += (ms.X - lms.X);
                         Locate.Y += (ms.Y - lms.Y);
 
-                        if (Locate.X < 0) Locate.X = 0;
-                        if (Locate.Y < 0) Locate.Y = 0;
-                        if (Locate.X > Settings.Resolution.X - 20) Locate.X = (int)Settings.Resolution.X - 20;
-                        if (Locate.Y > Settings.Resolution.Y - 20) Locate.X = (int)Settings.Resolution.Y - 20;
+                        if (Locate.X < 0) {
+                            Locate.X = 0;
+                        }
+                        if (Locate.Y < 0) {
+                            Locate.Y = 0;
+                        }
+                        if (Locate.X > Settings.Resolution.X - 20) {
+                            Locate.X = (int) Settings.Resolution.X - 20;
+                        }
+                        if (Locate.Y > Settings.Resolution.Y - 20) {
+                            Locate.X = (int) Settings.Resolution.Y - 20;
+                        }
                     }
                 }
                 for (int i = Components.Count - 1; i >= 0; i--) {
-                    var component = Components[i];
+                    IGameComponent component = Components[i];
                     component.Update(gt, ms, lms, ks, lks, mh);
                 }
             }
-        }
-
-        protected bool aimed;
-
-        public Vector2 GetLocation() {
-            return new Vector2(Locate.X + 2, Locate.Y + 22);
         }
 
         public Vector2 GetPosition() {
@@ -237,6 +202,41 @@ namespace rglikeworknamelib.Window {
 
         public float Height {
             get { return Locate.Height; }
+        }
+
+        public Texture2D whitepixel_ { get; set; }
+        public SpriteFont font1_ { get; set; }
+
+        public void CenterComponentHor(IGameComponent component) {
+            Vector2 p = component.GetPosition();
+            component.SetPosition(new Vector2((Locate.Width/2 - component.Width/2), p.Y));
+        }
+
+        [Obsolete]
+        public void CenterComponentVert(IGameComponent component) {
+            Vector2 p = component.GetPosition();
+            component.SetPosition(new Vector2(p.X, (Locate.Height/2 + component.Width)/2));
+        }
+
+        public void AddComponent(IGameComponent component) {
+            Components.Add(component);
+            if (component is TextBox) {
+                hasTextbox_ = true;
+            }
+        }
+
+        public bool MouseClickCatched { get; set; }
+
+        private void closeButton__onPressed(object sender, EventArgs e) {
+            Close();
+        }
+
+        public void Close() {
+            Visible = false;
+        }
+
+        public Vector2 GetLocation() {
+            return new Vector2(Locate.X + 2, Locate.Y + 22);
         }
 
         public void OnTop() {

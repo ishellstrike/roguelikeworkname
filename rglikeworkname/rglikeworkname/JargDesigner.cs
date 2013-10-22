@@ -16,10 +16,8 @@ using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
 using IGameComponent = rglikeworknamelib.Window.IGameComponent;
 
-namespace jarg
-{
-    public partial class JargMain
-    {
+namespace jarg {
+    public partial class JargMain {
         #region Windows Vars
 
         private Button Button12h, Button24h;
@@ -87,7 +85,7 @@ namespace jarg
         private Label LabelTimeType;
         private Label LabelWearCaption;
         private List<Label> LabelsAbilities;
-        private ListContainer ListStatist;
+        private ListContainer StatistList;
         private Button ModLoaderButton;
 
         private ListContainer ModLoaderContainer;
@@ -97,22 +95,27 @@ namespace jarg
         private ProgressBar StatsHeat;
         private ProgressBar StatsHunger;
         private ProgressBar StatsJajda;
-        private Window WindowCaracter;
+        private Window CaracterWindow;
         private Window WindowCaracterCration;
         private Window WindowContainer;
-        private Window WindowEventLog;
+        private Window EventLogWindow;
         private Window WindowGlobal;
         private Window WindowIngameHint;
         private Window WindowIngameMenu;
-        private Window WindowInventory;
+        private Window InventoryWindow;
         private Window WindowMainMenu;
         private Window WindowMinimap;
         private Window WindowRadio;
         private Window WindowSettings;
-        private Window WindowStatist;
+        private Window StatistWindow;
         private Window WindowStats;
         private Window WindowUIButtons;
         private ListContainer contaiter1;
+
+        private Window CraftWindow;
+        private Button CraftSortAll;
+        private ListContainer CraftItems;
+        private LabelFixed CraftMoreInfo;
 
         #endregion
 
@@ -123,8 +126,7 @@ namespace jarg
         private ItemType nowSort_ = ItemType.Nothing;
         private Item selectedItem;
 
-        private void CreateWindows(WindowSystem ws)
-        {
+        private void CreateWindows(WindowSystem ws) {
             var rnd = new Random();
 
             WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, ws) {Visible = false};
@@ -134,8 +136,7 @@ namespace jarg
             CloseAllTestButton = new Button(new Vector2(10, 100), "Close all", WindowStats);
             CloseAllTestButton.OnPressed += CloseAllTestButton_onPressed;
             contaiter1 = new ListContainer(new Rectangle(200, 200, 100, 200), WindowStats);
-            for (int i = 1; i < 20; i++)
-            {
+            for (int i = 1; i < 20; i++) {
                 new Button(Vector2.Zero, rnd.Next(1, 1000).ToString(), contaiter1);
             }
 
@@ -265,45 +266,43 @@ namespace jarg
             ButtonCaracterCancel.OnPressed += ButtonCaracterCancel_onPressed;
             PerksContainer = new ListContainer(new Rectangle(40, 40, 250, (int) (Settings.Resolution.Y/3*2)),
                                                WindowCaracterCration);
-            for (int i = 0; i < PerkDataBase.Perks.Count; i++)
-            {
+            for (int i = 0; i < PerkDataBase.Perks.Count; i++) {
                 KeyValuePair<string, PerkData> keyValuePair = PerkDataBase.Perks.ElementAt(i);
-                if (keyValuePair.Value.Initial)
-                {
+                if (keyValuePair.Value.Initial) {
                     var t = new CheckBox(Vector2.Zero, keyValuePair.Value.Name, PerksContainer)
-                        {Cheked = player_.Perks.IsSelected(keyValuePair.Key), Tag = keyValuePair.Key};
+                    {Cheked = player_.Perks.IsSelected(keyValuePair.Key), Tag = keyValuePair.Key};
                     t.OnPressed += Game1_onPressed;
                 }
             }
 
-            WindowInventory =
+            InventoryWindow =
                 new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
                            "Inventory", true, ws) {Visible = false};
             ContainerInventoryItems =
                 new ListContainer(
-                    new Rectangle(10, 10, WindowInventory.Locate.Width/2, WindowInventory.Locate.Height - 40),
-                    WindowInventory);
-            InventoryMoreInfo = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20,
-                                               WindowInventory);
+                    new Rectangle(10, 10, InventoryWindow.Locate.Width/2, InventoryWindow.Locate.Height - 40),
+                    InventoryWindow);
+            InventoryMoreInfo = new LabelFixed(new Vector2(InventoryWindow.Locate.Width - 200, 40), "", 20,
+                                               InventoryWindow);
             InventorySortAll =
-                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200), "All",
-                           WindowInventory);
+                new Button(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200), "All",
+                           InventoryWindow);
             InventorySortAll.OnPressed += InventorySortAll_onPressed;
             InventorySortMedicine =
-                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30),
-                           "Medicine", WindowInventory);
+                new Button(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200 + 30),
+                           "Medicine", InventoryWindow);
             InventorySortMedicine.OnPressed += InventorySortMedicine_onPressed;
             InventorySortFood =
-                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2),
-                           "Food", WindowInventory);
+                new Button(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200 + 30*2),
+                           "Food", InventoryWindow);
             InventorySortFood.OnPressed += InventorySortFood_onPressed;
             IntentoryEquip =
-                new Button(new Vector2(WindowInventory.Locate.Width - 100, WindowInventory.Locate.Height - 200 + 30*2),
-                           "Equip", WindowInventory);
+                new Button(new Vector2(InventoryWindow.Locate.Width - 100, InventoryWindow.Locate.Height - 200 + 30*2),
+                           "Equip", InventoryWindow);
             IntentoryEquip.OnPressed += IntentoryEquip_onPressed;
             InventoryTotalWV =
-                new Label(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*3),
-                          "some weight" + Environment.NewLine + "some volume", WindowInventory);
+                new Label(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200 + 30*3),
+                          "some weight" + Environment.NewLine + "some volume", InventoryWindow);
 
             WindowContainer =
                 new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
@@ -311,26 +310,26 @@ namespace jarg
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
             ContainerContainer =
                 new ListContainer(
-                    new Rectangle(10, 10, WindowInventory.Locate.Width/2, WindowInventory.Locate.Height - 40),
+                    new Rectangle(10, 10, InventoryWindow.Locate.Width/2, InventoryWindow.Locate.Height - 40),
                     WindowContainer);
-            LabelContainer = new LabelFixed(new Vector2(WindowInventory.Locate.Width - 200, 40), "", 20,
+            LabelContainer = new LabelFixed(new Vector2(InventoryWindow.Locate.Width - 200, 40), "", 20,
                                             WindowContainer);
             ButtonContainerTakeAll =
-                new Button(new Vector2(WindowInventory.Locate.Width - 200, WindowInventory.Locate.Height - 200 + 30*2),
+                new Button(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200 + 30*2),
                            "Take All (R)", WindowContainer);
             ButtonContainerTakeAll.OnPressed += ButtonContainerTakeAll_onPressed;
 
-            WindowEventLog =
+            EventLogWindow =
                 new Window(new Rectangle(3, 570, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/4), "Log",
                            true, ws_) {Visible = false, Closable = false, hides = true};
             ContainerEventLog =
                 new ListContainer(
                     new Rectangle(0, 0, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/4 - 20),
-                    WindowEventLog);
+                    EventLogWindow);
             EventLog.OnLogUpdate += EventLog_onLogUpdate;
 
             WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, ws)
-                {NoBorder = true, Visible = false};
+            {NoBorder = true, Visible = false};
             LabelIngameHint = new Label(new Vector2(10, 3), "a-ha", WindowIngameHint);
 
             WindowGlobal = new Window(new Vector2(Settings.Resolution.X - 100, Settings.Resolution.Y - 50), "Map", true,
@@ -339,50 +338,48 @@ namespace jarg
                                     WindowGlobal);
 
             int ii = 0;
-            WindowCaracter =
+            CaracterWindow =
                 new Window(new Vector2(Settings.Resolution.X/3*2, Settings.Resolution.Y - Settings.Resolution.Y/10),
                            "Caracter info", true, ws) {Visible = false};
             ii++;
-            LabelCaracterGun = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ranged Weapon : ", WindowCaracter);
+            LabelCaracterGun = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ranged Weapon : ", CaracterWindow);
             ii++;
-            LabelCaracterMeele = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Meele Weapon : ", WindowCaracter);
+            LabelCaracterMeele = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Meele Weapon : ", CaracterWindow);
             ii++;
-            LabelCaracterAmmo = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ammo : ", WindowCaracter);
+            LabelCaracterAmmo = new DoubleLabel(new Vector2(10, 10 + 15*ii), "Ammo : ", CaracterWindow);
             ii += 2;
-            LabelWearCaption = new Label(new Vector2(10, 10 + 15*ii), "Wear", WindowCaracter);
+            LabelWearCaption = new Label(new Vector2(10, 10 + 15*ii), "Wear", CaracterWindow);
             ii += 2;
             ContainerWearList =
                 new ListContainer(
-                    new Rectangle(0, 10 + 15*ii, (int) WindowCaracter.Width/2,
-                                  (int) WindowCaracter.Height/2 - (10 + 15*ii)), WindowCaracter);
+                    new Rectangle(0, 10 + 15*ii, (int) CaracterWindow.Width/2,
+                                  (int) CaracterWindow.Height/2 - (10 + 15*ii)), CaracterWindow);
             ii = 0;
-            LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15*ii), "HP : ", WindowCaracter);
+            LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15*ii), "HP : ", CaracterWindow);
             LabelsAbilities = new List<Label>();
-            for (int i = 0; i < 11; i++)
-            {
-                var temp = new Label(new Vector2(10, 400 + 15*ii), "", WindowCaracter);
+            for (int i = 0; i < 11; i++) {
+                var temp = new Label(new Vector2(10, 400 + 15*ii), "", CaracterWindow);
                 ii++;
                 LabelsAbilities.Add(temp);
             }
             EffectsContainer =
                 new ListContainer(
-                    new Rectangle((int) WindowCaracter.Width/2, (int) (WindowCaracter.Height/2),
-                                  (int) (WindowCaracter.Width/2), (int) (WindowCaracter.Height/2) - 19),
-                    WindowCaracter);
+                    new Rectangle((int) CaracterWindow.Width/2, (int) (CaracterWindow.Height/2),
+                                  (int) (CaracterWindow.Width/2), (int) (CaracterWindow.Height/2) - 19),
+                    CaracterWindow);
 
 
-            InfoWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/6), "Info", true, ws)
-                {
-                    Visible = false
-                };
+            InfoWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/6), "Info", true, ws) {
+                Visible = false
+            };
             InfoWindowLabel = new DoubleLabel(new Vector2(20, 20), "some info", InfoWindow);
 
-            WindowStatist = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Statistic", true,
+            StatistWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Statistic", true,
                                        ws) {Visible = false};
-            ListStatist =
+            StatistList =
                 new ListContainer(
                     new Rectangle(0, 0, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/3 - 20),
-                    WindowStatist);
+                    StatistWindow);
 
             ConsoleWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/3), "Concole", true,
                                        ws) {Visible = false};
@@ -406,169 +403,167 @@ namespace jarg
                     new Rectangle(0, 0, (int) (ModLoaderWindow.Width/3*2), (int) ModLoaderWindow.Height - 20),
                     ModLoaderWindow);
             UpdateModLoader(null, null);
+
+            CraftWindow = new Window(Settings.Resolution/4 * 3, "Craft", true, ws);
+            CraftSortAll = new Button(new Vector2(10, 10), "All recipes", CraftWindow);
+            CraftSortAll.OnPressed += CraftSortAll_OnPressed;
+            CraftItems = new ListContainer(new Rectangle(0,40,(int)(CraftWindow.Width/5*2),(int)(CraftWindow.Height - 60)), CraftWindow);
+            CraftMoreInfo = new LabelFixed(new Vector2(CraftItems.Width + 10, 40), string.Empty, 40, CraftWindow);
         }
 
-        private void ModLoaderButton_OnPressed(object sender, EventArgs e)
+        private CraftData selectedCraft;
+        void Update_Craft_Items(object sender, EventArgs e) {
+            CraftItems.Clear();
+            selectedCraft = null;
+            CraftMoreInfo.Text = string.Empty;
+
+            foreach (var craftData in CraftDataBase.Data) {
+                var a = new LabelFixed(Vector2.Zero,  craftData.OutputCount[0] + " " + ItemDataBase.Data[craftData.Output[0]].Name, 30,
+                                       CraftItems) { Tag = craftData };
+                a.OnPressed += CraftItemsLabel_OnPressed;
+            }
+        }
+
+        void CraftItemsLabel_OnPressed(object sender, EventArgs e) {
+            selectedCraft = (CraftData)((IGameComponent) sender).Tag;
+            CraftMoreInfo.Text = selectedCraft.ToString();
+        }
+
+        void CraftSortAll_OnPressed(object sender, EventArgs e)
         {
+            
+        }
+
+        private void ModLoaderButton_OnPressed(object sender, EventArgs e) {
             ModLoaderWindow.Visible = !ModLoaderWindow.Visible;
-            if (ModLoaderWindow.Visible)
-            {
+            if (ModLoaderWindow.Visible) {
                 ModLoaderWindow.OnTop();
             }
         }
 
-        private void UpdateModLoader(object sender, EventArgs e)
-        {
+        private void UpdateModLoader(object sender, EventArgs e) {
             ModLoaderContainer.Clear();
 
             new LabelFixed(Vector2.Zero, "Units", Color.Cyan, 20, ModLoaderContainer);
             string[] f = Directory.GetFiles(Settings.GetDataDirectory() + @"\Units", "*.txt");
-            foreach (string s in f)
-            {
+            foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
             new LabelFixed(Vector2.Zero, "Blocks", Color.Cyan, 20, ModLoaderContainer);
             f = Directory.GetFiles(Settings.GetObjectDataDirectory(), "*.txt");
-            foreach (string s in f)
-            {
+            foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
             new LabelFixed(Vector2.Zero, "Items", Color.Cyan, 20, ModLoaderContainer);
             f = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.txt");
-            foreach (string s in f)
-            {
+            foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
             new LabelFixed(Vector2.Zero, "Buffs", Color.Cyan, 20, ModLoaderContainer);
             f = Directory.GetFiles(Settings.GetEffectDataDirectory(), "*.txt");
-            foreach (string s in f)
-            {
+            foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
         }
 
-        private void IBInv_onPressed(object sender, EventArgs e)
-        {
+        private void IBInv_onPressed(object sender, EventArgs e) {
             WindowGlobal.Visible = !WindowGlobal.Visible;
-            if (WindowGlobal.Visible)
-            {
+            if (WindowGlobal.Visible) {
                 WindowGlobal.OnTop();
             }
         }
 
-        private void IBCaracter_onPressed(object sender, EventArgs e)
-        {
-            WindowCaracter.Visible = !WindowCaracter.Visible;
-            if (WindowCaracter.Visible)
-            {
-                WindowCaracter.OnTop();
+        private void IBCaracter_onPressed(object sender, EventArgs e) {
+            CaracterWindow.Visible = !CaracterWindow.Visible;
+            if (CaracterWindow.Visible) {
+                CaracterWindow.OnTop();
             }
         }
 
-        private void IBBag_onPressed(object sender, EventArgs e)
-        {
-            WindowInventory.Visible = !WindowInventory.Visible;
-            if (WindowInventory.Visible)
-            {
-                WindowInventory.OnTop();
+        private void IBBag_onPressed(object sender, EventArgs e) {
+            InventoryWindow.Visible = !InventoryWindow.Visible;
+            if (InventoryWindow.Visible) {
+                InventoryWindow.OnTop();
             }
         }
 
-        private void Game1_onPressed(object sender, EventArgs e)
-        {
+        private void Game1_onPressed(object sender, EventArgs e) {
             var t = (string) ((IGameComponent) sender).Tag;
 
             player_.Perks.SetPerk(t);
         }
 
-        private void ButtonRadioOff_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonRadioOff_onPressed(object sender, EventArgs e) {
             WMPs.controls.stop();
             WindowRadio.Visible = false;
         }
 
-        private void ButtonRadioGB_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonRadioGB_onPressed(object sender, EventArgs e) {
             WMPs.controls.play();
             WindowRadio.Visible = true;
         }
 
 
-        private void ButtonLightOff_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonLightOff_onPressed(object sender, EventArgs e) {
             Settings.Lighting = false;
         }
 
-        private void ButtonLightOn_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonLightOn_onPressed(object sender, EventArgs e) {
             Settings.Lighting = true;
         }
 
-        private void ButtonFramelimitOff_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonFramelimitOff_onPressed(object sender, EventArgs e) {
             IsFixedTimeStep = false;
         }
 
-        private void ButtonFramelimitOn_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonFramelimitOn_onPressed(object sender, EventArgs e) {
             IsFixedTimeStep = true;
         }
 
-        private void ButtonResolution19201024_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution19201024_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(1920, 1024);
             ResolutionChanging();
         }
 
-        private void ButtonResolution1280800_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution1280800_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(1280, 800);
             ResolutionChanging();
         }
 
-        private void ButtonResolution1024768_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution1024768_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(1024, 768);
             ResolutionChanging();
         }
 
-        private void ButtonResolution800600_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonResolution800600_onPressed(object sender, EventArgs e) {
             Settings.Resolution = new Vector2(800, 600);
             ResolutionChanging();
         }
 
-        private void ButtonFullscreenOff_onPressed(object sender, EventArgs e)
-        {
-            if (graphics_.IsFullScreen)
-            {
+        private void ButtonFullscreenOff_onPressed(object sender, EventArgs e) {
+            if (graphics_.IsFullScreen) {
                 graphics_.ToggleFullScreen();
             }
             ResolutionChanging();
         }
 
-        private void ButtonFullscreenOn_onPressed(object sender, EventArgs e)
-        {
-            if (!graphics_.IsFullScreen)
-            {
+        private void ButtonFullscreenOn_onPressed(object sender, EventArgs e) {
+            if (!graphics_.IsFullScreen) {
                 graphics_.ToggleFullScreen();
             }
             ResolutionChanging();
         }
 
-        private void ConsoleTB_onEnter(object sender, EventArgs e)
-        {
+        private void ConsoleTB_onEnter(object sender, EventArgs e) {
             string s = ConsoleTB.Text;
             ConsoleTB.Tag = "";
 
-            if (s.Contains("spawn c "))
-            {
+            if (s.Contains("spawn c ")) {
                 string ss = s.Substring(8);
-                if (MonsterDataBase.Data.ContainsKey(ss))
-                {
+                if (MonsterDataBase.Data.ContainsKey(ss)) {
                     Vector2 pp = player_.GetWorldPositionInBlocks();
                     pp.X = (int) pp.X;
                     pp.Y = (int) pp.Y;
@@ -580,14 +575,12 @@ namespace jarg
                         string.Format("Creature {0} spawn at ({1}, {2}), in ({3}, {4})", ss, i, i1, (int) ppp.X,
                                       (int) ppp.Y), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                 }
-                else
-                {
+                else {
                     EventLog.Add(string.Format("Creature {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan,
                                  LogEntityType.Console);
                 }
             }
-            if (s.Contains("mypos"))
-            {
+            if (s.Contains("mypos")) {
                 Vector2 pp = player_.GetWorldPositionInBlocks();
                 pp.X = (int) pp.X;
                 pp.Y = (int) pp.Y;
@@ -599,69 +592,77 @@ namespace jarg
                                   (int) ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan,
                     LogEntityType.Console);
             }
-            if (s.Contains("fastwalk"))
-            {
+            if (s.Contains("fastwalk")) {
                 acmodifer = acmodifer == 1 ? 4 : 1;
                 EventLog.Add(string.Format("walk x{0}", acmodifer), GlobalWorldLogic.CurrentTime, Color.Cyan,
                              LogEntityType.Console);
             }
-            if (s.Contains("noclip"))
-            {
+            if (s.Contains("noclip")) {
                 Settings.Noclip = !Settings.Noclip;
                 EventLog.Add(string.Format("Noclip = {0}", Settings.Noclip), GlobalWorldLogic.CurrentTime, Color.Cyan,
                              LogEntityType.Console);
             }
-            if (s.Contains("killall"))
-            {
+            if (s.Contains("killall")) {
                 int t = currentFloor_.KillAllCreatures();
                 EventLog.Add(string.Format("{0} creatures in active sector killed!", t), GlobalWorldLogic.CurrentTime,
                              Color.Cyan, LogEntityType.Console);
             }
-            if (s.Contains("spawn i "))
-            {
+            if (s.Contains("spawn i ")) {
                 string ss = s.Substring(8);
-                if (ItemDataBase.Data.ContainsKey(ss))
-                {
+                if (ItemDataBase.Data.ContainsKey(ss)) {
                     inventory_.AddItem(new Item(ss, 1));
                     inventory_.StackSimilar();
                     UpdateInventoryContainer();
                 }
-                else
-                {
+                else {
                     EventLog.Add(string.Format("Item {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan,
                                  LogEntityType.Console);
                 }
             }
-            if (s.Contains("tp "))
-            {
+            if (s.Contains("tp ")) {
                 string ss = s.Substring(3);
                 string[] parts = ss.Split(' ');
                 int x, y;
-                if (parts.Length == 2)
-                {
-                    if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y))
-                    {
+                if (parts.Length == 2) {
+                    if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y)) {
                         player_.Position = new Vector2(x*MapSector.Rx*32, y*MapSector.Ry*32);
                         EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y),
                                      GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                     }
-                    else
-                    {
+                    else {
                         EventLog.Add(string.Format("Wrong number to tp <x> <y>"),
                                      GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                     }
                 }
-                else
-                {
+                else {
                     EventLog.Add(string.Format("Wrong parameters for tp <x> <y>"),
                                  GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                 }
             }
+            if (s.Contains("testitems1")) {
+                inventory_.AddItem(new Item("testhat", 1));
+                inventory_.AddItem(new Item("testhat2", 1));
+                inventory_.AddItem(new Item("ak47", 1));
+                inventory_.AddItem(new Item("a762", 100000));
+                UpdateInventoryContainer();
+            }
+            if (s.Contains("testitems2")) {
+                inventory_.AddItem(new Item("colacan", 1));
+                inventory_.AddItem(new Item("colacan", 1));
+                inventory_.AddItem(new Item("colacan", 1));
+                inventory_.AddItem(new Item("colacan", 1));
+                inventory_.AddItem(new Item("colacan", 1));
+                inventory_.AddItem(new Item("meatcan1", 1));
+                inventory_.AddItem(new Item("meatcan1", 1));
+                inventory_.AddItem(new Item("meatcan1", 1));
+                inventory_.AddItem(new Item("meatcan1", 1));
+                inventory_.AddItem(new Item("meatcan1", 1));
+                UpdateInventoryContainer();
+            }
             ConsoleTB.Text = string.Empty;
         }
 
-        private void ShowInfoWindow(string s1, string s2)
-        {
+        private void ShowInfoWindow(string s1, string s2) {
             InfoWindowLabel.Text = s1;
             InfoWindowLabel.Text2 = s2;
             // InfoWindow.CenterComponentHor(InfoWindowLabel);
@@ -669,24 +670,20 @@ namespace jarg
             InfoWindow.OnTop();
         }
 
-        private void HideInfoWindow()
-        {
+        private void HideInfoWindow() {
             InfoWindow.Visible = false;
         }
 
-        private void IntentoryEquip_onPressed(object sender, EventArgs e)
-        {
+        private void IntentoryEquip_onPressed(object sender, EventArgs e) {
             inventory_.UseItem(selectedItem, player_);
             UpdateInventoryContainer();
         }
 
-        private void ButtonIngameExit_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonIngameExit_onPressed(object sender, EventArgs e) {
             currentFloor_.SaveAllAndExit(player_, inventory_);
         }
 
-        private void ButtonContainerTakeAll_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonContainerTakeAll_onPressed(object sender, EventArgs e) {
             inventory_.AddItemRange(inContainer_);
             inContainer_.Clear();
             inventory_.StackSimilar();
@@ -694,48 +691,40 @@ namespace jarg
             UpdateInventoryContainer();
         }
 
-        private void Button24h_onPressed(object sender, EventArgs e)
-        {
+        private void Button24h_onPressed(object sender, EventArgs e) {
             Settings.IsAMDM = false;
         }
 
-        private void Button12h_onPressed(object sender, EventArgs e)
-        {
+        private void Button12h_onPressed(object sender, EventArgs e) {
             Settings.IsAMDM = true;
         }
 
-        private void EventLog_onLogUpdate(object sender, EventArgs e)
-        {
+        private void EventLog_onLogUpdate(object sender, EventArgs e) {
             ContainerEventLog.Clear();
             int i = 0;
-            foreach (LogEntity ss in EventLog.log)
-            {
+            foreach (LogEntity ss in EventLog.log) {
                 new LabelFixed(Vector2.Zero, ss.message, ss.col, 35, ContainerEventLog);
                 i++;
             }
             ContainerEventLog.ScrollBottom();
         }
 
-        private void InventorySortFood_onPressed(object sender, EventArgs e)
-        {
+        private void InventorySortFood_onPressed(object sender, EventArgs e) {
             nowSort_ = ItemType.Food;
             UpdateInventoryContainer();
         }
 
-        private void InventorySortMedicine_onPressed(object sender, EventArgs e)
-        {
+        private void InventorySortMedicine_onPressed(object sender, EventArgs e) {
             nowSort_ = ItemType.Medicine;
             UpdateInventoryContainer();
         }
 
-        private void InventorySortAll_onPressed(object sender, EventArgs e)
-        {
+        private void InventorySortAll_onPressed(object sender, EventArgs e) {
             nowSort_ = ItemType.Nothing;
             UpdateInventoryContainer();
         }
 
-        private void UpdateInventoryContainer()
-        {
+        private void UpdateInventoryContainer() {
             selectedItem = null;
             InventoryMoreInfo.Text = "";
 
@@ -750,10 +739,8 @@ namespace jarg
             var med = new List<Item>();
             var food = new List<Item>();
             var other = new List<Item>();
-            foreach (Item x in a)
-            {
-                switch (x.Data.SType)
-                {
+            foreach (Item x in a) {
+                switch (x.Data.SType) {
                     case ItemType.Gun:
                         weap.Add(x);
                         break;
@@ -776,11 +763,9 @@ namespace jarg
             }
 
 
-            if (weap.Count > 0)
-            {
+            if (weap.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Weapons", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (Item item in weap)
-                {
+                foreach (Item item in weap) {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
                     i.OnPressed += PressInInventory;
@@ -788,11 +773,9 @@ namespace jarg
             }
 
 
-            if (ammo.Count > 0)
-            {
+            if (ammo.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Ammo", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (Item item in ammo)
-                {
+                foreach (Item item in ammo) {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
                     i.OnPressed += PressInInventory;
@@ -800,11 +783,9 @@ namespace jarg
             }
 
 
-            if (wear.Count > 0)
-            {
+            if (wear.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Wear", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (Item item in wear)
-                {
+                foreach (Item item in wear) {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
                     i.OnPressed += PressInInventory;
@@ -812,11 +793,9 @@ namespace jarg
             }
 
 
-            if (med.Count > 0)
-            {
+            if (med.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Medicine", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (Item item in med)
-                {
+                foreach (Item item in med) {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
                     i.OnPressed += PressInInventory;
@@ -824,11 +803,9 @@ namespace jarg
             }
 
 
-            if (food.Count > 0)
-            {
+            if (food.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Food", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (Item item in food)
-                {
+                foreach (Item item in food) {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
                     i.OnPressed += PressInInventory;
@@ -836,11 +813,9 @@ namespace jarg
             }
 
 
-            if (other.Count > 0)
-            {
+            if (other.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Other", Color.Cyan, 22, ContainerInventoryItems);
-                foreach (Item item in other)
-                {
+                foreach (Item item in other) {
                     var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
                     i.Tag = item;
                     i.OnPressed += PressInInventory;
@@ -858,15 +833,13 @@ namespace jarg
                                                   inventory_.TotalVolume, player_.MaxVolume);
         }
 
-        private void UpdateContainerContainer(List<Item> a)
-        {
+        private void UpdateContainerContainer(List<Item> a) {
             inContainer_ = a;
 
             ContainerContainer.Clear();
 
             int cou = 0;
-            foreach (Item item in a)
-            {
+            foreach (Item item in a) {
                 var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerContainer);
                 i.Tag = cou;
                 i.OnPressed += PressInContainer;
@@ -874,36 +847,28 @@ namespace jarg
             }
         }
 
-        private void PressInInventory(object sender, EventArgs e)
-        {
+        private void PressInInventory(object sender, EventArgs e) {
             var label = sender as Label;
-            if (label != null)
-            {
+            if (label != null) {
                 var a = (Item) label.Tag;
                 selectedItem = a;
 
-                if (!doubleclick_)
-                {
+                if (!doubleclick_) {
                     InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(a);
                 }
-                else
-                {
+                else {
                     IntentoryEquip_onPressed(null, null);
                 }
             }
         }
 
-        private void PressInContainer(object sender, EventArgs e)
-        {
+        private void PressInContainer(object sender, EventArgs e) {
             var a = (int) (sender as Label).Tag;
-            if (inInv_.Count > a)
-            {
+            if (inInv_.Count > a) {
                 ContainerSelected = inContainer_[a];
                 LabelContainer.Text = ItemDataBase.GetItemFullDescription(ContainerSelected);
-                if (doubleclick_)
-                {
-                    if (inContainer_.Contains(ContainerSelected))
-                    {
+                if (doubleclick_) {
+                    if (inContainer_.Contains(ContainerSelected)) {
                         inventory_.AddItem(ContainerSelected);
                         inContainer_.Remove(ContainerSelected);
                         inventory_.StackSimilar();
@@ -914,71 +879,58 @@ namespace jarg
             }
         }
 
-        private void ButtonCaracterCancel_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonCaracterCancel_onPressed(object sender, EventArgs e) {
             WindowMainMenu.Visible = true;
             WindowCaracterCration.Visible = false;
         }
 
-        private void ButtonCaracterConfirm_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonCaracterConfirm_onPressed(object sender, EventArgs e) {
             WindowCaracterCration.Visible = false;
             drawAction_ = GameDraw;
             UpdateAction = GameUpdate;
-            WindowEventLog.Visible = true;
+            EventLogWindow.Visible = true;
         }
 
-        private void ButtonNewGame_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonNewGame_onPressed(object sender, EventArgs e) {
             WindowMainMenu.Visible = false;
             WindowCaracterCration.Visible = true;
         }
 
-        private void ButtonOpenGit_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonOpenGit_onPressed(object sender, EventArgs e) {
             Process.Start("https://github.com/ishellstrike/roguelikeworkname/issues");
         }
 
-        private void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e) {
             WindowSettings.Visible = true;
             WindowSettings.OnTop();
         }
 
-        private void ButtonHudColor3_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor3_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.DarkGray;
         }
 
-        private void ButtonHudColor5_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor5_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.LightGreen;
         }
 
-        private void ButtonHudColor4_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor4_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.DarkOrange;
         }
 
-        private void ButtonHudColor2_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor2_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.LightGray;
         }
 
-        private void ButtonHudColor1_onPressed(object sender, EventArgs e)
-        {
+        private void ButtonHudColor1_onPressed(object sender, EventArgs e) {
             Settings.HudСolor = Color.White;
         }
 
-        private void CloseAllTestButton_onPressed(object sender, EventArgs e)
-        {
+        private void CloseAllTestButton_onPressed(object sender, EventArgs e) {
             player_.Hunger.Current--;
         }
 
-        private void WindowsUpdate(GameTime gt)
-        {
-            if (WindowStats.Visible)
-            {
+        private void WindowsUpdate(GameTime gt) {
+            if (WindowStats.Visible) {
                 StatsHeat.Max = (int) player_.Heat.Max;
                 StatsHeat.Progress = (int) player_.Heat.Current;
 
@@ -989,41 +941,33 @@ namespace jarg
                 StatsHunger.Progress = (int) player_.Heat.Current;
             }
 
-            if (currentFloor_ != null && WindowMinimap.Visible)
-            {
+            if (currentFloor_ != null && WindowMinimap.Visible) {
                 ImageMinimap.image = currentFloor_.GetMinimap();
             }
 
-            if (Settings.InventoryUpdate)
-            {
+            if (Settings.InventoryUpdate) {
                 UpdateInventoryContainer();
                 Settings.InventoryUpdate = false;
             }
 
-            if (SecondTimespan.TotalSeconds >= 1)
-            {
-                ListStatist.Clear();
-                foreach (var statist in Achievements.Stat)
-                {
-                    if (statist.Value.Count != 0)
-                    {
-                        new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count, ListStatist);
+            if (SecondTimespan.TotalSeconds >= 1) {
+                StatistList.Clear();
+                foreach (var statist in Achievements.Stat) {
+                    if (statist.Value.Count != 0) {
+                        new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count, StatistList);
                     }
                 }
 
-                if (WindowCaracter.Visible)
-                {
+                if (CaracterWindow.Visible) {
                     UpdateCaracterWindowItems(null, null);
                 }
             }
         }
 
-        private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs)
-        {
+        private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs) {
             LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
 
-            for (int i = 0; i < LabelsAbilities.Count; i++)
-            {
+            for (int i = 0; i < LabelsAbilities.Count; i++) {
                 LabelsAbilities[i].Text = string.Format("{0} {1} ({2}/{3})", player_.Abilities.ToShow[i].Name,
                                                         player_.Abilities.ToShow[i],
                                                         (int) player_.Abilities.ToShow[i].XpCurrent,
@@ -1040,17 +984,14 @@ namespace jarg
                                            : "";
 
             EffectsContainer.Clear();
-            for (int i = 0; i < player_.Buffs.Count; i++)
-            {
+            for (int i = 0; i < player_.Buffs.Count; i++) {
                 LabelFixed label;
-                if (player_.Buffs[i].Expiring)
-                {
+                if (player_.Buffs[i].Expiring) {
                     label = new LabelFixed(Vector2.Zero,
                                            string.Format("{0} {1}", BuffDataBase.Data[player_.Buffs[i].Id].Name,
                                                          player_.Buffs[i].Expire), 20, EffectsContainer);
                 }
-                else
-                {
+                else {
                     label = new LabelFixed(Vector2.Zero,
                                            string.Format("{0}", BuffDataBase.Data[player_.Buffs[i].Id].Name), 20,
                                            EffectsContainer);
@@ -1058,8 +999,7 @@ namespace jarg
             }
 
             ContainerWearList.Clear();
-            foreach (Item item in player_.Weared)
-            {
+            foreach (Item item in player_.Weared) {
                 var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), 20, ContainerWearList);
             }
         }

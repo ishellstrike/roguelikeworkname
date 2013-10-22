@@ -1,36 +1,47 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
     [Serializable]
     public class Creature : ICreature {
-        public string Id { get; set; }
-
-        private Vector2 lastpos_;
-        private Vector2 remPos_;
-
-        private Vector2 sectoroffset_;
         internal Color Col;
 
-        internal float Percenter = (float)Settings.rnd.NextDouble()/5f + 0.8f;
+        internal float Percenter = (float) Settings.rnd.NextDouble()/5f + 0.8f;
+        public Vector2 Velocity;
+        private Abilities abilities_ = new Abilities();
+        private List<IBuff> buffs_ = new List<IBuff>();
+        internal Stat hp_ = new Stat(200);
+        private Vector2 lastpos_;
 
         internal Vector2 position_;
-        public Vector2 Position  {
+        private TimeSpan reactionT_ = TimeSpan.Zero;
+        private Vector2 remPos_;
+        private TimeSpan sec_ = TimeSpan.Zero;
+        private Vector2 sectoroffset_;
+
+        public Vector2 LastPos {
+            get { return lastpos_; }
+            set { lastpos_ = value; }
+        }
+
+        public Vector2 ShootPoint { get; set; }
+        public string Id { get; set; }
+
+        public Vector2 Position {
             get { return position_; }
             set {
-                lastpos_ = position_; 
+                lastpos_ = position_;
                 position_ = value;
             }
         }
 
-        internal Stat hp_ = new Stat(200);
         public Stat Hp {
             get { return hp_; }
             set { hp_ = value; }
@@ -38,82 +49,45 @@ namespace rglikeworknamelib.Creatures {
 
         public bool isDead { get; internal set; }
 
-        public void SetPositionInBlocks(int x, int y)
-        {
-            position_ = new Vector2((x + 0.5f) * 32, (y + 0.5f) * 32);
-        }
-
         /// <summary>
-        /// Returns creature position in game blocks
+        ///     Returns creature position in game blocks
         /// </summary>
         /// <returns></returns>
-        public Vector2 GetPositionInBlocks() {
-            var po = Position;
-            po.X = po.X < 0 ? po.X / 32 - 1 : po.X / 32;
-            po.Y = po.Y < 0 ? po.Y / 32 - 1 : po.Y / 32;
-            return po;
-        }
-
-        /// <summary>
-        /// Returns creature position in game blocks
-        /// </summary>
-        /// <returns></returns>
-        public Vector2 GetWorldPositionInBlocks()
-        {
-            var po = WorldPosition();
-            po.X = po.X < 0 ? po.X / 32 - 1 : po.X / 32;
-            po.Y = po.Y < 0 ? po.Y / 32 - 1 : po.Y / 32;
+        public Vector2 GetWorldPositionInBlocks() {
+            Vector2 po = WorldPosition();
+            po.X = po.X < 0 ? po.X/32 - 1 : po.X/32;
+            po.Y = po.Y < 0 ? po.Y/32 - 1 : po.Y/32;
             return po;
         }
 
         public event EventHandler OnDamageRecieve;
         public event EventHandler OnDeath;
 
-        private List<IBuff> buffs_ = new List<IBuff>();
-        public List<IBuff> Buffs 
-        {
-            get
-            {
-                return buffs_;
-            }
-            set
-            {
-                buffs_ = value;
-            }
+        public List<IBuff> Buffs {
+            get { return buffs_; }
+            set { buffs_ = value; }
         }
 
-        public Ability GetAbility(string s) {
-            return abilities_.list[s];
-        }
-
-        private Abilities abilities_ = new Abilities();
         public Abilities Abilities {
             get { return abilities_; }
             set { abilities_ = value; }
         }
 
-        public Vector2 LastPos
-        {
-            get { return lastpos_; }
-            set { lastpos_ = value; }
-        }
-
-        private TimeSpan sec_ = TimeSpan.Zero;
-        private TimeSpan reactionT_ = TimeSpan.Zero;
         public virtual void Update(GameTime gt, MapSector ms, Player hero) {
-            var time = gt.ElapsedGameTime.TotalSeconds;
+            double time = gt.ElapsedGameTime.TotalSeconds;
             reactionT_ += gt.ElapsedGameTime;
             sec_ += gt.ElapsedGameTime;
             if (!Skipp || !ms.Ready) {
                 sectoroffset_ = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
-                var block = ms.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
-                if (block != null && block.Lightness == Color.White && reactionT_.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
+                IBlock block = ms.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
+                if (block != null && block.Lightness == Color.White &&
+                    reactionT_.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
                     remPos_ = hero.Position - WorldPosition() + Position;
                     MoveByMover(ms, time);
 
                     Col = Color.White;
-                    if(sec_.TotalSeconds > 1 && ms.Parent.IsCreatureMeele(hero, this)) {
+                    if (sec_.TotalSeconds > 1 && ms.Parent.IsCreatureMeele(hero, this)) {
                         hero.GiveDamage(MonsterDataBase.Data[Id].Damage, DamageType.Default, ms);
                         sec_ = TimeSpan.Zero;
                     }
@@ -124,49 +98,47 @@ namespace rglikeworknamelib.Creatures {
                 }
 
                 if (Position.Y >= 32*MapSector.Ry) {
-                    var t = ms.Parent.GetDownN(ms.SectorOffsetX, ms.SectorOffsetY);
+                    MapSector t = ms.Parent.GetDownN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
                         ms.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.Y = position_.Y - 32 * MapSector.Ry;
+                        position_.Y = position_.Y - 32*MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.Y = 32 * MapSector.Ry-1;
+                        position_.Y = 32*MapSector.Ry - 1;
                     }
                 }
                 else if (Position.Y < 0) {
-                    var t = ms.Parent.GetUpN(ms.SectorOffsetX, ms.SectorOffsetY);
+                    MapSector t = ms.Parent.GetUpN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
                         ms.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.Y = position_.Y + 32 * MapSector.Ry;
+                        position_.Y = position_.Y + 32*MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
                         position_.Y = 0;
                     }
                 }
-                if (Position.X >= 32 * MapSector.Rx)
-                {
-                    var t = ms.Parent.GetRightN(ms.SectorOffsetX, ms.SectorOffsetY);
+                if (Position.X >= 32*MapSector.Rx) {
+                    MapSector t = ms.Parent.GetRightN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
                         ms.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.X = position_.X - 32 * MapSector.Rx;
+                        position_.X = position_.X - 32*MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.X = 32 * MapSector.Rx - 1;
+                        position_.X = 32*MapSector.Rx - 1;
                     }
                 }
                 else if (Position.X < 0) {
-                    
-                    var t = ms.Parent.GetLeftN(ms.SectorOffsetX, ms.SectorOffsetY);
+                    MapSector t = ms.Parent.GetLeftN(ms.SectorOffsetX, ms.SectorOffsetY);
                     if (t != null) {
                         ms.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.X = position_.X + 32 * MapSector.Rx;
+                        position_.X = position_.X + 32*MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
@@ -176,7 +148,7 @@ namespace rglikeworknamelib.Creatures {
             }
 
             for (int i = 0; i < Buffs.Count; i++) {
-                var buff = Buffs[i];
+                IBuff buff = Buffs[i];
                 buff.Update(gt);
                 if (!buff.Applied) {
                     Buffs.Remove(buff);
@@ -184,43 +156,12 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        private void MoveByMover(MapSector ms, double time) {
-            if (remPos_ != Vector2.Zero && ((int)remPos_.X != (int)position_.X || (int)remPos_.Y != (int)position_.Y))
-            {
-                var mover = - position_ + remPos_;
-                var percenterMax = MonsterDataBase.Data[Id].Speed*Percenter;
-
-                if (mover.Length() > time * percenterMax)
-                {
-                    mover.Normalize();
-                    mover *= (float)time * percenterMax;
-                }
-
-                var newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
-                var newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
-
-                var blockDatas = BlockDataBase.Data;
-                var key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
-                if (key != null && key.Id != null && key.Data.IsWalkable) {
-                    position_.X += mover.X;
-                }
-                key = ms.Parent.GetBlock((int) newwposy.X, (int) newwposy.Y);
-                if (key != null && (key.Id != null && key.Data.IsWalkable)) {
-                    position_.Y += mover.Y;
-                }
-            }
-        }
-
-
-        public Vector2 ShootPoint { get; set; }
-
-        public Vector2 Velocity;
         public bool Skipp { get; set; }
 
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
-            var a = GetPositionInBlocks();
-            var p = WorldPosition() - camera;
-            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p+new Vector2(-16,0), Col);
+            Vector2 a = GetPositionInBlocks();
+            Vector2 p = WorldPosition() - camera;
+            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p + new Vector2(-16, 0), Col);
             if (Settings.DebugInfo) {
                 spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
             }
@@ -234,32 +175,77 @@ namespace rglikeworknamelib.Creatures {
         public virtual void Kill(MapSector ms) {
             Hp = new Stat(0, 0);
             isDead = true;
-            ms.AddDecal(new Particle(WorldPosition(), 3) { Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0) });
-            if(OnDeath != null) {
+            ms.AddDecal(new Particle(WorldPosition(), 3) {Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0)});
+            if (OnDeath != null) {
                 OnDeath(null, null);
             }
         }
 
         public void GiveDamage(float value, DamageType type, MapSector ms) {
-
             hp_.Current -= value;
-            EventLog.Add(string.Format("{0} получает {1} урона", MonsterDataBase.Data[Id].Name, value), GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Damage);
-            if(Hp.Current <= 0 ) {
+            EventLog.Add(string.Format("{0} получает {1} урона", MonsterDataBase.Data[Id].Name, value),
+                         GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Damage);
+            if (Hp.Current <= 0) {
                 Kill(ms);
-                EventLog.Add(string.Format("{0} УМИРАЕТ!", MonsterDataBase.Data[Id].Name.ToUpper()), GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Dies);
+                EventLog.Add(string.Format("{0} УМИРАЕТ!", MonsterDataBase.Data[Id].Name.ToUpper()),
+                             GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Dies);
             }
-            Vector2 adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
+            var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
 
             ms.AddDecal(new Particle(WorldPosition() + adder, 3)
-                        {Rotation = Settings.rnd.Next()%360, Life = new TimeSpan(0, 0, 1, 0)});
+            {Rotation = Settings.rnd.Next()%360, Life = new TimeSpan(0, 0, 1, 0)});
 
-            if(OnDamageRecieve != null) {
+            if (OnDamageRecieve != null) {
                 OnDamageRecieve(null, null);
             }
         }
 
-        public void GiveDamage(float value, MapSector ms)
-        {
+        public void SetPositionInBlocks(int x, int y) {
+            position_ = new Vector2((x + 0.5f)*32, (y + 0.5f)*32);
+        }
+
+        /// <summary>
+        ///     Returns creature position in game blocks
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetPositionInBlocks() {
+            Vector2 po = Position;
+            po.X = po.X < 0 ? po.X/32 - 1 : po.X/32;
+            po.Y = po.Y < 0 ? po.Y/32 - 1 : po.Y/32;
+            return po;
+        }
+
+        public Ability GetAbility(string s) {
+            return abilities_.list[s];
+        }
+
+        private void MoveByMover(MapSector ms, double time) {
+            if (remPos_ != Vector2.Zero &&
+                ((int) remPos_.X != (int) position_.X || (int) remPos_.Y != (int) position_.Y)) {
+                Vector2 mover = - position_ + remPos_;
+                float percenterMax = MonsterDataBase.Data[Id].Speed*Percenter;
+
+                if (mover.Length() > time*percenterMax) {
+                    mover.Normalize();
+                    mover *= (float) time*percenterMax;
+                }
+
+                Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
+                Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
+
+                Dictionary<string, BlockData> blockDatas = BlockDataBase.Data;
+                IBlock key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
+                if (key != null && key.Id != null && key.Data.IsWalkable) {
+                    position_.X += mover.X;
+                }
+                key = ms.Parent.GetBlock((int) newwposy.X, (int) newwposy.Y);
+                if (key != null && (key.Id != null && key.Data.IsWalkable)) {
+                    position_.Y += mover.Y;
+                }
+            }
+        }
+
+        public void GiveDamage(float value, MapSector ms) {
             GiveDamage(value, DamageType.Default, ms);
         }
     }

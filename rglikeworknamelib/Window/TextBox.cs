@@ -4,25 +4,23 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
-    public class TextBox : IGameComponent
-    {
-        private Rectangle locate_;
-        public String Text="";
-        private bool aimed_;
-        private IGameContainer Parent;
+    public class TextBox : IGameComponent {
+        private readonly IGameContainer Parent;
 
-        private readonly Texture2D whitepixel_;
         private readonly SpriteFont font1_;
+        private readonly Texture2D whitepixel_;
+        public String Text = "";
+        private bool first_;
+        private string last_ = string.Empty;
+        private Rectangle locate_;
+        private bool second_;
         private TimeSpan spam_;
-        private bool first, second_;
-        public event EventHandler OnEnter;
 
-        public TextBox(Vector2 position, int length, IGameContainer parent)
-        {
+        public TextBox(Vector2 position, int length, IGameContainer parent) {
             whitepixel_ = parent.whitepixel_;
             font1_ = parent.font1_;
-            locate_.X = (int)position.X;
-            locate_.Y = (int)position.Y;
+            locate_.X = (int) position.X;
+            locate_.Y = (int) position.Y;
             locate_.Height = 20;
             locate_.Width = length;
             Parent = parent;
@@ -31,11 +29,10 @@ namespace rglikeworknamelib.Window {
         }
 
         public void Draw(SpriteBatch sb) {
-            if (Visible)
-            {
+            if (Visible) {
                 Vector2 realpos = GetPosition();
 
-                Color col = !aimed_ ? Settings.HudÑolor : Color.White;
+                Color col = Settings.HudÑolor;
 
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetPosition(), null, col, 0,
                         Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);
@@ -50,23 +47,22 @@ namespace rglikeworknamelib.Window {
             }
         }
 
-        private string last = string.Empty;
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
             spam_ += gt.ElapsedGameTime;
-            if(ks.GetPressedKeys().Length == 0) {
-                first = false;
+            if (ks.GetPressedKeys().Length == 0) {
+                first_ = false;
                 second_ = false;
             }
 
-            foreach (var key in ks.GetPressedKeys()) {
-                var a = key;
-                if (!lks.IsKeyDown(a) || (spam_.TotalMilliseconds >= 300 && !second_) || (spam_.TotalMilliseconds >= 100 && second_))
-                {
+            foreach (Keys key in ks.GetPressedKeys()) {
+                Keys a = key;
+                if (!lks.IsKeyDown(a) || (spam_.TotalMilliseconds >= 500 && !second_) ||
+                    (spam_.TotalMilliseconds >= 100 && second_)) {
                     spam_ = TimeSpan.Zero;
-                    if(first) {
+                    if (first_) {
                         second_ = true;
                     }
-                    first = true;
+                    first_ = true;
                     switch (a) {
                         case Keys.Back:
                             if (Text.Length > 0) {
@@ -129,30 +125,29 @@ namespace rglikeworknamelib.Window {
                             Text += ".";
                             break;
                         case Keys.Enter:
-                            if(!string.IsNullOrEmpty(Text)) {
-                                last = Text;
+                            if (!string.IsNullOrEmpty(Text)) {
+                                last_ = Text;
                             }
-                            if(OnEnter != null) {
+                            if (OnEnter != null) {
                                 OnEnter(this, null);
                             }
                             Text = string.Empty;
                             break;
                         case Keys.Up:
-                            Text = last;
+                            Text = last_;
                             break;
-
                     }
                 }
             }
-    }
+        }
 
         public Vector2 GetPosition() {
             return new Vector2(locate_.X, locate_.Y);
         }
 
         public void SetPosition(Vector2 pos) {
-            locate_.X = (int)pos.X;
-            locate_.Y = (int)pos.Y;
+            locate_.X = (int) pos.X;
+            locate_.Y = (int) pos.Y;
         }
 
         public float Width {
@@ -166,5 +161,6 @@ namespace rglikeworknamelib.Window {
         public bool Visible { get; set; }
 
         public object Tag { get; set; }
+        public event EventHandler OnEnter;
     }
 }

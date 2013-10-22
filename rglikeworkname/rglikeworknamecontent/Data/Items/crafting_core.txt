@@ -67,6 +67,41 @@ Weight=10000
 ~Item,hammer
 Name=Молоток
 SType=Craft
-Weight=1000
+Weight=700
+
+~Item,otvertka
+Name=Отвертка
+SType=Craft
+Weight=150
+
+~Item,knife
+Name=Небольшой нож
+SType=Meele
+Weight=200
+
+~Item,spearknife
+Name=Самодельное копье с ножом
+SType=Meele
+Weight=650
+
+~Item,chipset
+Name=Печатная плата
+SType=Craft
+Weight=20
+
+~Item,batery
+Name=Аккумулятор
+SType=Craft
+Weight=20
+
+~Item,tinymonitor
+Name=маленький ЖК экран
+SType=Craft
+Weight=20
+
+~Item,smallvint
+Name=Маленькие винты
+SType=Craft
+Weight=1
 
 ~Item,2001

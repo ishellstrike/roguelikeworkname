@@ -1,45 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using Microsoft.Xna.Framework;
 using jarg;
 using rglikeworknamelib.Creatures;
-using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Effects;
 
-namespace rglikeworknamelib.Dungeon.Item
-{
+namespace rglikeworknamelib.Dungeon.Item {
     public class InventorySystem {
         private List<Items.Item> items_ = new List<Items.Item>();
 
         public int TotalWeight {
-            get {
-                return items_.Select(x => x.Data.Weight).Sum();
-            }
+            get { return items_.Select(x => x.Data.Weight).Sum(); }
         }
 
-        public int TotalVolume
-        {
-            get
-            {
-                return items_.Select(x => x.Data.Volume).Sum();
-            }
+        public int TotalVolume {
+            get { return items_.Select(x => x.Data.Volume).Sum(); }
         }
 
         public void AddItem(Items.Item it) {
             items_.Add(it);
             switch (it.Data.SType) {
-                    case ItemType.Ammo:
+                case ItemType.Ammo:
                     Achievements.Stat["ammototal"].Count += it.Count;
                     break;
-                    case ItemType.Gun:
+                case ItemType.Gun:
                     Achievements.Stat["guntotal"].Count += it.Count;
                     break;
-                    case ItemType.Food:
+                case ItemType.Food:
                     Achievements.Stat["foodtotal"].Count += it.Count;
                     break;
             }
@@ -60,9 +50,9 @@ namespace rglikeworknamelib.Dungeon.Item
         public void StackSimilar() {
             var a = new List<Items.Item>();
 
-            foreach (var item in items_) {
+            foreach (Items.Item item in items_) {
                 Items.Item it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses != 0);
-                if(it != null) {
+                if (it != null) {
                     it.Count += item.Count;
                 }
                 a.Add(item);
@@ -79,8 +69,7 @@ namespace rglikeworknamelib.Dungeon.Item
             if (selectedItem == null || player == null) {
                 return;
             }
-            switch (selectedItem.Data.SType)
-            {
+            switch (selectedItem.Data.SType) {
                 case ItemType.Wear:
                 case ItemType.Meele:
                 case ItemType.Ammo:
@@ -90,12 +79,12 @@ namespace rglikeworknamelib.Dungeon.Item
                     break;
                 case ItemType.Medicine:
                 case ItemType.Food:
-                    if(player.EatItem(selectedItem)) {
+                    if (player.EatItem(selectedItem)) {
                         EventLog.Add(
                             string.Format("{1} {0}", selectedItem.Data.Name,
                                           selectedItem.Data.SType == ItemType.Medicine ? "Вы приняли" : "Вы употребили"),
                             GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
-                        foreach (var buff in selectedItem.Buffs) {
+                        foreach (IBuff buff in selectedItem.Buffs) {
                             buff.ApplyToTarget(player);
                         }
                         selectedItem.Doses--;
@@ -113,7 +102,7 @@ namespace rglikeworknamelib.Dungeon.Item
         }
 
         public void AddItemRange(List<Items.Item> inContainer) {
-            foreach (var item in inContainer) {
+            foreach (Items.Item item in inContainer) {
                 AddItem(item);
             }
         }
@@ -124,9 +113,10 @@ namespace rglikeworknamelib.Dungeon.Item
 
         public void Save() {
             var binaryFormatter = new BinaryFormatter();
-            var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"), FileMode.Create);
+            var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
+                                            FileMode.Create);
             var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
-                binaryFormatter.Serialize(gZipStream, items_);
+            binaryFormatter.Serialize(gZipStream, items_);
             gZipStream.Close();
             gZipStream.Dispose();
             fileStream.Close();
@@ -140,8 +130,8 @@ namespace rglikeworknamelib.Dungeon.Item
                 var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
                                                 FileMode.Open);
                 var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                    items_ = (List<Items.Item>) binaryFormatter.Deserialize(gZipStream);
-                foreach (var item in items_) {
+                items_ = (List<Items.Item>) binaryFormatter.Deserialize(gZipStream);
+                foreach (Items.Item item in items_) {
                     item.UpdateData();
                 }
                 gZipStream.Close();
@@ -150,6 +140,5 @@ namespace rglikeworknamelib.Dungeon.Item
                 fileStream.Dispose();
             }
         }
-
     }
 }

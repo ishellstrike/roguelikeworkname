@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Security.Authentication;
 using Microsoft.Xna.Framework;
-using NLog.Config;
 using rglikeworknamelib.Dungeon;
-using NLog;
 
-namespace rglikeworknamelib
-{
+namespace rglikeworknamelib {
     public enum LogEntityType {
         OpenCloseDor,
         SeeSomething,
@@ -25,8 +19,8 @@ namespace rglikeworknamelib
     }
 
     public struct LogEntity {
-        public string message;
         public Color col;
+        public string message;
         public LogEntityType type;
 
         public LogEntity(string mes, Color c, LogEntityType t = LogEntityType.Default) {
@@ -35,22 +29,20 @@ namespace rglikeworknamelib
             type = t;
         }
 
-        public LogEntity(string mes, LogEntityType entity = LogEntityType.Default)
-        {
+        public LogEntity(string mes, LogEntityType entity = LogEntityType.Default) {
             message = mes;
             col = Color.White;
             type = entity;
         }
     }
-    public static class EventLog
-    {
+
+    public static class EventLog {
         public static List<LogEntity> log = new List<LogEntity>();
 
-        public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type)
-        {
+        public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type) {
             log.Add(new LogEntity(GlobalWorldLogic.GetTimeString(globalDateTime) + " " + message, color, type));
 
-            if (log.Count > 100) { 
+            if (log.Count > 100) {
                 log.RemoveAt(0);
             }
 
@@ -59,8 +51,8 @@ namespace rglikeworknamelib
 
         private static void UpdateEvent() {
             if (OnLogUpdate != null) {
-                    OnLogUpdate(null, null);
-                }
+                OnLogUpdate(null, null);
+            }
         }
 
         public static event EventHandler OnLogUpdate;

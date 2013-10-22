@@ -10,57 +10,62 @@ using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Items {
-    public class ItemDataBase
-    {
+    public class ItemDataBase {
         public static Dictionary<string, ItemData> Data;
         public static Dictionary<string, ItemData> DataMedicineItems;
         public static Dictionary<string, ItemData> DataFoodItems;
         private static Logger logger_ = LogManager.GetCurrentClassLogger();
-       // public Collection<Texture2D> texatlas;
+        // public Collection<Texture2D> texatlas;
 
         /// <summary>
-        /// WARNING! Also loading all data from standart patch
+        ///     WARNING! Also loading all data from standart patch
         /// </summary>
         public ItemDataBase() {
             //texatlas = texatlas_;
             Data = new Dictionary<string, ItemData>();
             DataFoodItems = new Dictionary<string, ItemData>();
             DataMedicineItems = new Dictionary<string, ItemData>();
-            var a = ParsersCore.UniversalParseDirectory(Settings.GetItemDataDirectory(), UniversalParser.Parser<ItemData>);
+            List<KeyValuePair<string, object>> a = ParsersCore.UniversalParseDirectory(Settings.GetItemDataDirectory(),
+                                                                                       UniversalParser.Parser<ItemData>);
             foreach (var pair in a) {
-                Data.Add(pair.Key, (ItemData)pair.Value);
-                if (((ItemData)pair.Value).SType == ItemType.Medicine) DataMedicineItems.Add(pair.Key, (ItemData)pair.Value);
-                if (((ItemData)pair.Value).SType == ItemType.Food) DataFoodItems.Add(pair.Key, (ItemData)pair.Value);
+                Data.Add(pair.Key, (ItemData) pair.Value);
+                if (((ItemData) pair.Value).SType == ItemType.Medicine) {
+                    DataMedicineItems.Add(pair.Key, (ItemData) pair.Value);
+                }
+                if (((ItemData) pair.Value).SType == ItemType.Food) {
+                    DataFoodItems.Add(pair.Key, (ItemData) pair.Value);
+                }
             }
         }
 
         private static void JsonEyeCandy(List<KeyValuePair<int, object>> a) {
-            MemoryStream sw = new MemoryStream();
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof (ItemData));
+            var sw = new MemoryStream();
+            var ser = new DataContractJsonSerializer(typeof (ItemData));
             foreach (var pair in a) {
                 ser.WriteObject(sw, pair.Value as ItemData);
             }
 
             sw.Position = 0;
-            StreamReader re = new StreamReader(sw);
+            var re = new StreamReader(sw);
             string jdata = re.ReadToEnd();
 
             jdata = jdata.Insert(1, Environment.NewLine);
             jdata = jdata.Replace("}{", Environment.NewLine + "}" + Environment.NewLine + "{" + Environment.NewLine);
             jdata = jdata.Replace(":", " : ");
 
-            Regex reg1 = new Regex("({\n)?\"[a-zA-Z]+\".+?(},|,|\n}|})");
-            var mac = reg1.Matches(jdata);
+            var reg1 = new Regex("({\n)?\"[a-zA-Z]+\".+?(},|,|\n}|})");
+            MatchCollection mac = reg1.Matches(jdata);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            foreach (var vari in mac) {
+            foreach (object vari in mac) {
                 sb.Append(" " + vari + Environment.NewLine);
             }
 
-            StreamWriter writer =
-                new StreamWriter(Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory() + @"/items.json",
-                                 false);
+            var writer =
+                new StreamWriter(
+                    Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory() + @"/items.json",
+                    false);
             writer.Write(sb);
             writer.Flush();
             writer.Close();
@@ -81,21 +86,20 @@ namespace rglikeworknamelib.Dungeon.Items {
             }
         }
 
-        public static string GetItemDescription(Item i)
-        {
+        public static string GetItemDescription(Item i) {
             return i.Data.Description;
         }
 
         public static string GetItemFullDescription(Item i) {
-            var item = Data[i.Id];
-            StringBuilder sb = new StringBuilder();
+            ItemData item = Data[i.Id];
+            var sb = new StringBuilder();
             sb.Append(item.Name);
             if (item.Description != null) {
                 sb.Append(Environment.NewLine + Environment.NewLine + item.Description);
             }
             sb.Append(Environment.NewLine + string.Format("{0} г", item.Weight));
             sb.Append(Environment.NewLine + string.Format("{0} места", item.Volume));
-            if(Settings.DebugInfo) {
+            if (Settings.DebugInfo) {
                 sb.Append(Environment.NewLine + string.Format("id {0} uid {1}", i.Id, i.Uid));
             }
 
@@ -103,10 +107,10 @@ namespace rglikeworknamelib.Dungeon.Items {
                 sb.Append(Environment.NewLine + string.Format("оставл€ет {0}", Data[item.AfteruseId].Name));
             }
 
-            if(item.Buff != null) {
-                sb.Append(Environment.NewLine +Environment.NewLine+ string.Format("Ёффекты :"));
+            if (item.Buff != null) {
+                sb.Append(Environment.NewLine + Environment.NewLine + string.Format("Ёффекты :"));
 
-                foreach (var buff in item.Buff) {
+                foreach (string buff in item.Buff) {
                     sb.Append(Environment.NewLine + string.Format("{0}", BuffDataBase.Data[buff].Name));
                 }
             }

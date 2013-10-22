@@ -1,34 +1,26 @@
 using System;
-using System.Linq;
-using System.Reflection;
 using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Level {
-    public class BlockData 
-    {
+    public class BlockData {
         public string AfterDeathId;
+        public string[] AlterMtex;
 
         public float Damage;
         public string Description;
-        public bool IsDestructable;
 
+        public float Hp;
+        public bool IsDestructable;
+        public bool IsTransparent;
+        public bool IsWalkable;
+        public Color MMCol;
+        public string MTex;
+        public string Name;
         public Type Prototype;
         public SmartAction SmartAction;
 
-        public float Hp;
-        public string MTex;
-        public string Name;
-
-        public Color MMCol;
-
-        public bool IsWalkable;
-        public bool IsTransparent;
-
-        public int swide = 32;
-
         public int StorageSlots;
-
-        public string[] AlterMtex;
+        public int swide = 32;
 
         //public override bool Equals(object obj) {
         //    if (obj == null || GetType() != obj.GetType()) {
@@ -51,19 +43,19 @@ namespace rglikeworknamelib.Dungeon.Level {
         //    return true;
         //}
 
-        public string RandomMtexFromAlters()
-        {
+        public string RandomMtexFromAlters() {
             if (AlterMtex != null && Settings.rnd.Next(1, 5) == 1) {
                 return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
             }
             return MTex;
         }
 
-        public static Rectangle GetSource(string s)
-        {
-            if (s == null) return new Rectangle(0, 0, 0, 0);
+        public static Rectangle GetSource(string s) {
+            if (s == null) {
+                return new Rectangle(0, 0, 0, 0);
+            }
             int index = Atlases.BlockIndexes[s];
-            return new Rectangle(index % 32 * 32, index / 32 * 32, 32, 32);
+            return new Rectangle(index%32*32, index/32*32, 32, 32);
         }
     }
 }

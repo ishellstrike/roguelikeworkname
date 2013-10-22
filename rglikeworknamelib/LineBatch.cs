@@ -17,7 +17,6 @@ namespace jarg {
         #region Constructor
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="graphicsDevice"></param>
         public LineBatch(GraphicsDevice graphicsDevice) {
@@ -44,7 +43,6 @@ namespace jarg {
         #region Implementation
 
         /// <summary>
-        ///
         /// </summary>
         public void Dispose() {
             if (!m_isDisposed) {
@@ -59,14 +57,12 @@ namespace jarg {
         }
 
         /// <summary>
-        ///
         /// </summary>
         public void Clear() {
             m_vertices.Clear();
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="vertex1"></param>
         /// <param name="vertex2"></param>
@@ -78,7 +74,6 @@ namespace jarg {
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="vertex1"></param>
         /// <param name="vertex2"></param>
@@ -89,7 +84,6 @@ namespace jarg {
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="vertex1"></param>
         /// <param name="vertex2"></param>
@@ -100,10 +94,10 @@ namespace jarg {
             normal.Normalize();
             normal = new Vector2(normal.Y, -normal.X);
 
-            var v1 = new Vector3(vertex1 - 0.5f * width1 * normal, 0);
-            var v2 = new Vector3(vertex1 + 0.5f * width1 * normal, 0);
-            var v3 = new Vector3(vertex2 - 0.5f * width2 * normal, 0);
-            var v4 = new Vector3(vertex2 + 0.5f * width2 * normal, 0);
+            var v1 = new Vector3(vertex1 - 0.5f*width1*normal, 0);
+            var v2 = new Vector3(vertex1 + 0.5f*width1*normal, 0);
+            var v3 = new Vector3(vertex2 - 0.5f*width2*normal, 0);
+            var v4 = new Vector3(vertex2 + 0.5f*width2*normal, 0);
 
             m_vertices.Add(new VertexPositionColor(v1, color1));
             m_vertices.Add(new VertexPositionColor(v2, color1));
@@ -115,7 +109,6 @@ namespace jarg {
         }
 
         /// <summary>
-        ///
         /// </summary>
         public void Draw() {
             //m_device.VertexDeclaration = m_vertexDeclaration;
@@ -124,7 +117,7 @@ namespace jarg {
             //m_basicEffect.Begin();
             //m_basicEffect.CurrentTechnique.Passes[0].Begin();
 
-            int primitiveCount = m_vertices.Count / 3;
+            int primitiveCount = m_vertices.Count/3;
 
             foreach (EffectPass pass in m_basicEffect.CurrentTechnique.Passes) {
                 pass.Apply();

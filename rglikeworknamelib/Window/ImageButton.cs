@@ -4,13 +4,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace rglikeworknamelib.Window {
     public class ImageButton : Button {
-        private Texture2D Im;
-        private Color cola = new Color(1,1,1,0.5f);
+        private readonly Texture2D Im;
+        private Color cola = new Color(1, 1, 1, 0.5f);
+
         public ImageButton(Vector2 position, string text, Texture2D im, Window ow) : base(position, text, ow) {
             Im = im;
             locate_.Height = im.Height;
             locate_.Width = im.Width;
         }
+
         public override void Draw(SpriteBatch sb) {
             if (Visible) {
                 Vector2 realpos = GetPosition();
@@ -31,8 +33,9 @@ namespace rglikeworknamelib.Window {
                 sb.DrawString(font1_, Text, realpos + new Vector2(5, 0), col);
             }
         }
-        public override void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh)
-        {
+
+        public override void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks,
+                                    bool mh) {
             if (Visible && mh) {
                 Vector2 realpos = GetPosition();
                 Vector2 realdl = realpos;
@@ -44,8 +47,10 @@ namespace rglikeworknamelib.Window {
                     if (ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released) {
                         PressButton();
                     }
-                } else
+                }
+                else {
                     aimed_ = false;
+                }
             }
         }
     }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace rglikeworknamelib
-{
+﻿namespace rglikeworknamelib {
     public static class UniqueIds {
         private static int iteIds, monIds;
 
@@ -13,8 +7,7 @@ namespace rglikeworknamelib
             return iteIds;
         }
 
-        public static int GetNewMonsterId()
-        {
+        public static int GetNewMonsterId() {
             monIds++;
             return monIds;
         }

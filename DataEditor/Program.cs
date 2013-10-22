@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
-namespace DataEditor
-{
-    static class Program
-    {
+namespace DataEditor {
+    internal static class Program {
         /// <summary>
-        /// Главная точка входа для приложения.
+        ///     Главная точка входа для приложения.
         /// </summary>
         [STAThread]
-        static void Main()
-        {
+        private static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
