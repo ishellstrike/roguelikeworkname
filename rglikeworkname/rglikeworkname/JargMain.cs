@@ -25,6 +25,7 @@ using rglikeworknamelib.Parser;
 using rglikeworknamelib.Window;
 using Color = Microsoft.Xna.Framework.Color;
 using Label = rglikeworknamelib.Window.Label;
+using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace jarg {
@@ -145,7 +146,7 @@ namespace jarg {
             graphics_.PreferredBackBufferHeight = (int) Settings.Resolution.Y;
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             graphics_.SynchronizeWithVerticalRetrace = false;
-            InactiveSleepTime = TimeSpan.FromMilliseconds(500);
+            InactiveSleepTime = TimeSpan.FromMilliseconds(200);
 
             IsFixedTimeStep = false;
             graphics_.SynchronizeWithVerticalRetrace = true;
@@ -431,21 +432,18 @@ namespace jarg {
             }
         }
 
+        private Vector2 aa, sectorLast;
         private void GameUpdate(GameTime gameTime) {
             sec += gameTime.ElapsedGameTime;
 
-            EffectOmnilight.Parameters["slen"].SetValue(GlobalWorldLogic.GetCurrentSlen());
-            float aaa = 1 - GlobalWorldLogic.GetCurrentSlen()/7 + 0.5f;
-            aaa = Math.Max(aaa, 1.1f);
-            aaa = Math.Max(aaa, 0.8f);
-            EffectOmnilight.Parameters["shine"].SetValue(aaa);
+            sectorLast = aa;
+            aa = currentFloor_.GetInSectorPosition(player_.GetPositionInBlocks());
 
-            if (sec >= TimeSpan.FromSeconds(0.5)) {
-                sec = TimeSpan.Zero;
-
+            if ((int)aa.X != (int)sectorLast.X || (int)aa.Y != (int)sectorLast.Y)
+            {
                 currentFloor_.GenerateMinimap(GraphicsDevice, spriteBatch_, player_);
                 if (WindowGlobal.Visible) {
-                    currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
+                    currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_, mousemapoffset);
                 }
             }
 
@@ -455,7 +453,7 @@ namespace jarg {
                                                 ms_.X - player_.Position.X + camera_.X),
                                      seeAngleDeg);
 
-            Vector2 aa = currentFloor_.GetInSectorPosition(player_.GetPositionInBlocks());
+            
             if (car != null) {
                 car.Update(gameTime, player_);
             }

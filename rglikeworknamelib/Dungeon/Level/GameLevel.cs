@@ -442,11 +442,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             gd.SetRenderTarget(null);
         }
 
-        public void GenerateMap(GraphicsDevice gd, SpriteBatch sb, Creature pl) {
+        public void GenerateMap(GraphicsDevice gd, SpriteBatch sb, Creature pl, Vector2 off) {
             gd.SetRenderTarget(map_);
             gd.Clear(Color.Transparent);
             sb.Begin();
-            Vector2 pos = GetInSectorPosition(pl.GetPositionInBlocks());
+            Vector2 pos = GetInSectorPosition(pl.GetPositionInBlocks())+off;
             for (int i = (int) pos.X - 30; i < pos.X + 31; i++) {
                 for (int j = (int) pos.Y - 30; j < pos.Y + 31; j++) {
                     var a = new Tuple<int, int>(i, j);
@@ -458,7 +458,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                     }
                 }
             }
-            sb.Draw(Atlases.MinimapAtlas["cross1"], new Vector2(30*11, 30*11), Color.Red);
+            Vector2 posh = GetInSectorPosition(pl.GetPositionInBlocks());
+            sb.Draw(Atlases.MinimapAtlas["cross1"], new Vector2(30 * 11 - (int)off.X * 11, 30 * 11 - (int)off.Y * 11), Color.Red);
             sb.End();
             gd.SetRenderTarget(null);
         }
@@ -731,9 +732,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void ShadowRender() {
-            gd_.RasterizerState = new RasterizerState {CullMode = CullMode.None, FillMode = FillMode.Solid};
-            gd_.DepthStencilState = DepthStencilState.Default;
-            gd_.BlendState = BlendState.AlphaBlend;
+            gd_.RasterizerState = new RasterizerState {CullMode = CullMode.CullClockwiseFace, FillMode = FillMode.Solid};
             Vector3 color = Color.Black.ToVector3();
             ((BasicEffect) be_).DiffuseColor = color;
 
@@ -746,9 +745,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             if (Settings.DebugWire) {
-                gd_.RasterizerState = new RasterizerState {CullMode = CullMode.None, FillMode = FillMode.WireFrame};
-                gd_.DepthStencilState = DepthStencilState.Default;
-                gd_.BlendState = BlendState.AlphaBlend;
+                gd_.RasterizerState = new RasterizerState { CullMode = CullMode.CullClockwiseFace, FillMode = FillMode.WireFrame};
                 (be_ as BasicEffect).DiffuseColor = Color.White.ToVector3();
 
                 foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
@@ -992,6 +989,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             GetBlock((int) ((camera.X + Settings.Resolution.X)/32), (int) ((camera.Y)/32));
             GetBlock((int) ((camera.X)/32), (int) ((camera.Y + Settings.Resolution.Y)/32));
 
+            GetBlock((int)((camera.X + Settings.Resolution.X/2) / 32), (int)((camera.Y) / 32));
+            GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y/2) / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y / 2) / 32));
+            GetBlock((int)((camera.X + Settings.Resolution.X / 2) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+
             min = new Vector2((camera.X)/ssx - 1, (camera.Y)/ssy - 1);
             max = new Vector2((camera.X + Settings.Resolution.X)/ssx,
                               (camera.Y + Settings.Resolution.Y)/ssy);
@@ -1067,6 +1069,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             for (int k = 0; k < sectors_.Count; k++) {
                 MapSector sector = sectors_.ElementAt(k).Value;
+                if(sector.Blocks != null && sector.Blocks[0]!= null)
                 if (sector.SectorOffsetX*rx + rx < min.X &&
                     sector.SectorOffsetY*ry + ry < min.Y) {
                     continue;
@@ -1094,7 +1097,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                             }
 
 
-                            if ((shad || MapJustUpdated) && !sector.GetBlock(a).Data.IsTransparent) {
+                            if ((shad || MapJustUpdated) && !block.Data.IsTransparent)
+                            {
                                 AddShadowpointForBlock(camera, per, xpos, ypos, block.Data.swide);
                             }
                         }

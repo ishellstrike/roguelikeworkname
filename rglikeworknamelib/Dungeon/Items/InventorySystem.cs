@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Item {
     public class InventorySystem {
@@ -139,6 +140,20 @@ namespace rglikeworknamelib.Dungeon.Item {
                 fileStream.Close();
                 fileStream.Dispose();
             }
+        }
+
+       // public void ExtractItem(string s,)
+
+        public void Craft(CraftData selectedCraft) {
+            var a = CraftRequireCheck(selectedCraft.Input1, selectedCraft.Input1Count);
+            var b = CraftRequireCheck(selectedCraft.Input2, selectedCraft.Input2Count);
+            var c = CraftRequireCheck(selectedCraft.Input3, selectedCraft.Input3Count);
+            var d = CraftRequireCheck(selectedCraft.Input4, selectedCraft.Input4Count);
+        }
+
+        private bool CraftRequireCheck(string[] a, string[] b) {
+            if (a == null) return true;
+            return a.Select(t1 => items_.FirstOrDefault(x => x.Id == t1)).Where((t, i) => t != null && t.Count > int.Parse(b[i])).Any();
         }
     }
 }

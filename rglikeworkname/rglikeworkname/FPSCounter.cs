@@ -16,7 +16,8 @@ namespace Mork {
         private static int frameRate_;
         private static readonly Vector2 position_ = new Vector2(10, 50);
         private static readonly Vector2 ofs = new Vector2(0, 15);
-        private static long memo;
+        private static float memo;
+        private static double cpu;
         private static readonly int[] graph = new int[MAX_GR];
         private static int curent_;
         private static int max_ = 1, min_;

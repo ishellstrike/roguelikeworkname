@@ -55,7 +55,7 @@ namespace rglikeworknamelib.Parser {
             var temp = new Collection<Texture2D>();
 
             var sr = new StreamReader(s, Encoding.Default);
-            while (true) {
+            for (;;) {
                 string t = sr.ReadLine();
                 if (t == null || t.Length < 3) {
                     break;
@@ -70,7 +70,7 @@ namespace rglikeworknamelib.Parser {
             var temp = new Dictionary<string, Texture2D>();
 
             var sr = new StreamReader(s, Encoding.Default);
-            while (true) {
+            for (;;) {
                 string t = sr.ReadLine();
                 if (t == null || t.Length < 3) {
                     break;

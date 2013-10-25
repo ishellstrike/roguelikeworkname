@@ -34,7 +34,7 @@ namespace jarg {
                 if (ks_[Keys.M] == KeyState.Down && lks_[Keys.M] == KeyState.Up) {
                     WindowGlobal.Visible = !WindowGlobal.Visible;
                     if (WindowGlobal.Visible) {
-                        currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
+                        currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_, mousemapoffset);
                         ImageGlobal.image = currentFloor_.GetMap();
                     }
                 }
@@ -120,7 +120,7 @@ namespace jarg {
                         currentFloor_.GetSector(i + x, j + y);
                     }
                 }
-                currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_);
+                currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_, mousemapoffset);
                 ImageGlobal.image = currentFloor_.GetMap();
                 currentFloor_.KillFarSectors(player_, gameTime, true);
             }

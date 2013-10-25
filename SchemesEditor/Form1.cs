@@ -58,7 +58,7 @@ namespace SchemesEditor {
                 listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.MTex + " -- " + a.Value.Name);
             }
 
-            while (true) {
+            for (;;) {
                 string T = sr.ReadLine();
                 if (T == null) {
                     break;

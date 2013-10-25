@@ -116,6 +116,7 @@ namespace jarg {
         private Button CraftSortAll;
         private ListContainer CraftItems;
         private LabelFixed CraftMoreInfo;
+        private Button CraftThisButton;
 
         #endregion
 
@@ -336,6 +337,9 @@ namespace jarg {
                                       ws) {Visible = false};
             ImageGlobal = new Image(new Vector2(10, 10), new Texture2D(GraphicsDevice, 10, 10), Color.White,
                                     WindowGlobal);
+            ImageGlobal.OnMouseDown += ImageGlobal_OnMouseDown;
+            ImageGlobal.OnMouseUp += ImageGlobalOnOnMouseUp;
+            ImageGlobal.OnMouseMove += ImageGlobalOnOnMouseMove;
 
             int ii = 0;
             CaracterWindow =
@@ -409,6 +413,35 @@ namespace jarg {
             CraftSortAll.OnPressed += CraftSortAll_OnPressed;
             CraftItems = new ListContainer(new Rectangle(0,40,(int)(CraftWindow.Width/5*2),(int)(CraftWindow.Height - 60)), CraftWindow);
             CraftMoreInfo = new LabelFixed(new Vector2(CraftItems.Width + 10, 40), string.Empty, 40, CraftWindow);
+            CraftThisButton = new Button(new Vector2(CraftItems.Width + 10, CraftWindow.Height - 60), "Craft", CraftWindow);
+            CraftThisButton.OnPressed += CraftThisButton_OnPressed;
+        }
+
+        void CraftThisButton_OnPressed(object sender, EventArgs e)
+        {
+            if (selectedCraft != null) {
+                inventory_.Craft(selectedCraft);
+            }
+        }
+
+        private void ImageGlobalOnOnMouseMove(object sender, Image.MouseStateEventArgs mouseStateEventArgs)
+        {
+            if (mousemappress_)
+            {
+                mousemapoffset -= new Vector2((mouseStateEventArgs.Ms.X - mouseStateEventArgs.Lms.X) / 10f,
+                                              (mouseStateEventArgs.Ms.Y - mouseStateEventArgs.Lms.Y) / 10f);
+                currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_, mousemapoffset);
+            }
+        }
+
+        private void ImageGlobalOnOnMouseUp(object sender, Image.MouseStateEventArgs mouseStateEventArgs) {
+            mousemappress_ = false;
+        }
+
+        private bool mousemappress_;
+        private Vector2 mousemapoffset;
+        void ImageGlobal_OnMouseDown(object sender, Image.MouseStateEventArgs e) {
+            mousemappress_ = true;
         }
 
         private CraftData selectedCraft;
@@ -626,6 +659,7 @@ namespace jarg {
                 if (parts.Length == 2) {
                     if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y)) {
                         player_.Position = new Vector2(x*MapSector.Rx*32, y*MapSector.Ry*32);
+                        mousemapoffset = Vector2.Zero;
                         EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y),
                                      GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                     }
