@@ -6,26 +6,6 @@ float lightRadius;
 float3 lightPosition;
 float3 lightColor;
  
-Texture NormalMap;
-sampler NormalMapSampler = sampler_state {
-    texture = <NormalMap>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
-    AddressU = mirror;
-    AddressV = mirror;
-};
- 
-Texture DepthMap;
-sampler DepthMapSampler = sampler_state {
-    texture = <DepthMap>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
-    AddressU = mirror;
-    AddressV = mirror;
-};
- 
 struct VertexToPixel
 {
     float4 Position : POSITION;
@@ -50,10 +30,7 @@ VertexToPixel VertexToPixelShader(float4 inPos: POSITION0, float2 texCoord: TEXC
 PixelToFrame PointLightShader(VertexToPixel PSIn) : COLOR0
 {
     PixelToFrame Output = (PixelToFrame)0;
- 
-    float3 normal = tex2D(NormalMapSampler, PSIn.TexCoord).rgb;
-    normal = normal*2.0f-1.0f;
-    normal = normalize(normal);
+	float3 normal = float3(0,0,-1);
  
     float depth = 1;
  

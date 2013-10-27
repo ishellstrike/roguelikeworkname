@@ -31,7 +31,6 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 namespace jarg {
     public partial class JargMain : Game {
         private static readonly Logger logger = LogManager.GetLogger("JargMain");
-        private static Form gameWindowForm_;
         public static bool ErrorExit;
         private readonly GraphicsDeviceManager graphics_;
         private readonly Color lwstatus_color = new Color(1, 1, 1, 0.2f);
@@ -40,7 +39,6 @@ namespace jarg {
         private Effect EffectOmnilight;
         private bool Flashlight = true;
         public float PlayerSeeAngle;
-        private Texture2D RenderedFlashlight;
         private Action<GameTime> UpdateAction = x => { };
         private WindowsMediaPlayer WMPs;
         private Achievements achievements_;
@@ -52,7 +50,6 @@ namespace jarg {
         private Texture2D caracter;
         private RenderTarget2D colorMapRenderTarget_;
         private GameLevel currentFloor_;
-        private RenderTarget2D depthMapRenderTarget_;
         private Action<GameTime> drawAction_ = x => { };
         private SpriteFont font1_;
         private Texture2D gear;
@@ -62,8 +59,6 @@ namespace jarg {
         private Label labelMainVer_;
         private LevelWorker levelWorker_;
         private Effect lig1;
-        private Effect lig3;
-        private Effect lig4;
         private List<Light> lightCollection_;
         private Effect lightEffect1_;
         private Effect lightEffect2_;
@@ -73,7 +68,6 @@ namespace jarg {
         private Texture2D map;
         private MouseState ms_;
         private bool needChangeSesolution_;
-        private RenderTarget2D normalMapRenderTarget_;
         private Vector2 pivotpoint_;
         private Player player_;
         private Vector2 player_last_pos;
@@ -180,7 +174,7 @@ namespace jarg {
         }
 
         private void UpdateTitle() {
-            Window.Title = Version.GetLong() + string.Format(" - {0}x{1}", Settings.Resolution.X, Settings.Resolution.Y);
+            Window.Title = Version.GetLong() + string.Format(" - {0}x{1} S: {2}x{3}", Settings.Resolution.X, Settings.Resolution.Y, (int)(Settings.Resolution.X/LightQ), (int)(Settings.Resolution.Y/LightQ));
         }
 
         private void Window_ClientSizeChanged(object sender, EventArgs e) {
@@ -188,6 +182,7 @@ namespace jarg {
             needChangeSesolution_ = true;
         }
 
+        private int LightQ = 1;
         private void ResolutionChanging() {
             var height = (int) Settings.Resolution.Y;
             var width = (int) Settings.Resolution.X;
@@ -206,11 +201,7 @@ namespace jarg {
             EventLog_onLogUpdate(null, null);
             colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
                                                        DepthFormat.Depth24Stencil8);
-            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
-                                                       DepthFormat.Depth24Stencil8);
-            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
-                                                        DepthFormat.Depth24Stencil8);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width/LightQ, height/LightQ, true, SurfaceFormat.Color,
                                                         DepthFormat.Depth24Stencil8);
             EffectOmnilight.Parameters["screenWidth"].SetValue(width);
             EffectOmnilight.Parameters["screenHeight"].SetValue(height);
@@ -243,8 +234,6 @@ namespace jarg {
 
             lig1 = Content.Load<Effect>(@"Effects/Lighting1");
             EffectOmnilight = Content.Load<Effect>(@"Effects/Effect1");
-            lig3 = Content.Load<Effect>(@"Effects/Effect11");
-            lig4 = Content.Load<Effect>(@"Effects/Effect111");
 
             arup = Content.Load<Texture2D>(@"Textures/arrow_up");
             ardown = Content.Load<Texture2D>(@"Textures/arrow_down");
@@ -269,10 +258,6 @@ namespace jarg {
 
             colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
                                                        DepthFormat.Depth24Stencil8);
-            depthMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
-                                                       DepthFormat.Depth24Stencil8);
-            normalMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
-                                                        DepthFormat.Depth24Stencil8);
             shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
                                                         DepthFormat.Depth24Stencil8);
 
@@ -318,7 +303,6 @@ namespace jarg {
 
             player_.OnUpdatedEquip += UpdateCaracterWindowItems;
             player_.OnShoot += player__onShoot;
-            RenderedFlashlight = GetRenderedFlashlight();
 
             player_.Load();
             inventory_.Load();
@@ -592,7 +576,7 @@ namespace jarg {
             }
             else {
                 GraphicsDevice.SetRenderTarget(null);
-                spriteBatch_.Begin();
+                spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, ScaleAll2);
                 spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
                 spriteBatch_.End();
             }
@@ -635,20 +619,6 @@ namespace jarg {
                 Color.White);
 
             spriteBatch_.Draw(
-                depthMapRenderTarget_,
-                new Rectangle(size.Width, 0,
-                              size.Width,
-                              size.Height),
-                Color.White);
-
-            spriteBatch_.Draw(
-                normalMapRenderTarget_,
-                new Rectangle(size.Width, size.Height,
-                              size.Width,
-                              size.Height),
-                Color.White);
-
-            spriteBatch_.Draw(
                 shadowMapRenderTarget_,
                 new Rectangle(0, size.Height,
                               size.Width,
@@ -658,6 +628,7 @@ namespace jarg {
             spriteBatch_.End();
         }
 
+        private Matrix ScaleAll2 = Matrix.CreateScale(1);
         private void DrawCombinedMaps() {
             float value = GlobalWorldLogic.GetCurrentSlen()/10;
             lightEffect2_.Parameters["ambient"].SetValue(value);
@@ -668,9 +639,8 @@ namespace jarg {
             lightEffect2_.Parameters["lightAmbient"].SetValue(4);
             lightEffect2_.Parameters["ColorMap"].SetValue(colorMapRenderTarget_);
             lightEffect2_.Parameters["ShadingMap"].SetValue(shadowMapTexture_);
-            lightEffect1_.Parameters["DepthMap"].SetValue(depthMapRenderTarget_);
 
-            spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, ScaleAll2);
             foreach (EffectPass pass in lightEffect2_.CurrentTechnique.Passes) {
                 pass.Apply();
                 spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
@@ -691,14 +661,12 @@ namespace jarg {
             foreach (Light light in lightCollection_) {
                 lightEffect1_.CurrentTechnique = lightEffect1_.Techniques["DeferredPointLight"];
                 lightEffect1_.Parameters["lightStrength"].SetValue(light.Power);
-                lightEffect1_.Parameters["lightPosition"].SetValue(light.GetWorldPosition(camera_));
+                lightEffect1_.Parameters["lightPosition"].SetValue(light.GetWorldPosition(camera_, LightQ));
                 lightEffect1_.Parameters["lightColor"].SetValue(light.Color.ToVector3());
-                lightEffect1_.Parameters["lightRadius"].SetValue(light.LightRadius);
+                lightEffect1_.Parameters["lightRadius"].SetValue(light.LightRadius/LightQ);
 
                 lightEffect1_.Parameters["screenWidth"].SetValue(GraphicsDevice.Viewport.Width);
                 lightEffect1_.Parameters["screenHeight"].SetValue(GraphicsDevice.Viewport.Height);
-                lightEffect1_.Parameters["NormalMap"].SetValue(normalMapRenderTarget_);
-                lightEffect1_.Parameters["DepthMap"].SetValue(depthMapRenderTarget_);
 
                 foreach (EffectPass pass in lightEffect1_.CurrentTechnique.Passes) {
                     pass.Apply();

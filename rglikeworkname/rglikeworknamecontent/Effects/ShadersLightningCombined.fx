@@ -5,9 +5,7 @@ float lightAmbient;
 Texture ColorMap;
 sampler ColorMapSampler = sampler_state {
     texture = <ColorMap>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
+    Filter = MIN_MAG_MIP_POINT;
     AddressU = mirror;
     AddressV = mirror;
 };
@@ -15,19 +13,7 @@ sampler ColorMapSampler = sampler_state {
 Texture ShadingMap;
 sampler ShadingMapSampler = sampler_state {
     texture = <ShadingMap>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
-    AddressU = mirror;
-    AddressV = mirror;
-};
-
-Texture DepthMap;
-sampler DepthMapSampler = sampler_state {
-    texture = <DepthMap>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
+    Filter = MIN_MAG_MIP_LINEAR;
     AddressU = mirror;
     AddressV = mirror;
 };
@@ -36,7 +22,6 @@ float4 CombinedPixelShader(float4 color : COLOR0, float2 texCoords : TEXCOORD0) 
 {
     float4 color2 = tex2D(ColorMapSampler, texCoords);
     float4 shading = tex2D(ShadingMapSampler, texCoords);
-	float depth = tex2D(DepthMapSampler, texCoords);
  
     float4 finalColor = color2 * ambientColor * ambient;
  

@@ -8,8 +8,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public Vector3 Position;
         public float Power;
 
-        public Vector3 GetWorldPosition(Vector2 camera) {
-            return Position - new Vector3(camera.X, camera.Y, 0);
+        public Vector3 GetWorldPosition(Vector2 camera, int SQ) {
+            return (Position - new Vector3(camera.X, camera.Y, 0))/SQ;
         }
     }
 }

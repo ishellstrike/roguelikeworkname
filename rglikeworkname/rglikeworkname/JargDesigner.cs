@@ -32,16 +32,15 @@ namespace jarg {
         private Button ButtonIngameExit;
         private Button ButtonIngameMenuSettings;
         private Button ButtonLightOff;
-        private Button ButtonLightOn;
+        private Button ButtonLightOn1, ButtonLightOn2, ButtonLightOn4, ButtonLightOn8, ButtonLightOn12;
         private Button ButtonNewGame;
         private Button ButtonOpenGit;
         private Button ButtonRadioGB, ButtonRadioOff;
 
         private Button ButtonResolution1024768,
                        ButtonResolution1280800,
-                       ButtonResolution19201024;
-
-        private Button ButtonResolution800600;
+                       ButtonResolution19201024,
+                       ButtonResolution800600;
 
         private Button ButtonSettings;
         private Button CloseAllTestButton;
@@ -187,9 +186,17 @@ namespace jarg {
             ButtonFramelimitOff = new Button(new Vector2(10 + 50 + 40*3, 10 + 40*3), "Off", WindowSettings);
             ButtonFramelimitOff.OnPressed += ButtonFramelimitOff_onPressed;
             LabelLight = new Label(new Vector2(10, 10 + 40*4), "Enable lighting", WindowSettings);
-            ButtonLightOn = new Button(new Vector2(10 + 50 + 40*2, 10 + 40*4), "On", WindowSettings);
-            ButtonLightOn.OnPressed += ButtonLightOn_onPressed;
-            ButtonLightOff = new Button(new Vector2(10 + 50 + 40*3, 10 + 40*4), "Off", WindowSettings);
+            ButtonLightOn1 = new Button(new Vector2(LabelLight.GetPosition().X + LabelLight.Width + 10, 10 + 40 * 4), "Extra", WindowSettings);
+            ButtonLightOn1.OnPressed += ButtonLightOn1On1Pressed;
+            ButtonLightOn2 = new Button(new Vector2(ButtonLightOn1.GetPosition().X + ButtonLightOn1.Width + 10, 10 + 40 * 4), "Hight", WindowSettings);
+            ButtonLightOn2.OnPressed += ButtonLightOn2On1Pressed;
+            ButtonLightOn4 = new Button(new Vector2(ButtonLightOn2.GetPosition().X + ButtonLightOn2.Width + 10, 10 + 40 * 4), "Medium", WindowSettings);
+            ButtonLightOn4.OnPressed += ButtonLightOn4On1Pressed;
+            ButtonLightOn8 = new Button(new Vector2(ButtonLightOn4.GetPosition().X + ButtonLightOn4.Width + 10, 10 + 40 * 4), "Low", WindowSettings);
+            ButtonLightOn8.OnPressed += ButtonLightOn8On1Pressed;
+            ButtonLightOn12 = new Button(new Vector2(ButtonLightOn8.GetPosition().X + ButtonLightOn8.Width + 10, 10 + 40 * 4), "Minimum", WindowSettings);
+            ButtonLightOn12.OnPressed += ButtonLightOn12On1Pressed;
+            ButtonLightOff = new Button(new Vector2(ButtonLightOn12.GetPosition().X + ButtonLightOn12.Width + 10, 10 + 40 * 4), "Disabled", WindowSettings);
             ButtonLightOff.OnPressed += ButtonLightOff_onPressed;
             LabelResolution = new Label(new Vector2(10, 10 + 40*5), "Resolution", WindowSettings);
             ButtonResolution800600 = new Button(new Vector2(10 + 50 + 95*1, 10 + 40*5), " 800x600 ",
@@ -321,7 +328,7 @@ namespace jarg {
             ButtonContainerTakeAll.OnPressed += ButtonContainerTakeAll_onPressed;
 
             EventLogWindow =
-                new Window(new Rectangle(3, 570, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/4), "Log",
+                new Window(new Rectangle(3, (int)(Settings.Resolution.Y - Settings.Resolution.Y / 4 - 3), (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4), "Log",
                            true, ws_) {Visible = false, Closable = false, hides = true};
             ContainerEventLog =
                 new ListContainer(
@@ -415,6 +422,42 @@ namespace jarg {
             CraftMoreInfo = new LabelFixed(new Vector2(CraftItems.Width + 10, 40), string.Empty, 40, CraftWindow);
             CraftThisButton = new Button(new Vector2(CraftItems.Width + 10, CraftWindow.Height - 60), "Craft", CraftWindow);
             CraftThisButton.OnPressed += CraftThisButton_OnPressed;
+        }
+
+        private void ButtonLightOff_onPressed(object sender, EventArgs e)
+        {
+            Settings.Lighting = false;
+        }
+
+        private void ButtonLightOn1On1Pressed(object sender, EventArgs e)
+        {
+            Settings.Lighting = true;
+            LightQ = 1;
+            ResolutionChanging();
+        }
+
+        private void ButtonLightOn12On1Pressed(object sender, EventArgs e) {
+            Settings.Lighting = true;
+            LightQ = 12;
+            ResolutionChanging();
+        }
+
+        private void ButtonLightOn2On1Pressed(object sender, EventArgs e) {
+            Settings.Lighting = true;
+            LightQ = 2;
+            ResolutionChanging();
+        }
+
+        private void ButtonLightOn4On1Pressed(object sender, EventArgs e) {
+            Settings.Lighting = true;
+            LightQ = 4;
+            ResolutionChanging();
+        }
+
+        private void ButtonLightOn8On1Pressed(object sender, EventArgs e) {
+            Settings.Lighting = true;
+            LightQ = 8;
+            ResolutionChanging();
         }
 
         void CraftThisButton_OnPressed(object sender, EventArgs e)
@@ -537,15 +580,6 @@ namespace jarg {
         private void ButtonRadioGB_onPressed(object sender, EventArgs e) {
             WMPs.controls.play();
             WindowRadio.Visible = true;
-        }
-
-
-        private void ButtonLightOff_onPressed(object sender, EventArgs e) {
-            Settings.Lighting = false;
-        }
-
-        private void ButtonLightOn_onPressed(object sender, EventArgs e) {
-            Settings.Lighting = true;
         }
 
         private void ButtonFramelimitOff_onPressed(object sender, EventArgs e) {

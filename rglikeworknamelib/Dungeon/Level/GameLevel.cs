@@ -747,7 +747,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (Settings.DebugWire) {
                 gd_.RasterizerState = new RasterizerState { CullMode = CullMode.CullClockwiseFace, FillMode = FillMode.WireFrame};
                 (be_ as BasicEffect).DiffuseColor = Color.White.ToVector3();
-
                 foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
                     pass.Apply();
 
@@ -985,18 +984,19 @@ namespace rglikeworknamelib.Dungeon.Level {
             float ssy = Settings.FloorSpriteSize.Y;
 
             GetBlock((int) (camera.X/32), (int) (camera.Y/32));
-            GetBlock((int) ((camera.X + Settings.Resolution.X)/32), (int) ((camera.Y + Settings.Resolution.Y)/32));
-            GetBlock((int) ((camera.X + Settings.Resolution.X)/32), (int) ((camera.Y)/32));
-            GetBlock((int) ((camera.X)/32), (int) ((camera.Y + Settings.Resolution.Y)/32));
+            Vector2 resolution = Settings.Resolution;
+            GetBlock((int) ((camera.X + resolution.X)/32), (int) ((camera.Y + resolution.Y)/32));
+            GetBlock((int) ((camera.X + resolution.X)/32), (int) ((camera.Y)/32));
+            GetBlock((int) ((camera.X)/32), (int) ((camera.Y + resolution.Y)/32));
 
-            GetBlock((int)((camera.X + Settings.Resolution.X/2) / 32), (int)((camera.Y) / 32));
-            GetBlock((int)((camera.X) / 32), (int)((camera.Y + Settings.Resolution.Y/2) / 32));
-            GetBlock((int)((camera.X + Settings.Resolution.X) / 32), (int)((camera.Y + Settings.Resolution.Y / 2) / 32));
-            GetBlock((int)((camera.X + Settings.Resolution.X / 2) / 32), (int)((camera.Y + Settings.Resolution.Y) / 32));
+            GetBlock((int)((camera.X + resolution.X/2) / 32), (int)((camera.Y) / 32));
+            GetBlock((int)((camera.X) / 32), (int)((camera.Y + resolution.Y/2) / 32));
+            GetBlock((int)((camera.X + resolution.X) / 32), (int)((camera.Y + resolution.Y / 2) / 32));
+            GetBlock((int)((camera.X + resolution.X / 2) / 32), (int)((camera.Y + resolution.Y) / 32));
 
             min = new Vector2((camera.X)/ssx - 1, (camera.Y)/ssy - 1);
-            max = new Vector2((camera.X + Settings.Resolution.X)/ssx,
-                              (camera.Y + Settings.Resolution.Y)/ssy);
+            max = new Vector2((camera.X + resolution.X)/ssx,
+                              (camera.Y + resolution.Y)/ssy);
 
             for (int k = 0; k < sectors_.Count; k++) {
                 MapSector sector = sectors_.ElementAt(k).Value;
