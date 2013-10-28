@@ -182,7 +182,7 @@ namespace jarg {
             needChangeSesolution_ = true;
         }
 
-        private int LightQ = 1;
+        private int LightQ = 4;
         private void ResolutionChanging() {
             var height = (int) Settings.Resolution.Y;
             var width = (int) Settings.Resolution.X;
@@ -258,7 +258,7 @@ namespace jarg {
 
             colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
                                                        DepthFormat.Depth24Stencil8);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, true, SurfaceFormat.Color,
                                                         DepthFormat.Depth24Stencil8);
 
             lightEffect1_ = Content.Load<Effect>(@"Effects/ShadersLightningShadow");
@@ -297,6 +297,13 @@ namespace jarg {
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
                                    currentFloor_, font1_, lineBatch_);
             inventory_ = new InventorySystem();
+#if DEBUG
+            inventory_.AddItem(new Item("testhat", 1));
+            inventory_.AddItem(new Item("testhat2", 1));
+            inventory_.AddItem(new Item("ak47", 1));
+            inventory_.AddItem(new Item("a762", 100000));
+            inventory_.AddItem(new Item("resp1", 1));
+#endif
             UpdateInventoryContainer();
 
             Update_Craft_Items(null, null);

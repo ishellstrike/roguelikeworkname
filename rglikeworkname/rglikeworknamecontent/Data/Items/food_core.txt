@@ -35,7 +35,7 @@ Doses=20
 SType=Food
 
 ~Item,meatcan1
-Name=Банка тушеной говядины
+Name=Открытая банка тушеной говядины
 Nameret=Банка с едой
 Weight=300
 NutCal=800
@@ -43,14 +43,22 @@ Doses=2
 AfteruseId=emptycan
 SType=Food
 
+~Item,meatcan1сl
+Name=Закрытая банка тушеной говядины
+Nameret=Банка с едой
+
 ~Item,meatcan2
-Name=Банка паштета
+Name=Открытая банка паштета
 Nameret=Банка с едой
 Weight=300
 NutCal=600
 Doses=2
 AfteruseId=emptycan
 SType=Food
+
+~Item,meatcan2cl
+Name=Закрытая банка паштета
+Nameret=Банка с едой
 
 ~Item,milk1
 Name=Пакет молока

@@ -46,3 +46,9 @@ Weight=100
 Name=Солнцезащитные очки
 SType=Wear
 Weight=50
+
+~Item,resp1
+Name=Респиратор
+SType=Wear
+Weight=8000
+Dress=resp1

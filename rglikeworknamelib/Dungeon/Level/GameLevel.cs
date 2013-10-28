@@ -494,7 +494,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             Vector2 a = who.GetPositionInBlocks();
             Color colb = Color.Black;
 
-            if ((int) a.X != (int) pre_pos_vis.X || (int) a.Y != (int) pre_pos_vis.Y || MapJustUpdated) {
+            //if ((int) a.X != (int) pre_pos_vis.X || (int) a.Y != (int) pre_pos_vis.Y || MapJustUpdated) 
+            {
                 for (int i = -20; i < 20; i++) {
                     for (int j = -20; j < 20; j++) {
                         IBlock t = GetBlock((int) a.X + i, (int) a.Y + j);

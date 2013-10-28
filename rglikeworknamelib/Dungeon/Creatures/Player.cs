@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
@@ -20,9 +21,6 @@ namespace rglikeworknamelib.Creatures {
     public class Player : ShootingCreature {
         private readonly SpriteBatch sb_;
 
-        public Dress DressHat = new Dress("haer1", Color.White);
-        public Dress DressPants = new Dress("pants1", Color.DarkBlue);
-        public Dress DressTshort = new Dress("t-short1", Color.DarkRed);
         public SpriteFont Font;
 
 
@@ -243,11 +241,12 @@ namespace rglikeworknamelib.Creatures {
             var origin = new Vector2(Tex.Width/2f, Tex.Height);
             sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
                      SpriteEffects.None, 1);
-            sb_.Draw(Atlases.DressAtlas[DressHat.id], position, null, DressHat.col, 0, origin, 1, SpriteEffects.None, 1);
-            sb_.Draw(Atlases.DressAtlas[DressPants.id], position, null, DressPants.col, 0, origin, 1, SpriteEffects.None,
-                     1);
-            sb_.Draw(Atlases.DressAtlas[DressTshort.id], position, null, DressTshort.col, 0, origin, 1,
-                     SpriteEffects.None, 1);
+            foreach (var dress in Weared) {
+                if (!string.IsNullOrEmpty(dress.Data.Dress)) {
+                    sb_.Draw(Atlases.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin, 1,
+                             SpriteEffects.None, 1);
+                }
+            }
 
             if (Settings.DebugInfo) {
                 sb_.DrawString(Font,
@@ -363,9 +362,6 @@ namespace rglikeworknamelib.Creatures {
                     ItemMeele.UpdateData();
                 }
 
-                DressHat = (Dress) binaryFormatter.Deserialize(gZipStream);
-                DressPants = (Dress) binaryFormatter.Deserialize(gZipStream);
-                DressTshort = (Dress) binaryFormatter.Deserialize(gZipStream);
                 Hunger = (Stat) binaryFormatter.Deserialize(gZipStream);
                 Thirst = (Stat) binaryFormatter.Deserialize(gZipStream);
                 Heat = (Stat) binaryFormatter.Deserialize(gZipStream);
@@ -403,9 +399,6 @@ namespace rglikeworknamelib.Creatures {
             if (t) {
                 binaryFormatter.Serialize(gZipStream, ItemMeele);
             }
-            binaryFormatter.Serialize(gZipStream, DressHat);
-            binaryFormatter.Serialize(gZipStream, DressPants);
-            binaryFormatter.Serialize(gZipStream, DressTshort);
             binaryFormatter.Serialize(gZipStream, Hunger);
             binaryFormatter.Serialize(gZipStream, Thirst);
             binaryFormatter.Serialize(gZipStream, Heat);
