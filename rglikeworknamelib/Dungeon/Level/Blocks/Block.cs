@@ -4,11 +4,8 @@ using Microsoft.Xna.Framework;
 namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]
     public class Block : IBlock {
-        [NonSerialized] private BlockData data_;
         private string id_;
         [NonSerialized] private Color lightness_;
-        private string mTex_;
-        [NonSerialized] private Rectangle source_;
 
         public string Id {
             get { return id_; }
@@ -18,6 +15,8 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             }
         }
 
+        [NonSerialized]
+        private BlockData data_;
         public BlockData Data {
             get { return data_; }
         }
@@ -29,10 +28,13 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
 
         public bool Explored { get; set; }
 
+        [NonSerialized]
+        private Rectangle source_;
         public Rectangle Source {
             get { return source_; }
         }
 
+        private string mTex_;
         public string MTex {
             get { return mTex_; }
             set {

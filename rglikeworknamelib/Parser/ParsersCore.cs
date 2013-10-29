@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework;
@@ -66,6 +67,7 @@ namespace rglikeworknamelib.Parser {
             return temp;
         }
 
+        [Obsolete]
         public static Dictionary<string, Texture2D> LoadTexturesTagged(string s, ContentManager content) {
             var temp = new Dictionary<string, Texture2D>();
 
@@ -80,6 +82,22 @@ namespace rglikeworknamelib.Parser {
             }
 
             return temp;
+        }
+
+        /// <summary>
+        /// Load all textures from directory
+        /// </summary>
+        /// <param name="s">directory patch</param>
+        /// <param name="content">content manager</param>
+        /// <returns>texture dictionary</returns>
+        public static Dictionary<string, Texture2D> LoadTexturesDirectory(string s, ContentManager content) {
+            var dictionary = new Dictionary<string, Texture2D>();
+            foreach (string file in Directory.GetFiles(s, "*.xnb")) {
+                var info = new FileInfo(file);
+                string t = info.Name.Replace(info.Extension, string.Empty);
+                dictionary.Add(t, content.Load<Texture2D>(s.Replace("Content\\", string.Empty)+"\\"+t));
+            }
+            return dictionary;
         }
 
         [Obsolete]

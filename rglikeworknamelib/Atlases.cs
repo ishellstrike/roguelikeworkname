@@ -37,23 +37,16 @@ namespace rglikeworknamelib {
         }
 
         private void Load(GraphicsDevice gd) {
-            FloorArray = ParsersCore.LoadTexturesTagged(Settings.GetFloorTextureDirectory() + @"\textureloadorder.ord",
-                                                        Content);
-            BlockArray = ParsersCore.LoadTexturesTagged(
-                Settings.GetObjectTextureDirectory() + @"\textureloadorder.ord", Content);
-            VehicleArray =
-                ParsersCore.LoadTexturesTagged(Settings.GetVehicleTextureDirectory() + @"\textureloadorder.ord", Content);
+            FloorArray = ParsersCore.LoadTexturesDirectory(Settings.GetFloorTextureDirectory(), Content);
+            BlockArray = ParsersCore.LoadTexturesDirectory(Settings.GetObjectTextureDirectory(), Content);
+            VehicleArray = ParsersCore.LoadTexturesTagged(Settings.GetVehicleTextureDirectory() + @"\textureloadorder.ord", Content);
             RebuildAtlases(gd);
             // BlockArray.Clear();
-            CreatureAtlas = ParsersCore.LoadTexturesTagged(
-                Settings.GetUnitTextureDirectory() + @"\textureloadorder.ord", Content);
-            ParticleAtlas =
-                ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"\textureloadorder.ord",
+            CreatureAtlas = ParsersCore.LoadTexturesDirectory(Settings.GetUnitTextureDirectory(), Content);
+            ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"\textureloadorder.ord",
                                                 Content);
-            DressAtlas = ParsersCore.LoadTexturesTagged(
-                Settings.GetDressTexturesDirectory() + @"\textureloadorder.ord", Content);
-            MinimapAtlas =
-                ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"\textureloadorder.ord",
+            DressAtlas = ParsersCore.LoadTexturesDirectory(Settings.GetDressTexturesDirectory(), Content);
+            MinimapAtlas = ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"\textureloadorder.ord",
                                                Content);
 
             NormalAtlas = new Collection<Texture2D>();

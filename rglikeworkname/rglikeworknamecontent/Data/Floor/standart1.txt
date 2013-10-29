@@ -17,7 +17,7 @@ Walkable=true
 Name="Çולכÿ"
 mmcol="brown"
 Walkable=true
-MTex=1
+MTex=dirt1
 
 ~Floor,2
 Name="Àספאכüע"

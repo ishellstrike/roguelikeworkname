@@ -222,7 +222,7 @@ namespace jarg {
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
 
-            var a = new Atlases(Content, GraphicsDevice);
+            new Atlases(Content, GraphicsDevice);
 
             whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             var data = new uint[1];
@@ -303,6 +303,7 @@ namespace jarg {
             inventory_.AddItem(new Item("ak47", 1));
             inventory_.AddItem(new Item("a762", 100000));
             inventory_.AddItem(new Item("resp1", 1));
+            inventory_.AddItem(new Item("kitty_collar", 1));
 #endif
             UpdateInventoryContainer();
 
@@ -356,7 +357,7 @@ namespace jarg {
             HideInfoWindow();
             sw.Stop();
             logger.Info(
-                "Total:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\nloaded in {0}",
+                "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\nloaded in {0}",
                 sw.Elapsed,
                 MonsterDataBase.Data.Count,
                 BlockDataBase.Data.Count,
@@ -367,6 +368,11 @@ namespace jarg {
                 DialogDataBase.data.Count,
                 NameDataBase.data.Count,
                 CraftDataBase.Data.Count);
+
+            sw.Start();
+            BasesCheker.CheckAndResolve();
+            sw.Stop();
+            logger.Info(string.Format("Check end in {0}", sw.Elapsed));
 
             Action igen = InitialGeneration;
             igen.BeginInvoke(null, null);

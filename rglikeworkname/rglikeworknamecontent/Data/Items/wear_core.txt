@@ -2,6 +2,7 @@
 Name=Кошачий ошейник
 Weight=50
 SType=Wear
+Dress=collar1
 
 ~Item,socks
 Name=Носки

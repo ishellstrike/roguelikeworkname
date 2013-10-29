@@ -131,6 +131,7 @@
     <Compile Include="Dungeon\Creatures\Creature.cs" />
     <Compile Include="Dungeon\Creatures\CreatureData.cs" />
     <Compile Include="Dungeon\Creatures\MonsterDataBase.cs" />
+    <Compile Include="Parser\BasesCheker.cs" />
     <Compile Include="Parser\ChemesParser.cs" />
     <Compile Include="Parser\ParsersCore.cs" />
     <Compile Include="Dungeon\Creatures\Player.cs" />
