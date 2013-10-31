@@ -304,6 +304,9 @@ namespace jarg {
             inventory_.AddItem(new Item("a762", 100000));
             inventory_.AddItem(new Item("resp1", 1));
             inventory_.AddItem(new Item("kitty_collar", 1));
+            player_.Weared.Add(new Item("jeans", 1));
+            player_.Weared.Add(new Item("t-shirt1", 1));
+            player_.Weared.Add(new Item("haer1", 1));
 #endif
             UpdateInventoryContainer();
 

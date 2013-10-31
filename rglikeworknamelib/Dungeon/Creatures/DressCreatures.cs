@@ -1,13 +1,13 @@
 using System;
 using Microsoft.Xna.Framework;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures {
     [Serializable]
-    public struct Dress {
+    public struct DressCreatures {
         public Color col;
         public string id;
 
-        public Dress(string i, Color c) {
+        public DressCreatures(string i, Color c) {
             id = i;
             col = c;
         }

@@ -2,20 +2,21 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
     [Serializable]
     public class CrearureZombie : Creature {
-        public Dress Hat = new Dress("haer1",
+        public DressCreatures Hat = new DressCreatures("haer1",
                                      new Color(Settings.rnd.Next()%255, Settings.rnd.Next()%255, Settings.rnd.Next()%255));
 
-        public Dress Pants = new Dress("pants1",
+        public DressCreatures Pants = new DressCreatures("pants1",
                                        new Color(Settings.rnd.Next()%255, Settings.rnd.Next()%255,
                                                  Settings.rnd.Next()%255));
 
-        public Dress Tshort = new Dress("t-short1",
+        public DressCreatures Tshort = new DressCreatures("t-shirt1",
                                         new Color(Settings.rnd.Next()%255, Settings.rnd.Next()%255,
                                                   Settings.rnd.Next()%255));
 

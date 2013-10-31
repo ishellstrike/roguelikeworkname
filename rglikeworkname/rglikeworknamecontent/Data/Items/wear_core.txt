@@ -47,9 +47,28 @@ Weight=100
 Name=Солнцезащитные очки
 SType=Wear
 Weight=50
+Dress=glass1
 
 ~Item,resp1
 Name=Респиратор
 SType=Wear
-Weight=8000
+Weight=800
 Dress=resp1
+
+~Item,jeans
+Name=Джинсы
+SType=Wear
+Weight=500
+Dress=jeans
+
+~Item,t-shirt1
+Name=Футболка
+SType=Wear
+Weight=200
+Dress=t-shirt1
+
+~Item,haer1
+Name=Волосы
+Stype=Wear
+Dress=haer1
+Hidden=true

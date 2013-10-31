@@ -15,6 +15,7 @@ namespace rglikeworknamelib.Dungeon.Item {
         public int Damage = 20;
         public string Description;
         public string Dress;
+        public bool Hidden;
 
         public int Doses = 1;
         public int FireRate = 1000;

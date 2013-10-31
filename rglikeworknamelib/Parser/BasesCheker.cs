@@ -39,6 +39,14 @@ namespace rglikeworknamelib.Parser
                     data.Value.Dress = "error";
                     errorIDB++;
                 }
+                if (data.Value.AfteruseId != null)
+                {
+                    if (!ItemDataBase.Data.ContainsKey(data.Value.AfteruseId)) {
+                        Logger.Error(string.Format("object \"{0}\" for ItemDataBase.AfteruseId not found", data.Value.AfteruseId));
+                        data.Value.AfteruseId = "0";
+                        errorIDB++;
+                    }
+                }
             }
 
             int errorFDB = 0;

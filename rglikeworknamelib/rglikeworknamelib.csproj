@@ -76,7 +76,7 @@
     <Compile Include="Dungeon\Creatures\AbilityNameStyle.cs" />
     <Compile Include="Dungeon\Creatures\CrearureZombie.cs" />
     <Compile Include="Dungeon\Creatures\DamageType.cs" />
-    <Compile Include="Dungeon\Creatures\Dress.cs" />
+    <Compile Include="Dungeon\Creatures\DressCreatures.cs" />
     <Compile Include="Dungeon\Creatures\ICreature.cs" />
     <Compile Include="Dungeon\Creatures\Perk.cs" />
     <Compile Include="Dungeon\Creatures\PerkData.cs" />

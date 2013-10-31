@@ -1094,8 +1094,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\Units\Dress\pants_jeans.png">
-      <Name>pants_jeans</Name>
+    <Compile Include="Textures\Units\Dress\jeans.png">
+      <Name>jeans</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1131,8 +1131,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\Units\Dress\t-short1.png">
-      <Name>t-short1</Name>
+    <Compile Include="Textures\Units\Dress\t-shirt1.png">
+      <Name>t-shirt1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -1161,6 +1161,30 @@
   <ItemGroup>
     <Compile Include="Textures\Dungeon\Floor\error.png">
       <Name>error</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Units\Dress\error.png">
+      <Name>error</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Units\Dress\glass1.png">
+      <Name>glass1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Units\Dress\glass2.png">
+      <Name>glass2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Units\Dress\glass3.png">
+      <Name>glass3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

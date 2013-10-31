@@ -6,37 +6,25 @@ MTex=0
 
 ~Block,1
 Name="Кирпичная кладка"
-MTex=1
-
-~Block,asfalt
-Name="Асфальт"
-MTex=asfalt
-IsWalkable=true
-IsTransparent=true
-
-~Block,asfalt_br
-Name="Разделительная полоса"
-MTex=asfalt_br
-IsWalkable=true
-IsTransparent=true
+MTex=briwall1
 
 ~StorageBlock,2
 Name="Шкаф"
 SmartAction=ActionOpenContainer
 swide=28
-MTex=2
+MTex=shkaf
 
 ~Block,3
 Name="Деревянная дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=7
-MTex=3
+MTex=door1
 
 ~Block,6,6
 Name="Деревянная дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=7
-MTex=6
+MTex=door1_open
 
 ~Block,7,7
 Name="Деревянная дверь (открыта)"
@@ -44,7 +32,7 @@ SmartAction=ActionOpenClose
 AfterDeathId=3
 IsWalkable=true
 IsTransparent=true
-MTex=7
+MTex=door1_open
 
 
 
@@ -52,13 +40,13 @@ MTex=7
 Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
-MTex=4
+MTex=door2
 
 ~Block,5,5
 Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
-MTex=5
+MTex=door2
 
 ~Block,8,8
 Name="Металлическая дверь (открыта)"
@@ -66,7 +54,7 @@ SmartAction=ActionOpenClose
 AfterDeathId=4
 IsWalkable=true
 IsTransparent=true
-MTex=8
+MTex=door2_open
 
 ~Block,9,9
 Name="Консоль"
@@ -75,58 +63,58 @@ MTex=9
 
 ~Block,10,27
 Name="Кровать"
-AlterMtex={"28","39","30","31"}
+AlterMtex={"bed2","bed3","bed4","bed5"}
 IsTransparent=true
-MTex=27
+MTex=bed1
 
 ~StorageBlock,15,32
 Name="Ящик"
 SmartAction=ActionOpenContainer
-AlterMtex={"33","34"}
+AlterMtex={"crates2","crates3"}
 IsTransparent=true
-MTex=32
+MTex=crates1
 
 ~Block,16,36
 Name="Дерево"
 swide=16
-MTex=36
+MTex=tree1
 
 ~Block,18,38
 Name="Небольшое дерево"
 swide=16
-MTex=38
+MTex=tree2
 
 ~Block,17
 Name="Куст"
 swide=16
-MTex=37
+MTex=bush1
 
 
 ~Block,19
 Name="Окно"
 IsTransparent=true
-MTex=38
+MTex=glass_hor
 
 ~Block,20
 Name="Окно"
 IsTransparent=true
-MTex=39
+MTex=glass_hor
 
 
 ~Block,21
 Name="Прилавок"
 IsTransparent=true
-MTex=40
+MTex=table_hor_mid
 
 ~Block,22
 Name="Прилавок"
 IsTransparent=true
-MTex=41
+MTex=table_hor_mid
 
 ~Block,23
 Name="Прилавок"
 IsTransparent=true
-MTex=42
+MTex=table_hor_mid
 
 ~Block,kustsmall
 Name="Молодой кустарник"
@@ -141,7 +129,7 @@ AlterMtex={mbush2,mbush3}
 Name="Густой кустарник"
 IsWalkable=true
 IsTransparent=true
-MTex=bush
+MTex=bush1
 
 ~BlockButningBochka,bbochka
 Name="Горящая бочка"
