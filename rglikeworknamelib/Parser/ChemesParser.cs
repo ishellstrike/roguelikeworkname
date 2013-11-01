@@ -28,9 +28,42 @@ namespace rglikeworknamelib.Parser {
                     cur.x = Convert.ToInt32(header[0]);
                     cur.y = Convert.ToInt32(header[1]);
                     cur.data = new string[cur.x*cur.y];
-                    switch (header[2]) {
+                    switch (header[2].Replace("\r", string.Empty)) {
                         case "house":
                             cur.type = SchemesType.House;
+                            break;
+                        case "b_part_udlr":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_ud":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_lr":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_udl":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_udr":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_ulr":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_dlr":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_ul":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_ur":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_dl":
+                            cur.type = SchemesType.BunkerParts;
+                            break;
+                        case "b_part_dr":
+                            cur.type = SchemesType.BunkerParts;
                             break;
                     }
                     //switch (header[0])

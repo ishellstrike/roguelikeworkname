@@ -194,6 +194,7 @@ Content\Data\Items\test_items.txt
 Content\Data\Items\guns_core.txt
 Content\Data\Items\Crafts\test_crafts.txt
 Content\Data\Items\Crafts\weapons_core.txt
+Content\Data\Schemes\b_part.txt
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord

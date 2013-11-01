@@ -13,9 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jargtests", "jargtests\jarg
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1C27904A-C59A-4FB0-8141-CA1FA7B64206}"
 	ProjectSection(SolutionItems) = preProject
-		Local.testsettings = Local.testsettings
 		rglikeworkname.vsmdi = rglikeworkname.vsmdi
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataEditor", "DataEditor\DataEditor.csproj", "{4F55B71E-0297-4441-BA36-7E545A728BD4}"

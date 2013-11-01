@@ -2,10 +2,18 @@
 Name="???"
 IsWalkable=true
 IsTransparent=true
-MTex=0
+MTex=none
 
 ~Block,1
 Name="Кирпичная кладка"
+MTex=briwall1
+
+~Block,w2
+Name="Стена 2"
+MTex=briwall1
+
+~Block,w3
+Name="Стена 3"
 MTex=briwall1
 
 ~StorageBlock,2

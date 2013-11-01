@@ -50,7 +50,6 @@ namespace SchemesEditor {
             gl = new SchemesMap(20, 20);
 
             imageList1.Images.Clear();
-            var sr = new StreamReader(Settings.GetObjectTextureDirectory() + @"\textureloadorder.ord", Encoding.Default);
 
 
             listBox1.Items.Clear();
@@ -58,17 +57,20 @@ namespace SchemesEditor {
                 listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.MTex + " -- " + a.Value.Name);
             }
 
-            for (;;) {
-                string T = sr.ReadLine();
-                if (T == null) {
-                    break;
-                }
-                string t = T.Substring(0, T.IndexOf(' '));
-                string t2 = T.Substring(T.IndexOf(' ') + 1, T.Length - (T.IndexOf(' ') + 1));
-
-                Image tr = Image.FromFile("Content/" + t + ".png").GetThumbnailImage(16, 16, null, IntPtr.Zero);
-                imdict.Add(t2, tr);
+            foreach (string file in Directory.GetFiles(Settings.GetObjectTextureDirectory(), "*.png")) {
+                var info = new FileInfo(file);
+                Image tr = Image.FromFile(Settings.GetObjectTextureDirectory() + "\\" + info.Name).GetThumbnailImage(16,16,null, IntPtr.Zero);
+                imdict.Add(info.Name.Replace(info.Extension, string.Empty), tr);
             }
+
+            Atlases.BlockIndexes = new Dictionary<string, int>();
+            foreach (var blockData in BlockDataBase.Data) {
+                if(!Atlases.BlockIndexes.ContainsKey(blockData.Value.MTex)) {
+                    Atlases.BlockIndexes.Add(blockData.Value.MTex, 0);
+                }
+            }
+
+            BasesCheker.ErrorBdb();
 
             button3_Click(null, null);
         }
@@ -78,7 +80,7 @@ namespace SchemesEditor {
                 for (int j = 0; j < 30; j++) {
                     if (i - camx < gl.rx && j - camy < gl.ry && i - camx >= 0 && j - camy >= 0) {
                         map[i*30 + j].Image = gl.block[i - camx, j - camy].MTex == null
-                                                  ? imdict["0"]
+                                                  ? imdict["none"]
                                                   : imdict[gl.block[i - camx, j - camy].MTex];
                     }
                     else {
@@ -95,7 +97,7 @@ namespace SchemesEditor {
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e) {
             var sw = new StreamReader(openFileDialog1.FileName);
             sw.Read();
-            List<Schemes> a = ChemesParser.Parser(sw.ReadToEnd());
+            List<Schemes> a = ChemesParser.Parser("#"+sw.ReadToEnd());
             gl = new SchemesMap(a[0].x, a[0].y);
             gl.CreateAllMapFromArray(a[0].data);
             sw.Close();
@@ -147,7 +149,7 @@ namespace SchemesEditor {
             for (int index0 = 0; index0 < gl.rx; index0++) {
                 for (int index1 = 0; index1 < gl.ry; index1++) {
                     gl.block[index0, index1].Id = "0";
-                    gl.block[index0, index1].MTex = "0";
+                    gl.block[index0, index1].MTex = "notex";
                 }
             }
         }

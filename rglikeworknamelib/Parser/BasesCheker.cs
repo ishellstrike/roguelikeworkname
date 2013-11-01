@@ -12,24 +12,7 @@ namespace rglikeworknamelib.Parser
     {
         private static readonly Logger Logger = LogManager.GetLogger("BasesCheker");
         public static void CheckAndResolve() {
-            int errorBDB = 0;
-            foreach (var data in BlockDataBase.Data) {
-                if (!Atlases.BlockIndexes.ContainsKey(data.Value.MTex)) {
-                    Logger.Error(string.Format("texture \"{0}\" for BlockDataBase.MTex not found", data.Value.MTex));
-                    data.Value.MTex = "error";
-                    errorBDB++;
-                }
-                if (data.Value.AlterMtex != null) {
-                    for (int i = 0; i < data.Value.AlterMtex.Length; i++) {
-                        var s = data.Value.AlterMtex[i];
-                        if (!Atlases.BlockIndexes.ContainsKey(s)) {
-                            Logger.Error(string.Format("texture \"{0}\" for BlockDataBase.AlterMtex not found", s));
-                            data.Value.AlterMtex[i] = "error";
-                            errorBDB++;
-                        }
-                    }
-                }
-            }
+            var errorBDB = ErrorBdb();
 
             int errorIDB = 0;
             foreach (var data in ItemDataBase.Data) {
@@ -73,6 +56,28 @@ namespace rglikeworknamelib.Parser
             }
 
             Logger.Info(string.Format("\nTotal:\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {1} in ItemDataBase\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB));
+        }
+
+        public static int ErrorBdb() {
+            int errorBDB = 0;
+            foreach (var data in BlockDataBase.Data) {
+                if (!Atlases.BlockIndexes.ContainsKey(data.Value.MTex)) {
+                    Logger.Error(string.Format("texture \"{0}\" for BlockDataBase.MTex not found", data.Value.MTex));
+                    data.Value.MTex = "error";
+                    errorBDB++;
+                }
+                if (data.Value.AlterMtex != null) {
+                    for (int i = 0; i < data.Value.AlterMtex.Length; i++) {
+                        var s = data.Value.AlterMtex[i];
+                        if (!Atlases.BlockIndexes.ContainsKey(s)) {
+                            Logger.Error(string.Format("texture \"{0}\" for BlockDataBase.AlterMtex not found", s));
+                            data.Value.AlterMtex[i] = "error";
+                            errorBDB++;
+                        }
+                    }
+                }
+            }
+            return errorBDB;
         }
     }
 }
