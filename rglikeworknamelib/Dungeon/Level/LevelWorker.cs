@@ -51,6 +51,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void Run() {
+            Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+            Thread.CurrentThread.IsBackground = true;
             while (!exit) {
                 if (onSave_.Count > 0) {
                     KeyValuePair<Point, MapSector> t = onSave_.First();
@@ -154,8 +156,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 fileStream.Dispose();
             }
             catch (Exception e) {
-                logger.Error(e.ToString);
-                return;
+                logger.Error("SAVE ERROR -- " + e);
             }
         }
 
@@ -197,7 +198,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 return null;
             }
             catch (Exception e) {
-                logger.Error(e.ToString);
+                logger.Error("LOAD ERROR -- " + e);
                 var t = new MapSector(gl, sectorOffsetX, sectorOffsetY);
                 t.Rebuild(gl.MapSeed);
                 return t;

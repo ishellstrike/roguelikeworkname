@@ -73,34 +73,36 @@ namespace rglikeworknamelib.Creatures {
             set { abilities_ = value; }
         }
 
-        public virtual void Update(GameTime gt, MapSector ms, Player hero) {
+        private MapSector ms;
+        public virtual void Update(GameTime gt, MapSector ms_, Player hero) {
+            ms = ms_;
             double time = gt.ElapsedGameTime.TotalSeconds;
             reactionT_ += gt.ElapsedGameTime;
             sec_ += gt.ElapsedGameTime;
-            if (!Skipp || !ms.Ready) {
-                sectoroffset_ = new Vector2(ms.SectorOffsetX, ms.SectorOffsetY);
+            if (!Skipp || !ms_.Ready) {
+                sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
-                IBlock block = ms.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
+                IBlock block = ms_.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
                 if (block != null && block.Lightness == Color.White &&
                     reactionT_.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
                     remPos_ = hero.Position - WorldPosition() + Position;
-                    MoveByMover(ms, time);
+                    MoveByMover(ms_, time);
 
                     Col = Color.White;
-                    if (sec_.TotalSeconds > 1 && ms.Parent.IsCreatureMeele(hero, this)) {
-                        hero.GiveDamage(MonsterDataBase.Data[Id].Damage, DamageType.Default, ms);
+                    if (sec_.TotalSeconds > 1 && ms_.Parent.IsCreatureMeele(hero, this)) {
+                        hero.GiveDamage(MonsterDataBase.Data[Id].Damage, DamageType.Default, ms_);
                         sec_ = TimeSpan.Zero;
                     }
                 }
                 else {
                     Col = Color.Black;
-                    MoveByMover(ms, time);
+                    MoveByMover(ms_, time);
                 }
 
                 if (Position.Y >= 32*MapSector.Ry) {
-                    MapSector t = ms.Parent.GetDownN(ms.SectorOffsetX, ms.SectorOffsetY);
+                    MapSector t = ms_.Parent.GetDownN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Creatures.Remove(this);
+                        ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
                         position_.Y = position_.Y - 32*MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
@@ -110,9 +112,9 @@ namespace rglikeworknamelib.Creatures {
                     }
                 }
                 else if (Position.Y < 0) {
-                    MapSector t = ms.Parent.GetUpN(ms.SectorOffsetX, ms.SectorOffsetY);
+                    MapSector t = ms_.Parent.GetUpN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Creatures.Remove(this);
+                        ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
                         position_.Y = position_.Y + 32*MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
@@ -122,9 +124,9 @@ namespace rglikeworknamelib.Creatures {
                     }
                 }
                 if (Position.X >= 32*MapSector.Rx) {
-                    MapSector t = ms.Parent.GetRightN(ms.SectorOffsetX, ms.SectorOffsetY);
+                    MapSector t = ms_.Parent.GetRightN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Creatures.Remove(this);
+                        ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
                         position_.X = position_.X - 32*MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
@@ -134,9 +136,9 @@ namespace rglikeworknamelib.Creatures {
                     }
                 }
                 else if (Position.X < 0) {
-                    MapSector t = ms.Parent.GetLeftN(ms.SectorOffsetX, ms.SectorOffsetY);
+                    MapSector t = ms_.Parent.GetLeftN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Creatures.Remove(this);
+                        ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
                         position_.X = position_.X + 32*MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
@@ -181,7 +183,7 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        public void GiveDamage(float value, DamageType type, MapSector ms) {
+        public void GiveDamage(float value, DamageType type) {
             hp_.Current -= value;
             EventLog.Add(string.Format("{0} получает {1} урона", MonsterDataBase.Data[Id].Name, value),
                          GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Damage);
@@ -243,10 +245,6 @@ namespace rglikeworknamelib.Creatures {
                     position_.Y += mover.Y;
                 }
             }
-        }
-
-        public void GiveDamage(float value, MapSector ms) {
-            GiveDamage(value, DamageType.Default, ms);
         }
     }
 }

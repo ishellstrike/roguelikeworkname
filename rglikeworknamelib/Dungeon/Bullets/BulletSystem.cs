@@ -57,13 +57,9 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                     }
 
                     ICreature sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start);
-                    MapSector crea = level.GetCreatureSector(bullet.Pos, bullet.Start);
 
                     if (sect != null) {
-                        sect.GiveDamage(bullet.Damage, DamageType.Default, crea);
-                        if (sect.isDead) {
-                        }
-
+                        sect.GiveDamage(bullet.Damage, DamageType.Default);
                         bullet.Life = TimeSpan.Zero;
                     }
 

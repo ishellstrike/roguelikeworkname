@@ -15,7 +15,7 @@ namespace rglikeworknamelib.Creatures {
         List<IBuff> Buffs { get; set; }
         Abilities Abilities { get; set; }
         void Kill(MapSector ms);
-        void GiveDamage(float value, DamageType type, MapSector ms);
+        void GiveDamage(float value, DamageType type);
         void Update(GameTime gt, MapSector ms, Player hero);
         void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms);
         Vector2 WorldPosition();

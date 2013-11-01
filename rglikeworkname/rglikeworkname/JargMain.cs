@@ -297,7 +297,7 @@ namespace jarg {
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
                                    currentFloor_, font1_, lineBatch_);
             inventory_ = new InventorySystem();
-#if DEBUG
+
             inventory_.AddItem(new Item("testhat", 1));
             inventory_.AddItem(new Item("testhat2", 1));
             inventory_.AddItem(new Item("ak47", 1));
@@ -307,7 +307,7 @@ namespace jarg {
             player_.Weared.Add(new Item("jeans", 1));
             player_.Weared.Add(new Item("t-shirt1", 1));
             player_.Weared.Add(new Item("haer1", 1));
-#endif
+
             UpdateInventoryContainer();
 
             Update_Craft_Items(null, null);
@@ -387,10 +387,11 @@ namespace jarg {
         }
 
         protected override void Update(GameTime gameTime) {
+            bool di = Settings.DebugInfo;
             SecondTimespan += gameTime.ElapsedGameTime;
             //first
 
-            if (Settings.DebugInfo) {
+            if (di) {
                 sw_update.Restart();
             }
             else {
@@ -420,7 +421,7 @@ namespace jarg {
                 UpdateAction(gameTime);
             }
 
-            if (Settings.DebugInfo) {
+            if (di) {
                 FrameRateCounter.Update(gameTime);
                 sw_update.Stop();
             }
@@ -454,13 +455,13 @@ namespace jarg {
                                      seeAngleDeg);
 
             
-            if (car != null) {
-                car.Update(gameTime, player_);
-            }
+            //if (car != null) {
+            //    car.Update(gameTime, player_);
+            //}
             player_.Update(gameTime, currentFloor_.GetSector((int) aa.X, (int) aa.Y), player_);
             currentFloor_.KillFarSectors(player_, gameTime);
             bs_.Update(gameTime);
-            currentFloor_.UpdateBlocks(gameTime, camera_);
+            //currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
 
             currentFloor_.UpdateCreatures(gameTime, player_, GraphicsDevice);
