@@ -158,24 +158,23 @@ namespace rglikeworknamelib.Dungeon.Level {
             var rand = new Random(s);
 
             Biom = GetBiom(SectorOffsetX, SectorOffsetY, Parent);
-            if (Biom == SectorBiom.House) {
-                Biom = SectorBiom.Field;
-            }
 
-            MapGenerators.FillTest1(this, "1");
             MapGenerators.ClearBlocks(this);
             MapGenerators.FloorPerlin(this);
 
             switch (Biom) {
                 case SectorBiom.Bushland:
-                    int next = rand.Next(1, 3);
-                    for (int i = 0; i < next; i++) {
-                        SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "bbochka");
+                    int aa = rand.Next(3, 7);
+                    for (int i = 0; i < aa; i++) {
+                        SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustsmall");
+                    }
+                    for (int i = 0; i < aa; i++) {
+                        SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
                     }
                     break;
 
                 case SectorBiom.Forest:
-                    int aa = rand.Next(2, 5);
+                    aa = rand.Next(2, 5);
                     for (int i = 0; i < aa; i++) {
                         SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "17");
                     }
@@ -212,6 +211,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                         SetBlock(rand.Next(0, Rx - 1), rand.Next(0, Ry - 1), "kustbig");
                     }
                     break;
+
+                    //case Se
             }
 
             List<StorageBlock> sb = GetStorageBlocks();
@@ -245,11 +246,18 @@ namespace rglikeworknamelib.Dungeon.Level {
             var rand = new Random(s);
             string most = MapGenerators.GetMost(offX, offY);
 
-            biom = (SectorBiom) rand.Next(0, Enum.GetNames(typeof (SectorBiom)).Length - 3);
+            //biom = (SectorBiom) rand.Next(0, Enum.GetNames(typeof (SectorBiom)).Length - 3);
 
-            if (most == "1") {
-                if (biom == SectorBiom.Forest || biom == SectorBiom.WildForest || biom == SectorBiom.SuperWildForest) {
-                    biom = SectorBiom.Field;
+            if(most == "1") {
+                biom = SectorBiom.Field;
+                if(rand.Next(5) == 0) {
+                    biom = SectorBiom.AgroField;
+                }
+            } else {
+                var fo = new[] {SectorBiom.Forest, SectorBiom.WildForest, SectorBiom.SuperWildForest, SectorBiom.Bushland, };
+                biom = fo[rand.Next(fo.Length)];
+                if(rand.Next(30) == 0) {
+                    biom = SectorBiom.ForestSpider;
                 }
             }
 
@@ -326,7 +334,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void AddDecal(Particle particle) {
             Decals.Add(particle);
-            if (Decals.Count > 256) {
+            if (Decals.Count > Settings.DecalCount) {
+                Decals.RemoveAt(0);
                 Decals.RemoveAt(0);
             }
         }

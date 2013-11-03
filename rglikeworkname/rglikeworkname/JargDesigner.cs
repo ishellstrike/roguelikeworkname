@@ -12,6 +12,7 @@ using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
 using IGameComponent = rglikeworknamelib.Window.IGameComponent;
@@ -36,6 +37,7 @@ namespace jarg {
         private Button ButtonNewGame;
         private Button ButtonOpenGit;
         private Button ButtonRadioGB, ButtonRadioOff;
+        private Button DeleteLastWorldButton;
 
         private Button ButtonResolution1024768,
                        ButtonResolution1280800,
@@ -159,6 +161,7 @@ namespace jarg {
             InitInventory(ws);
             InitContainer(ws);
             InitEventLog(ws);
+            InitSchemes(ws);
 
             WindowIngameHint = new Window(new Vector2(50, 50), "HINT", false, ws)
             {NoBorder = true, Visible = false};
@@ -208,9 +211,64 @@ namespace jarg {
                 new ListContainer(
                     new Rectangle(0, 0, (int) (ModLoaderWindow.Width/3*2), (int) ModLoaderWindow.Height - 20),
                     ModLoaderWindow);
-            UpdateModLoader(null, null);
+            UpdateModLoader();
 
             InitCraft(ws);
+        }
+
+        SchemesMap scheme = new SchemesMap(16, 16);
+        Point schemesOffset = new Point(2, 2);
+        private void InitSchemes(WindowSystem ws) {
+            SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws);
+            SchemesImages = new Image[20,20];
+            for (int i = 0; i < SchemesImages.GetLength(0); i++) {
+                for (int j = 0; j < SchemesImages.GetLength(1); j++) {
+                    SchemesImages[i, j] = new Image(new Vector2(20 + 32 * i, 20 + 32 * j), Atlases.BlockArray["none"], Color.White, SchemesEditorWindow);
+                    SchemesImages[i, j].Tag = new Point(i, j);
+                    SchemesImages[i, j].OnMouseDown += JargMain_OnMouseDown;
+                }
+            }
+            SchemesContainer = new ListContainer(new Rectangle((int)Settings.Resolution.X/3*2, 40, (int)Settings.Resolution.X/4, (int)Settings.Resolution.Y/5*4), SchemesEditorWindow);
+        }
+
+        private int schemesSelected = 0;
+        void l_OnPressed(object sender, EventArgs e) {
+            int i = (int) ((Label) sender).Tag;
+
+            schemesSelected = i;
+        }
+
+        private bool schemesReady;
+        private void SchemeEditorInit() {
+            for (int i = 0; i < scheme.block.GetLength(0); i++) {
+                for (int j = 0; j < scheme.block.GetLength(1); j++) {
+                    scheme.block[i, j] = new Block() {
+                        Id = "0",
+                        MTex = "none"
+                    };
+                }
+            }
+
+            SchemesContainer.Clear();
+            for (int i = 0; i < BlockDataBase.Data.Count; i++) {
+                var l = new Label(Vector2.Zero,
+                          BlockDataBase.Data.ElementAt(i).Key + " " + BlockDataBase.Data.ElementAt(i).Value.Name,
+                          Color.White, SchemesContainer);
+                l.Tag = i;
+                l.OnPressed += l_OnPressed;
+            }
+
+            schemesReady = true;
+        }
+
+        void JargMain_OnMouseDown(object sender, Image.MouseStateEventArgs e) {
+            Point p = (Point) ((Image) sender).Tag;
+
+            if(scheme.rx > - schemesOffset.X + p.X && scheme.ry > - schemesOffset.Y + p.Y && - schemesOffset.X + p.X > 0 && - schemesOffset.Y + p.Y > 0) {
+                string i = BlockDataBase.Data.ElementAt(schemesSelected).Key;
+                scheme.block[-schemesOffset.X + p.X, -schemesOffset.Y + p.Y].Id = i;
+                scheme.block[-schemesOffset.X + p.X, -schemesOffset.Y + p.Y].MTex = BlockDataBase.Data[i].MTex;
+            }
         }
 
         private void InitCraft(WindowSystem ws) {
@@ -366,6 +424,8 @@ namespace jarg {
             ButtonNewGame = new Button(new Vector2(10, 120 + 40*1), "New game", WindowMainMenu);
             ButtonNewGame.OnPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
+            DeleteLastWorldButton = new Button(new Vector2(ButtonNewGame.GetPosition().X + ButtonNewGame.Width + 20, ButtonNewGame.GetPosition().Y), "Delete Last World", WindowMainMenu);
+            DeleteLastWorldButton.OnPressed += new EventHandler(DeleteLastWorldButton_OnPressed);
 
             ModLoaderButton = new Button(new Vector2(10, 100 + 40*4), "ModLoader", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ModLoaderButton);
@@ -386,6 +446,12 @@ namespace jarg {
                                        WindowMainMenu);
             ButtonOpenGit.OnPressed += ButtonOpenGit_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonOpenGit);
+        }
+
+        void DeleteLastWorldButton_OnPressed(object sender, EventArgs e) {
+            Directory.Delete(Settings.GetWorldsDirectory(), true);
+            var a = new Action(InitialGeneration);
+            a.BeginInvoke(null, null);
         }
 
         private void InitWindowSettings(WindowSystem ws) {
@@ -534,7 +600,7 @@ namespace jarg {
         }
 
         private CraftData selectedCraft;
-        void Update_Craft_Items(object sender, EventArgs e) {
+        void Update_Craft_Items() {
             CraftItems.Clear();
             selectedCraft = null;
             CraftMoreInfo.Text = string.Empty;
@@ -563,7 +629,7 @@ namespace jarg {
             }
         }
 
-        private void UpdateModLoader(object sender, EventArgs e) {
+        private void UpdateModLoader() {
             ModLoaderContainer.Clear();
 
             new LabelFixed(Vector2.Zero, "Units", Color.Cyan, 20, ModLoaderContainer);
@@ -1059,6 +1125,26 @@ namespace jarg {
                 ImageMinimap.image = currentFloor_.GetMinimap();
             }
 
+            if(SchemesEditorWindow.Visible && schemesReady) {
+                for (int i = 0; i < SchemesImages.GetLength(0); i++) {
+                    for (int j = 0; j < SchemesImages.GetLength(1); j++) {
+                        if (scheme.rx > -schemesOffset.X + i && scheme.ry > -schemesOffset.Y + j && -schemesOffset.X + i > 0 && -schemesOffset.Y + j > 0) {
+                            SchemesImages[i, j].image =
+                                Atlases.BlockArray[scheme.block[i - schemesOffset.X, j - schemesOffset.Y].MTex];
+                            if (scheme.block[i - schemesOffset.X, j - schemesOffset.Y].Id == "0") {
+                                scheme.block[i - schemesOffset.X, j - schemesOffset.Y].MTex = "notex";
+                                SchemesImages[i, j].col_ = Color.Red;
+                            } else {
+                                SchemesImages[i, j].col_ = Color.White;
+                            }
+                        } else {
+                            SchemesImages[i, j].image = Atlases.BlockArray["bush1"];
+                        }
+                        
+                    }
+                }
+            }
+
             if (Settings.InventoryUpdate) {
                 UpdateInventoryContainer();
                 Settings.InventoryUpdate = false;
@@ -1115,6 +1201,33 @@ namespace jarg {
             ContainerWearList.Clear();
             foreach (Item item in player_.Weared) {
                 var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), 20, ContainerWearList);
+            }
+        }
+    }
+
+    public class SchemesMap
+    {
+        public Block[,] block;
+        public int rx, ry;
+
+        public SchemesMap(int x, int y)
+        {
+            rx = x;
+            ry = y;
+            block = new Block[x, y];
+
+            for (int i = 0; i < x; i++) {
+                for (int j = 0; j < y; j++) {
+                    block[i, j] = new Block();
+                }
+            }
+        }
+
+        public void CreateAllMapFromArray(string[] ints)
+        {
+            for (int i = 0; i < ints.Length; i++) {
+                block[i / ry, i % ry].Id = ints[i];
+                block[i / ry, i % ry].MTex = BlockDataBase.Data[ints[i]].MTex;
             }
         }
     }

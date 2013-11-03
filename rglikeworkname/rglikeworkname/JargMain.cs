@@ -297,7 +297,6 @@ namespace jarg {
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
                                    currentFloor_, font1_, lineBatch_);
             inventory_ = new InventorySystem();
-
             inventory_.AddItem(new Item("testhat", 1));
             inventory_.AddItem(new Item("testhat2", 1));
             inventory_.AddItem(new Item("ak47", 1));
@@ -310,7 +309,7 @@ namespace jarg {
 
             UpdateInventoryContainer();
 
-            Update_Craft_Items(null, null);
+            Update_Craft_Items();
 
             player_.OnUpdatedEquip += UpdateCaracterWindowItems;
             player_.OnShoot += player__onShoot;
@@ -376,6 +375,8 @@ namespace jarg {
             BasesCheker.CheckAndResolve();
             sw.Stop();
             logger.Info(string.Format("Check end in {0}", sw.Elapsed));
+
+            SchemeEditorInit();
 
             Action igen = InitialGeneration;
             igen.BeginInvoke(null, null);

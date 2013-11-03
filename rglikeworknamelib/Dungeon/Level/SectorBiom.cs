@@ -9,6 +9,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         House,
         RoadHevt,
         RoadHor,
-        RoadCross
+        RoadCross,
+        ForestSpider
     }
 }

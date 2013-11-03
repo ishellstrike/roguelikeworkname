@@ -28,6 +28,7 @@ namespace rglikeworknamelib {
         public static bool InventoryUpdate;
         public static bool SeeAll = false;
         public static bool Noclip;
+        public static int DecalCount = 256;
 
         public static Vector2 Resolution {
             set {
