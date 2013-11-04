@@ -99,6 +99,10 @@
       <Name>README</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Schemes\store1.txt">
+      <Name>store1</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Textures\Dungeon\Floor\textureloadorder.ord">
       <Name>textureloadorder</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -528,14 +532,6 @@
       <Name>houseTiny1</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Schemes\houseTiny2.txt">
-      <Name>houseTiny2</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Schemes\houseTiny3.txt">
-      <Name>houseTiny3</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\Dungeon\Objects\crates1.png">
@@ -902,14 +898,6 @@
       <Name>eliteHouse1</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Schemes\store1.txt">
-      <Name>store1</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Schemes\store2.txt">
-      <Name>store2</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Schemes\houseArray1.txt">
@@ -1192,6 +1180,12 @@
   <ItemGroup>
     <None Include="Data\Schemes\b_part.txt">
       <Name>b_part</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Schemes\apteka.txt">
+      <Name>apteka</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

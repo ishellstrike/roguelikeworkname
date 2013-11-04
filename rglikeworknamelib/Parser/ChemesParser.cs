@@ -32,6 +32,12 @@ namespace rglikeworknamelib.Parser {
                         case "house":
                             cur.type = SchemesType.House;
                             break;
+                        case "hospital":
+                            cur.type = SchemesType.Hospital;
+                            break;
+                        case "store":
+                            cur.type = SchemesType.Shop;
+                            break;
                         case "b_part_udlr":
                             cur.type = SchemesType.BunkerParts;
                             break;

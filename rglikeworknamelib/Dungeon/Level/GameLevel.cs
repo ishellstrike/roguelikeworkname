@@ -476,6 +476,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 case SectorBiom.House:
                     a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.White);
                     break;
+                case SectorBiom.Shop:
+                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.Yellow);
+                    break;
+                case SectorBiom.Hospital:
+                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.Teal);
+                    break;
                 case SectorBiom.RoadCross:
                 case SectorBiom.RoadHevt:
                 case SectorBiom.RoadHor:

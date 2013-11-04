@@ -74,11 +74,24 @@ namespace rglikeworknamelib.Generation {
         }
 
         public static void PlaceScheme(GameLevel gl, Schemes scheme, int x, int y) {
+            SectorBiom sb = SectorBiom.House;
+                        switch (scheme.type) {
+                            case SchemesType.Shop:
+                                sb = SectorBiom.Shop;
+                                break;
+                            case SchemesType.Hospital:
+                                sb = SectorBiom.Hospital;
+                                break;
+                            case SchemesType.Storage:
+                                sb = SectorBiom.Storage;
+                                break;
+                        }
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
                     if (scheme.data[i*scheme.y + j] != "0") {
                         gl.SetBlockSync(x + i, y + j, scheme.data[i*scheme.y + j]);
-                        gl.SetBiomAtBlock(x + i, y + j, SectorBiom.House);
+                        
+                        gl.SetBiomAtBlock(x + i, y + j, sb);
 
                         if (BlockDataBase.Data[scheme.data[i*scheme.y + j]].Prototype == typeof (StorageBlock)) {
                             int r = Settings.rnd.Next(1, 4);
@@ -416,7 +429,7 @@ namespace rglikeworknamelib.Generation {
                 var off = new Point();
                 int maxx = 0;
                 for (;;) {
-                    Schemes ch = SchemesDataBase.Data[rnd.Next(SchemesDataBase.Data.Count)];
+                    Schemes ch = SchemesDataBase.NormalCity[rnd.Next(SchemesDataBase.NormalCity.Count)];
                     if (off.X + ch.x > ostx) {
                         break;
                     }

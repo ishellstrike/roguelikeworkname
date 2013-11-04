@@ -8,6 +8,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public static List<Schemes> Data;
         public static List<Schemes> Houses;
         public static List<Schemes> Storages;
+        public static List<Schemes> NormalCity; 
 
         /// <summary>
         ///     WARNING! Also loading all data from standart patch
@@ -22,6 +23,10 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Houses = Data.Where(x => x.type == SchemesType.House).ToList();
             Storages = Data.Where(x => x.type == SchemesType.Storage).ToList();
+            NormalCity =
+                Data.Where(
+                    x => x.type == SchemesType.House || x.type == SchemesType.Shop || x.type == SchemesType.Hospital).
+                    ToList();
         }
     }
 }
