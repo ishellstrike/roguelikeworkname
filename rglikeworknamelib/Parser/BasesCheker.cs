@@ -55,7 +55,18 @@ namespace rglikeworknamelib.Parser
                 }
             }
 
-            Logger.Info(string.Format("\nTotal:\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {1} in ItemDataBase\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB));
+            int errorScDB = 0;
+            foreach (var schemese in SchemesDataBase.Data) {
+                for (int i = 0; i < schemese.data.Length; i++) {
+                    if (!BlockDataBase.Data.ContainsKey(schemese.data[i])) {
+                        Logger.Error(string.Format("block \"{0}\" for SchemesDataBase not found", schemese.data[i]));
+                        schemese.data[i] = "error";
+                        errorScDB++;
+                    }
+                }
+            }
+
+            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {1} in ItemDataBase\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB));
         }
 
         public static int ErrorBdb() {

@@ -1,19 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using NLog;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Items {
+    public class DropGroup {
+        public string[] Ids;
+        public int MinCount, MaxCount, Prob;
+    }
+
     public class ItemDataBase {
         public static Dictionary<string, ItemData> Data;
         public static Dictionary<string, ItemData> DataMedicineItems;
         public static Dictionary<string, ItemData> DataFoodItems;
+
+        public static Dictionary<string, List<DropGroup>> SpawnLists; 
+
         private static Logger logger_ = LogManager.GetCurrentClassLogger();
         // public Collection<Texture2D> texatlas;
 
@@ -36,41 +43,19 @@ namespace rglikeworknamelib.Dungeon.Items {
                     DataFoodItems.Add(pair.Key, (ItemData) pair.Value);
                 }
             }
-        }
 
-        private static void JsonEyeCandy(List<KeyValuePair<int, object>> a) {
-            var sw = new MemoryStream();
-            var ser = new DataContractJsonSerializer(typeof (ItemData));
-            foreach (var pair in a) {
-                ser.WriteObject(sw, pair.Value as ItemData);
+            SpawnLists = new Dictionary<string, List<DropGroup>>();
+
+            var b = ParsersCore.ParseDirectory(Settings.GetSpawnlistsDataDirectory(), SpawnlistParser.Parser);
+
+            foreach (var pair in b) {
+                if(SpawnLists.ContainsKey(pair.Key)) {
+                    SpawnLists[pair.Key].Add(pair.Value);
+                }
+                else {
+                    SpawnLists.Add(pair.Key, new List<DropGroup>{ pair.Value });
+                }
             }
-
-            sw.Position = 0;
-            var re = new StreamReader(sw);
-            string jdata = re.ReadToEnd();
-
-            jdata = jdata.Insert(1, Environment.NewLine);
-            jdata = jdata.Replace("}{", Environment.NewLine + "}" + Environment.NewLine + "{" + Environment.NewLine);
-            jdata = jdata.Replace(":", " : ");
-
-            var reg1 = new Regex("({\n)?\"[a-zA-Z]+\".+?(},|,|\n}|})");
-            MatchCollection mac = reg1.Matches(jdata);
-
-            var sb = new StringBuilder();
-
-            foreach (object vari in mac) {
-                sb.Append(" " + vari + Environment.NewLine);
-            }
-
-            var writer =
-                new StreamWriter(
-                    Directory.GetCurrentDirectory() + @"/" + Settings.GetItemDataDirectory() + @"/items.json",
-                    false);
-            writer.Write(sb);
-            writer.Flush();
-            writer.Close();
-            sw.Close();
-            re.Close();
         }
 
         public static Dictionary<string, ItemData> GetItemByItemDatasType(ItemType it) {
@@ -125,6 +110,29 @@ namespace rglikeworknamelib.Dungeon.Items {
             //        break;
             //}
             return sb.ToString();
+        }
+    }
+
+    public class SpawnlistParser {
+        public static List<KeyValuePair<string, DropGroup>> Parser(string dataString) {
+            var temp = new List<KeyValuePair<string, DropGroup>>();
+
+            dataString = Regex.Replace(dataString, "//.*", "");
+
+            string[] blocks = dataString.Split('~');
+            foreach (string block in blocks) {
+                if (block.Length != 0) {
+                    var parts = block.Split(',');
+                    var it = new DropGroup();
+                    it.Ids =  parts[1].Split(' ');
+                    it.MinCount = int.Parse(parts[2]);
+                    it.MaxCount = int.Parse(parts[3]);
+                    it.Prob = int.Parse(parts[4]);
+                    temp.Add(new KeyValuePair<string, DropGroup>(parts[0], it));
+                }
+                
+            }
+            return temp;
         }
     }
 }

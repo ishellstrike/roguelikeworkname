@@ -1,3 +1,5 @@
-~house
-freq=8
-rare=1 2 3 4 5 6 7 8
+~stelaj_food,colacan meatcan1cl meatcan2cl lapsha1 cigarets milk1,5,30,50
+~stelaj_food,colacan meatcan1cl meatcan2cl lapsha1 cigarets milk1,5,30,25
+~stelaj_hospital,pantocid bint1 bint2 cofein,10,20,20
+~stelaj_hospital,pantocid bint1 bint2 cofein,5,10,20
+~stelaj_hospital,pantocid bint1 bint2 cofein,20,30,10

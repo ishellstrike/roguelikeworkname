@@ -100,7 +100,13 @@ namespace rglikeworknamelib.Parser {
             return dictionary;
         }
 
-        [Obsolete]
+        /// <summary>
+        /// Parse directory with custom parser
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="patch"></param>
+        /// <param name="parser"></param>
+        /// <returns></returns>
         public static List<T> ParseDirectory<T>(string patch, OldBaseParserDelegate<T> parser) {
             try {
                 string[] a = Directory.GetFiles(patch, "*.txt");
@@ -116,7 +122,6 @@ namespace rglikeworknamelib.Parser {
             }
         }
 
-        [Obsolete]
         public static List<T> ParseFile<T>(string patch, OldBaseParserDelegate<T> parser) {
             try {
                 var sr = new StreamReader(patch, Encoding.Default);
@@ -130,6 +135,14 @@ namespace rglikeworknamelib.Parser {
             }
         }
 
+        /// <summary>
+        /// Parse directory with universal parser
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="patch"></param>
+        /// <param name="parser"></param>
+        /// <param name="baseType"></param>
+        /// <returns></returns>
         public static List<T> UniversalParseDirectory<T>(string patch, BaseParserDelegate<T> parser,
                                                          Type baseType = null) {
             try {
@@ -166,6 +179,5 @@ namespace rglikeworknamelib.Parser {
 
     public delegate List<T> BaseParserDelegate<T>(string dataString, string filePos, Type baseType);
 
-    [Obsolete]
     public delegate List<T> OldBaseParserDelegate<T>(string dataString);
 }

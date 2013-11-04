@@ -4,6 +4,12 @@ IsWalkable=true
 IsTransparent=true
 MTex=none
 
+~Block,error
+Name="ОШИБКА"
+IsWalkable=true
+IsTransparent=true
+MTex=error
+
 ~Block,1
 Name="Кирпичная кладка"
 MTex=briwall1
@@ -17,10 +23,28 @@ Name="Стена 3"
 MTex=briwall1
 
 ~StorageBlock,2
-Name="Шкаф"
+Name=Шкаф тестовый
 SmartAction=ActionOpenContainer
 swide=28
 MTex=shkaf
+
+~StorageBlock,stelaj_food
+Name=Продовольственный стелаж
+MTex=notex
+swide=28
+SmartAction=ActionOpenContainer
+
+~StorageBlock,stelaj_hospital
+Name=Cтелаж с лекарствами
+MTex=notex
+swide=28
+SmartAction=ActionOpenContainer
+
+~StorageBlock,tumba_house
+Name=Тумба
+IsTransparent=true
+MTex=notex
+SmartAction=ActionOpenContainer
 
 ~Block,3
 Name="Деревянная дверь (закрыта)"
@@ -164,24 +188,6 @@ MTex=notex
 ~Block,lavka
 
 Name=Лавка
-IsTransparent=true
-
-MTex=notex
-
-
-
-~StorageBlock,stelaj
-
-Name=Стелаж
-IsTransparent=true
-
-MTex=notex
-
-
-
-~StorageBlock,tumba
-
-Name=Тумба
 IsTransparent=true
 
 MTex=notex

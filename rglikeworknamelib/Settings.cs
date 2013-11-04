@@ -135,5 +135,9 @@ namespace rglikeworknamelib {
         public static string GetCraftsDirectory() {
             return GetItemDataDirectory() + @"\Crafts";
         }
+
+        public static string GetSpawnlistsDataDirectory() {
+            return GetItemDataDirectory() + @"\Spawnlists";
+        }
     }
 }

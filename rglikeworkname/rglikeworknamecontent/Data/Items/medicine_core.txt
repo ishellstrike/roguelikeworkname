@@ -1,25 +1,25 @@
 //medicine from 5000
 
-~Item,5000
+~Item,bint1
 Name=Бинт
 SType=Medicine
 
 
-~Item,5001
+~Item,bint2
 Name=Плотный бинт
 SType=Medicine
 
-~Item,5002
+~Item,jgut
 Name=Жгут
 SType=Medicine
 Description=Средство временной остановки кровотечения
 
-~Item,5003
+~Item,pantoсid
 Name=Пантоцид в упаковке
 SType=Medicine
 Doses=20
 
-~Item,5004
+~Item,cofein
 Name=Кофеин в упаковке
 Doses=20
 SType=Medicine
