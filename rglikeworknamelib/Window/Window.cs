@@ -146,7 +146,9 @@ namespace rglikeworknamelib.Window {
             }
         }
 
+        private bool lastaim;
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
+            lastaim = aimed;
             aimed = false;
             if (Visible && !mh) {
                 if (hasTextbox_) {
@@ -180,12 +182,20 @@ namespace rglikeworknamelib.Window {
                         }
                     }
                 }
+                if (lastaim && !aimed)
+                {
+                    if (OnLooseAim != null) {
+                        OnLooseAim(null, null);
+                    }
+                }
                 for (int i = Components.Count - 1; i >= 0; i--) {
                     IGameComponent component = Components[i];
                     component.Update(gt, ms, lms, ks, lks, mh);
                 }
             }
         }
+
+        public EventHandler OnLooseAim;
 
         public Vector2 GetPosition() {
             return new Vector2(Locate.X, Locate.Y + 20);

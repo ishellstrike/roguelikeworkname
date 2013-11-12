@@ -39,6 +39,10 @@ namespace rglikeworknamelib {
     public static class EventLog {
         public static List<LogEntity> log = new List<LogEntity>();
 
+        public static void Add(string message, Color color, LogEntityType type) {
+            Add(message, GlobalWorldLogic.CurrentTime, color, type);
+        }
+
         public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type) {
             log.Add(new LogEntity(GlobalWorldLogic.GetTimeString(globalDateTime) + " " + message, color, type));
 

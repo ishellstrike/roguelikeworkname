@@ -21,6 +21,9 @@ namespace jarg {
     public partial class JargMain {
         #region Windows Vars
 
+        private Window InventoryDropDownWindow;
+        private ListContainer InventoryDropDownContainer;
+
         private Button Button12h, Button24h;
         private Button ButtonCaracterCancel;
         private Button ButtonCaracterConfirm;
@@ -129,10 +132,10 @@ namespace jarg {
 
         #endregion
 
-        private Item ContainerSelected;
+        private IItem ContainerSelected;
         private TimeSpan SecondTimespan;
-        private List<Item> inContainer_ = new List<Item>();
-        private List<Item> inInv_ = new List<Item>();
+        private List<IItem> inContainer_ = new List<IItem>();
+        private List<IItem> inInv_ = new List<IItem>();
         private ItemType nowSort_ = ItemType.Nothing;
         private Item selectedItem;
 
@@ -220,7 +223,7 @@ namespace jarg {
         SchemesMap scheme = new SchemesMap(16, 16);
         Point schemesOffset = new Point(2, 2);
         private void InitSchemes(WindowSystem ws) {
-            SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws);
+            SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws) {Visible = false};
             SchemesImages = new Image[20,20];
             for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                 for (int j = 0; j < SchemesImages.GetLength(1); j++) {
@@ -271,7 +274,7 @@ namespace jarg {
         }
 
         private int schemesSelected = 0;
-        void l_OnPressed(object sender, EventArgs e) {
+        void LOnLeftPressed(object sender, EventArgs e) {
             int i = (int) ((Label) sender).Tag;
 
             schemesSelected = i;
@@ -294,7 +297,7 @@ namespace jarg {
                           BlockDataBase.Data.ElementAt(i).Key + " " + BlockDataBase.Data.ElementAt(i).Value.Name,
                           Color.White, SchemesContainer);
                 l.Tag = i;
-                l.OnPressed += l_OnPressed;
+                l.OnLeftPressed += LOnLeftPressed;
             }
 
             schemesReady = true;
@@ -311,7 +314,7 @@ namespace jarg {
         }
 
         private void InitCraft(WindowSystem ws) {
-            CraftWindow = new Window(Settings.Resolution/4*3, "Craft", true, ws);
+            CraftWindow = new Window(Settings.Resolution/4*3, "Craft", true, ws) {Visible = false};
             CraftSortAll = new Button(new Vector2(10, 10), "All recipes", CraftWindow);
             CraftSortAll.OnPressed += CraftSortAll_OnPressed;
             CraftItems = new ListContainer(
@@ -413,6 +416,14 @@ namespace jarg {
             InventoryTotalWV =
                 new Label(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200 + 30*3),
                           "some weight" + Environment.NewLine + "some volume", InventoryWindow);
+
+            InventoryDropDownWindow = new Window(new Vector2(150, 220), "Select action", false, ws) {Visible = false};
+            InventoryDropDownWindow.OnLooseAim += OnLooseAim;
+            InventoryDropDownContainer = new ListContainer( new Rectangle(0,0,150, 200), InventoryDropDownWindow);
+        }
+
+        private void OnLooseAim(object sender, EventArgs eventArgs) {
+            InventoryDropDownWindow.Visible = false;
         }
 
         private void InitCaracterCration(WindowSystem ws) {
@@ -647,11 +658,11 @@ namespace jarg {
             foreach (var craftData in CraftDataBase.Data) {
                 var a = new LabelFixed(Vector2.Zero,  craftData.OutputCount[0] + " " + ItemDataBase.Data[craftData.Output[0]].Name, 30,
                                        CraftItems) { Tag = craftData };
-                a.OnPressed += CraftItemsLabel_OnPressed;
+                a.OnLeftPressed += CraftItemsLabelOnLeftPressed;
             }
         }
 
-        void CraftItemsLabel_OnPressed(object sender, EventArgs e) {
+        void CraftItemsLabelOnLeftPressed(object sender, EventArgs e) {
             selectedCraft = (CraftData)((IGameComponent) sender).Tag;
             CraftMoreInfo.Text = selectedCraft.ToString();
         }
@@ -828,7 +839,7 @@ namespace jarg {
             if (s.Contains("spawn i ")) {
                 string ss = s.Substring(8);
                 if (ItemDataBase.Data.ContainsKey(ss)) {
-                    inventory_.AddItem(new Item(ss, 1));
+                    inventory_.AddItem(new Item{Id = ss, Count = 1});
                     inventory_.StackSimilar();
                     UpdateInventoryContainer();
                 }
@@ -859,24 +870,23 @@ namespace jarg {
                 }
             }
             if (s.Contains("testitems1")) {
-                inventory_.AddItem(new Item("testhat", 1));
-                inventory_.AddItem(new Item("testhat2", 1));
-                inventory_.AddItem(new Item("ak47", 1));
-                inventory_.AddItem(new Item("a762", 100000));
+                inventory_.AddItem(new Item{Id = "testhat",Count = 1});
+                inventory_.AddItem(new Item{Id = "testhat2",Count = 1});
+                inventory_.AddItem(new Item{Id = "ak47",Count = 1});
+                inventory_.AddItem(new Item{Id = "a762",Count = 100000});
                 UpdateInventoryContainer();
             }
             if (s.Contains("testitems2")) {
-                inventory_.AddItem(new Item("colacan", 1));
-                inventory_.AddItem(new Item("colacan", 1));
-                inventory_.AddItem(new Item("colacan", 1));
-                inventory_.AddItem(new Item("colacan", 1));
-                inventory_.AddItem(new Item("colacan", 1));
-                inventory_.AddItem(new Item("meatcan1", 1));
-                inventory_.AddItem(new Item("meatcan1", 1));
-                inventory_.AddItem(new Item("meatcan1", 1));
-                inventory_.AddItem(new Item("meatcan1", 1));
-                inventory_.AddItem(new Item("meatcan1", 1));
-                UpdateInventoryContainer();
+                inventory_.AddItem(new Item{Id = "colacan", Count = 1});
+                inventory_.AddItem(new Item{Id = "colacan", Count = 1});
+                inventory_.AddItem(new Item{Id = "colacan", Count = 1});
+                inventory_.AddItem(new Item{Id = "colacan", Count = 1});
+                inventory_.AddItem(new Item{Id = "colacan", Count = 1});
+                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
+                inventory_.AddItem(new Item {Id = "meatcan1", Count = 1});
+                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
+                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
+               UpdateInventoryContainer();
             }
             ConsoleTB.Text = string.Empty;
         }
@@ -947,7 +957,7 @@ namespace jarg {
             selectedItem = null;
             InventoryMoreInfo.Text = "";
 
-            List<Item> a = inventory_.FilterByType(nowSort_);
+            List<IItem> a = inventory_.FilterByType(nowSort_);
             inInv_ = a;
 
             ContainerInventoryItems.Clear();
@@ -985,9 +995,7 @@ namespace jarg {
             if (weap.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Weapons", Color.Cyan, 22, ContainerInventoryItems);
                 foreach (Item item in weap) {
-                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
-                    i.Tag = item;
-                    i.OnPressed += PressInInventory;
+                    AddInventoryItemString(item);
                 }
             }
 
@@ -995,9 +1003,7 @@ namespace jarg {
             if (ammo.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Ammo", Color.Cyan, 22, ContainerInventoryItems);
                 foreach (Item item in ammo) {
-                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
-                    i.Tag = item;
-                    i.OnPressed += PressInInventory;
+                    AddInventoryItemString(item);
                 }
             }
 
@@ -1005,9 +1011,7 @@ namespace jarg {
             if (wear.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Wear", Color.Cyan, 22, ContainerInventoryItems);
                 foreach (Item item in wear) {
-                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
-                    i.Tag = item;
-                    i.OnPressed += PressInInventory;
+                    AddInventoryItemString(item);
                 }
             }
 
@@ -1015,9 +1019,7 @@ namespace jarg {
             if (med.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Medicine", Color.Cyan, 22, ContainerInventoryItems);
                 foreach (Item item in med) {
-                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
-                    i.Tag = item;
-                    i.OnPressed += PressInInventory;
+                    AddInventoryItemString(item);
                 }
             }
 
@@ -1025,9 +1027,7 @@ namespace jarg {
             if (food.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Food", Color.Cyan, 22, ContainerInventoryItems);
                 foreach (Item item in food) {
-                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
-                    i.Tag = item;
-                    i.OnPressed += PressInInventory;
+                    AddInventoryItemString(item);
                 }
             }
 
@@ -1035,16 +1035,14 @@ namespace jarg {
             if (other.Count > 0) {
                 new LabelFixed(Vector2.Zero, "Other", Color.Cyan, 22, ContainerInventoryItems);
                 foreach (Item item in other) {
-                    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
-                    i.Tag = item;
-                    i.OnPressed += PressInInventory;
+                    AddInventoryItemString(item);
                 }
             }
 
             //foreach (var item in a) {
             //    var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems);
             //    i.Tag = cou;
-            //    i.OnPressed += PressInInventory;
+            //    i.OnLeftPressed += PressInInventory;
             //    cou++;
             //}
             InventoryTotalWV.Text = string.Format("Weight {0}/{1}{2}Volume {3}/{4}", inventory_.TotalWeight,
@@ -1052,7 +1050,36 @@ namespace jarg {
                                                   inventory_.TotalVolume, player_.MaxVolume);
         }
 
-        private void UpdateContainerContainer(List<Item> a) {
+        private void AddInventoryItemString(IItem item) {
+            var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems) {Tag = item};
+            i.OnLeftPressed += PressInInventory;
+            i.OnRightPressed += RightPressInInventory;
+        }
+
+        private void RightPressInInventory(object sender, LabelPressEventArgs labelPressEventArgs)
+        {
+            IItem i = (IItem)((LabelFixed)sender).Tag;
+            if (i.Actions == null || i.Actions.Count == 0) {
+                return;
+            }
+            InventoryDropDownContainer.Clear();
+            foreach (var action in i.Actions) {
+                var a = new LabelFixed(Vector2.Zero, action.Name, 10, InventoryDropDownContainer);
+                a.Tag = action;
+                a.OnLeftPressed += AOnOnLeftPressed;
+            }
+
+            InventoryDropDownWindow.Visible = true;
+            InventoryDropDownWindow.SetPosition(new Vector2(labelPressEventArgs.Ms.X - 10, labelPressEventArgs.Ms.Y - 10));
+            InventoryDropDownWindow.OnTop();
+        }
+
+        private void AOnOnLeftPressed(object sender, LabelPressEventArgs labelPressEventArgs) {
+            var action = (ItemAction)((LabelFixed) sender).Tag;
+            action.Action(player_);
+        }
+
+        private void UpdateContainerContainer(List<IItem> a) {
             inContainer_ = a;
 
             ContainerContainer.Clear();
@@ -1061,7 +1088,7 @@ namespace jarg {
             foreach (Item item in a) {
                 var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerContainer);
                 i.Tag = cou;
-                i.OnPressed += PressInContainer;
+                i.OnLeftPressed += PressInContainer;
                 cou++;
             }
         }

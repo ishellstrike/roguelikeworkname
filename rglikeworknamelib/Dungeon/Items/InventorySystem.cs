@@ -11,7 +11,7 @@ using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Item {
     public class InventorySystem {
-        private List<Items.Item> items_ = new List<Items.Item>();
+        private List<IItem> items_ = new List<IItem>();
 
         public int TotalWeight {
             get { return items_.Select(x => x.Data.Weight).Sum(); }
@@ -21,7 +21,7 @@ namespace rglikeworknamelib.Dungeon.Item {
             get { return items_.Select(x => x.Data.Volume).Sum(); }
         }
 
-        public void AddItem(Items.Item it) {
+        public void AddItem(IItem it) {
             items_.Add(it);
             switch (it.Data.SType) {
                 case ItemType.Ammo:
@@ -36,23 +36,23 @@ namespace rglikeworknamelib.Dungeon.Item {
             }
         }
 
-        public void RemoveItem(Items.Item it) {
+        public void RemoveItem(IItem it) {
             items_.Remove(it);
         }
 
-        public bool ContainsItem(Items.Item it) {
+        public bool ContainsItem(IItem it) {
             return items_.Contains(it);
         }
 
-        public List<Items.Item> FilterByType(ItemType it) {
+        public List<IItem> FilterByType(ItemType it) {
             return it == ItemType.Nothing ? items_ : items_.Where(item => item.Data.SType == it).ToList();
         }
 
         public void StackSimilar() {
-            var a = new List<Items.Item>();
+            var a = new List<IItem>();
 
-            foreach (Items.Item item in items_) {
-                Items.Item it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses != 0);
+            foreach (IItem item in items_) {
+                IItem it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses != 0);
                 if (it != null) {
                     it.Count += item.Count;
                 }
@@ -102,13 +102,13 @@ namespace rglikeworknamelib.Dungeon.Item {
             }
         }
 
-        public void AddItemRange(List<Items.Item> inContainer) {
-            foreach (Items.Item item in inContainer) {
+        public void AddItemRange(List<IItem> inContainer) {
+            foreach (IItem item in inContainer) {
                 AddItem(item);
             }
         }
 
-        public Items.Item ContainsId(string itemData) {
+        public IItem ContainsId(string itemData) {
             return items_.FirstOrDefault(x => x.Id == itemData);
         }
 
@@ -131,9 +131,9 @@ namespace rglikeworknamelib.Dungeon.Item {
                 var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
                                                 FileMode.Open);
                 var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                items_ = (List<Items.Item>) binaryFormatter.Deserialize(gZipStream);
-                foreach (Items.Item item in items_) {
-                    item.UpdateData();
+                items_ = (List<IItem>) binaryFormatter.Deserialize(gZipStream);
+                foreach (IItem item in items_) {
+                    item.OnLoad();
                 }
                 gZipStream.Close();
                 gZipStream.Dispose();

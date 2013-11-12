@@ -17,6 +17,10 @@ SType=Bag
 Name=Мобильный телефон
 Weight=100
 
+~ItemWorkingRadio,radio1
+Name=Небольшое радио
+Weight=300
+
 ~Item,paper
 Name=Лист бумаги
 Weight=5

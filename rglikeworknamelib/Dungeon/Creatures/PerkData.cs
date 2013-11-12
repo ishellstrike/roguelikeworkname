@@ -18,6 +18,7 @@ namespace rglikeworknamelib.Creatures {
             Name = s;
         }
 
+        //TODO: move actions to lua
         public void RunSctipt(bool b, ICreature target, Lua lua) {
             // lua["target"]
             lua.DoString(Script);

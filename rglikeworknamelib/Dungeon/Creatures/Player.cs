@@ -26,17 +26,16 @@ namespace rglikeworknamelib.Creatures {
 
         public Stat Heat = new Stat(100);
         public Stat Hunger = new Stat(100);
-        public Item ItemAmmo;
-
-        public Item ItemGun;
-        public Item ItemMeele;
+        public IItem ItemAmmo;
+        public IItem ItemGun;
+        public IItem ItemMeele;
         public Stat Morale = new Stat(100);
 
         public PerksSystem Perks;
         public Stat Sleep = new Stat(100);
         public Texture2D Tex;
         public Stat Thirst = new Stat(100);
-        public Collection<Item> Weared;
+        public Collection<IItem> Weared;
 
         /// <summary>
         ///     Experience for abilities. From rest
@@ -51,7 +50,7 @@ namespace rglikeworknamelib.Creatures {
             Tex = tex;
             Position = new Vector2(1, 1);
             Perks = new PerksSystem(this);
-            Weared = new Collection<Item>();
+            Weared = new Collection<IItem>();
         }
 
         public Vector2 CurrentActiveRoom { get; set; }
@@ -65,7 +64,7 @@ namespace rglikeworknamelib.Creatures {
         }
 
 
-        public void EquipItem(Item item, InventorySystem ins) {
+        public void EquipItem(IItem item, InventorySystem ins) {
             Settings.InventoryUpdate = true;
             switch (item.Data.SType) {
                 case ItemType.Wear:
@@ -86,7 +85,7 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        private void EquipWear(Item i, InventorySystem ins) {
+        private void EquipWear(IItem i, InventorySystem ins) {
             if (i != null) {
                 //if (Weared.Contains(i))
                 //{
@@ -111,7 +110,7 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        private void EquipSloted(Item i, InventorySystem ins, ref Item ite) {
+        private void EquipSloted(IItem i, InventorySystem ins, ref IItem ite) {
             if (i != null) {
                 if (ite != null) {
                     ins.AddItem(ite);
@@ -328,12 +327,12 @@ namespace rglikeworknamelib.Creatures {
                 Position = (Vector2) binaryFormatter.Deserialize(gZipStream);
                 Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
                 Perks.Owner = this;
-                Weared = (Collection<Item>) binaryFormatter.Deserialize(gZipStream);
+                Weared = (Collection<IItem>) binaryFormatter.Deserialize(gZipStream);
                 foreach (Item item in Weared) {
                     foreach (IBuff buff in item.Buffs) {
                         buff.Target = this;
                     }
-                    item.UpdateData();
+                    item.OnLoad();
                 }
                 var t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
@@ -341,7 +340,7 @@ namespace rglikeworknamelib.Creatures {
                     foreach (IBuff buff in ItemAmmo.Buffs) {
                         buff.Target = this;
                     }
-                    ItemAmmo.UpdateData();
+                    ItemAmmo.OnLoad();
                 }
 
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
@@ -350,7 +349,7 @@ namespace rglikeworknamelib.Creatures {
                     foreach (IBuff buff in ItemGun.Buffs) {
                         buff.Target = this;
                     }
-                    ItemGun.UpdateData();
+                    ItemGun.OnLoad();
                 }
 
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
@@ -359,7 +358,7 @@ namespace rglikeworknamelib.Creatures {
                     foreach (IBuff buff in ItemMeele.Buffs) {
                         buff.Target = this;
                     }
-                    ItemMeele.UpdateData();
+                    ItemMeele.OnLoad();
                 }
 
                 Hunger = (Stat) binaryFormatter.Deserialize(gZipStream);

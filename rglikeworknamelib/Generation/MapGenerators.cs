@@ -96,10 +96,11 @@ namespace rglikeworknamelib.Generation {
                         if (BlockDataBase.Data[scheme.data[i*scheme.y + j]].Prototype == typeof (StorageBlock)) {
                             int r = Settings.rnd.Next(1, 4);
                             for (int k = 0; k < r; k++) {
-                                ((StorageBlock) gl.GetBlock(x + i, y + j)).StoredItems.Add(
-                                    new Item(
-                                        ItemDataBase.Data.ElementAt(Settings.rnd.Next(1, ItemDataBase.Data.Count)).Key,
-                                        1));
+                                var item = new Item();
+                                item.Id = ItemDataBase.Data.ElementAt(Settings.rnd.Next(1, ItemDataBase.Data.Count)).Key;
+                                item.Count = 1;
+                                item.OnLoad();
+                                ((StorageBlock) gl.GetBlock(x + i, y + j)).StoredItems.Add(item);
                             }
                         }
                     }

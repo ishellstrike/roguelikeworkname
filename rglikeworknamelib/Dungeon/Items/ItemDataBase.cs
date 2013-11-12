@@ -71,11 +71,11 @@ namespace rglikeworknamelib.Dungeon.Items {
             }
         }
 
-        public static string GetItemDescription(Item i) {
+        public static string GetItemDescription(IItem i) {
             return i.Data.Description;
         }
 
-        public static string GetItemFullDescription(Item i) {
+        public static string GetItemFullDescription(IItem i) {
             ItemData item = Data[i.Id];
             var sb = new StringBuilder();
             sb.Append(item.Name);
@@ -85,7 +85,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             sb.Append(Environment.NewLine + string.Format("{0} г", item.Weight));
             sb.Append(Environment.NewLine + string.Format("{0} места", item.Volume));
             if (Settings.DebugInfo) {
-                sb.Append(Environment.NewLine + string.Format("id {0} uid {1}", i.Id, i.Uid));
+                sb.Append(Environment.NewLine + string.Format("id {0} uid {1}", i.Id, 0));
             }
 
             if (item.AfteruseId != null) {

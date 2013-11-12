@@ -297,15 +297,16 @@ namespace jarg {
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
                                    currentFloor_, font1_, lineBatch_);
             inventory_ = new InventorySystem();
-            inventory_.AddItem(new Item("testhat", 1));
-            inventory_.AddItem(new Item("testhat2", 1));
-            inventory_.AddItem(new Item("ak47", 1));
-            inventory_.AddItem(new Item("a762", 100000));
-            inventory_.AddItem(new Item("resp1", 1));
-            inventory_.AddItem(new Item("kitty_collar", 1));
-            player_.Weared.Add(new Item("jeans", 1));
-            player_.Weared.Add(new Item("t-shirt1", 1));
-            player_.Weared.Add(new Item("haer1", 1));
+            inventory_.AddItem(new Item { Id = "testhat", Count = 1 });
+            inventory_.AddItem(new Item { Id = "testhat2", Count = 1 });
+            inventory_.AddItem(new Item { Id = "ak47", Count = 1 });
+            inventory_.AddItem(new Item { Id = "a762", Count = 100000 });
+            inventory_.AddItem(new Item { Id = "resp1", Count = 1 });
+            inventory_.AddItem(new Item { Id = "kitty_collar", Count = 1 });
+            inventory_.AddItem(new ItemWorkingRadio { Id = "radio1", Count = 1 });
+            player_.Weared.Add(new Item { Id = "jeans", Count = 1 });
+            player_.Weared.Add(new Item { Id = "t-shirt1", Count = 1 });
+            player_.Weared.Add(new Item { Id = "haer1", Count = 1 });
 
             UpdateInventoryContainer();
 

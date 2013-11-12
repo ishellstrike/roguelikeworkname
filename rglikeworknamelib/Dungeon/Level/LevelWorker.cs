@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using NLog;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 
 namespace rglikeworknamelib.Dungeon.Level {
@@ -187,8 +188,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                     foreach (IBlock block in t.Blocks) {
                         ((Block) block).OnLoad();
                         if (block.Data.Prototype == typeof (StorageBlock)) {
-                            foreach (Items.Item item in ((StorageBlock) block).StoredItems) {
-                                item.UpdateData();
+                            foreach (IItem item in ((StorageBlock) block).StoredItems) {
+                                item.OnLoad();
                             }
                         }
                     }

@@ -140,6 +140,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="UniqueIds.cs" />
     <Compile Include="Window\Button.cs" />
+    <Compile Include="Window\CheckBox.cs" />
     <Compile Include="Window\IGameComponent.cs" />
     <Compile Include="Window\IGameContainer.cs" />
     <Compile Include="Window\Image.cs" />
