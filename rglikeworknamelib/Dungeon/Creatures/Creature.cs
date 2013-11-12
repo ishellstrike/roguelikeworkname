@@ -25,6 +25,8 @@ namespace rglikeworknamelib.Creatures {
         private Vector2 remPos_;
         private TimeSpan sec_ = TimeSpan.Zero;
         private Vector2 sectoroffset_;
+        [NonSerialized]
+        private MapSector ms_;
 
         public Vector2 LastPos {
             get { return lastpos_; }
@@ -73,7 +75,11 @@ namespace rglikeworknamelib.Creatures {
             set { abilities_ = value; }
         }
 
-        private MapSector ms;
+        public MapSector ms {
+            get { return ms_; }
+            set { ms_ = value; }
+        }
+
         public virtual void Update(GameTime gt, MapSector ms_, Player hero) {
             ms = ms_;
             double time = gt.ElapsedGameTime.TotalSeconds;

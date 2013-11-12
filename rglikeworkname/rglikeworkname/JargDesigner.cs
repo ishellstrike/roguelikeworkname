@@ -499,9 +499,14 @@ namespace jarg {
         }
 
         void DeleteLastWorldButton_OnPressed(object sender, EventArgs e) {
-            Directory.Delete(Settings.GetWorldsDirectory(), true);
-            var a = new Action(InitialGeneration);
-            a.BeginInvoke(null, null);
+            if (Directory.Exists(Settings.GetWorldsDirectory())) {
+                Directory.Delete(Settings.GetWorldsDirectory(), true);
+                if (!Directory.Exists(Settings.GetWorldsDirectory())) {
+                    Directory.CreateDirectory(Settings.GetWorldsDirectory());
+                }
+                var a = new Action(InitialGeneration);
+                a.BeginInvoke(null, null);
+            }
         }
 
         private void InitWindowSettings(WindowSystem ws) {
