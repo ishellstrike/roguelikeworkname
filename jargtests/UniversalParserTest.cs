@@ -20,34 +20,6 @@ namespace jargtests {
 
         #region Дополнительные атрибуты теста
 
-        // 
-        //При написании тестов можно использовать следующие дополнительные атрибуты:
-        //
-        //ClassInitialize используется для выполнения кода до запуска первого теста в классе
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
-        //
-        //ClassCleanup используется для выполнения кода после завершения работы всех тестов в классе
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        //TestInitialize используется для выполнения кода перед запуском каждого теста
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        //
-        //TestCleanup используется для выполнения кода после завершения каждого теста
-        //[TestCleanup()]
-        //public void MyTestCleanup()
-        //{
-        //}
-        //
-
         #endregion
 
         /// <summary>
@@ -118,6 +90,14 @@ namespace jargtests {
         public void NoIdParserTest() {
             object a = NoIdParserTestHelper<BlockData>("~Block\nName=Imya", @"C:\filepos\", typeof (Block));
             Assert.AreEqual("Imya", ((BlockData) a).Name);
+        }
+
+        [TestMethod]
+        public void SchemesV1Parser() {
+            var a = ChemesParser.Parser("#version = 1\r\n~2,2,store\r\n1 1 3 1\r\n\r\n~2,2,house\r\n!test!4\r\n");
+            Assert.AreEqual(a[0].type, SchemesType.Shop);
+            Assert.AreEqual(a[1].type, SchemesType.House);
+            Assert.AreEqual(a[1].data[3], "test");
         }
     }
 }

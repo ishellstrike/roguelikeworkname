@@ -43,9 +43,10 @@ Doses=2
 AfteruseId=emptycan
 SType=Food
 
-~Item,meatcan1сl
+~ItemCan,meatcan1сl
 Name=Закрытая банка тушеной говядины
 Nameret=Банка с едой
+AfteruseId=meatcan1
 
 ~Item,meatcan2
 Name=Открытая банка паштета
@@ -56,9 +57,10 @@ Doses=2
 AfteruseId=emptycan
 SType=Food
 
-~Item,meatcan2cl
+~ItemCan,meatcan2сl
 Name=Закрытая банка паштета
 Nameret=Банка с едой
+AfteruseId=meatcan2
 
 ~Item,milk1
 Name=Пакет молока

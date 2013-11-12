@@ -297,16 +297,20 @@ namespace jarg {
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
                                    currentFloor_, font1_, lineBatch_);
             inventory_ = new InventorySystem();
-            inventory_.AddItem(new Item { Id = "testhat", Count = 1 });
-            inventory_.AddItem(new Item { Id = "testhat2", Count = 1 });
-            inventory_.AddItem(new Item { Id = "ak47", Count = 1 });
-            inventory_.AddItem(new Item { Id = "a762", Count = 100000 });
-            inventory_.AddItem(new Item { Id = "resp1", Count = 1 });
-            inventory_.AddItem(new Item { Id = "kitty_collar", Count = 1 });
-            inventory_.AddItem(new ItemWorkingRadio { Id = "radio1", Count = 1 });
-            player_.Weared.Add(new Item { Id = "jeans", Count = 1 });
-            player_.Weared.Add(new Item { Id = "t-shirt1", Count = 1 });
-            player_.Weared.Add(new Item { Id = "haer1", Count = 1 });
+            player_.Inventory = inventory_;
+            inventory_.AddItem(ItemFactory.GetInstance("testhat", 1));
+            inventory_.AddItem(ItemFactory.GetInstance("testhat2", 1));
+            inventory_.AddItem(ItemFactory.GetInstance("ak47", 1));
+            inventory_.AddItem(ItemFactory.GetInstance("a762", 100000));
+            inventory_.AddItem(ItemFactory.GetInstance("resp1", 1));
+            inventory_.AddItem(ItemFactory.GetInstance("kitty_collar", 1));
+            inventory_.AddItem(ItemFactory.GetInstance("radio1", 3));
+            inventory_.AddItem(ItemFactory.GetInstance("otvertka", 1));
+            inventory_.AddItem(ItemFactory.GetInstance("meatcan1ñl", 1));
+            inventory_.AddItem(ItemFactory.GetInstance("meatcan2ñl", 1));
+            player_.Weared.Add(ItemFactory.GetInstance("jeans", 1));
+            player_.Weared.Add(ItemFactory.GetInstance("t-shirt1", 1));
+            player_.Weared.Add(ItemFactory.GetInstance("haer1", 1));
 
             UpdateInventoryContainer();
 

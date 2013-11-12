@@ -36,6 +36,7 @@ namespace rglikeworknamelib.Creatures {
         public Texture2D Tex;
         public Stat Thirst = new Stat(100);
         public Collection<IItem> Weared;
+        public InventorySystem Inventory;
 
         /// <summary>
         ///     Experience for abilities. From rest
@@ -283,7 +284,7 @@ namespace rglikeworknamelib.Creatures {
                     }
                     else {
                         if (secShoot_.TotalMilliseconds > 1000) {
-                            EquipItem(ins.ContainsId(ItemGun.Data.Ammo), ins);
+                            EquipItem(ins.TryGetId(ItemGun.Data.Ammo), ins);
                             EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow,
                                          LogEntityType.NoAmmoWeapon);
                             secShoot_ = TimeSpan.Zero;

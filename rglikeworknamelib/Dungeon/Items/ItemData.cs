@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Item {
     public class ItemData {
@@ -17,7 +20,7 @@ namespace rglikeworknamelib.Dungeon.Item {
         public string Dress;
         public bool Hidden;
 
-        public int Doses = 1;
+        public int Doses = 0;
         public int FireRate = 1000;
 
         public Color MMCol;
@@ -27,6 +30,8 @@ namespace rglikeworknamelib.Dungeon.Item {
         public string Nameret;
         public int NutCal;
         public int NutH2O;
+
+        public Type Prototype;
 
         public ItemType SType;
         public int Volume;

@@ -10,8 +10,8 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         public string Id {
             get { return id_; }
             set {
-                data_ = BlockDataBase.Data[value];
                 id_ = value;
+                OnLoad();
             }
         }
 

@@ -1077,6 +1077,7 @@ namespace jarg {
         private void AOnOnLeftPressed(object sender, LabelPressEventArgs labelPressEventArgs) {
             var action = (ItemAction)((LabelFixed) sender).Tag;
             action.Action(player_);
+            InventoryDropDownWindow.Visible = false;
         }
 
         private void UpdateContainerContainer(List<IItem> a) {
@@ -1212,6 +1213,7 @@ namespace jarg {
             }
 
             if (Settings.InventoryUpdate) {
+                inventory_.StackSimilar();
                 UpdateInventoryContainer();
                 Settings.InventoryUpdate = false;
             }

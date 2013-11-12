@@ -33,7 +33,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             DataFoodItems = new Dictionary<string, ItemData>();
             DataMedicineItems = new Dictionary<string, ItemData>();
             List<KeyValuePair<string, object>> a = ParsersCore.UniversalParseDirectory(Settings.GetItemDataDirectory(),
-                                                                                       UniversalParser.Parser<ItemData>);
+                                                                                       UniversalParser.Parser<ItemData>, typeof(Item));
             foreach (var pair in a) {
                 Data.Add(pair.Key, (ItemData) pair.Value);
                 if (((ItemData) pair.Value).SType == ItemType.Medicine) {

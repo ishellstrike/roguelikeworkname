@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using NLog;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
@@ -58,8 +59,6 @@ namespace rglikeworknamelib.Dungeon.Items {
         //        }
         //    }
         //}
-
-
 
         public virtual void OnLoad() {
             data_ = ItemDataBase.Data[Id];
@@ -119,25 +118,62 @@ namespace rglikeworknamelib.Dungeon.Items {
     public class ItemWorkingRadio : Item {
         public override void OnLoad()
         {
-            data_ = ItemDataBase.Data[Id];
-            Doses = Data.Doses;
-            Buffs = new List<IBuff>();
-            if (ItemDataBase.Data[Id].Buff != null)
-            {
-                foreach (string buff in ItemDataBase.Data[Id].Buff)
-                {
-                    var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[buff].Prototype);
-                    a.Id = buff;
-                    Buffs.Add(a);
-                }
+            base.OnLoad();
+            Actions.Add(new ItemAction { Name = "Включить или выключить", Action = RadioOnOff });
+            Actions.Add(new ItemAction{Name = "Разобрать", Action = Disass});
+        }
+
+        private void Disass(Player p) {
+            if (p.Inventory.ContainsId("otvertka")) {
+                p.Inventory.TryRemoveItem(Id, 1);
+                p.Inventory.AddItem(ItemFactory.GetInstance("chipset", 1));
+                p.Inventory.AddItem(ItemFactory.GetInstance("batery", 1));
+                p.Inventory.AddItem(ItemFactory.GetInstance("smallvint", 20));
+
+                EventLog.Add(string.Format("Вы успешно разбираете {0}", Data.Name), Color.Yellow, LogEntityType.NoAmmoWeapon);
             }
-            Actions = new List<ItemAction>();
-            var ac = new ItemAction { Name = @"Включить\Выключить", Action = RadioOnOff };
-            Actions.Add(ac);
+            else {
+                EventLog.Add("Чтобы разбирать электронику вам нужна отвертка", Color.Yellow, LogEntityType.NoAmmoWeapon);
+            }
+            
         }
 
         private void RadioOnOff(Player p) {
             EventLog.Add("Радио включается", Color.White, LogEntityType.Default);
+        }
+    }
+
+    [Serializable]
+    public class ItemCan : Item {
+        public override void OnLoad()
+        {
+            base.OnLoad();
+            Actions.Add(new ItemAction{Name = "Открыть банку", Action = OpenCan});
+        }
+
+        public void OpenCan(Player p) {
+            if (p.Inventory.ContainsId("knife")) {
+                p.Inventory.TryRemoveItem(Id, 1);
+                p.Inventory.AddItem(ItemFactory.GetInstance(ItemDataBase.Data[Id].AfteruseId, 1));
+            }
+            else {
+                EventLog.Add("Чтобы открывать банки вам нужен нож", Color.Yellow, LogEntityType.NoAmmoWeapon);
+            }
+        }
+    }
+
+    public class ItemFactory {
+        private static readonly Logger logger = LogManager.GetLogger("ItemFactory");
+        public static IItem GetInstance(string id, int count) {
+            if (!ItemDataBase.Data.ContainsKey(id)) {
+                logger.Error(string.Format("Missing ItemData id={0}!!!", id));
+                return null;
+            }
+            var a = (IItem)Activator.CreateInstance(ItemDataBase.Data[id].Prototype);
+            a.Id = id;
+            a.Count = count;
+
+            return a;
         }
     }
 }

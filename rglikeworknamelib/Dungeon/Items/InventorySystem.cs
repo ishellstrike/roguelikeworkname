@@ -12,6 +12,7 @@ using rglikeworknamelib.Dungeon.Items;
 namespace rglikeworknamelib.Dungeon.Item {
     public class InventorySystem {
         private List<IItem> items_ = new List<IItem>();
+        public bool changed = false;
 
         public int TotalWeight {
             get { return items_.Select(x => x.Data.Weight).Sum(); }
@@ -22,6 +23,7 @@ namespace rglikeworknamelib.Dungeon.Item {
         }
 
         public void AddItem(IItem it) {
+            if (it == null) return;
             items_.Add(it);
             switch (it.Data.SType) {
                 case ItemType.Ammo:
@@ -34,10 +36,12 @@ namespace rglikeworknamelib.Dungeon.Item {
                     Achievements.Stat["foodtotal"].Count += it.Count;
                     break;
             }
+            Settings.InventoryUpdate = true;
         }
 
         public void RemoveItem(IItem it) {
             items_.Remove(it);
+            Settings.InventoryUpdate = true;
         }
 
         public bool ContainsItem(IItem it) {
@@ -52,11 +56,13 @@ namespace rglikeworknamelib.Dungeon.Item {
             var a = new List<IItem>();
 
             foreach (IItem item in items_) {
-                IItem it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses != 0);
+                IItem it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses == 0);
                 if (it != null) {
                     it.Count += item.Count;
                 }
-                a.Add(item);
+                else {
+                    a.Add(item);
+                }
             }
 
             //foreach (var item in items_) {
@@ -64,6 +70,18 @@ namespace rglikeworknamelib.Dungeon.Item {
             //}
 
             items_ = a;
+            Settings.InventoryUpdate = true;
+        }
+
+        public bool TryRemoveItem(string id, int count) {
+            var a = TryGetId(id);
+            if (a.Count < count) return false;
+            a.Count -= count;
+            if (a.Count == 0) {
+                items_.Remove(a);
+            }
+
+            return true;
         }
 
         public void UseItem(Items.Item selectedItem, Player player) {
@@ -100,16 +118,23 @@ namespace rglikeworknamelib.Dungeon.Item {
                     }
                     break;
             }
+            Settings.InventoryUpdate = true;
         }
 
         public void AddItemRange(List<IItem> inContainer) {
             foreach (IItem item in inContainer) {
                 AddItem(item);
             }
+            changed = true;
         }
 
-        public IItem ContainsId(string itemData) {
+        public IItem TryGetId(string itemData) {
+            Settings.InventoryUpdate = true;
             return items_.FirstOrDefault(x => x.Id == itemData);
+        }
+
+        public bool ContainsId(string id) {
+            return items_.FirstOrDefault(x => x.Id == id) != null;
         }
 
         public void Save() {
