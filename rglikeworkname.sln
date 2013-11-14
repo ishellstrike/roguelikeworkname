@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataEditor", "DataEditor\Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestArea", "TestArea\TestArea.csproj", "{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropListEditor", "DropListEditor\DropListEditor.csproj", "{3CEAEF0A-126C-4847-93D9-F996B596A2CC}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = rglikeworkname.vsmdi
@@ -155,6 +157,24 @@ Global
 		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|Win32.ActiveCfg = Release|x86
 		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|x86.ActiveCfg = Release|x86
 		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|x86.Build.0 = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|Win32.ActiveCfg = Debug|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|x86.ActiveCfg = Debug|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|x86.Build.0 = Debug|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Only Game|Any CPU.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Only Game|Mixed Platforms.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Only Game|Mixed Platforms.Build.0 = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Only Game|Win32.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Only Game|x86.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Only Game|x86.Build.0 = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Release|Any CPU.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Release|Mixed Platforms.Build.0 = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Release|Win32.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Release|x86.ActiveCfg = Release|x86
+		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
