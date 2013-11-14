@@ -21,6 +21,9 @@ namespace jarg {
     public partial class JargMain {
         #region Windows Vars
 
+        private Window AchievementsWindow;
+        private ListContainer AchievementContainer;
+
         private Window InventoryDropDownWindow;
         private ListContainer InventoryDropDownContainer;
 
@@ -372,17 +375,17 @@ namespace jarg {
 
         private void InitContainer(WindowSystem ws) {
             WindowContainer =
-                new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
+                new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y/3*2),
                            "Container", true, ws) {Visible = false};
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
             ContainerContainer =
                 new ListContainer(
-                    new Rectangle(10, 10, InventoryWindow.Locate.Width/2, InventoryWindow.Locate.Height - 40),
+                    new Rectangle(10, 10, (int)WindowContainer.Width / 2, (int)WindowContainer.Height - 40),
                     WindowContainer);
-            LabelContainer = new LabelFixed(new Vector2(InventoryWindow.Locate.Width - 200, 40), "", 20,
+            LabelContainer = new LabelFixed(new Vector2(WindowContainer.Width - 200, 40), "", 20,
                                             WindowContainer);
             ButtonContainerTakeAll =
-                new Button(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200 + 30*2),
+                new Button(new Vector2(WindowContainer.Width - 200, WindowContainer.Height - 200 + 30 * 2),
                            "Take All (R)", WindowContainer);
             ButtonContainerTakeAll.OnPressed += ButtonContainerTakeAll_onPressed;
         }

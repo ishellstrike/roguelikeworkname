@@ -149,7 +149,7 @@ namespace rglikeworknamelib.Window {
                         Components[fromNow].SetPosition(new Vector2(l.X + 10, curBottom));
                         count++;
 
-                        curBottom += Components[fromNow].Height + 10;
+                        curBottom += Components[fromNow].Height + 2;
                         fromNow++;
                         if (fromNow > Components.Count - 1) {
                             break;
@@ -190,7 +190,7 @@ namespace rglikeworknamelib.Window {
             float cur = location_.Top;
             int lastN = 0;
             for (int i = FromI; i < Components.Count; i++) {
-                cur += Components[i].Height + 10;
+                cur += Components[i].Height + 2;
                 if (cur > location_.Bottom) {
                     break;
                 }
@@ -206,7 +206,7 @@ namespace rglikeworknamelib.Window {
             float cur = location_.Bottom;
             int lastN = 0;
             for (int i = Components.Count - 1; i >= 0; i--) {
-                cur -= Components[i].Height + 10;
+                cur -= Components[i].Height + 2;
                 if (cur < location_.Top) {
                     break;
                 }
@@ -240,7 +240,7 @@ namespace rglikeworknamelib.Window {
             float cur = location_.Bottom;
             int lastN = 0;
             for (int i = Components.Count - 1; i >= 0; i--) {
-                cur -= Components[i].Height + 10;
+                cur -= Components[i].Height + 2;
                 if (cur < location_.Top) {
                     break;
                 }
