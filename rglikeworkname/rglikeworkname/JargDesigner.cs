@@ -847,8 +847,11 @@ namespace jarg {
             if (s.Contains("spawn i ")) {
                 string ss = s.Substring(8);
                 if (ItemDataBase.Data.ContainsKey(ss)) {
-                    inventory_.AddItem(new Item{Id = ss, Count = 1});
+                    var a = ItemFactory.GetInstance(ss, 1);
+                    inventory_.AddItem(a);
                     inventory_.StackSimilar();
+                    EventLog.Add(
+                        string.Format("Item {0} spawn in inventory", a.Id), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                     UpdateInventoryContainer();
                 }
                 else {

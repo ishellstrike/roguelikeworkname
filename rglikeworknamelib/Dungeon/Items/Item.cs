@@ -128,7 +128,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                 p.Inventory.TryRemoveItem(Id, 1);
                 p.Inventory.AddItem(ItemFactory.GetInstance("chipset", 1));
                 p.Inventory.AddItem(ItemFactory.GetInstance("batery", 1));
-                p.Inventory.AddItem(ItemFactory.GetInstance("smallvint", 20));
+                p.Inventory.AddItem(ItemFactory.GetInstance("smallvint", Settings.rnd.Next(5)+10));
 
                 EventLog.Add(string.Format("Вы успешно разбираете {0}", Data.Name), Color.Yellow, LogEntityType.NoAmmoWeapon);
             }
@@ -159,6 +159,48 @@ namespace rglikeworknamelib.Dungeon.Items {
             else {
                 EventLog.Add("Чтобы открывать банки вам нужен нож", Color.Yellow, LogEntityType.NoAmmoWeapon);
             }
+        }
+    }
+
+    [Serializable]
+    public class ItemCloth : Item
+    {
+        public override void OnLoad()
+        {
+            base.OnLoad();
+            Actions.Add(new ItemAction { Name = "Разорвать на тряпки", Action = DestroyCloth });
+            
+        }
+
+        public void DestroyCloth(Player p)
+        {
+            var a = Data.Weight;
+            if (a > 10000) {
+                EventLog.Add("Предмет слишком большой", Color.Yellow, LogEntityType.NoAmmoWeapon);
+                return;
+            }
+            if (a < 100) {
+                EventLog.Add("Предмет слишком маленький", Color.Yellow, LogEntityType.NoAmmoWeapon);
+                return;
+            }
+            p.Inventory.TryRemoveItem(Id, 1);
+            var rnd = Settings.rnd;
+            while (a >= 50)
+            {
+                var part = rnd.Next(2);
+                switch (part)
+                {
+                    case 0:
+                        a -= 50;
+                        p.Inventory.AddItem(ItemFactory.GetInstance("brcloth", 1));
+                        break;
+                    case 1:
+                        a -= 100;
+                        p.Inventory.AddItem(ItemFactory.GetInstance("partcloth", 1));
+                        break;
+                }
+            }
+            EventLog.Add(string.Format("Вы успешно разорвали {0} на тряпки", Data.Name), Color.Yellow, LogEntityType.NoAmmoWeapon);
         }
     }
 

@@ -22,20 +22,32 @@ MTex=briwall1
 Name="Стена 3"
 MTex=briwall1
 
-~StorageBlock,2
-Name=Шкаф тестовый
-SmartAction=ActionOpenContainer
-swide=28
-MTex=shkaf
-
 ~StorageBlock,stelaj_food
 Name=Продовольственный стелаж
 MTex=notex
 swide=28
 SmartAction=ActionOpenContainer
 
+~StorageBlock,stelaj_weapon
+Name=Оруженый стелаж
+MTex=notex
+swide=28
+SmartAction=ActionOpenContainer
+
+~StorageBlock,stelaj_weapon_armored
+Name=Бронированный стелаж с оружием
+MTex=notex
+swide=28
+SmartAction=ActionOpenContainer
+
 ~StorageBlock,stelaj_hospital
 Name=Cтелаж с лекарствами
+MTex=notex
+swide=28
+SmartAction=ActionOpenContainer
+
+~StorageBlock,stelaj_wear
+Name=Cтелаж с одеждой
 MTex=notex
 swide=28
 SmartAction=ActionOpenContainer
@@ -52,13 +64,13 @@ SmartAction=ActionOpenClose
 AfterDeathId=7
 MTex=door1
 
-~Block,6,6
+~Block,6
 Name="Деревянная дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=7
 MTex=door1_open
 
-~Block,7,7
+~Block,7
 Name="Деревянная дверь (открыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=3
@@ -68,19 +80,19 @@ MTex=door1_open
 
 
 
-~Block,4,4
+~Block,4
 Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
 MTex=door2
 
-~Block,5,5
+~Block,5
 Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
 MTex=door2
 
-~Block,8,8
+~Block,8
 Name="Металлическая дверь (открыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=4
@@ -88,7 +100,7 @@ IsWalkable=true
 IsTransparent=true
 MTex=door2_open
 
-~Block,9,9
+~Block,9
 Name="Консоль"
 AlterMtex={"9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26"}
 MTex=9
@@ -99,19 +111,19 @@ AlterMtex={"bed2","bed3","bed4","bed5"}
 IsTransparent=true
 MTex=bed1
 
-~StorageBlock,15,32
+~StorageBlock,scrapbox
 Name="Ящик"
 SmartAction=ActionOpenContainer
 AlterMtex={"crates2","crates3"}
 IsTransparent=true
 MTex=crates1
 
-~Block,16,36
+~Block,16
 Name="Дерево"
 swide=16
 MTex=tree1
 
-~Block,18,38
+~Block,18
 Name="Небольшое дерево"
 swide=16
 MTex=tree2

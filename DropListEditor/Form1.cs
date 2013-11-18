@@ -42,6 +42,9 @@ namespace DropListEditor
             StringBuilder sb = new StringBuilder();
             if(ItemDataBase.SpawnLists.ContainsKey(BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key)) {
                 foreach (var list in ItemDataBase.SpawnLists[BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key]) {
+                    sb.Append("x");
+                    sb.Append(list.Repeat);
+                    sb.Append(" :: ");
                     sb.Append(string.Join(", ", list.Ids));
                     sb.Append("\n       ");
                     sb.Append(list.MinCount);

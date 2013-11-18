@@ -73,7 +73,8 @@ namespace rglikeworknamelib.Generation {
             return scheme;
         }
 
-        public static void PlaceScheme(GameLevel gl, Schemes scheme, int x, int y) {
+        public static List<StorageBlock> PlaceScheme(GameLevel gl, Schemes scheme, int x, int y, Random rand) {
+            var l = new List<StorageBlock>();
             SectorBiom sb = SectorBiom.House;
                         switch (scheme.type) {
                             case SchemesType.Shop:
@@ -94,18 +95,26 @@ namespace rglikeworknamelib.Generation {
                         gl.SetBiomAtBlock(x + i, y + j, sb);
 
                         if (BlockDataBase.Data[scheme.data[i*scheme.y + j]].Prototype == typeof (StorageBlock)) {
-                            int r = Settings.rnd.Next(1, 4);
-                            for (int k = 0; k < r; k++) {
-                                var item = new Item();
-                                item.Id = ItemDataBase.Data.ElementAt(Settings.rnd.Next(1, ItemDataBase.Data.Count)).Key;
-                                item.Count = 1;
-                                item.OnLoad();
-                                ((StorageBlock) gl.GetBlock(x + i, y + j)).StoredItems.Add(item);
+                            List<DropGroup> a;
+                            if (ItemDataBase.SpawnLists.TryGetValue(scheme.data[i * scheme.y + j], out a))
+                            {
+                                foreach (var drop in a)
+                                {
+                                    var thr = rand.Next(100) + 1;
+                                    if (drop.Prob >= thr)
+                                    {
+                                        for (int k = 0; k < drop.Repeat; k++)
+                                        {
+                                            ((StorageBlock)gl.GetBlock(x + i, y + j)).StoredItems.Add(ItemFactory.GetInstance(drop.Ids[rand.Next(drop.Ids.Length)], rand.Next(drop.MaxCount - drop.MinCount) + drop.MinCount));
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+            return l;
         }
 
         /// <summary>
@@ -147,7 +156,7 @@ namespace rglikeworknamelib.Generation {
                 string[] aa = GetInnerFloorArrayWithId(scheme, "conk_base");
                 FillFloorFromArrayAndOffset(gl, scheme.x, scheme.y, aa, posX, posY);
                 ClearBlocksFromArrayAndOffset(gl, scheme.x, scheme.y, aa, posX, posX);
-                PlaceScheme(gl, scheme, posX, posY);
+                PlaceScheme(gl, scheme, posX, posY, rnd);
                 return new Point(scheme.x, scheme.y);
             }
             return Point.Zero;
@@ -438,7 +447,7 @@ namespace rglikeworknamelib.Generation {
                     string[] aa = GetInnerFloorArrayWithId(ch, "conk_base");
                     FillFloorFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
                     ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
-                    PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7, rnd);
                     off.X += ch.x;
                     if (maxx < ch.x) {
                         maxx = ch.y;
@@ -458,7 +467,7 @@ namespace rglikeworknamelib.Generation {
                     string[] aa = GetInnerFloorArrayWithId(ch, "conk_base");
                     FillFloorFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
                     ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
-                    PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7, rnd);
                     off.Y += ch.y;
                 }
             }

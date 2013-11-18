@@ -69,3 +69,7 @@ Weight=10
 ~Item,brcloth
 Name=ќбрывки ткани
 Weight=50
+
+~Item,partcloth
+Name=“кань
+Weight=100

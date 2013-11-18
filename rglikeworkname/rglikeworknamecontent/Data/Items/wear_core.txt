@@ -4,12 +4,12 @@ Weight=50
 SType=Wear
 Dress=collar1
 
-~Item,socks
+~ItemCloth,socks
 Name=Носки
 Weight=50
 SType=Wear
 
-~Item,wool_socks
+~ItemCloth,wool_socks
 Name=Шерстяные носки
 Weight=100
 SType=Wear
@@ -55,13 +55,13 @@ SType=Wear
 Weight=800
 Dress=resp1
 
-~Item,jeans
+~ItemCloth,jeans
 Name=Джинсы
 SType=Wear
 Weight=500
 Dress=jeans
 
-~Item,t-shirt1
+~ItemCloth,t-shirt1
 Name=Футболка
 SType=Wear
 Weight=200

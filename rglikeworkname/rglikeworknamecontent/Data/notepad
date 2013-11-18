@@ -22,7 +22,7 @@
             <Keywords name="Folders in comment, middle" id="14"></Keywords>
             <Keywords name="Folders in comment, close" id="15"></Keywords>
             <Keywords name="Keywords1" id="16">Item</Keywords>
-            <Keywords name="Keywords2" id="17">Name Weight SType AfteruseId Doses</Keywords>
+            <Keywords name="Keywords2" id="17">Name Weight SType AfteruseId Doses NutCal NutH2O Nameret IsWalkable IsTransparent MTex SmartAction swide AfterDeathId</Keywords>
             <Keywords name="Keywords3" id="18"></Keywords>
             <Keywords name="Keywords4" id="19"></Keywords>
             <Keywords name="Keywords5" id="20"></Keywords>

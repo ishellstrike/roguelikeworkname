@@ -96,11 +96,13 @@
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
     <Compile Include="Dungeon\Items\Craft.cs" />
+    <Compile Include="Dungeon\Items\DropGroup.cs" />
     <Compile Include="Dungeon\Items\InventorySystem.cs" />
     <Compile Include="Dungeon\Items\Item.cs" />
     <Compile Include="Dungeon\Items\ItemData.cs" />
     <Compile Include="Dungeon\Items\ItemDataBase.cs" />
     <Compile Include="Dungeon\Items\ItemType.cs" />
+    <Compile Include="Dungeon\Items\SpawnlistParser.cs" />
     <Compile Include="Dungeon\Level\Blocks\Block.cs" />
     <Compile Include="Dungeon\Level\Blocks\BlockButningBochka.cs" />
     <Compile Include="Dungeon\Level\Blocks\BlockData.cs" />

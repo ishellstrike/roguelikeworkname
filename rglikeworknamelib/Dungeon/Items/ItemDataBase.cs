@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using NLog;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Item;
@@ -9,11 +8,6 @@ using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Items {
-    public class DropGroup {
-        public string[] Ids;
-        public int MinCount, MaxCount, Prob;
-    }
-
     public class ItemDataBase {
         public static Dictionary<string, ItemData> Data;
         public static Dictionary<string, ItemData> DataMedicineItems;
@@ -110,29 +104,6 @@ namespace rglikeworknamelib.Dungeon.Items {
             //        break;
             //}
             return sb.ToString();
-        }
-    }
-
-    public class SpawnlistParser {
-        public static List<KeyValuePair<string, DropGroup>> Parser(string dataString) {
-            var temp = new List<KeyValuePair<string, DropGroup>>();
-
-            dataString = Regex.Replace(dataString, "//.*", "");
-
-            string[] blocks = dataString.Split('~');
-            foreach (string block in blocks) {
-                if (block.Length != 0) {
-                    var parts = block.Split(',');
-                    var it = new DropGroup();
-                    it.Ids =  parts[1].Split(' ');
-                    it.MinCount = int.Parse(parts[2]);
-                    it.MaxCount = int.Parse(parts[3]);
-                    it.Prob = int.Parse(parts[4]);
-                    temp.Add(new KeyValuePair<string, DropGroup>(parts[0], it));
-                }
-                
-            }
-            return temp;
         }
     }
 }

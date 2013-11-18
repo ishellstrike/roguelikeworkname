@@ -34,7 +34,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly Texture2D whitepixel;
 
         public bool MapJustUpdated;
-        public int MapSeed = 23142455;
+        public int MapSeed = 12551;
         private bool all_saved;
         public int generated;
 

@@ -180,9 +180,7 @@ namespace SchemesEditor {
                 int x = (int) ((PictureBox) sender).Tag/30 - camy;
                 if (x < gl.rx && y < gl.ry && x >= 0 && y >= 0) {
                     gl.block[x, y].Id =
-                        listBox1.Items[listBox1.SelectedIndex].ToString().Substring(0, listBox1.Items[
-                            listBox1.SelectedIndex].
-                                                                                           ToString().IndexOf(" ")).
+                        listBox1.Items[listBox1.SelectedIndex].ToString().Substring(0, listBox1.Items[listBox1.SelectedIndex].ToString().IndexOf(" ")).
                                                                Substring(2);
                     gl.block[x, y].MTex = BlockDataBase.Data[gl.block[x, y].Id].MTex;
                 }
@@ -219,8 +217,15 @@ namespace SchemesEditor {
 
         public void CreateAllMapFromArray(string[] ints) {
             for (int i = 0; i < ints.Length; i++) {
-                block[i/ry, i%ry].Id = ints[i];
-                block[i/ry, i%ry].MTex = BlockDataBase.Data[ints[i]].MTex;
+                if (BlockDataBase.Data.ContainsKey(ints[i]))
+                {
+                    block[i/ry, i%ry].Id = ints[i];
+                    block[i/ry, i%ry].MTex = BlockDataBase.Data[ints[i]].MTex;
+                }
+                else {
+                    block[i / ry, i % ry].Id = "error";
+                    block[i/ry, i%ry].MTex = "error";
+                }
             }
         }
     }
