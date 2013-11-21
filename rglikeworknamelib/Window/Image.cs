@@ -40,7 +40,7 @@ namespace rglikeworknamelib.Window {
 
                     if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y && mh)
                     {
-                        if (ms.LeftButton == ButtonState.Pressed) {
+                        if (ms.LeftButton == ButtonState.Pressed || ms.RightButton == ButtonState.Pressed || ms.MiddleButton == ButtonState.Pressed) {
                             if (OnMouseDown != null) {
                                 OnMouseDown(this, new MouseStateEventArgs(ms, lms));
                             }

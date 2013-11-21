@@ -23,3 +23,4 @@ Doses=20
 Name=Кофеин в упаковке
 Doses=20
 SType=Medicine
+Buffs={cofeine8}

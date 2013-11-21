@@ -13,5 +13,7 @@ namespace rglikeworknamelib.Creatures {
         public int ReactionTime = 500;
 
         public int Speed = 50;
+
+        public int Hp = 20;
     }
 }

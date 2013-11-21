@@ -3,10 +3,10 @@ using System.IO;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Creatures {
-    public class MonsterDataBase {
+    public class CreatureDataBase {
         public static Dictionary<string, CreatureData> Data;
 
-        public MonsterDataBase() {
+        public CreatureDataBase() {
             Data = new Dictionary<string, CreatureData>();
             List<KeyValuePair<string, object>> a =
                 ParsersCore.UniversalParseDirectory(

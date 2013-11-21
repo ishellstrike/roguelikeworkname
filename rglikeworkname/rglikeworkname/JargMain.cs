@@ -344,7 +344,7 @@ namespace jarg {
             var sw = new Stopwatch();
             sw.Start();
             ShowInfoWindow("Bases loading :", "1/9");
-            new MonsterDataBase();
+            new CreatureDataBase();
             ShowInfoWindow("Bases loading :", "2/9");
             new BlockDataBase();
             ShowInfoWindow("Bases loading :", "3/9");
@@ -366,7 +366,7 @@ namespace jarg {
             logger.Info(
                 "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\nloaded in {0}",
                 sw.Elapsed,
-                MonsterDataBase.Data.Count,
+                CreatureDataBase.Data.Count,
                 BlockDataBase.Data.Count,
                 FloorDataBase.Data.Count,
                 ItemDataBase.Data.Count,

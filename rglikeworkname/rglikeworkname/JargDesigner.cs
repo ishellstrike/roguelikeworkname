@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using rglikeworknamelib;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon;
@@ -23,6 +24,8 @@ namespace jarg {
 
         private Window AchievementsWindow;
         private ListContainer AchievementContainer;
+
+        private ListContainer SchemesExist;
 
         private Window InventoryDropDownWindow;
         private ListContainer InventoryDropDownContainer;
@@ -224,20 +227,23 @@ namespace jarg {
         }
 
         SchemesMap scheme = new SchemesMap(16, 16);
-        Point schemesOffset = new Point(2, 2);
+        Vector2 schemesOffset = new Vector2(2, 2);
         private void InitSchemes(WindowSystem ws) {
-            SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws) {Visible = false};
+            SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws) {Visible = true};
             SchemesImages = new Image[20,20];
             for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                 for (int j = 0; j < SchemesImages.GetLength(1); j++) {
-                    SchemesImages[i, j] = new Image(new Vector2(20 + 32 * i, 20 + 32 * j), Atlases.BlockArray["none"], Color.White, SchemesEditorWindow);
-                    SchemesImages[i, j].Tag = new Point(i, j);
-                    SchemesImages[i, j].OnMouseDown += JargMain_OnMouseDown;
+                        SchemesImages[i, j] = new Image(new Vector2(20 + 32*i, 20 + 32*j), Atlases.BlockArray["none"],
+                                                        Color.White, SchemesEditorWindow);
+                        SchemesImages[i, j].Tag = new Point(i, j);
+                        SchemesImages[i, j].OnMouseDown += JargMain_OnMouseDown;
                 }
             }
-            SchemesContainer = new ListContainer(new Rectangle((int)Settings.Resolution.X/3*2, 40, (int)Settings.Resolution.X/4, (int)Settings.Resolution.Y/5*4), SchemesEditorWindow);
+            SchemesContainer = new ListContainer(new Rectangle((int)Settings.Resolution.X/3*2, 40, (int)Settings.Resolution.X/4, (int)Settings.Resolution.Y/5*3), SchemesEditorWindow);
             SchemesSave = new Button(SchemesContainer.GetPosition()+new Vector2(-40,0), "Save", SchemesEditorWindow);
             SchemesSave.OnPressed += SchemesSave_OnPressed;
+
+            SchemesExist = new ListContainer(new Rectangle((int)SchemesContainer.GetPosition().X, (int)(SchemesContainer.GetPosition().Y + SchemesContainer.Height), (int)Settings.Resolution.X / 4, (int)Settings.Resolution.Y / 5), SchemesEditorWindow);
         }
 
         /// <summary>
@@ -260,7 +266,7 @@ namespace jarg {
                     }
                 }
 
-                if (count > 2) {
+                if (count > 2 || (count > 1 && id.Length > 1)) {
                     sw.Write(string.Format("!{0}!{1} ", id, count));
                 } else {
                     for (int k = 0; k < count; k++) {
@@ -303,16 +309,43 @@ namespace jarg {
                 l.OnLeftPressed += LOnLeftPressed;
             }
 
+            SchemesExist.Clear();
+            foreach (var sch in SchemesDataBase.Data) {
+                var l = new Label(Vector2.Zero, sch.filename, SchemesExist);
+                l.Tag = sch;
+                l.OnLeftPressed += l_OnLeftPressed;
+            }
+
             schemesReady = true;
+        }
+
+        void l_OnLeftPressed(object sender, LabelPressEventArgs e) {
+            Schemes s = (Schemes) ((Label) sender).Tag;
+            scheme = new SchemesMap(s.x, s.y);
+            for (int i = 0; i < scheme.rx; i++)
+            {
+                for (int j = 0; j < scheme.ry; j++)
+                {
+                    scheme.block[i, j] = new Block()
+                    {
+                        Id = s.data[i * s.y + j],
+                        MTex = BlockDataBase.Data[s.data[i * s.y + j]].MTex
+                    };
+                }
+            }
         }
 
         void JargMain_OnMouseDown(object sender, Image.MouseStateEventArgs e) {
             Point p = (Point) ((Image) sender).Tag;
 
-            if(scheme.rx > - schemesOffset.X + p.X && scheme.ry > - schemesOffset.Y + p.Y && - schemesOffset.X + p.X > 0 && - schemesOffset.Y + p.Y > 0) {
+            if(scheme.rx > schemesOffset.X + p.X && scheme.ry > schemesOffset.Y + p.Y && schemesOffset.X + p.X > 0 && schemesOffset.Y + p.Y > 0 && e.Ms.LeftButton == ButtonState.Pressed) {
                 string i = BlockDataBase.Data.ElementAt(schemesSelected).Key;
-                scheme.block[-schemesOffset.X + p.X, -schemesOffset.Y + p.Y].Id = i;
-                scheme.block[-schemesOffset.X + p.X, -schemesOffset.Y + p.Y].MTex = BlockDataBase.Data[i].MTex;
+                scheme.block[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].Id = i;
+                scheme.block[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].MTex = BlockDataBase.Data[i].MTex;
+            }
+
+            if (e.Ms.RightButton == ButtonState.Pressed) {
+                schemesOffset = new Vector2(schemesOffset.X - (ms_.X - lms_.X) / 32f, schemesOffset.Y - (ms_.Y - lms_.Y) / 32f);
             }
         }
 
@@ -574,7 +607,7 @@ namespace jarg {
             ButtonResolution19201024 = new Button(new Vector2(10 + 50 + 95*4, 10 + 40*5), "1920x1024",
                                                   WindowSettings);
             ButtonResolution19201024.OnPressed += ButtonResolution19201024_onPressed;
-            LabelOnlineRadio = new Label(new Vector2(10, 10 + 40*6), "Resolution", WindowSettings);
+            LabelOnlineRadio = new Label(new Vector2(10, 10 + 40*6), "Radio", WindowSettings);
             ButtonRadioGB = new Button(new Vector2(10 + 50 + 95*1, 10 + 40*6), "GhostBox", WindowSettings);
             ButtonRadioGB.OnPressed += ButtonRadioGB_onPressed;
             ButtonRadioOff = new Button(new Vector2(10 + 50 + 95*2, 10 + 40*6), "  Off   ", WindowSettings);
@@ -800,7 +833,7 @@ namespace jarg {
 
             if (s.Contains("spawn c ")) {
                 string ss = s.Substring(8);
-                if (MonsterDataBase.Data.ContainsKey(ss)) {
+                if (CreatureDataBase.Data.ContainsKey(ss)) {
                     Vector2 pp = player_.GetWorldPositionInBlocks();
                     pp.X = (int) pp.X;
                     pp.Y = (int) pp.Y;
@@ -1206,17 +1239,19 @@ namespace jarg {
             if(SchemesEditorWindow.Visible && schemesReady) {
                 for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                     for (int j = 0; j < SchemesImages.GetLength(1); j++) {
-                        if (scheme.rx > -schemesOffset.X + i && scheme.ry > -schemesOffset.Y + j && -schemesOffset.X + i > 0 && -schemesOffset.Y + j > 0) {
-                            SchemesImages[i, j].image =
-                                Atlases.BlockArray[scheme.block[i - schemesOffset.X, j - schemesOffset.Y].MTex];
-                            if (scheme.block[i - schemesOffset.X, j - schemesOffset.Y].Id == "0") {
-                                scheme.block[i - schemesOffset.X, j - schemesOffset.Y].MTex = "notex";
+                        if (scheme.rx > (int)schemesOffset.X + i && scheme.ry > (int)schemesOffset.Y + j && (int)schemesOffset.X + i >= 0 && (int)schemesOffset.Y + j >= 0)
+                        {
+                            SchemesImages[i, j].image = Atlases.BlockArray[scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex];
+                            if (scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].Id == "0")
+                            {
+                                scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex = "notex";
                                 SchemesImages[i, j].col_ = Color.Red;
                             } else {
                                 SchemesImages[i, j].col_ = Color.White;
                             }
                         } else {
                             SchemesImages[i, j].image = Atlases.BlockArray["bush1"];
+                            SchemesImages[i, j].col_ = Color.White;
                         }
                         
                     }
@@ -1295,11 +1330,11 @@ namespace jarg {
             ry = y;
             block = new Block[x, y];
 
-            for (int i = 0; i < x; i++) {
-                for (int j = 0; j < y; j++) {
-                    block[i, j] = new Block();
-                }
-            }
+            //for (int i = 0; i < x; i++) {
+            //    for (int j = 0; j < y; j++) {
+            //        block[i, j] = new Block();
+            //    }
+            //}
         }
 
         public void CreateAllMapFromArray(string[] ints)

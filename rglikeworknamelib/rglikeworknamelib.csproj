@@ -75,6 +75,7 @@
     <Compile Include="Dungeon\Creatures\Ability.cs" />
     <Compile Include="Dungeon\Creatures\AbilityNameStyle.cs" />
     <Compile Include="Dungeon\Creatures\CrearureZombie.cs" />
+    <Compile Include="Dungeon\Creatures\CreatureFactory.cs" />
     <Compile Include="Dungeon\Creatures\DamageType.cs" />
     <Compile Include="Dungeon\Creatures\DressCreatures.cs" />
     <Compile Include="Dungeon\Creatures\ICreature.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Dungeon\Items\Item.cs" />
     <Compile Include="Dungeon\Items\ItemData.cs" />
     <Compile Include="Dungeon\Items\ItemDataBase.cs" />
+    <Compile Include="Dungeon\Items\ItemFactory.cs" />
     <Compile Include="Dungeon\Items\ItemType.cs" />
     <Compile Include="Dungeon\Items\SpawnlistParser.cs" />
     <Compile Include="Dungeon\Level\Blocks\Block.cs" />
@@ -132,7 +134,7 @@
     <Compile Include="Dungeon\Creatures\AIStyle.cs" />
     <Compile Include="Dungeon\Creatures\Creature.cs" />
     <Compile Include="Dungeon\Creatures\CreatureData.cs" />
-    <Compile Include="Dungeon\Creatures\MonsterDataBase.cs" />
+    <Compile Include="Dungeon\Creatures\CreatureDataBase.cs" />
     <Compile Include="Parser\BasesCheker.cs" />
     <Compile Include="Parser\ChemesParser.cs" />
     <Compile Include="Parser\ParsersCore.cs" />

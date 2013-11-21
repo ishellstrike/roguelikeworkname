@@ -106,9 +106,18 @@ namespace rglikeworknamelib.Dungeon.Item {
                         foreach (IBuff buff in selectedItem.Buffs) {
                             buff.ApplyToTarget(player);
                         }
-                        selectedItem.Doses--;
-                        if (selectedItem.Doses <= 0 && items_.Contains(selectedItem)) {
-                            items_.Remove(selectedItem);
+                        if (selectedItem.Doses > 0) {
+                            selectedItem.Doses--;
+                            if (selectedItem.Doses <= 0 && items_.Contains(selectedItem))
+                            {
+                                items_.Remove(selectedItem);
+                            }
+                        } else if (selectedItem.Count > 0) {
+                            selectedItem.Count--;
+                            if (selectedItem.Count <= 0 && items_.Contains(selectedItem))
+                            {
+                                items_.Remove(selectedItem);
+                            }
                         }
                     }
                     else {

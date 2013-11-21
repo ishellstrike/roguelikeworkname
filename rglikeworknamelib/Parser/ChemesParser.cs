@@ -72,6 +72,7 @@ namespace rglikeworknamelib.Parser {
                             cur.type = SchemesType.BunkerParts;
                             break;
                     }
+                    cur.filename = string.Format("{0}{1}", cur.type, Settings.rnd.Next());
                     //switch (header[0])
                     //{
                     //    default:

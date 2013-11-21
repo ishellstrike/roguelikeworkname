@@ -3,6 +3,7 @@
         public string[] data;
         public SchemesType type;
         public int x, y;
+        public string filename;
 
         public void Rotate(int rr) {
             var temp = new string[x*y];

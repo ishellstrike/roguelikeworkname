@@ -71,11 +71,21 @@ namespace rglikeworknamelib.Window {
             }
         }
 
+        private int scVal = 0;
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
             if (Visible) {
                 for (int i = 0; i < Components.Count; i++) {
                     Components[i].Update(gt, ms, lms, ks, lks, mh);
                 }
+                var a = GetPosition();
+                if (ms.X >= a.X && ms.Y >= a.Y && ms.X <= a.X + Width && ms.Y <= a.Y + Height && mh) {
+                    if (scVal > ms.ScrollWheelValue) {
+                        buttonDown__onPressed(null, null);
+                    } else if (scVal < ms.ScrollWheelValue) {
+                        buttonUp__onPressed(null, null);
+                    }
+                }
+                scVal = ms.ScrollWheelValue;
             }
         }
 
@@ -130,7 +140,8 @@ namespace rglikeworknamelib.Window {
 
                 Vector2 l = Vector2.Zero;
 
-                foreach (IGameComponent item in Components) {
+                for (int i = 0; i < Components.Count; i++) {
+                    IGameComponent item = Components[i];
                     if (item == buttonUp_ || item == buttonDown_ || item == progress_) {
                         continue;
                     }

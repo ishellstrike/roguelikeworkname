@@ -41,3 +41,9 @@ Value={25}
 Name=Восстанавливает 50 здоровья
 Duration=0
 Value={50}
+
+~BuffCofeine,cofeine8
+Name=Придает немного бодрости
+Duration=0
+Value={8}
+

@@ -90,13 +90,13 @@ namespace rglikeworknamelib.Creatures {
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
                 IBlock block = ms_.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
                 if (block != null && block.Lightness == Color.White &&
-                    reactionT_.TotalMilliseconds > MonsterDataBase.Data[Id].ReactionTime) {
+                    reactionT_.TotalMilliseconds > CreatureDataBase.Data[Id].ReactionTime) {
                     remPos_ = hero.Position - WorldPosition() + Position;
                     MoveByMover(ms_, time);
 
                     Col = Color.White;
                     if (sec_.TotalSeconds > 1 && ms_.Parent.IsCreatureMeele(hero, this)) {
-                        hero.GiveDamage(MonsterDataBase.Data[Id].Damage, DamageType.Default, ms_);
+                        hero.GiveDamage(CreatureDataBase.Data[Id].Damage, DamageType.Default, ms_);
                         sec_ = TimeSpan.Zero;
                     }
                 }
@@ -169,7 +169,7 @@ namespace rglikeworknamelib.Creatures {
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
             Vector2 a = GetPositionInBlocks();
             Vector2 p = WorldPosition() - camera;
-            spriteBatch.Draw(Atlases.CreatureAtlas[MonsterDataBase.Data[Id].MTex], p + new Vector2(-16, 0), Col);
+            spriteBatch.Draw(Atlases.CreatureAtlas[CreatureDataBase.Data[Id].MTex], p + new Vector2(-16, 0), Col);
             if (Settings.DebugInfo) {
                 spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
             }
@@ -191,11 +191,11 @@ namespace rglikeworknamelib.Creatures {
 
         public void GiveDamage(float value, DamageType type) {
             hp_.Current -= value;
-            EventLog.Add(string.Format("{0} получает {1} урона", MonsterDataBase.Data[Id].Name, value),
+            EventLog.Add(string.Format("{0} получает {1} урона", CreatureDataBase.Data[Id].Name, value),
                          GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Damage);
             if (Hp.Current <= 0) {
                 Kill(ms);
-                EventLog.Add(string.Format("{0} УМИРАЕТ!", MonsterDataBase.Data[Id].Name.ToUpper()),
+                EventLog.Add(string.Format("{0} УМИРАЕТ!", CreatureDataBase.Data[Id].Name.ToUpper()),
                              GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Dies);
             }
             var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
@@ -231,7 +231,7 @@ namespace rglikeworknamelib.Creatures {
             if (remPos_ != Vector2.Zero &&
                 ((int) remPos_.X != (int) position_.X || (int) remPos_.Y != (int) position_.Y)) {
                 Vector2 mover = - position_ + remPos_;
-                float percenterMax = MonsterDataBase.Data[Id].Speed*Percenter;
+                float percenterMax = CreatureDataBase.Data[Id].Speed*Percenter;
 
                 if (mover.Length() > time*percenterMax) {
                     mover.Normalize();

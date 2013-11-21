@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using NLog;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
@@ -201,21 +200,6 @@ namespace rglikeworknamelib.Dungeon.Items {
                 }
             }
             EventLog.Add(string.Format("Вы успешно разорвали {0} на тряпки", Data.Name), Color.Yellow, LogEntityType.NoAmmoWeapon);
-        }
-    }
-
-    public class ItemFactory {
-        private static readonly Logger logger = LogManager.GetLogger("ItemFactory");
-        public static IItem GetInstance(string id, int count) {
-            if (!ItemDataBase.Data.ContainsKey(id)) {
-                logger.Error(string.Format("Missing ItemData id={0}!!!", id));
-                return null;
-            }
-            var a = (IItem)Activator.CreateInstance(ItemDataBase.Data[id].Prototype);
-            a.Id = id;
-            a.Count = count;
-
-            return a;
         }
     }
 }

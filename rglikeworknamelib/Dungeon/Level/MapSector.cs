@@ -271,10 +271,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void Spawn(string creatureId, int x, int y) {
-            var n = (ICreature) Activator.CreateInstance(MonsterDataBase.Data[creatureId].Prototype);
-            n.Position = new Vector2(x*32, y*32);
-            n.Id = creatureId;
-            Creatures.Add(n);
+            Creatures.Add(CreatureFactory.GetInstance(creatureId, new Vector2(x * 32, y * 32)));
         }
 
         public IBlock GetBlock(int x, int y) {
