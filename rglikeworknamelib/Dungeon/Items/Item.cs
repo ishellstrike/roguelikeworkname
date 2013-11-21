@@ -151,12 +151,13 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public void OpenCan(Player p) {
-            if (p.Inventory.ContainsId("knife")) {
+            if (p.Inventory.ContainsId("knife") || p.Inventory.ContainsId("otvertka"))
+            {
                 p.Inventory.TryRemoveItem(Id, 1);
                 p.Inventory.AddItem(ItemFactory.GetInstance(ItemDataBase.Data[Id].AfteruseId, 1));
             }
             else {
-                EventLog.Add("Чтобы открывать банки вам нужен нож", Color.Yellow, LogEntityType.NoAmmoWeapon);
+                EventLog.Add("Чтобы открывать банки вам нужен нож или отвертка", Color.Yellow, LogEntityType.NoAmmoWeapon);
             }
         }
     }

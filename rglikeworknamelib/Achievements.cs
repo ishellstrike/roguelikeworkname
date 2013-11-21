@@ -1,27 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace jarg {
-    public class Achievement {
-        public DateTime Date;
-        public string Description;
-        public string Name;
-        public AcievementType Type;
-    }
-
-    public enum AcievementType {
-    }
-
-    public class Statist {
-        public float Count;
-        public string Description;
-        public string Name;
-        public StatistType Type;
-    }
-
-    public enum StatistType {
-    }
-
     public class Achievements {
         public static Dictionary<string, Achievement> Data = new Dictionary<string, Achievement>();
         public static Dictionary<string, Statist> Stat = new Dictionary<string, Statist>();
@@ -30,17 +9,20 @@ namespace jarg {
             Data.Add("test1", new Achievement {Name = "Test 1", Description = "Desc 1"});
             Data.Add("test2", new Achievement {Name = "Test 2", Description = "Desc 2"});
 
-            Stat.Add("ammototal", new Statist {Name = "Vsego patronov sobrano"});
-            Stat.Add("ammouse", new Statist {Name = "Vsego patronov rasstrelyano"});
-            Stat.Add("guntotal", new Statist {Name = "Vsego pushek sobrano"});
-            Stat.Add("foodtotal", new Statist {Name = "Vsego edi sobrano"});
-            Stat.Add("zombiekill", new Statist {Name = "Ubito zombi"});
-            Stat.Add("takedmg", new Statist {Name = "Polucheno urona"});
-            Stat.Add("makedmg", new Statist {Name = "Naneseno urona"});
-            Stat.Add("maxdmg", new Statist {Name = "Maksimalnii uron"});
-            Stat.Add("dooro", new Statist {Name = "Otkrito dverei"});
-            Stat.Add("walk", new Statist {Name = "Vsego proideno"});
-            Stat.Add("drive", new Statist {Name = "Vsego proehano"});
+            Stat.Add("ammototal", new Statist {Name = "Собрано патронов"});
+            Stat.Add("ammouse", new Statist {Name = "Израсходовано патронов"});
+            Stat.Add("guntotal", new Statist {Name = "Огнестрельного оружия"});
+            Stat.Add("foodtotal", new Statist {Name = "Еды"});
+            Stat.Add("medtotal", new Statist { Name = "Медикаментов" });
+            Stat.Add("zombiekill", new Statist {Name = "Зомби"});
+            Stat.Add("takedmg", new Statist {Name = "получено урона"});
+            Stat.Add("makedmg", new Statist {Name = "Нанесено урона"});
+            Stat.Add("maxdmg", new Statist {Name = "Максимальный урон"});
+            Stat.Add("dooro", new Statist {Name = "Открыто дверей"});
+            Stat.Add("walk", new Statist {Name = "Пройдено"});
+            Stat.Add("drive", new Statist {Name = "На транспортном средстве"});
+            Stat.Add("fooduse", new Statist { Name = "Еды" });
+            Stat.Add("meduse", new Statist { Name = "Медикаментов" });
         }
     }
 }

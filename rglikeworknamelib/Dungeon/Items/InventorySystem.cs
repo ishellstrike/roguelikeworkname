@@ -106,6 +106,13 @@ namespace rglikeworknamelib.Dungeon.Item {
                         foreach (IBuff buff in selectedItem.Buffs) {
                             buff.ApplyToTarget(player);
                         }
+
+                        if (selectedItem.Data.SType == ItemType.Medicine) {
+                            Achievements.Stat["meduse"].Count++;
+                        } else {
+                            Achievements.Stat["fooduse"].Count++;
+                        }
+
                         if (selectedItem.Doses > 0) {
                             selectedItem.Doses--;
                             if (selectedItem.Doses <= 0 && items_.Contains(selectedItem))
