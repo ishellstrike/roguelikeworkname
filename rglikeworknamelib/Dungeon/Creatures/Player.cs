@@ -21,6 +21,10 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         
     }
 
+    public class Bodypart {
+        
+    }
+
     public class Player : ShootingCreature {
         private readonly SpriteBatch sb_;
 
@@ -33,7 +37,8 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public IItem ItemGun;
         public IItem ItemMeele;
         public Stat Morale = new Stat(50);
-        public Collection<MoraleModifer> MoraleModifers;
+        public Collection<MoraleModifer> MoraleModifers = new Collection<MoraleModifer>();
+        public Collection<Bodypart> Bodyparts = new Collection<Bodypart>(); 
 
         public PerksSystem Perks;
         public Stat Sleep = new Stat(100);

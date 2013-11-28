@@ -850,14 +850,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 for (int i = 0; i < interestCount; i++) {
                     var a = new InterestPointCity {
                         Name = NameDataBase.GetRandom(rand),
-                        SectorPos = new Point(rand.Next(0, 0), rand.Next(0, 0)),
+                        SectorPos = new Point(rand.Next(0, 0) + megaOffsetX * 100, rand.Next(0, 0) + megaOffsettY * 100),
                         Range = 10
                     };
                     mm.InterestPoints.Add(a);
-
-                    if (i == 0) {
-                        a.SectorPos = new Point(0, 0);
-                    }
 
                     var size = new Point(0, 0);
                     int max = 0;
@@ -1177,6 +1173,18 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         #endregion
+
+        public void GenerateMegaSectorAround(int arg1, int arg2) {
+            for (int i = -1 + arg1; i <= 1 + arg1; i++)
+            {
+                for (int j = -1 + arg2; j <= 1 + arg2; j++)
+                {
+                    if (i != arg1 || j != arg2) {
+                        GenerateMegaSector(i, j);
+                    }
+                }
+            }
+        }
     }
 
     [Serializable]

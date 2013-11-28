@@ -22,11 +22,13 @@ namespace rglikeworknamelib {
         public Color col;
         public string message;
         public LogEntityType type;
+        internal const int LogSize = 512;
 
         public LogEntity(string mes, Color c, LogEntityType t = LogEntityType.Default) {
             message = mes;
             col = c;
             type = t;
+
         }
 
         public LogEntity(string mes, LogEntityType entity = LogEntityType.Default) {
@@ -46,11 +48,18 @@ namespace rglikeworknamelib {
         public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type) {
             log.Add(new LogEntity(GlobalWorldLogic.GetTimeString(globalDateTime) + " " + message, color, type));
 
-            if (log.Count > 100) {
+            if (log.Count > LogEntity.LogSize)
+            {
                 log.RemoveAt(0);
             }
 
-            UpdateEvent();
+            updated = true; UpdateEvent();
+        }
+
+        private static bool updated;
+        public static void Update() {
+            updated = false;
+            
         }
 
         private static void UpdateEvent() {

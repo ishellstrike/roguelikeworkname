@@ -65,8 +65,8 @@ namespace rglikeworknamelib.Window {
                         Vector2.Zero,
                         new Vector2(b.Width + 2, 2), SpriteEffects.None, 0);
 
-                foreach (IGameComponent item in Components) {
-                    item.Draw(sb);
+                for (int i = 0; i < Components.Count; i++) {
+                    Components[i].Draw(sb);
                 }
             }
         }
@@ -187,7 +187,6 @@ namespace rglikeworknamelib.Window {
         public void Clear() {
             FromI = 0;
 
-            Components.Clear();
             Components.Clear();
 
             Components.Add(buttonUp_);

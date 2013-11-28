@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -21,6 +22,10 @@ using IGameComponent = rglikeworknamelib.Window.IGameComponent;
 namespace jarg {
     public partial class JargMain {
         #region Windows Vars
+
+        private Window BigLogWindow;
+        private ListContainer BigLogContainer;
+        private Button ShowBigLogWindow;
 
         private Window MoraleWindow;
         private ListContainer MoraleContainer;
@@ -156,6 +161,9 @@ namespace jarg {
         private void CreateWindows(WindowSystem ws) {
             var rnd = new Random();
 
+            BigLogWindow = new Window(new Vector2(Settings.Resolution.X/10*9, Settings.Resolution.Y/10*9), "Big Event Log", true, ws) {Visible = false};
+            BigLogContainer = new ListContainer(new Rectangle(0, 0, (int)BigLogWindow.Width, (int)BigLogWindow.Height - 20), BigLogWindow);
+
             WindowStats = new Window(new Rectangle(50, 50, 400, 400), "Stats", true, ws) {Visible = false};
             StatsHeat = new ProgressBar(new Rectangle(50, 50, 100, 20), "", WindowStats);
             StatsJajda = new ProgressBar(new Rectangle(50, 50 + 30, 100, 20), "", WindowStats);
@@ -175,7 +183,7 @@ namespace jarg {
             SpawnSomeWindow = new Window(new Vector2(200,400), "Spawn some", true, ws) {Visible = false};
             SpawnSomeList = new ListContainer(new Rectangle(0, 0, (int)SpawnSomeWindow.Width, (int)SpawnSomeWindow.Height - 20), SpawnSomeWindow);
 
-            MoraleWindow = new Window(new Vector2(400, 400), "Morale", true, ws);
+            MoraleWindow = new Window(new Vector2(400, 400), "Morale", true, ws){Visible = false};
             MoraleContainer = new ListContainer(new Rectangle(0, 0, (int)MoraleWindow.Width, (int)MoraleWindow.Height - 20), MoraleWindow);
 
             InitWindowUI(ws);
@@ -220,7 +228,7 @@ namespace jarg {
             ConsoleTB.OnEnter += ConsoleTB_onEnter;
             ConsoleWindow.CenterComponentHor(ConsoleTB);
             SpawnItemButton = new Button(new Vector2(10,10), "Spawn item", ConsoleWindow);
-            SpawnItemButton.OnPressed += new EventHandler(SpawnItemButton_OnPressed);
+            SpawnItemButton.OnPressed += SpawnItemButton_OnPressed;
 
             WindowRadio =
                 new Window(
@@ -247,11 +255,9 @@ namespace jarg {
             ShowSpawnSomeWindow(ItemDataBase.Data.Keys.ToList(), true);
         }
 
-        private bool isitem_inspawn;
         private void ShowSpawnSomeWindow(List<string> ids, bool isitem) {
             SpawnSomeWindow.Visible = true;
             SpawnSomeWindow.OnTop();
-            isitem_inspawn = isitem;
             SpawnSomeList.Clear();
             if (isitem) {
                 int phase = 0;
@@ -446,12 +452,26 @@ namespace jarg {
                 new Window(
                     new Rectangle(3, (int) (Settings.Resolution.Y - Settings.Resolution.Y/4 - 3), (int) Settings.Resolution.X/3,
                                   (int) Settings.Resolution.Y/4), "Log",
-                    true, ws) {Visible = false, Closable = false, hides = true};
+                    true, ws) {Visible = false, Closable = false, NoBorder = true, Moveable = false};
             ContainerEventLog =
                 new ListContainer(
                     new Rectangle(0, 0, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/4 - 20),
                     EventLogWindow);
+            ContainerEventLog.Clear();
             EventLog.OnLogUpdate += EventLog_onLogUpdate;
+            ShowBigLogWindow = new Button(Vector2.Zero, "big", EventLogWindow);
+            ShowBigLogWindow.OnPressed += ShowBigLogWindow_OnPressed;
+        }
+
+        void ShowBigLogWindow_OnPressed(object sender, EventArgs e) {
+            BigLogWindow.Visible = true;
+            BigLogContainer.Clear();
+
+            for (int i = 0; i < EventLog.log.Count; i++) {
+                var logEntity = EventLog.log[i];
+                new LabelFixed(Vector2.Zero, logEntity.message, logEntity.col, BigLogContainer);
+            }
+            BigLogContainer.ScrollBottom();
         }
 
         private void InitContainer(WindowSystem ws) {
@@ -876,6 +896,8 @@ namespace jarg {
             ResolutionChanging();
         }
 
+        Action rlg = RandomLogFill;
+        IAsyncResult rldrslt;
         private void ConsoleTB_onEnter(object sender, EventArgs e) {
             string s = ConsoleTB.Text;
             ConsoleTB.Tag = "";
@@ -910,6 +932,13 @@ namespace jarg {
                     string.Format("Player position {4} or ({0}, {1}) in sector ({2}, {3})", i, i1, (int) ppp.X,
                                   (int) ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan,
                     LogEntityType.Console);
+            }
+
+            if (s.Contains("randomlog"))
+            {
+                if (rldrslt == null || rldrslt.IsCompleted) {
+                    rldrslt = rlg.BeginInvoke(null, null);
+                }
             }
             if (s.Contains("fastwalk")) {
                 acmodifer = acmodifer == 1 ? 4 : 1;
@@ -986,6 +1015,13 @@ namespace jarg {
             ConsoleTB.Text = string.Empty;
         }
 
+        private static void RandomLogFill() {
+            for (int i = 0; i <= 128; i++) {
+                Thread.Sleep(50);
+                EventLog.Add(Settings.rnd.Next().ToString()+string.Format(" ({0}/{1})",i+1,128), new Color(Settings.rnd.Next(0, 256), Settings.rnd.Next(0, 256), Settings.rnd.Next(0, 256)), LogEntityType.Default);
+            }
+        }
+
         private void ShowInfoWindow(string s1, string s2) {
             InfoWindowLabel.Text = s1;
             InfoWindowLabel.Text2 = s2;
@@ -1026,7 +1062,9 @@ namespace jarg {
         private void EventLog_onLogUpdate(object sender, EventArgs e) {
             ContainerEventLog.Clear();
             int i = 0;
-            foreach (LogEntity ss in EventLog.log) {
+            for (int j = 0; j < EventLog.log.Count; j++)
+            {
+                LogEntity ss = EventLog.log[j];
                 new LabelFixed(Vector2.Zero, ss.message, ss.col, ContainerEventLog);
                 i++;
             }

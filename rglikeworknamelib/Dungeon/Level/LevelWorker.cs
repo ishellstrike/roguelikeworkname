@@ -56,13 +56,13 @@ namespace rglikeworknamelib.Dungeon.Level {
             Thread.CurrentThread.IsBackground = true;
             while (!exit) {
                 if (onSave_.Count > 0) {
-                    KeyValuePair<Point, MapSector> t = onSave_.First();
+                    KeyValuePair<Point, MapSector> t = onSave_.ElementAt(0);
                     SaveSector(t.Value);
                     onSave_.Remove(t.Key);
                 }
 
                 if (onLoad_.Count > 0) {
-                    KeyValuePair<Point, GameLevel> t = onLoad_.First();
+                    KeyValuePair<Point, GameLevel> t = onLoad_.ElementAt(0);
                     if (Ready.ContainsKey(t.Key)) {
                         Ready.Remove(t.Key);
                     }
@@ -72,7 +72,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
 
                 if (onGeneration_.Count > 0) {
-                    KeyValuePair<Point, GameLevel> tt = onGeneration_.First();
+                    KeyValuePair<Point, GameLevel> tt = onGeneration_.ElementAt(0);
                     var ms = new MapSector(tt.Value, tt.Key.X, tt.Key.Y);
                     ms.Rebuild(tt.Value.MapSeed);
                     if (Ready.ContainsKey(tt.Key)) {

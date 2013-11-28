@@ -25,6 +25,7 @@ using rglikeworknamelib.Generation.Names;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Window;
 using Color = Microsoft.Xna.Framework.Color;
+using EventLog = rglikeworknamelib.EventLog;
 using Label = rglikeworknamelib.Window.Label;
 using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
@@ -200,10 +201,10 @@ namespace jarg {
             UpdateInventoryContainer();
             UpdateCaracterWindowItems(null, null);
             EventLog_onLogUpdate(null, null);
-            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
-                                                       DepthFormat.Depth24Stencil8);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width/LightQ, height/LightQ, true, SurfaceFormat.Color,
-                                                        DepthFormat.Depth24Stencil8);
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
+                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
+                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             EffectOmnilight.Parameters["screenWidth"].SetValue(width);
             EffectOmnilight.Parameters["screenHeight"].SetValue(height);
             lineBatch_.UpdateProjection(GraphicsDevice);
@@ -257,10 +258,10 @@ namespace jarg {
             int width = pp.BackBufferWidth;
             int height = pp.BackBufferHeight;
 
-            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, true, SurfaceFormat.Color,
-                                                       DepthFormat.Depth24Stencil8);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, true, SurfaceFormat.Color,
-                                                        DepthFormat.Depth24Stencil8);
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
+                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
+                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
 
             lightEffect1_ = Content.Load<Effect>(@"Effects/ShadersLightningShadow");
             lightEffect2_ = Content.Load<Effect>(@"Effects/ShadersLightningCombined");
@@ -326,7 +327,7 @@ namespace jarg {
 
             currentFloor_.MegaMapPreload();
 
-            var inv = new Action<int, int>(currentFloor_.GenerateMegaSector);
+            var inv = new Action<int, int>(currentFloor_.GenerateMegaSectorAround);
             inv.BeginInvoke(0, 0, null, null);
 
             HideInfoWindow();
@@ -470,6 +471,7 @@ namespace jarg {
             bs_.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
+            EventLog.Update();
 
             currentFloor_.UpdateCreatures(gameTime, player_, GraphicsDevice);
 
@@ -498,7 +500,7 @@ namespace jarg {
                 sw_draw.Restart();
             }
 
-            GraphicsDevice.Clear(Color.Black);
+            //GraphicsDevice.Clear(Color.Black);
 
             drawAction_(gameTime);
 
@@ -552,7 +554,7 @@ namespace jarg {
             {player_.Position.X - camera_.X, player_.Position.Y - camera_.Y});
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            GraphicsDevice.Clear(Color.Black);
+            //GraphicsDevice.Clear(Color.Black);
             //color maps
             spriteBatch_.Begin();
             currentFloor_.DrawFloors(gameTime, camera_);
