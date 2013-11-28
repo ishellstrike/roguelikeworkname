@@ -34,7 +34,7 @@ namespace rglikeworknamelib.Creatures {
             Vector2 a = GetPositionInBlocks();
             Vector2 p = WorldPosition() - camera;
             Vector2 position = p + new Vector2(-16, 0);
-            spriteBatch.Draw(Atlases.CreatureAtlas[CreatureDataBase.Data[Id].MTex], position, Col);
+            spriteBatch.Draw(MTex, position, Col);
 
             Vector2 origin = Vector2.Zero;
             if (Col != Color.Black) {

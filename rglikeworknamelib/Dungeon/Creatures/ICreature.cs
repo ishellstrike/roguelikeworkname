@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Level;
 
@@ -10,7 +11,9 @@ namespace rglikeworknamelib.Creatures {
         Vector2 Position { get; set; }
         Stat Hp { get; set; }
         bool isDead { get; }
-        string Id { get; set; }
+        string Id { get;}
+        CreatureData Data { get; }
+        Texture2D MTex { get; }
         bool Skipp { get; set; }
         MapSector ms { get; set; }
         List<IBuff> Buffs { get; set; }
@@ -23,5 +26,6 @@ namespace rglikeworknamelib.Creatures {
         Vector2 GetWorldPositionInBlocks();
         event EventHandler OnDamageRecieve;
         event EventHandler OnDeath;
+        void OnLoad();
     }
 }

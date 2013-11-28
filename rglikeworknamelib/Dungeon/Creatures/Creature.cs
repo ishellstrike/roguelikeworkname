@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
@@ -28,13 +29,19 @@ namespace rglikeworknamelib.Creatures {
         [NonSerialized]
         private MapSector ms_;
 
+        [NonSerialized]
+        private CreatureData data_;
+
+        [NonSerialized]
+        private Texture2D mTex_;
+
         public Vector2 LastPos {
             get { return lastpos_; }
             set { lastpos_ = value; }
         }
 
         public Vector2 ShootPoint { get; set; }
-        public string Id { get; set; }
+        //public string Id { get; internal set; }
 
         public Vector2 Position {
             get { return position_; }
@@ -50,6 +57,16 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public bool isDead { get; internal set; }
+        public string Id { get; internal set; }
+        public CreatureData Data {
+            get { return data_; }
+            internal set { data_ = value; }
+        }
+
+        public Texture2D MTex {
+            get { return mTex_; }
+            internal set { mTex_ = value; }
+        }
 
         /// <summary>
         ///     Returns creature position in game blocks
@@ -64,6 +81,10 @@ namespace rglikeworknamelib.Creatures {
 
         public event EventHandler OnDamageRecieve;
         public event EventHandler OnDeath;
+        public void OnLoad() {
+            Data = CreatureDataBase.Data[Id];
+            MTex = Atlases.CreatureAtlas[Data.MTex];
+        }
 
         public List<IBuff> Buffs {
             get { return buffs_; }
@@ -90,13 +111,13 @@ namespace rglikeworknamelib.Creatures {
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
                 IBlock block = ms_.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
                 if (block != null && block.Lightness == Color.White &&
-                    reactionT_.TotalMilliseconds > CreatureDataBase.Data[Id].ReactionTime) {
+                    reactionT_.TotalMilliseconds > Data.ReactionTime) {
                     remPos_ = hero.Position - WorldPosition() + Position;
                     MoveByMover(ms_, time);
 
                     Col = Color.White;
                     if (sec_.TotalSeconds > 1 && ms_.Parent.IsCreatureMeele(hero, this)) {
-                        hero.GiveDamage(CreatureDataBase.Data[Id].Damage, DamageType.Default, ms_);
+                        hero.GiveDamage(Data.Damage, DamageType.Default, ms_);
                         sec_ = TimeSpan.Zero;
                     }
                 }
@@ -169,7 +190,7 @@ namespace rglikeworknamelib.Creatures {
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
             Vector2 a = GetPositionInBlocks();
             Vector2 p = WorldPosition() - camera;
-            spriteBatch.Draw(Atlases.CreatureAtlas[CreatureDataBase.Data[Id].MTex], p + new Vector2(-16, 0), Col);
+            spriteBatch.Draw(MTex, p + new Vector2(-16, 0), Col);
             if (Settings.DebugInfo) {
                 spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
             }
@@ -191,11 +212,11 @@ namespace rglikeworknamelib.Creatures {
 
         public void GiveDamage(float value, DamageType type) {
             hp_.Current -= value;
-            EventLog.Add(string.Format("{0} получает {1} урона", CreatureDataBase.Data[Id].Name, value),
+            EventLog.Add(string.Format("{0} получает {1} урона", Data.Name, value),
                          GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Damage);
             if (Hp.Current <= 0) {
                 Kill(ms);
-                EventLog.Add(string.Format("{0} УМИРАЕТ!", CreatureDataBase.Data[Id].Name.ToUpper()),
+                EventLog.Add(string.Format("{0} УМИРАЕТ!", Data.Name.ToUpper()),
                              GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Dies);
             }
             var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
@@ -231,7 +252,7 @@ namespace rglikeworknamelib.Creatures {
             if (remPos_ != Vector2.Zero &&
                 ((int) remPos_.X != (int) position_.X || (int) remPos_.Y != (int) position_.Y)) {
                 Vector2 mover = - position_ + remPos_;
-                float percenterMax = CreatureDataBase.Data[Id].Speed*Percenter;
+                float percenterMax = Data.Speed*Percenter;
 
                 if (mover.Length() > time*percenterMax) {
                     mover.Normalize();

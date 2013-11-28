@@ -156,7 +156,7 @@ namespace rglikeworknamelib.Parser {
                                 {
                                     extracted = extracted.Substring(1, extracted.Length - 2);
                                     IEnumerable<string> arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
-                                    string[] ar = arrayextractor.ToArray();
+                                    List<string> ar = arrayextractor.ToList();
                                     finfo.SetValue(cur, ar);
                                 }
                                 else {

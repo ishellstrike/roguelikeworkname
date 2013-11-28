@@ -1,5 +1,6 @@
 ﻿using System;
 using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Buffs {
     [Serializable]

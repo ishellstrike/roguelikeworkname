@@ -41,7 +41,19 @@ namespace jarg {
 
                 if (ks_[Keys.C] == KeyState.Down && lks_[Keys.C] == KeyState.Up) {
                     CaracterWindow.Visible = !CaracterWindow.Visible;
+                    if (CaracterWindow.Visible) {
+                        CaracterWindow.OnTop();
+                    }
                     UpdateCaracterWindowItems(null, null);
+                }
+
+                if (ks_[Keys.V] == KeyState.Down && lks_[Keys.V] == KeyState.Up)
+                {
+                    CraftWindow.Visible = !CraftWindow.Visible;
+                    if (CraftWindow.Visible) {
+                        CraftWindow.OnTop();
+                    }
+                    Update_Craft_Items();
                 }
 
                 if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
@@ -56,6 +68,15 @@ namespace jarg {
                     EventLogWindow.Visible = !EventLogWindow.Visible;
                     if (EventLogWindow.Visible) {
                         EventLogWindow.OnTop();
+                    }
+                }
+
+                if (ks_[Keys.R] == KeyState.Down && lks_[Keys.R] == KeyState.Up)
+                {
+                    MoraleWindow.Visible = !MoraleWindow.Visible;
+                    if (MoraleWindow.Visible)
+                    {
+                        MoraleWindow.OnTop();
                     }
                 }
 

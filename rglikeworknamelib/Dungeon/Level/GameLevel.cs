@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NLog;
 using jarg;
 using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;

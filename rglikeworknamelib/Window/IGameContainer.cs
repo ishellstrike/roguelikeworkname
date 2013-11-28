@@ -6,6 +6,7 @@ namespace rglikeworknamelib.Window {
         bool MouseClickCatched { get; set; }
         Texture2D whitepixel_ { get; set; }
         SpriteFont font1_ { get; set; }
+        float Width { get; }
         void CenterComponentHor(IGameComponent component);
 
         void CenterComponentVert(IGameComponent component);

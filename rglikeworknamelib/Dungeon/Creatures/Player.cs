@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
@@ -8,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
-using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
@@ -17,7 +16,11 @@ using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures {
+    public class MoraleModifer {
+        
+    }
+
     public class Player : ShootingCreature {
         private readonly SpriteBatch sb_;
 
@@ -29,7 +32,8 @@ namespace rglikeworknamelib.Creatures {
         public IItem ItemAmmo;
         public IItem ItemGun;
         public IItem ItemMeele;
-        public Stat Morale = new Stat(100);
+        public Stat Morale = new Stat(50);
+        public Collection<MoraleModifer> MoraleModifers;
 
         public PerksSystem Perks;
         public Stat Sleep = new Stat(100);
@@ -135,7 +139,7 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        public void UnEquipItem(Item i) {
+        public void UnEquipItem(Items.Item i) {
         }
 
         public void Accelerate(Vector2 ac) {
@@ -300,7 +304,7 @@ namespace rglikeworknamelib.Creatures {
             }
         }
 
-        public bool EatItem(Item selectedItem) {
+        public bool EatItem(Items.Item selectedItem) {
             //25 -- 2500 ml per day / 100 percent
             Hunger.Current += selectedItem.Data.NutCal/25f/selectedItem.Data.Doses;
             if (Hunger.Current > Hunger.Max) {
@@ -329,7 +333,7 @@ namespace rglikeworknamelib.Creatures {
                 Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
                 Perks.Owner = this;
                 Weared = (Collection<IItem>) binaryFormatter.Deserialize(gZipStream);
-                foreach (Item item in Weared) {
+                foreach (Items.Item item in Weared) {
                     foreach (IBuff buff in item.Buffs) {
                         buff.Target = this;
                     }
@@ -337,7 +341,7 @@ namespace rglikeworknamelib.Creatures {
                 }
                 var t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
-                    ItemAmmo = (Item) binaryFormatter.Deserialize(gZipStream);
+                    ItemAmmo = (Items.Item) binaryFormatter.Deserialize(gZipStream);
                     foreach (IBuff buff in ItemAmmo.Buffs) {
                         buff.Target = this;
                     }
@@ -346,7 +350,7 @@ namespace rglikeworknamelib.Creatures {
 
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
-                    ItemGun = (Item) binaryFormatter.Deserialize(gZipStream);
+                    ItemGun = (Items.Item) binaryFormatter.Deserialize(gZipStream);
                     foreach (IBuff buff in ItemGun.Buffs) {
                         buff.Target = this;
                     }
@@ -355,7 +359,7 @@ namespace rglikeworknamelib.Creatures {
 
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
-                    ItemMeele = (Item) binaryFormatter.Deserialize(gZipStream);
+                    ItemMeele = (Items.Item) binaryFormatter.Deserialize(gZipStream);
                     foreach (IBuff buff in ItemMeele.Buffs) {
                         buff.Target = this;
                     }

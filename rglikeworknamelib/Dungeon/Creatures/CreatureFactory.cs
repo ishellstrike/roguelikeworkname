@@ -15,7 +15,8 @@ namespace rglikeworknamelib.Creatures {
             }
             CreatureData creatureData = CreatureDataBase.Data[id];
             var a = (ICreature)Activator.CreateInstance(creatureData.Prototype);
-            a.Id = id;
+            ((Creature) a).Id = id;
+            a.OnLoad();
             a.Position = pos;
             a.Hp = new Stat(creatureData.Hp, creatureData.Hp);
 

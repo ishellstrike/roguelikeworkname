@@ -5,14 +5,29 @@ namespace rglikeworknamelib.Window {
     public class LabelFixed : Label {
         private readonly int fixLength;
 
-        public LabelFixed(Vector2 position, string text, Color c, int fixl, IGameContainer win)
+        public LabelFixed(Vector2 position, string text, Color c, IGameContainer win)
             : base(position, text, c, win) {
-            fixLength = fixl;
+            var w = font1_.MeasureString("O").X;
+            fixLength = (int)((win.Width - 26) / w);
             Text = text;
         }
 
-        public LabelFixed(Vector2 position, string text, int fixl, IGameContainer win) : base(position, text, win) {
-            fixLength = fixl;
+        public LabelFixed(Vector2 position, string text, Color c, int fix, IGameContainer win)
+            : base(position, text, c, win) {
+            fixLength = fix;
+            Text = text;
+        }
+
+        public LabelFixed(Vector2 position, string text, IGameContainer win) : base(position, text, win) {
+            var w = font1_.MeasureString("O").X;
+            fixLength = (int)((win.Width - 26) / w);
+            Text = text;
+        }
+
+        public LabelFixed(Vector2 position, string text, int fix, IGameContainer win)
+            : base(position, text, win)
+        {
+            fixLength = fix;
             Text = text;
         }
 

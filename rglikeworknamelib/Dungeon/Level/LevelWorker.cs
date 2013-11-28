@@ -136,7 +136,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// </summary>
         /// <param name="a"></param>
         internal void SaveSector(MapSector a) {
-            //try {
+            try
+            {
                 var binaryFormatter = new BinaryFormatter();
 
                 var fileStream =
@@ -155,11 +156,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 gZipStream.Dispose();
                 fileStream.Close();
                 fileStream.Dispose();
-            //}
-            //catch (Exception e) {
-            //    logger.Error("SAVE ERROR -- " + e);
-            //    throw e;
-            //}
+            }
+            catch (Exception e)
+            {
+                logger.Error("SAVE ERROR -- " + e);
+                //throw e;
+            }
         }
 
         private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY, GameLevel gl) {
@@ -195,6 +197,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         }
                     foreach (var crea in t.Creatures) {
                         crea.ms = t;
+                        crea.OnLoad();
                     }
                     }
                     

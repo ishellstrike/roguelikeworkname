@@ -22,8 +22,16 @@ namespace jarg {
     public partial class JargMain {
         #region Windows Vars
 
+        private Window MoraleWindow;
+        private ListContainer MoraleContainer;
+
         private Window AchievementsWindow;
         private ListContainer AchievementContainer;
+
+        private Button SpawnItemButton;
+
+        private Window SpawnSomeWindow;
+        private ListContainer SpawnSomeList;
 
         private ListContainer SchemesExist;
 
@@ -164,6 +172,12 @@ namespace jarg {
             ImageMinimap = new Image(new Vector2(10, 10), new Texture2D(GraphicsDevice, 88, 88), Color.White,
                                      WindowMinimap);
 
+            SpawnSomeWindow = new Window(new Vector2(200,400), "Spawn some", true, ws) {Visible = false};
+            SpawnSomeList = new ListContainer(new Rectangle(0, 0, (int)SpawnSomeWindow.Width, (int)SpawnSomeWindow.Height - 20), SpawnSomeWindow);
+
+            MoraleWindow = new Window(new Vector2(400, 400), "Morale", true, ws);
+            MoraleContainer = new ListContainer(new Rectangle(0, 0, (int)MoraleWindow.Width, (int)MoraleWindow.Height - 20), MoraleWindow);
+
             InitWindowUI(ws);
             InitWindowSettings(ws);
             InitIngameMenu(ws);
@@ -205,6 +219,8 @@ namespace jarg {
             ConsoleTB = new TextBox(new Vector2(10, 100), 200, ConsoleWindow);
             ConsoleTB.OnEnter += ConsoleTB_onEnter;
             ConsoleWindow.CenterComponentHor(ConsoleTB);
+            SpawnItemButton = new Button(new Vector2(10,10), "Spawn item", ConsoleWindow);
+            SpawnItemButton.OnPressed += new EventHandler(SpawnItemButton_OnPressed);
 
             WindowRadio =
                 new Window(
@@ -226,10 +242,42 @@ namespace jarg {
             InitCraft(ws);
         }
 
+        void SpawnItemButton_OnPressed(object sender, EventArgs e)
+        {
+            ShowSpawnSomeWindow(ItemDataBase.Data.Keys.ToList(), true);
+        }
+
+        private bool isitem_inspawn;
+        private void ShowSpawnSomeWindow(List<string> ids, bool isitem) {
+            SpawnSomeWindow.Visible = true;
+            SpawnSomeWindow.OnTop();
+            isitem_inspawn = isitem;
+            SpawnSomeList.Clear();
+            if (isitem) {
+                int phase = 0;
+                foreach (var id in ids) {
+                    var a = new LabelFixed(Vector2.Zero, string.Format("{0} - {1}",id, ItemDataBase.Data[id].Name), phase == 0 ? Color.Gray : Color.Cyan, SpawnSomeList);
+                    phase = 1 - phase;
+                    a.Tag = id;
+                    a.OnLeftPressed += a_OnLeftPressed;
+                }
+            }
+        }
+
+        void a_OnLeftPressed(object sender, LabelPressEventArgs e)
+        {
+           var a = ItemFactory.GetInstance((string)((Label)sender).Tag, 1);
+           inventory_.AddItem(a);
+           inventory_.StackSimilar();
+           EventLog.Add(
+               string.Format("Item {0} spawn in inventory", a.Id), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+           UpdateInventoryContainer();
+        }
+
         SchemesMap scheme = new SchemesMap(16, 16);
         Vector2 schemesOffset = new Vector2(2, 2);
         private void InitSchemes(WindowSystem ws) {
-            SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws) {Visible = true};
+            SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws) {Visible = false};
             SchemesImages = new Image[20,20];
             for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                 for (int j = 0; j < SchemesImages.GetLength(1); j++) {
@@ -355,7 +403,7 @@ namespace jarg {
             CraftSortAll.OnPressed += CraftSortAll_OnPressed;
             CraftItems = new ListContainer(
                 new Rectangle(0, 40, (int) (CraftWindow.Width/5*2), (int) (CraftWindow.Height - 60)), CraftWindow);
-            CraftMoreInfo = new LabelFixed(new Vector2(CraftItems.Width + 10, 40), string.Empty, 40, CraftWindow);
+            CraftMoreInfo = new LabelFixed(new Vector2(CraftItems.Width + 10, 40), string.Empty, CraftWindow);
             CraftThisButton = new Button(new Vector2(CraftItems.Width + 10, CraftWindow.Height - 60), "Craft", CraftWindow);
             CraftThisButton.OnPressed += CraftThisButton_OnPressed;
         }
@@ -415,7 +463,7 @@ namespace jarg {
                 new ListContainer(
                     new Rectangle(10, 10, (int)WindowContainer.Width / 2, (int)WindowContainer.Height - 40),
                     WindowContainer);
-            LabelContainer = new LabelFixed(new Vector2(WindowContainer.Width - 200, 40), "", 20,
+            LabelContainer = new LabelFixed(new Vector2(WindowContainer.Width - 200, 40), "",
                                             WindowContainer);
             ButtonContainerTakeAll =
                 new Button(new Vector2(WindowContainer.Width - 200, WindowContainer.Height - 200 + 30 * 2),
@@ -431,7 +479,8 @@ namespace jarg {
                 new ListContainer(
                     new Rectangle(10, 10, InventoryWindow.Locate.Width/2, InventoryWindow.Locate.Height - 40),
                     InventoryWindow);
-            InventoryMoreInfo = new LabelFixed(new Vector2(InventoryWindow.Locate.Width - 200, 40), "", 20,
+
+            InventoryMoreInfo = new LabelFixed(new Vector2(ContainerInventoryItems.GetPosition().X + 10, 40), "", 26,
                                                InventoryWindow);
             InventorySortAll =
                 new Button(new Vector2(InventoryWindow.Locate.Width - 200, InventoryWindow.Locate.Height - 200), "All",
@@ -697,7 +746,7 @@ namespace jarg {
             CraftMoreInfo.Text = string.Empty;
 
             foreach (var craftData in CraftDataBase.Data) {
-                var a = new LabelFixed(Vector2.Zero,  craftData.OutputCount[0] + " " + ItemDataBase.Data[craftData.Output[0]].Name, 30,
+                var a = new LabelFixed(Vector2.Zero,  craftData.OutputCount[0] + " " + ItemDataBase.Data[craftData.Output[0]].Name,
                                        CraftItems) { Tag = craftData };
                 a.OnLeftPressed += CraftItemsLabelOnLeftPressed;
             }
@@ -723,25 +772,25 @@ namespace jarg {
         private void UpdateModLoader() {
             ModLoaderContainer.Clear();
 
-            new LabelFixed(Vector2.Zero, "Units", Color.Cyan, 20, ModLoaderContainer);
+            new LabelFixed(Vector2.Zero, "Units", Color.Cyan, ModLoaderContainer);
             string[] f = Directory.GetFiles(Settings.GetDataDirectory() + @"\Units", "*.txt");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
-            new LabelFixed(Vector2.Zero, "Blocks", Color.Cyan, 20, ModLoaderContainer);
+            new LabelFixed(Vector2.Zero, "Blocks", Color.Cyan, ModLoaderContainer);
             f = Directory.GetFiles(Settings.GetObjectDataDirectory(), "*.txt");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
-            new LabelFixed(Vector2.Zero, "Items", Color.Cyan, 20, ModLoaderContainer);
+            new LabelFixed(Vector2.Zero, "Items", Color.Cyan, ModLoaderContainer);
             f = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.txt");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
-            new LabelFixed(Vector2.Zero, "Buffs", Color.Cyan, 20, ModLoaderContainer);
+            new LabelFixed(Vector2.Zero, "Buffs", Color.Cyan, ModLoaderContainer);
             f = Directory.GetFiles(Settings.GetEffectDataDirectory(), "*.txt");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
@@ -879,7 +928,8 @@ namespace jarg {
             }
             if (s.Contains("spawn i ")) {
                 string ss = s.Substring(8);
-                if (ItemDataBase.Data.ContainsKey(ss)) {
+                if (ItemDataBase.Data.ContainsKey(ss))
+                {
                     var a = ItemFactory.GetInstance(ss, 1);
                     inventory_.AddItem(a);
                     inventory_.StackSimilar();
@@ -887,7 +937,8 @@ namespace jarg {
                         string.Format("Item {0} spawn in inventory", a.Id), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                     UpdateInventoryContainer();
                 }
-                else {
+                else
+                {
                     EventLog.Add(string.Format("Item {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan,
                                  LogEntityType.Console);
                 }
@@ -976,7 +1027,7 @@ namespace jarg {
             ContainerEventLog.Clear();
             int i = 0;
             foreach (LogEntity ss in EventLog.log) {
-                new LabelFixed(Vector2.Zero, ss.message, ss.col, 35, ContainerEventLog);
+                new LabelFixed(Vector2.Zero, ss.message, ss.col, ContainerEventLog);
                 i++;
             }
             ContainerEventLog.ScrollBottom();
@@ -1037,7 +1088,7 @@ namespace jarg {
 
 
             if (weap.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Weapons", Color.Cyan, 22, ContainerInventoryItems);
+                new LabelFixed(Vector2.Zero, "Weapons", Color.Cyan, ContainerInventoryItems);
                 foreach (Item item in weap) {
                     AddInventoryItemString(item);
                 }
@@ -1045,7 +1096,7 @@ namespace jarg {
 
 
             if (ammo.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Ammo", Color.Cyan, 22, ContainerInventoryItems);
+                new LabelFixed(Vector2.Zero, "Ammo", Color.Cyan, ContainerInventoryItems);
                 foreach (Item item in ammo) {
                     AddInventoryItemString(item);
                 }
@@ -1053,7 +1104,7 @@ namespace jarg {
 
 
             if (wear.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Wear", Color.Cyan, 22, ContainerInventoryItems);
+                new LabelFixed(Vector2.Zero, "Wear", Color.Cyan, ContainerInventoryItems);
                 foreach (Item item in wear) {
                     AddInventoryItemString(item);
                 }
@@ -1061,7 +1112,7 @@ namespace jarg {
 
 
             if (med.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Medicine", Color.Cyan, 22, ContainerInventoryItems);
+                new LabelFixed(Vector2.Zero, "Medicine", Color.Cyan, ContainerInventoryItems);
                 foreach (Item item in med) {
                     AddInventoryItemString(item);
                 }
@@ -1069,7 +1120,7 @@ namespace jarg {
 
 
             if (food.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Food", Color.Cyan, 22, ContainerInventoryItems);
+                new LabelFixed(Vector2.Zero, "Food", Color.Cyan, ContainerInventoryItems);
                 foreach (Item item in food) {
                     AddInventoryItemString(item);
                 }
@@ -1077,7 +1128,7 @@ namespace jarg {
 
 
             if (other.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Other", Color.Cyan, 22, ContainerInventoryItems);
+                new LabelFixed(Vector2.Zero, "Other", Color.Cyan, ContainerInventoryItems);
                 foreach (Item item in other) {
                     AddInventoryItemString(item);
                 }
@@ -1095,7 +1146,7 @@ namespace jarg {
         }
 
         private void AddInventoryItemString(IItem item) {
-            var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerInventoryItems) {Tag = item};
+            var i = new LabelFixed(Vector2.Zero, item.ToString(), ContainerInventoryItems) {Tag = item};
             i.OnLeftPressed += PressInInventory;
             i.OnRightPressed += RightPressInInventory;
         }
@@ -1108,7 +1159,7 @@ namespace jarg {
             }
             InventoryDropDownContainer.Clear();
             foreach (var action in i.Actions) {
-                var a = new LabelFixed(Vector2.Zero, action.Name, 10, InventoryDropDownContainer);
+                var a = new LabelFixed(Vector2.Zero, action.Name, InventoryDropDownContainer);
                 a.Tag = action;
                 a.OnLeftPressed += AOnOnLeftPressed;
             }
@@ -1131,7 +1182,7 @@ namespace jarg {
 
             int cou = 0;
             foreach (Item item in a) {
-                var i = new LabelFixed(Vector2.Zero, item.ToString(), 22, ContainerContainer);
+                var i = new LabelFixed(Vector2.Zero, item.ToString(), ContainerContainer);
                 i.Tag = cou;
                 i.OnLeftPressed += PressInContainer;
                 cou++;
@@ -1258,6 +1309,11 @@ namespace jarg {
                 }
             }
 
+            if (MoraleWindow.Visible) {
+                MoraleContainer.Clear();
+                new LabelFixed(Vector2.Zero, string.Format("Общая: {0}", player_.Morale.Current - player_.Morale.Max / 2), Color.White, MoraleContainer);
+            }
+
             if (Settings.InventoryUpdate) {
                 inventory_.StackSimilar();
                 UpdateInventoryContainer();
@@ -1303,18 +1359,18 @@ namespace jarg {
                 if (player_.Buffs[i].Expiring) {
                     label = new LabelFixed(Vector2.Zero,
                                            string.Format("{0} {1}", BuffDataBase.Data[player_.Buffs[i].Id].Name,
-                                                         player_.Buffs[i].Expire), 20, EffectsContainer);
+                                                         player_.Buffs[i].Expire), EffectsContainer);
                 }
                 else {
                     label = new LabelFixed(Vector2.Zero,
-                                           string.Format("{0}", BuffDataBase.Data[player_.Buffs[i].Id].Name), 20,
+                                           string.Format("{0}", BuffDataBase.Data[player_.Buffs[i].Id].Name),
                                            EffectsContainer);
                 }
             }
 
             ContainerWearList.Clear();
             foreach (Item item in player_.Weared) {
-                var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), 20, ContainerWearList);
+                var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), ContainerWearList);
             }
         }
     }
