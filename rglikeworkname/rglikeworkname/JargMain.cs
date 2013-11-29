@@ -614,14 +614,15 @@ namespace jarg {
             if (levelWorker_.Loading()) {
                 spriteBatch_.Draw(arup, new Vector2(42, 10), lwstatus_color);
             }
-            if (levelWorker_.Saving()) {
+            if (levelWorker_.Storing()) {
                 spriteBatch_.Draw(ardown, new Vector2(74, 10), lwstatus_color);
             }
             if (Settings.DebugInfo) {
                 spriteBatch_.DrawString(font1_, levelWorker_.GenerationCount().ToString(), new Vector2(10, 10),
                                         Color.White);
                 spriteBatch_.DrawString(font1_, levelWorker_.LoadCount().ToString(), new Vector2(42, 10), Color.White);
-                spriteBatch_.DrawString(font1_, levelWorker_.SaveCount().ToString(), new Vector2(74, 10), Color.White);
+                spriteBatch_.DrawString(font1_, levelWorker_.StoreCount().ToString(), new Vector2(74, 10), Color.White);
+                spriteBatch_.DrawString(font1_, levelWorker_.ReadyCount().ToString(), new Vector2(140, 10), Color.Red);
             }
             spriteBatch_.End();
         }

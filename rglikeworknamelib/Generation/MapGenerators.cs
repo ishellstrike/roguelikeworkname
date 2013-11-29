@@ -103,9 +103,13 @@ namespace rglikeworknamelib.Generation {
                                     var thr = rand.Next(100) + 1;
                                     if (drop.Prob >= thr)
                                     {
-                                        for (int k = 0; k < drop.Repeat; k++)
-                                        {
-                                            ((StorageBlock)gl.GetBlock(x + i, y + j)).StoredItems.Add(ItemFactory.GetInstance(drop.Ids[rand.Next(drop.Ids.Length)], rand.Next(drop.MaxCount - drop.MinCount) + drop.MinCount));
+                                        for (int k = 0; k < drop.Repeat; k++) {
+                                            var item = ItemFactory.GetInstance(drop.Ids[rand.Next(drop.Ids.Length)],
+                                                                            rand.Next(drop.MaxCount - drop.MinCount) +
+                                                                            drop.MinCount);
+                                            if (item != null) {
+                                                ((StorageBlock) gl.GetBlock(x + i, y + j)).StoredItems.Add(item);
+                                            }
                                         }
                                     }
                                 }

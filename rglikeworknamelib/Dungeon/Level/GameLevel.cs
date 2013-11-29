@@ -394,6 +394,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
+        /// <summary>
+        /// All sectors store in LevelWorker Buffer or Store. Therefore we can just removing them from sectors_, they keep storing
+        /// </summary>
+        /// <param name="cara"></param>
+        /// <param name="gt"></param>
+        /// <param name="ignore"></param>
         public void KillFarSectors(Creature cara, GameTime gt, bool ignore = false) {
             if (!ignore) {
                 sec += gt.ElapsedGameTime;
@@ -406,7 +412,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                         Math.Abs((a.Value.SectorOffsetX + 0.5)*MapSector.Rx - cara.GetWorldPositionInBlocks().X) > 128 ||
                         Math.Abs((a.Value.SectorOffsetY + 0.5)*MapSector.Ry - cara.GetPositionInBlocks().Y) > 128) {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
-                        lw_.Save(a.Value);
                     }
                 }
             }
@@ -799,6 +804,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             a.BeginInvoke(pl, inv, null, null);
         }
 
+        [Obsolete]
         private void SaveAllAsyncAndExit(Player pl, InventorySystem inv) {
             lw_.Stop();
             pl.Save();
@@ -812,7 +818,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 for (int i = 0; i < sectors_.Count; i++) {
                     Settings.NTS2 = i + "/" + sectors_.Count;
                     Settings.NeedToShowInfoWindow = true;
-                    lw_.SaveSector(sectors_.ElementAt(i).Value);
+                    //lw_.SaveSector(sectors_.ElementAt(i).Value);
                 }
             }
 
@@ -867,16 +873,11 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 Settings.NeedToShowInfoWindow = false;
                 megaMap.Add(point, mm);
-
-                var bf = new BinaryFormatter();
-                var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("global.rlm"),
-                                                FileMode.Create);
-                var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
-                bf.Serialize(gZipStream, megaMap);
-                gZipStream.Close();
-                gZipStream.Dispose();
-                fileStream.Close();
-                fileStream.Dispose();
+            }
+            for (int i = 0; i < sectors_.Count; i++) {
+                var sector = sectors_.ElementAt(i);
+                lw_.StoreGenerated(sector.Value);
+                sectors_.Remove(sector.Key);
             }
             sw.Stop();
             logger.Info(string.Format("megamap sector {0} generation in {1}", point, sw.Elapsed));

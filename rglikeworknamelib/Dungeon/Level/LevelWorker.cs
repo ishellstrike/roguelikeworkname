@@ -13,205 +13,103 @@ using rglikeworknamelib.Dungeon.Level.Blocks;
 namespace rglikeworknamelib.Dungeon.Level {
     public class LevelWorker {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        private readonly Dictionary<Point, GameLevel> onGeneration_;
-        private readonly Dictionary<Point, GameLevel> onLoad_;
-        private readonly Dictionary<Point, MapSector> onSave_;
-        public Dictionary<Point, MapSector> Ready;
+        private readonly Dictionary<Point, GameLevel> onLoadOrGenerate_;
+        private readonly Dictionary<Point, MapSector> onStore_;
+        public Dictionary<Point, MapSector> Buffer;
         private bool exit;
         private Point lastTry;
 
         public LevelWorker() {
-            onLoad_ = new Dictionary<Point, GameLevel>();
-            onGeneration_ = new Dictionary<Point, GameLevel>();
-            onSave_ = new Dictionary<Point, MapSector>();
-            Ready = new Dictionary<Point, MapSector>();
+            onLoadOrGenerate_ = new Dictionary<Point, GameLevel>();
+            onStore_ = new Dictionary<Point, MapSector>();
+            Buffer = new Dictionary<Point, MapSector>();
         }
 
         public bool Loading() {
-            return onLoad_.Count > 0;
+            return onLoadOrGenerate_.Count > 0;
         }
 
-        public bool Saving() {
-            return onSave_.Count > 0;
+        public bool Storing() {
+            return onStore_.Count > 0;
         }
 
         public bool Generating() {
-            return onGeneration_.Count > 0;
+            return false;
         }
 
         public int LoadCount() {
-            return onLoad_.Count;
+            return onLoadOrGenerate_.Count;
         }
 
         public int GenerationCount() {
-            return onGeneration_.Count;
+            return 0;
         }
 
-        public int SaveCount() {
-            return onSave_.Count;
+        public int StoreCount() {
+            return onStore_.Count;
+        }
+
+        public int ReadyCount()
+        {
+            return Buffer.Count;
         }
 
         public void Run() {
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
             Thread.CurrentThread.IsBackground = true;
             while (!exit) {
-                if (onSave_.Count > 0) {
-                    KeyValuePair<Point, MapSector> t = onSave_.ElementAt(0);
-                    SaveSector(t.Value);
-                    onSave_.Remove(t.Key);
-                }
-
-                if (onLoad_.Count > 0) {
-                    KeyValuePair<Point, GameLevel> t = onLoad_.ElementAt(0);
-                    if (Ready.ContainsKey(t.Key)) {
-                        Ready.Remove(t.Key);
+                if (onLoadOrGenerate_.Count > 0) {
+                    KeyValuePair<Point, GameLevel> kvp = onLoadOrGenerate_.ElementAt(0);
+                    MapSector trget;
+                    if (onStore_.TryGetValue(kvp.Key, out trget)) {
+                        Buffer.Add(kvp.Key, trget);
+                        onStore_.Remove(kvp.Key);
+                    } else {
+                        var ms = new MapSector(kvp.Value, kvp.Key.X, kvp.Key.Y);
+                        ms.Rebuild(kvp.Value.MapSeed);
+                        Buffer.Add(kvp.Key, ms);
                     }
-                    Ready.Add(t.Key, LoadSector(t.Key.X, t.Key.Y, t.Value));
-                    //gl.GetSector(t.Item1.X, t.Item1.Y);
-                    onLoad_.Remove(t.Key);
+                    lastTry = kvp.Key;
+                    onLoadOrGenerate_.Remove(kvp.Key);
                 }
 
-                if (onGeneration_.Count > 0) {
-                    KeyValuePair<Point, GameLevel> tt = onGeneration_.ElementAt(0);
-                    var ms = new MapSector(tt.Value, tt.Key.X, tt.Key.Y);
-                    ms.Rebuild(tt.Value.MapSeed);
-                    if (Ready.ContainsKey(tt.Key)) {
-                        Ready.Remove(tt.Key);
-                    }
-                    Ready.Add(tt.Key, ms);
-                    //gl.GetSector(tt.Item1.X, tt.Item1.Y);
-                    onGeneration_.Remove(tt.Key);
-                }
+                lastTry = new Point(int.MinValue, int.MinValue);
 
-                lastTry = new Point(-999, -999);
-
-                if (!Loading() && !Saving() && !Generating()) {
+                if (!Generating() && !Loading()) {
                     Thread.Sleep(300);
+                    var t = Buffer.Select(x=>x).ToList();
+                    foreach (var pair in t) {
+                        Buffer.Remove(pair.Key);
+                        onStore_.Add(pair.Key, pair.Value);
+                    }
                 }
             }
         }
 
-        public void Generate(Point p, GameLevel gl) {
-            if (!onGeneration_.ContainsKey(p)) {
-                onGeneration_.Add(p, gl);
+        private void LoadOrGenerate(Point p, GameLevel gl) {
+            if (!onLoadOrGenerate_.ContainsKey(p)) {
+                onLoadOrGenerate_.Add(p, gl);
             }
-        }
-
-        public void Load(Point p, GameLevel gl) {
-            if (!onLoad_.ContainsKey(p)) {
-                onLoad_.Add(p, gl);
-            }
-        }
-
-        public void Save(MapSector ms) {
-            var p = new Point(ms.SectorOffsetX, ms.SectorOffsetY);
-            if (onSave_.ContainsKey(p)) {
-                onSave_.Remove(p);
-            }
-            onSave_.Add(p, ms);
         }
 
         public MapSector TryGet(Point p, GameLevel gl) {
-            if (lastTry == p) {
-                return null;
+            //if (lastTry == p) {
+            //    return null;
+            //}
+            if (Buffer.ContainsKey(p)) {
+                return Buffer[p];
             }
-            if (Ready.ContainsKey(p)) {
-                return Ready[p];
-            }
-
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", p.X, p.Y))) {
-                Load(p, gl);
-            }
-            else {
-                Generate(p, gl);
-            }
-
-            lastTry = p;
-
+            LoadOrGenerate(p, gl);
+            //lastTry = p;
             return null;
         }
 
-        /// <summary>
-        ///     only for all map save. Remake!
-        /// </summary>
-        /// <param name="a"></param>
-        internal void SaveSector(MapSector a) {
-            try
-            {
-                var binaryFormatter = new BinaryFormatter();
-
-                var fileStream =
-                    new FileStream(
-                        Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", a.SectorOffsetX, a.SectorOffsetY),
-                        FileMode.Create);
-                var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
-                binaryFormatter.Serialize(gZipStream, a.SectorOffsetX);
-                binaryFormatter.Serialize(gZipStream, a.SectorOffsetY);
-                binaryFormatter.Serialize(gZipStream, a.Blocks);
-                binaryFormatter.Serialize(gZipStream, a.Floors);
-                binaryFormatter.Serialize(gZipStream, a.Biom);
-                binaryFormatter.Serialize(gZipStream, a.Creatures);
-                binaryFormatter.Serialize(gZipStream, a.Decals);
-                gZipStream.Close();
-                gZipStream.Dispose();
-                fileStream.Close();
-                fileStream.Dispose();
+        public void StoreGenerated(MapSector ms) {
+            var point = new Point(ms.SectorOffsetX, ms.SectorOffsetY);
+            if(onStore_.ContainsKey(point)) {
+                onStore_.Remove(point);
             }
-            catch (Exception e)
-            {
-                logger.Error("SAVE ERROR -- " + e);
-                //throw e;
-            }
-        }
-
-        private MapSector LoadSector(int sectorOffsetX, int sectorOffsetY, GameLevel gl) {
-            try {
-                if (
-                    File.Exists(Settings.GetWorldsDirectory() +
-                                string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY))) {
-                    var binaryFormatter = new BinaryFormatter();
-
-                    var fileStream = new FileStream(
-                        Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", sectorOffsetX, sectorOffsetY),
-                        FileMode.Open);
-
-                    var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                    object q1 = binaryFormatter.Deserialize(gZipStream); //SectorOffsetX
-                    object q2 = binaryFormatter.Deserialize(gZipStream); //SectorOffsetY
-                    object q3 = binaryFormatter.Deserialize(gZipStream); //Blocks
-                    object q4 = binaryFormatter.Deserialize(gZipStream); //Floors
-                    object q5 = binaryFormatter.Deserialize(gZipStream); //Biom
-                    object q6 = binaryFormatter.Deserialize(gZipStream); //Creatures
-                    object q7 = binaryFormatter.Deserialize(gZipStream); //Decals
-                    gZipStream.Close();
-                    gZipStream.Dispose();
-                    fileStream.Close();
-                    fileStream.Dispose();
-                    var t = new MapSector(gl, q1, q2, q3, q4, q5, q6, q7);
-                    foreach (IBlock block in t.Blocks) {
-                        ((Block) block).OnLoad();
-                        if (block.Data.Prototype == typeof (StorageBlock)) {
-                            foreach (IItem item in ((StorageBlock) block).StoredItems) {
-                                item.OnLoad();
-                            }
-                        }
-                    foreach (var crea in t.Creatures) {
-                        crea.ms = t;
-                        crea.OnLoad();
-                    }
-                    }
-                    
-                    t.Ready = true;
-                    return t;
-                }
-                return null;
-            }
-            catch (Exception e) {
-                logger.Error("LOAD ERROR -- " + e);
-                var t = new MapSector(gl, sectorOffsetX, sectorOffsetY);
-                t.Rebuild(gl.MapSeed);
-                return t;
-            }
+            onStore_.Add(point, ms);
         }
 
         public void Stop() {
