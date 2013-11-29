@@ -804,7 +804,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             a.BeginInvoke(pl, inv, null, null);
         }
 
-        [Obsolete]
         private void SaveAllAsyncAndExit(Player pl, InventorySystem inv) {
             lw_.Stop();
             pl.Save();
@@ -818,7 +817,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                 for (int i = 0; i < sectors_.Count; i++) {
                     Settings.NTS2 = i + "/" + sectors_.Count;
                     Settings.NeedToShowInfoWindow = true;
-                    //lw_.SaveSector(sectors_.ElementAt(i).Value);
+                    var a = sectors_.ElementAt(i).Value;
+                    lw_.SectoreSaver(a);
                 }
             }
 

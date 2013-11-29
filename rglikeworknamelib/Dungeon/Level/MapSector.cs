@@ -112,25 +112,26 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void ResetLightingSources() {
             Lights.Clear();
-            int i = 0;
-            for (int index = 0; index < Blocks.Count; index++) {
-                IBlock block = Blocks[index];
-                if (block is ILightSource) {
-                    Lights.Add(GetLights(block, i/Ry*32 + SectorOffsetX*Rx*32, i%Ry*32 + SectorOffsetY*Ry*32));
-                }
-                i++;
-            }
+            //int i = 0;
+            //for (int index = 0; index < Blocks.Count; index++) {
+            //    IBlock block = Blocks[index];
+            //    if (block is ILightSource) {
+            //        Lights.Add(GetLights(block, i/Ry*32 + SectorOffsetX*Rx*32, i%Ry*32 + SectorOffsetY*Ry*32));
+            //    }
+            //    i++;
+            //}
         }
 
         private Light GetLights(IBlock block, int x, int y) {
-            var a1 = block as ILightSource;
-            var t = new Light {
-                Color = a1.LightColor,
-                LightRadius = a1.LightRange,
-                Power = a1.LightPower,
-                Position = new Vector3(x + 16, y, 1 + 32)
-            };
-            return t;
+            //var a1 = block as ILightSource;
+            //var t = new Light {
+            //    Color = a1.LightColor,
+            //    LightRadius = a1.LightRange,
+            //    Power = a1.LightPower,
+            //    Position = new Vector3(x + 16, y, 1 + 32)
+            //};
+            //return t;
+            return new Light();
         }
 
         public void ExploreAllSector() {

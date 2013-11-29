@@ -9,7 +9,7 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         bool Explored { get; set; }
         Rectangle Source { get; }
         string MTex { get; set; }
-        void Update(TimeSpan ts, Vector2 vector2);
         void OnLoad();
+        void Update(TimeSpan elapsedGameTime, Vector2 vector2);
     }
 }
