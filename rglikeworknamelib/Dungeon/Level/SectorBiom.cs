@@ -13,6 +13,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         ForestSpider,
         Shop,
         Hospital,
-        Storage
+        Storage,
+        WearStore
     }
 }

@@ -488,6 +488,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 case SectorBiom.Hospital:
                     a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.Teal);
                     break;
+                case SectorBiom.WearStore:
+                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.Orange);
+                    break;
                 case SectorBiom.RoadCross:
                 case SectorBiom.RoadHevt:
                 case SectorBiom.RoadHor:
@@ -805,38 +808,23 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private void SaveAllAsyncAndExit(Player pl, InventorySystem inv) {
-            lw_.Stop();
-            pl.Save();
-            inv.Save();
+            if (pl != null) {
+                pl.Save();
+            }
+            if (inv != null) {
+                inv.Save();
+            }
             Settings.NTS1 = "Saving Map";
             Settings.NeedToShowInfoWindow = true;
             Settings.NeedToShowInfoWindow = true;
             Settings.NTS1 = "Saving : ";
             Settings.NTS2 = "";
-            if (sectors_.Count > 0) {
-                for (int i = 0; i < sectors_.Count; i++) {
-                    Settings.NTS2 = i + "/" + sectors_.Count;
-                    Settings.NeedToShowInfoWindow = true;
-                    var a = sectors_.ElementAt(i).Value;
-                    lw_.SectoreSaver(a);
-                }
-            }
+            lw_.SaveAll();
 
             Settings.NeedExit = true;
         }
 
         public void MegaMapPreload() {
-            if (File.Exists(Settings.GetWorldsDirectory() + "global.rlm")) {
-                var bf = new BinaryFormatter();
-                var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("global.rlm"),
-                                                FileMode.Open);
-                var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                megaMap = (Dictionary<Point, MegaMap>) bf.Deserialize(gZipStream);
-                gZipStream.Close();
-                gZipStream.Dispose();
-                fileStream.Close();
-                fileStream.Dispose();
-            }
         }
 
         /// <summary>
@@ -1176,6 +1164,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         #endregion
 
         public void GenerateMegaSectorAround(int arg1, int arg2) {
+            if(!File.Exists(Settings.GetWorldsDirectory()+"\\mapdata.rlm"))
             for (int i = -1 + arg1; i <= 1 + arg1; i++)
             {
                 for (int j = -1 + arg2; j <= 1 + arg2; j++)

@@ -281,7 +281,7 @@ namespace jarg {
         }
 
         SchemesMap scheme = new SchemesMap(16, 16);
-        Vector2 schemesOffset = new Vector2(2, 2);
+        Vector2 schemesOffset = new Vector2(0, 0);
         private void InitSchemes(WindowSystem ws) {
             SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws) {Visible = false};
             SchemesImages = new Image[20,20];

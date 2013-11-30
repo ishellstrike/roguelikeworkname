@@ -25,7 +25,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             Storages = Data.Where(x => x.type == SchemesType.Storage).ToList();
             NormalCity =
                 Data.Where(
-                    x => x.type == SchemesType.House || x.type == SchemesType.Shop || x.type == SchemesType.Hospital).
+                    x => x.type == SchemesType.House || x.type == SchemesType.Shop || x.type == SchemesType.Hospital || x.type == SchemesType.WearShop).
                     ToList();
         }
     }

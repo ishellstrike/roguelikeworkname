@@ -38,6 +38,9 @@ namespace rglikeworknamelib.Parser {
                         case "store":
                             cur.type = SchemesType.Shop;
                             break;
+                        case "wearstore":
+                            cur.type = SchemesType.WearShop;
+                            break;
                         case "b_part_udlr":
                             cur.type = SchemesType.BunkerParts;
                             break;

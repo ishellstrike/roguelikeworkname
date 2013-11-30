@@ -84,8 +84,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                     }
                 }
             }
+            stopped = true;
         }
 
+        private bool stopped;
         private void LoadOrGenerate(Point p, GameLevel gl) {
             if (!onLoadOrGenerate_.ContainsKey(p)) {
                 onLoadOrGenerate_.Add(p, gl);
@@ -116,7 +118,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             exit = true;
         }
 
-        public void SectoreSaver(MapSector ms) {
+        private void SectoreSaver(MapSector ms, StreamWriter fileStream)
+        {
             var uniq_id = new List<string>();
             var uniq_mtex = new List<string>();
             foreach (var block in ms.Blocks) {
@@ -139,16 +142,19 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             try {
-                var fileStream = new StreamWriter(Settings.GetWorldsDirectory() + string.Format("s{0},{1}.rlm", ms.SectorOffsetX, ms.SectorOffsetY), false);
+                fileStream.Write("~");
+                fileStream.Write(ms.SectorOffsetX+","+ms.SectorOffsetY);
+                fileStream.WriteLine();
+
                 fileStream.Write("~");
                 BlockPart(ms, uniq_mtex, uniq_id, fileStream);
                 fileStream.WriteLine();
+
                 fileStream.Write("~");
                 FloorPart(ms, fniq_mtex, fniq_id, fileStream);
+                fileStream.WriteLine();
                 //gZipStream.Close();
                 //gZipStream.Dispose();
-                fileStream.Close();
-                fileStream.Dispose();
             } catch (Exception e) {
                 logger.Error(e.ToString);
             }
@@ -277,6 +283,27 @@ namespace rglikeworknamelib.Dungeon.Level {
                 fileStream.Write(v);
                 fileStream.Write(" ");
             }
+        }
+
+        private bool save_started;
+        public void SaveAll() {
+            if(save_started) 
+                return;
+
+            Stop();
+            while (!stopped) {
+                Thread.Sleep(50);
+            }
+            int i = 0;
+            StreamWriter sw = new StreamWriter(Settings.GetWorldsDirectory() + "mapdata.rlm", false);
+            save_started = true;
+            foreach (var mapSector in onStore_) {
+                SectoreSaver(mapSector.Value, sw);
+                Settings.NTS2 = i + "/" + onStore_.Count;
+                i++;
+            }
+            sw.Close();
+            sw.Dispose();
         }
     }
 }

@@ -122,6 +122,12 @@ namespace jarg {
                 }
             }
 
+            if (ks_[Keys.F11] == KeyState.Down && lks_[Keys.F11] == KeyState.Up) {
+                if (ks_.IsKeyDown(Keys.LeftShift) && ks_.IsKeyDown(Keys.LeftAlt)) {
+                    SchemesEditorWindow.Visible = true;
+                }
+            }
+
             if (ks_[Keys.OemTilde] == KeyState.Down && lks_[Keys.OemTilde] == KeyState.Up) {
                 ConsoleWindow.Visible = !ConsoleWindow.Visible;
                 if (ConsoleWindow.Visible) {

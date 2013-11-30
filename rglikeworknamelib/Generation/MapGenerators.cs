@@ -86,6 +86,9 @@ namespace rglikeworknamelib.Generation {
                             case SchemesType.Storage:
                                 sb = SectorBiom.Storage;
                                 break;
+                            case SchemesType.WearShop:
+                                sb = SectorBiom.WearStore;
+                                break;
                         }
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
