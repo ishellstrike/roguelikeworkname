@@ -111,7 +111,7 @@ namespace rglikeworknamelib.Generation {
                                                                             rand.Next(drop.MaxCount - drop.MinCount) +
                                                                             drop.MinCount);
                                             if (item != null) {
-                                                ((StorageBlock) gl.GetBlock(x + i, y + j)).StoredItems.Add(item);
+                                                ((StorageBlock) gl.GetBlockSync(x + i, y + j)).StoredItems.Add(item);
                                             }
                                         }
                                     }

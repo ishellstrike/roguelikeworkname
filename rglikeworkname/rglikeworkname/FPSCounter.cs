@@ -17,15 +17,11 @@ namespace Mork {
         private static readonly Vector2 position_ = new Vector2(10, 50);
         private static readonly Vector2 ofs = new Vector2(0, 15);
         private static float memo;
-        private static double cpu;
         private static readonly int[] graph = new int[MAX_GR];
         private static int curent_;
         private static int max_ = 1, min_;
         private static readonly int[] insec = new[] {6, 6, 6, 6, 6, 6, 6, 6, 6, 6};
         private static byte curinsec;
-
-        private static double sr_up;
-        private static double sr_draw;
 
         public static void Update(GameTime gameTime) {
             elapsedTime_ += gameTime.ElapsedGameTime;

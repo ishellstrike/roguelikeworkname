@@ -151,7 +151,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Velocity += ac;
         }
 
-        public new void GiveDamage(float value, DamageType type, MapSector ms) {
+        public void GiveDamage(float value, DamageType type, MapSector ms) {
             Hp = new Stat(Hp.Current - value, Hp.Max);
             EventLog.Add(string.Format("Вы получаете {0} урона", value), GlobalWorldLogic.CurrentTime, Color.Red,
                          LogEntityType.SelfDamage);

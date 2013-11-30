@@ -49,22 +49,28 @@ namespace rglikeworknamelib.Dungeon.Bullets {
 
                 bullet.Start += new Vector2(f/2, f1/2);
 
-                IBlock bl = level.GetBlock((int) bullet.GetPositionInBlocks().X, (int) bullet.GetPositionInBlocks().Y,
+                Vector2 positionInBlocks = bullet.GetPositionInBlocks();
+                IBlock bl = level.GetBlock((int) positionInBlocks.X, (int) positionInBlocks.Y,
                                            true);
                 if (bl != null) {
                     if (!bl.Data.IsWalkable) {
                         bullet.Life = TimeSpan.Zero;
                     }
 
-                    ICreature sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start);
+                    bool nosector;
+                    ICreature sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start, out nosector);
 
-                    if (sect != null) {
-                        sect.GiveDamage(bullet.Damage, DamageType.Default);
+                    if (nosector) {
                         bullet.Life = TimeSpan.Zero;
-                    }
+                    } else {
+                        if (sect != null) {
+                            sect.GiveDamage(bullet.Damage, DamageType.Default);
+                            bullet.Life = TimeSpan.Zero;
+                        }
 
-                    if (bullet.Life <= TimeSpan.Zero) {
-                        bullet_.Remove(bullet);
+                        if (bullet.Life <= TimeSpan.Zero) {
+                            bullet_.Remove(bullet);
+                        }
                     }
                 }
                 else {

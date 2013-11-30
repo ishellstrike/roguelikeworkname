@@ -6,7 +6,6 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         string Id { get; set; }
         BlockData Data { get; }
         Color Lightness { get; set; }
-        bool Explored { get; set; }
         Rectangle Source { get; }
         string MTex { get; set; }
         void OnLoad();

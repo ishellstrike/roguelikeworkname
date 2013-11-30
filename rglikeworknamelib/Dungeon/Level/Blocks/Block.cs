@@ -26,8 +26,6 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             set { lightness_ = value; }
         }
 
-        public bool Explored { get; set; }
-
         [NonSerialized]
         private Rectangle source_;
         public Rectangle Source {

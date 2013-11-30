@@ -52,14 +52,7 @@ namespace rglikeworknamelib {
             {
                 log.RemoveAt(0);
             }
-
-            updated = true; UpdateEvent();
-        }
-
-        private static bool updated;
-        public static void Update() {
-            updated = false;
-            
+            UpdateEvent();
         }
 
         private static void UpdateEvent() {

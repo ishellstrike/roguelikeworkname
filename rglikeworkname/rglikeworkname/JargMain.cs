@@ -467,11 +467,10 @@ namespace jarg {
             //    car.Update(gameTime, player_);
             //}
             player_.Update(gameTime, currentFloor_.GetSector((int) aa.X, (int) aa.Y), player_);
-            currentFloor_.KillFarSectors(player_, gameTime);
+            currentFloor_.KillFarSectors(player_, gameTime, camera_);
             bs_.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
-            EventLog.Update();
 
             currentFloor_.UpdateCreatures(gameTime, player_, GraphicsDevice);
 

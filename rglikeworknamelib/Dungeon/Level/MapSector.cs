@@ -134,13 +134,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             return new Light();
         }
 
-        public void ExploreAllSector() {
-            foreach (IBlock b in Blocks) {
-                b.Explored = true;
-                b.Lightness = Color.White;
-            }
-        }
-
         /// <summary>
         ///     Main sector generation proc
         /// </summary>

@@ -17,7 +17,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly Dictionary<Point, MapSector> onStore_;
         public Dictionary<Point, MapSector> Buffer;
         private bool exit;
-        private Point lastTry;
 
         public LevelWorker() {
             onLoadOrGenerate_ = new Dictionary<Point, GameLevel>();
@@ -69,11 +68,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                         ms.Rebuild(kvp.Value.MapSeed);
                         Buffer.Add(kvp.Key, ms);
                     }
-                    lastTry = kvp.Key;
                     onLoadOrGenerate_.Remove(kvp.Key);
                 }
-
-                lastTry = new Point(int.MinValue, int.MinValue);
 
                 if (!Generating() && !Loading()) {
                     Thread.Sleep(300);
@@ -95,14 +91,10 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public MapSector TryGet(Point p, GameLevel gl) {
-            //if (lastTry == p) {
-            //    return null;
-            //}
             if (Buffer.ContainsKey(p)) {
                 return Buffer[p];
             }
             LoadOrGenerate(p, gl);
-            //lastTry = p;
             return null;
         }
 
