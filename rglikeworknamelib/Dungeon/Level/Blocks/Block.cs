@@ -11,7 +11,7 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             get { return id_; }
             set {
                 id_ = value;
-                OnLoad();
+                data_ = BlockDataBase.Data[value];
             }
         }
 

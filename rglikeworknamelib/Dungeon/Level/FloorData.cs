@@ -16,14 +16,13 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public bool Walkable;
 
-        public Rectangle RandomMtexFromAlters(ref string texstring) {
-            if (AlterMtex != null && Settings.rnd.Next(1, 5) == 1) {
-                texstring = AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
+        public string RandomMtexFromAlters()
+        {
+            if (AlterMtex != null && Settings.rnd.Next(1, 5) == 1)
+            {
+                return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
             }
-            else {
-                texstring = MTex;
-            }
-            return GetSource(texstring);
+            return MTex;
         }
 
         public static Rectangle GetSource(string s) {

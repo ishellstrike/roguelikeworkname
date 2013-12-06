@@ -95,12 +95,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             Vehicles = new List<Vehicle>();
             ResetLightingSources();
 
-            foreach (IBlock block in Blocks) {
-                block.OnLoad();
-            }
-            foreach (Floor floor in Floors) {
-                floor.Source = FloorData.GetSource(floor.MTex);
-            }
+            //foreach (IBlock block in Blocks) {
+            //    block.OnLoad();
+            //}
+            //foreach (Floor floor in Floors) {
+            //    floor.Source = FloorData.GetSource(floor.MTex);
+            //}
         }
 
         public List<StorageBlock> GetStorageBlocks() {
@@ -278,7 +278,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SetFloor(int x, int y, string floorId) {
             Floors[x*Ry + y].Id = floorId;
-            Floors[x*Ry + y].Source = FloorDataBase.Data[floorId].RandomMtexFromAlters(ref Floors[x*Ry + y].MTex);
+            Floors[x * Ry + y].MTex = Floors[x * Ry + y].Data.RandomMtexFromAlters();
         }
 
         public string GetId(int x, int y) {

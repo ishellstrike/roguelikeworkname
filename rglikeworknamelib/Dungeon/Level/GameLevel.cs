@@ -1154,15 +1154,17 @@ namespace rglikeworknamelib.Dungeon.Level {
         #endregion
 
         public void GenerateMegaSectorAround(int arg1, int arg2) {
-            if(!File.Exists(Settings.GetWorldsDirectory()+"\\mapdata.rlm"))
-            for (int i = -1 + arg1; i <= 1 + arg1; i++)
-            {
-                for (int j = -1 + arg2; j <= 1 + arg2; j++)
-                {
-                    if (i != arg1 || j != arg2) {
-                        GenerateMegaSector(i, j);
+            if (!File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm")) {
+                for (int i = -1 + arg1; i <= 1 + arg1; i++) {
+                    for (int j = -1 + arg2; j <= 1 + arg2; j++) {
+                        if (i != arg1 || j != arg2) {
+                            GenerateMegaSector(i, j);
+                        }
                     }
                 }
+            }
+            else {
+                lw_.LoadAll(this);
             }
         }
 
