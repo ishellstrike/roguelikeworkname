@@ -76,8 +76,9 @@ namespace jarg {
         private ParticleSystem ps_;
         public TimeSpan sec = TimeSpan.Zero;
         public float seeAngleDeg = 60;
+        private RenderTarget2D lightMapRenderTarget_;
         private RenderTarget2D shadowMapRenderTarget_;
-        private Texture2D shadowMapTexture_;
+        private Texture2D lightMapTexture_;
         private SpriteBatch spriteBatch_;
         private Stopwatch sw_shadows = new Stopwatch();
         private VertexPositionTexture[] vertices_;
@@ -203,7 +204,9 @@ namespace jarg {
             EventLog_onLogUpdate(null, null);
             colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
+            lightMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
+                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             EffectOmnilight.Parameters["screenWidth"].SetValue(width);
             EffectOmnilight.Parameters["screenHeight"].SetValue(height);
@@ -220,6 +223,7 @@ namespace jarg {
             base.OnDeactivated(sender, args);
         }
 
+        private Texture2D fltex;
         protected override void LoadContent() {
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
@@ -243,6 +247,7 @@ namespace jarg {
             bag = Content.Load<Texture2D>(@"Textures/bag");
             caracter = Content.Load<Texture2D>(@"Textures/caracter");
             map = Content.Load<Texture2D>(@"Textures/map");
+            fltex = Content.Load<Texture2D>(@"Textures/Effects/fl1");
 
             player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
 
@@ -260,7 +265,9 @@ namespace jarg {
 
             colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
+            lightMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
+                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
 
             lightEffect1_ = Content.Load<Effect>(@"Effects/ShadersLightningShadow");
@@ -517,40 +524,40 @@ namespace jarg {
         }
 
         private void GameDraw(GameTime gameTime) {
-            lightCollection_.Clear();
-            lightCollection_.AddRange(currentFloor_.GetLights());
-            if (Flashlight) {
-                var hpos = new Vector3(player_.Position.X, player_.Position.Y, 0.5f);
-                var ray = new Ray(hpos, Vector3.Normalize(new Vector3(ms_.X + camera_.X, ms_.Y + camera_.Y, 1) - hpos));
-                lightCollection_.Add(new Light {
-                    Color = Color.White,
-                    LightRadius = 30*3,
-                    Position = ray.Position + ray.Direction*40,
-                    Power = 10
-                });
-                lightCollection_.Add(new Light {
-                    Color = Color.White,
-                    LightRadius = 50*3,
-                    Position = ray.Position + ray.Direction*90,
-                    Power = 50
-                });
-                lightCollection_.Add(new Light {
-                    Color = Color.White,
-                    LightRadius = 80*3,
-                    Position = ray.Position + ray.Direction*160,
-                    Power = 50
-                });
-                lightCollection_.Add(new Light {
-                    Color = Color.White,
-                    LightRadius = 90*3,
-                    Position = ray.Position + ray.Direction*280,
-                    Power = 150
-                });
-            }
+            //lightCollection_.Clear();
+            //lightCollection_.AddRange(currentFloor_.GetLights());
+            //if (Flashlight) {
+            //    var hpos = new Vector3(player_.Position.X, player_.Position.Y, 0.5f);
+                //var ray = new Ray(hpos, Vector3.Normalize(new Vector3(ms_.X + camera_.X, ms_.Y + camera_.Y, 1) - hpos));
+                //lightCollection_.Add(new Light {
+                //    Color = Color.White,
+                //    LightRadius = 30*3,
+                //    Position = ray.Position + ray.Direction*40,
+                //    Power = 10
+                //});
+                //lightCollection_.Add(new Light {
+                //    Color = Color.White,
+                //    LightRadius = 50*3,
+                //    Position = ray.Position + ray.Direction*90,
+                //    Power = 50
+                //});
+                //lightCollection_.Add(new Light {
+                //    Color = Color.White,
+                //    LightRadius = 80*3,
+                //    Position = ray.Position + ray.Direction*160,
+                //    Power = 50
+                //});
+                //lightCollection_.Add(new Light {
+                //    Color = Color.White,
+                //    LightRadius = 90*3,
+                //    Position = ray.Position + ray.Direction*280,
+                //    Power = 150
+                //});
+            //}
 
 
-            EffectOmnilight.Parameters["cpos"].SetValue(new[]
-            {player_.Position.X - camera_.X, player_.Position.Y - camera_.Y});
+            //EffectOmnilight.Parameters["cpos"].SetValue(new[]
+            //{player_.Position.X - camera_.X, player_.Position.Y - camera_.Y});
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             //GraphicsDevice.Clear(Color.Black);
@@ -559,8 +566,12 @@ namespace jarg {
             currentFloor_.DrawFloors(gameTime, camera_);
             currentFloor_.DrawDecals(gameTime, camera_);
             spriteBatch_.End();
+            GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+            GraphicsDevice.Clear(Color.Transparent);
             currentFloor_.ShadowRender();
+            GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             spriteBatch_.Begin();
+            spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(0,0,0,1f));
             currentFloor_.DrawBlocks(gameTime, camera_, player_);
             player_.Draw(gameTime, camera_);
             spriteBatch_.End();
@@ -593,8 +604,7 @@ namespace jarg {
                 //    currentFloor_.DrawFloorsInnerDepth(gameTime, camera_);
                 //spriteBatch_.End();
 
-                GraphicsDevice.SetRenderTarget(null);
-                shadowMapTexture_ = GenerateShadowMap();
+                lightMapTexture_ = GenerateShadowMap();
 
                 GraphicsDevice.SetRenderTarget(null);
                 DrawCombinedMaps();
@@ -645,7 +655,7 @@ namespace jarg {
                 Color.White);
 
             spriteBatch_.Draw(
-                shadowMapRenderTarget_,
+                lightMapRenderTarget_,
                 new Rectangle(0, size.Height,
                               size.Width,
                               size.Height),
@@ -656,15 +666,14 @@ namespace jarg {
 
         private Matrix ScaleAll2 = Matrix.CreateScale(1);
         private void DrawCombinedMaps() {
-            float value = GlobalWorldLogic.GetCurrentSlen()/10;
+            float value = GlobalWorldLogic.GetCurrentSlen();
             lightEffect2_.Parameters["ambient"].SetValue(value);
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
-            // This variable is used to boost to output of the light sources when they are combined
-            // I found 4 a good value for my lights but you can also make this dynamic if you want
+            //light burst
             lightEffect2_.Parameters["lightAmbient"].SetValue(4);
             lightEffect2_.Parameters["ColorMap"].SetValue(colorMapRenderTarget_);
-            lightEffect2_.Parameters["ShadingMap"].SetValue(shadowMapTexture_);
+            lightEffect2_.Parameters["ShadingMap"].SetValue(lightMapTexture_);
 
             spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, ScaleAll2);
             foreach (EffectPass pass in lightEffect2_.CurrentTechnique.Passes) {
@@ -676,8 +685,11 @@ namespace jarg {
 
         private Texture2D GenerateShadowMap() {
             //GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+            GraphicsDevice.SetRenderTarget(lightMapRenderTarget_);
             GraphicsDevice.Clear(Color.Black);
+            spriteBatch_.Begin();
+            spriteBatch_.Draw(fltex, (player_.Position - camera_)/LightQ, null, Color.White, PlayerSeeAngle + MathHelper.PiOver2, new Vector2((fltex.Width / 2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
+            spriteBatch_.End();
 
             GraphicsDevice.BlendState = BlendState.Additive;
             //GraphicsDevice.BlendState = new BlendState{AlphaSourceBlend = Blend.Zero, AlphaDestinationBlend = Blend.One};
@@ -701,7 +713,7 @@ namespace jarg {
                 }
             }
 
-            return shadowMapRenderTarget_;
+            return lightMapRenderTarget_;
         }
 
         private void DebugInfoDraw() {
@@ -710,7 +722,7 @@ namespace jarg {
                     "SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
                     PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
                     currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated,
-                    currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen()/10,
+                    currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),
                     GlobalWorldLogic.DayPart, ws_.Mopusehook, ws_.Keyboardhook);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);

@@ -934,6 +934,23 @@ namespace jarg {
                     LogEntityType.Console);
             }
 
+            if (s.Contains("time ")) {
+                string ss = s.Substring(5);
+                int res;
+                if(int.TryParse(ss, out res)) {
+                    EventLog.Add(
+                        string.Format("Old time"), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                        LogEntityType.Console);
+                    GlobalWorldLogic.CurrentTime = GlobalWorldLogic.CurrentTime.AddHours(res - GlobalWorldLogic.CurrentTime.Hour);
+                    EventLog.Add(
+                        string.Format("New time"), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                        LogEntityType.Console);
+                } else {
+                    EventLog.Add(string.Format("Wrong number to time <hour>"),
+                                 GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                }
+            }
+
             if (s.Contains("randomlog"))
             {
                 if (rldrslt == null || rldrslt.IsCompleted) {

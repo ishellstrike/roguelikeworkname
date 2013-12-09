@@ -65,6 +65,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                         Buffer.Add(kvp.Key, trget);
                         onStore_.Remove(kvp.Key);
                     } else {
+                        if (load_started) {
+                            onLoadOrGenerate_.Remove(kvp.Key);
+                            continue;
+                        }
                         var ms = new MapSector(kvp.Value, kvp.Key.X, kvp.Key.Y);
                         ms.Rebuild(kvp.Value.MapSeed);
                         Buffer.Add(kvp.Key, ms);
@@ -289,7 +293,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             StreamReader sr = new StreamReader(stream);
             load_started = true;
             string block = sr.ReadToEnd();
-            var temp = new Dictionary<Point, MapSector>();
+            var temp = onStore_;
 
             var parts = block.Split('#');
 
@@ -423,9 +427,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             sr.Dispose();
             stream.Dispose();
             fs.Dispose();
-
-            onStore_ = temp;
             gl.MapJustUpdated = true;
+            load_started = false;
         }
 
         private bool save_started;

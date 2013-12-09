@@ -24,7 +24,8 @@ namespace rglikeworknamelib.Dungeon {
         private static float ler_ = 7;
 
         public static float GetCurrentSlen() {
-            return ler_;
+            var time = (float)CurrentTime.TimeOfDay.TotalHours;
+            return -0.0716092f*time*time+1.7802f*time-0.764538f;
         }
 
         public static void Update(GameTime gt) {
@@ -35,16 +36,16 @@ namespace rglikeworknamelib.Dungeon {
 
             DayPart = CurrentTime.Hour > 22 || CurrentTime.Hour < 7 ? DayPart.Night : DayPart.Day;
 
-            float a = 3;
-            switch (DayPart) {
-                case DayPart.Day:
-                    a = 12f;
-                    break;
-                case DayPart.Night:
-                    a = 2f;
-                    break;
-            }
-            ler_ = Vector2.Lerp(new Vector2(ler_, 0), new Vector2(a, 0), (float) Elapse.TotalHours).X;
+            //float a = 3;
+            //switch (DayPart) {
+            //    case DayPart.Day:
+            //        a = 11f;
+            //        break;
+            //    case DayPart.Night:
+            //        a = -1f;
+            //        break;
+            //}
+            //ler_ = Vector2.Lerp(new Vector2(ler_, 0), new Vector2(a, 0), (float) Elapse.TotalHours).X;
 
 
             switch (currentSeason_) {

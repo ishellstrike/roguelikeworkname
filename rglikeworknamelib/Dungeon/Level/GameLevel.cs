@@ -501,7 +501,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             if ((int) a.X != (int) pre_pos_vis.X || (int) a.Y != (int) pre_pos_vis.Y || MapJustUpdated) 
             {
-                if (Settings.SeeAll) {
+                //if (Settings.SeeAll) {
                     for (int i = -16; i < 16; i++) {
                         for (int j = -16; j < 16; j++) {
                             IBlock t = GetBlock((int)a.X + i, (int)a.Y + j);
@@ -510,8 +510,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                             }
                         }
                     }
-                    return;
-                }
+                //    return;
+               // }
 
                 IBlock temp2;
                 Color lightness = Color.White;
@@ -1075,7 +1075,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                             sector.SectorOffsetY*ry + j > min.Y &&
                             sector.SectorOffsetX*rx + i < max.X &&
                             sector.SectorOffsetY*ry + j < max.Y) {
-                            if (block.Id != "0") {
+                            if (block.Id != "0") { //&& block.Lightness.B != 0
                                 spriteBatch_.Draw(batlas, new Vector2(xpos, ypos), block.Source, block.Lightness);
                             }
 
