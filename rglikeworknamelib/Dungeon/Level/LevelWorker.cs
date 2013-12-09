@@ -284,7 +284,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             onStore_.Clear();
-            var sr = new StreamReader(Settings.GetWorldsDirectory() + "mapdata.rlm");
+            FileStream fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Open);
+            GZipStream stream = new GZipStream(fs, CompressionMode.Decompress);
+            StreamReader sr = new StreamReader(stream);
             load_started = true;
             string block = sr.ReadToEnd();
             var temp = new Dictionary<Point, MapSector>();
@@ -416,7 +418,12 @@ namespace rglikeworknamelib.Dungeon.Level {
             Settings.NeedToShowInfoWindow = false;
 
             sr.Close();
+            stream.Close();
+            fs.Close();
             sr.Dispose();
+            stream.Dispose();
+            fs.Dispose();
+
             onStore_ = temp;
             gl.MapJustUpdated = true;
         }
@@ -432,7 +439,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Thread.Sleep(50);
             }
             int i = 0;
-            StreamWriter sw = new StreamWriter(Settings.GetWorldsDirectory() + "mapdata.rlm", false);
+            //
+            FileStream fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Create);
+            GZipStream stream = new GZipStream(fs, CompressionMode.Compress);
+            StreamWriter sw = new StreamWriter(stream);
             save_started = true;
             foreach (var mapSector in onStore_) {
                 SectorSaver(mapSector.Value, sw);
@@ -440,7 +450,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                 i++;
             }
             sw.Close();
+            stream.Close();
+            fs.Close();
             sw.Dispose();
+            stream.Dispose();
+            fs.Dispose();
         }
     }
 }

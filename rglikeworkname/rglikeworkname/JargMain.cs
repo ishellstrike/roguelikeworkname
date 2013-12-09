@@ -159,7 +159,7 @@ namespace jarg {
         }
 
         private void RunRadioGhostBox() {
-            WMPs = new WindowsMediaPlayer(); //создаётся плеер 
+            WMPs = new WindowsMediaPlayer();
             WMPs.settings.volume = 20;
             WMPs.URL = "http://208.43.42.26:8086";
             WMPs.controls.play();

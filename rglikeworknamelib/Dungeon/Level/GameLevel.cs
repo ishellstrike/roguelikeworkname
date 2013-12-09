@@ -388,7 +388,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (!ignore) {
                 sec += gt.ElapsedGameTime;
             }
-            if (ignore || sec.TotalMilliseconds >= 1000) {
+            if (ignore || sec.TotalSeconds >= 3) {
                 sec = TimeSpan.Zero;
                 int rx = MapSector.Rx;
                 int ry = MapSector.Ry;
@@ -400,7 +400,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     //    Math.Abs((a.Value.SectorOffsetY + 0.5)*MapSector.Ry - cara.GetPositionInBlocks().Y) > 128) {
                     //    sectors_.Remove(sectors_.ElementAt(i).Key);
                     //}
-                    if ((a.Key.X +1) * 32 * rx - camera.X < -64 || (a.Key.Y + 1) * 32 * ry - camera.Y < -64 || a.Key.X * 32 * rx - camera.X > resolution.X || a.Key.Y * 32 * ry - camera.Y > resolution.Y) {
+                    if ((a.Key.X + 1) * 32 * rx - camera.X < -32 || (a.Key.Y + 1) * 32 * ry - camera.Y < -32 || a.Key.X * 32 * rx - camera.X > resolution.X || a.Key.Y * 32 * ry - camera.Y > resolution.Y) {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
                     }
                 }
