@@ -10,7 +10,7 @@ namespace rglikeworknamelib.Window {
         private readonly Button buttonDown_;
         private readonly Button buttonUp_;
         private readonly IGameContainer parent_;
-        private readonly VerticalProgressBar progress_;
+        private readonly VerticalSlider progress_;
 
         private readonly bool ready;
         public int FromI;
@@ -37,10 +37,10 @@ namespace rglikeworknamelib.Window {
             buttonDown_.OnPressed += buttonDown__onPressed;
 
             progress_ =
-                new VerticalProgressBar(
+                new VerticalSlider(
                     new Rectangle((int) bup.X, (int) (bup.Y + buttonUp_.Height), (int) buttonUp_.Width,
-                                  (int) (bdow.Y - bup.Y)), "", this);
-
+                                  (int) (bdow.Y - bup.Y)), this);
+            Components.Clear();
             ready = true;
             RecalcContainer();
         }
@@ -68,6 +68,9 @@ namespace rglikeworknamelib.Window {
                 for (int i = 0; i < Components.Count; i++) {
                     Components[i].Draw(sb);
                 }
+                buttonDown_.Draw(sb);
+                buttonUp_.Draw(sb);
+                progress_.Draw(sb);
             }
         }
 
@@ -86,6 +89,9 @@ namespace rglikeworknamelib.Window {
                     }
                 }
                 scVal = ms.ScrollWheelValue;
+                buttonDown_.Update(gt, ms ,lms, ks, lks, mh);
+                buttonUp_.Update(gt, ms, lms, ks, lks, mh);
+                progress_.Update(gt, ms, lms, ks, lks, mh);
             }
         }
 
@@ -150,7 +156,7 @@ namespace rglikeworknamelib.Window {
 
                 float curBottom = 0;
                 int count = 0;
-                int fromNow = FromI + 3;
+                int fromNow = FromI;
                 if (fromNow < Components.Count) {
                     for (;;) {
                         if (curBottom + Components[fromNow].Height + 10 > location_.Bottom - location_.Top) {
@@ -168,7 +174,9 @@ namespace rglikeworknamelib.Window {
                     }
                 }
 
-                progress_.Progress = FromI + count;
+                progress_.Start = FromI;
+                progress_.End = FromI + count;
+                progress_.Max = Components.Count;
             }
         }
 
@@ -188,10 +196,6 @@ namespace rglikeworknamelib.Window {
             FromI = 0;
 
             Components.Clear();
-
-            Components.Add(buttonUp_);
-            Components.Add(buttonDown_);
-            Components.Add(progress_);
 
             RecalcContainer();
         }
@@ -256,7 +260,7 @@ namespace rglikeworknamelib.Window {
                 }
                 lastN = i;
             }
-            FromI = lastN - 3;
+            FromI = lastN;
 
             RecalcContainer();
         }

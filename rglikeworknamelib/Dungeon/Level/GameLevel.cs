@@ -735,8 +735,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void ShadowRender() {
             gd_.RasterizerState = new RasterizerState {CullMode = CullMode.CullClockwiseFace, FillMode = FillMode.Solid};
-            Vector3 color = Color.Black.ToVector3();
-            ((BasicEffect) be_).DiffuseColor = color;
+            ((BasicEffect)be_).DiffuseColor = Color.Black.ToVector3();
+            ((BasicEffect) be_).VertexColorEnabled = true;
 
             foreach (EffectPass pass in be_.CurrentTechnique.Passes) {
                 pass.Apply();
@@ -1092,12 +1092,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 perPrew_ = per.Position;
 
-                if (Settings.DebugInfo) {
-                    var ff = new Vector2(-(int) camera.X +
-                                         MapSector.Rx*ssx*
-                                         sector.SectorOffsetX, -(int) camera.Y +
-                                                               MapSector.Ry*ssy*
-                                                               sector.SectorOffsetY);
+                if (Settings.DebugWire) {
+                    var ff = new Vector2(MapSector.Rx * ssx * sector.SectorOffsetX - camera.X, MapSector.Ry * ssy * sector.SectorOffsetY - camera.Y);
 
                     spriteBatch_.Draw(whitepixel, ff, null, Color.White, 0, Vector2.Zero, new Vector2(1, 1024),
                                       SpriteEffects.None, 0);

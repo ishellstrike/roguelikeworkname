@@ -459,7 +459,7 @@ namespace jarg {
                     EventLogWindow);
             ContainerEventLog.Clear();
             EventLog.OnLogUpdate += EventLog_onLogUpdate;
-            ShowBigLogWindow = new Button(Vector2.Zero, "big", EventLogWindow);
+            ShowBigLogWindow = new Button(new Vector2(0,-20), "big", EventLogWindow);
             ShowBigLogWindow.OnPressed += ShowBigLogWindow_OnPressed;
         }
 

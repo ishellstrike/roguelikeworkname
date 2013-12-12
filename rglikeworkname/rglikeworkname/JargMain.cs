@@ -409,9 +409,6 @@ namespace jarg {
             if (di) {
                 sw_update.Restart();
             }
-            else {
-                sw_update.Stop();
-            }
 
             if (ErrorExit || Settings.NeedExit) {
                 Exit();
