@@ -231,9 +231,7 @@ namespace jarg {
             new Atlases(Content, GraphicsDevice);
 
             whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
-            var data = new uint[1];
-            data[0] = 0xffffffff;
-            whitepixel_.SetData(data);
+            whitepixel_.SetData(new[] {Color.White});
 
             font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
             Settings.Font = font1_;

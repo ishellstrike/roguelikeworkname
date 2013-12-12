@@ -186,6 +186,13 @@ namespace jarg {
             MoraleWindow = new Window(new Vector2(400, 400), "Morale", true, ws){Visible = false};
             MoraleContainer = new ListContainer(new Rectangle(0, 0, (int)MoraleWindow.Width, (int)MoraleWindow.Height - 20), MoraleWindow);
 
+            AchievementsWindow = new Window(new Vector2(Settings.Resolution.X - 50, Settings.Resolution.Y - 50), "Achievements", true, ws);
+            AchievementContainer = new ListContainer(new Rectangle(10, 10, (int)(AchievementsWindow.Width - 20), (int)(AchievementsWindow.Height - 40)), AchievementsWindow);
+
+            for (int i = 0; i < 40; i++) {
+                new AchivementBox(Vector2.Zero, "some", bag, AchievementContainer);
+            }
+
             InitWindowUI(ws);
             InitWindowSettings(ws);
             InitIngameMenu(ws);
@@ -442,28 +449,30 @@ namespace jarg {
             }
             EffectsContainer =
                 new ListContainer(
-                    new Rectangle((int) CaracterWindow.Width/2, (int) (CaracterWindow.Height/2),
-                                  (int) (CaracterWindow.Width/2), (int) (CaracterWindow.Height/2) - 19),
+                    new Rectangle((int)CaracterWindow.Width / 2, (int)(CaracterWindow.Height / 2),
+                                  (int)(CaracterWindow.Width / 2), (int)(CaracterWindow.Height / 2) - 19),
                     CaracterWindow);
         }
 
-        private void InitEventLog(WindowSystem ws) {
+        private void InitEventLog(WindowSystem ws)
+        {
             EventLogWindow =
                 new Window(
-                    new Rectangle(3, (int) (Settings.Resolution.Y - Settings.Resolution.Y/4 - 3), (int) Settings.Resolution.X/3,
-                                  (int) Settings.Resolution.Y/4), "Log",
-                    true, ws) {Visible = false, Closable = false, NoBorder = true, Moveable = false};
+                    new Rectangle(3, (int)(Settings.Resolution.Y - Settings.Resolution.Y / 4 - 3), (int)Settings.Resolution.X / 3,
+                                  (int)Settings.Resolution.Y / 4), "Log",
+                    true, ws) { Visible = false, Closable = false, NoBorder = true, Moveable = false };
             ContainerEventLog =
                 new ListContainer(
-                    new Rectangle(0, 0, (int) Settings.Resolution.X/3, (int) Settings.Resolution.Y/4 - 20),
+                    new Rectangle(0, 0, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4 - 20),
                     EventLogWindow);
             ContainerEventLog.Clear();
             EventLog.OnLogUpdate += EventLog_onLogUpdate;
-            ShowBigLogWindow = new Button(new Vector2(0,-20), "big", EventLogWindow);
+            ShowBigLogWindow = new Button(new Vector2(0, -20), "big", EventLogWindow);
             ShowBigLogWindow.OnPressed += ShowBigLogWindow_OnPressed;
         }
 
-        void ShowBigLogWindow_OnPressed(object sender, EventArgs e) {
+        void ShowBigLogWindow_OnPressed(object sender, EventArgs e)
+        {
             BigLogWindow.Visible = true;
             BigLogContainer.Clear();
 

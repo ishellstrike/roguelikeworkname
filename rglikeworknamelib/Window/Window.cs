@@ -9,7 +9,7 @@ namespace rglikeworknamelib.Window {
         private readonly Color backtransparent_;
 
         private readonly Button closeButton_;
-        private readonly WindowSystem parent_;
+        internal readonly WindowSystem parent_;
         internal List<IGameComponent> Components = new List<IGameComponent>();
         public int Id;
         public Rectangle Locate;
@@ -30,8 +30,6 @@ namespace rglikeworknamelib.Window {
         /// <param name="location"></param>
         /// <param name="caption"></param>
         /// <param name="closeable"></param>
-        /// <param name="wp"></param>
-        /// <param name="wf"></param>
         /// <param name="parent"></param>
         public Window(Rectangle location, string caption, bool closeable, WindowSystem parent) {
             whitepixel_ = parent.whitepixel_;
@@ -45,7 +43,7 @@ namespace rglikeworknamelib.Window {
             backtransparent_.A = 220;
             Closable = closeable;
 
-            closeButton_ = new Button(new Vector2(Locate.Width - 19, 0), "x", this);
+            closeButton_ = new Button(new Vector2(Locate.Width - 19, 0), "x", this) {NoRepeat = true};
             closeButton_.OnPressed += closeButton__onPressed;
             if (!Closable) {
                 closeButton_.Visible = false;
@@ -60,8 +58,6 @@ namespace rglikeworknamelib.Window {
         /// <param name="size"></param>
         /// <param name="caption"></param>
         /// <param name="closeable"></param>
-        /// <param name="wp"></param>
-        /// <param name="wf"></param>
         /// <param name="parent"></param>
         public Window(Vector2 size, string caption, bool closeable, WindowSystem parent) {
             whitepixel_ = parent.whitepixel_;
@@ -77,7 +73,7 @@ namespace rglikeworknamelib.Window {
 
             Visible = true;
 
-            closeButton_ = new Button(new Vector2(Locate.Width - 19, -20), "x", this);
+            closeButton_ = new Button(new Vector2(Locate.Width - 19, -20), "x", this) { NoRepeat = true };
             closeButton_.OnPressed += closeButton__onPressed;
             if (!Closable) {
                 closeButton_.Visible = false;

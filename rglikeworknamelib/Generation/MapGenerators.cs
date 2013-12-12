@@ -439,7 +439,13 @@ namespace rglikeworknamelib.Generation {
         public static void GenerateCity(GameLevel gl, Random rnd, int mainW, int mainH, int posX, int posY) {
             List<Rectangle> t = GenerateRoads(gl, rnd, mainW, mainH, posX, posY, 10);
 
+            int i = 1;
             foreach (Rectangle rect in t) {
+                Settings.NTS1 = "Map generation :";
+                Settings.NTS2 = string.Format("{0}/{1} ({2})", i, t.Count, gl.megaMap.Count);
+                Settings.NeedToShowInfoWindow = true;
+                i++;
+
                 int ostx = rect.Width - 14;
                 int osty = rect.Height - 14;
 
@@ -479,6 +485,7 @@ namespace rglikeworknamelib.Generation {
                 }
             }
 
+            i = 0;
             foreach (Rectangle rect in t) {
                 PlaceRoad(gl, rect.X, rect.Y, 0, rect.Height, 6, true);
                 PlaceRoad(gl, rect.X, rect.Y, rect.Width, 0, 6, true);

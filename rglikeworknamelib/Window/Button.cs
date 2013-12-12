@@ -13,6 +13,7 @@ namespace rglikeworknamelib.Window {
         protected bool firstPress = true;
         protected TimeSpan lastPressed;
         protected Rectangle locate_;
+        public bool NoRepeat;
 
         public Button(Vector2 position, string text, IGameContainer parent) {
             whitepixel_ = parent.whitepixel_;
@@ -60,22 +61,29 @@ namespace rglikeworknamelib.Window {
 
                 if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y) {
                     aimed_ = true;
-                    if (firstPress) {
-                        if ((lms.LeftButton == ButtonState.Released ||
-                             gt.TotalGameTime.TotalMilliseconds - lastPressed.TotalMilliseconds > 500) &&
-                            ms.LeftButton == ButtonState.Pressed) {
+                    if (NoRepeat) {
+                        if (ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released) {
                             PressButton();
-                            lastPressed = gt.TotalGameTime;
-                            firstPress = false;
                         }
                     }
                     else {
-                        if ((lms.LeftButton == ButtonState.Released ||
-                             gt.TotalGameTime.TotalMilliseconds - lastPressed.TotalMilliseconds > 100) &&
-                            ms.LeftButton == ButtonState.Pressed) {
-                            PressButton();
-                            lastPressed = gt.TotalGameTime;
-                            firstPress = false;
+                        if (firstPress) {
+                            if ((lms.LeftButton == ButtonState.Released ||
+                                 gt.TotalGameTime.TotalMilliseconds - lastPressed.TotalMilliseconds > 500) &&
+                                ms.LeftButton == ButtonState.Pressed) {
+                                PressButton();
+                                lastPressed = gt.TotalGameTime;
+                                firstPress = false;
+                            }
+                        }
+                        else {
+                            if ((lms.LeftButton == ButtonState.Released ||
+                                 gt.TotalGameTime.TotalMilliseconds - lastPressed.TotalMilliseconds > 100) &&
+                                ms.LeftButton == ButtonState.Pressed) {
+                                PressButton();
+                                lastPressed = gt.TotalGameTime;
+                                firstPress = false;
+                            }
                         }
                     }
                 }

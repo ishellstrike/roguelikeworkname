@@ -9,7 +9,7 @@ namespace rglikeworknamelib.Window {
         private readonly List<IGameComponent> Components = new List<IGameComponent>();
         private readonly Button buttonDown_;
         private readonly Button buttonUp_;
-        private readonly IGameContainer parent_;
+        internal readonly IGameContainer parent_;
         private readonly VerticalSlider progress_;
 
         private readonly bool ready;
@@ -140,7 +140,7 @@ namespace rglikeworknamelib.Window {
             RecalcContainer();
         }
 
-        private void RecalcContainer() {
+        internal void RecalcContainer() {
             if (ready) {
                 progress_.Max = Components.Count;
 
@@ -175,7 +175,7 @@ namespace rglikeworknamelib.Window {
                 }
 
                 progress_.Start = FromI;
-                progress_.End = FromI + count;
+                progress_.Size = count;
                 progress_.Max = Components.Count;
             }
         }

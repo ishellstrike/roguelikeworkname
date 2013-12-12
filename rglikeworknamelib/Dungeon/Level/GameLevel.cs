@@ -835,9 +835,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                     };
                     mm.InterestPoints.Add(a);
 
-                    Settings.NTS1 = "Map generation :";
-                    Settings.NTS2 = string.Format("{0}/{1} ({2})", i, interestCount, lw_.StoreCount());
-                    Settings.NeedToShowInfoWindow = true;
                     MapGenerators.GenerateCity(this, rand, 500, 500, a.SectorPos.X*MapSector.Rx - 2,
                                                a.SectorPos.Y*MapSector.Ry - 2);
                 }

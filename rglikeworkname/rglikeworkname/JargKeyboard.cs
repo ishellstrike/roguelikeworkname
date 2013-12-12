@@ -88,9 +88,10 @@ namespace jarg {
                 }
 
                 if (ks_[Keys.P] == KeyState.Down && lks_[Keys.P] == KeyState.Up) {
-                    StatistWindow.Visible = !StatistWindow.Visible;
-                    if (StatistWindow.Visible) {
-                        StatistWindow.OnTop();
+                    AchievementsWindow.Visible = !AchievementsWindow.Visible;
+                    if (AchievementsWindow.Visible)
+                    {
+                        AchievementsWindow.OnTop();
                     }
                 }
 
