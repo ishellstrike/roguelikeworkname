@@ -1,0 +1,28 @@
+﻿~Statist,ammototal
+Name=Собрано патронов
+~Statist,ammouse
+Name=Израсходовано патронов
+~Statist,guntotal
+Name=Огнестрельного оружия
+~Statist,foodtotal
+Name=Еды
+~Statist,medtotal
+Name=Медикаментов
+~Statist,zombiekill
+Name=Зомби
+~Statist,takedmg
+Name=получено урона
+~Statist,makedmg
+Name=Нанесено урона
+~Statist,maxdmg
+Name=Максимальный урон
+~Statist,dooro
+Name=Открыто дверей
+~Statist,walk
+Name=Пройдено
+~Statist,drive
+Name=На транспортном средстве
+~Statist,fooduse
+Name=Еды
+~Statist,meduse
+Name=Медикаментов

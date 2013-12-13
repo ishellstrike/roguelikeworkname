@@ -1,0 +1,3 @@
+﻿~Achievment,test1
+Name=Тестовое достижение
+Description=Тестовое описание

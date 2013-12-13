@@ -1,0 +1,35 @@
+﻿~MoraleModifer,test
+Name=Тестовый модификатор
+Duration=1000
+Description=А это описание тестового модификатора.
+Bonus=-6
+Buff={hpup5,burn}
+
+~MoraleModifer,hungry1
+Name=Несильный голод
+Duration=-1
+Description=Вы испытываете несильный голод. Пока он не оказывает на выс влияния.
+
+~MoraleModifer,hungry2
+Name=Голод
+Duration=-1
+Description=Вы испытываете голод
+Bonus=-5
+
+~MoraleModifer,hungry3
+Name=Сильный голод
+Duration=-1
+Description=Вы испытываете сильный голод. Вам тяжело сосредоточиться
+Bonus=-30
+
+~MoraleModifer,foodjoy1
+Name=Вкусная еда
+Duration=60
+Description=Недавно вы ели вкусную еду
+Bonus=5
+
+~MoraleModifer,foodjoy2
+Name=Любимая еда
+Duration=120
+Description=Недавно вы ели свою любимую еду
+Bonus=15

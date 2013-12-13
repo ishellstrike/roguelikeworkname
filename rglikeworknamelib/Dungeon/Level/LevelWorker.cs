@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using NLog;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 
@@ -115,6 +116,38 @@ namespace rglikeworknamelib.Dungeon.Level {
             exit = true;
         }
 
+        private bool save_started;
+        public void SaveAll()
+        {
+            if (save_started)
+            {
+                return;
+            }
+
+            Stop();
+            while (!stopped)
+            {
+                Thread.Sleep(50);
+            }
+            int i = 0;
+            //
+            FileStream fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Create);
+            GZipStream stream = new GZipStream(fs, CompressionMode.Compress);
+            StreamWriter sw = new StreamWriter(stream);
+            save_started = true;
+            foreach (var mapSector in onStore_)
+            {
+                SectorSaver(mapSector.Value, sw);
+                Settings.NTS2 = i + "/" + onStore_.Count;
+                i++;
+            }
+            sw.Close();
+            stream.Close();
+            fs.Close();
+            sw.Dispose();
+            stream.Dispose();
+            fs.Dispose();
+        }
         private void SectorSaver(MapSector ms, StreamWriter fileStream)
         {
             var blockIdVocab = new List<string>();
@@ -137,10 +170,27 @@ namespace rglikeworknamelib.Dungeon.Level {
                     floorMtexVocab.Add(floor.MTex);
                 }
             }
+            var monsterIdVocab = new List<string>();
+            foreach (var creature in ms.Creatures) {
+                if (!monsterIdVocab.Contains(creature.Id)) {
+                    monsterIdVocab.Add(creature.Id);
+                } 
+            }
+
+            var itemIdVocab = new List<string>();
+            foreach (var block in ms.Blocks) {
+                if (block is StorageBlock) {
+                    foreach (var item in (block as StorageBlock).StoredItems) {
+                        if (!itemIdVocab.Contains(item.Id)) {
+                            itemIdVocab.Add(item.Id);
+                        }
+                    }
+                }
+            }
 
             try {
                 fileStream.Write("#");
-                fileStream.Write(ms.SectorOffsetX+","+ms.SectorOffsetY);
+                fileStream.Write(ms.SectorOffsetX + "," + ms.SectorOffsetY);
                 fileStream.WriteLine();
 
                 fileStream.Write("~");
@@ -150,9 +200,54 @@ namespace rglikeworknamelib.Dungeon.Level {
                 fileStream.Write("~");
                 FloorPart(ms, floorMtexVocab, floorIdVocab, fileStream);
                 fileStream.WriteLine();
-                //gZipStream.Close();
-                //gZipStream.Dispose();
-            } catch (Exception e) {
+
+                fileStream.Write("~");
+                foreach (var creature in ms.Creatures) {
+                    int id = monsterIdVocab.IndexOf(creature.Id);
+                    fileStream.Write(id);
+                    fileStream.Write(",");
+                    fileStream.Write((int) creature.Position.X);
+                    fileStream.Write(",");
+                    fileStream.Write((int) creature.Position.Y);
+                    fileStream.Write(" ");
+                }
+                fileStream.WriteLine();
+
+                fileStream.Write("~");
+                foreach (var v in monsterIdVocab) {
+                    fileStream.Write(v);
+                    fileStream.Write(" ");
+                }
+                fileStream.WriteLine();
+
+                fileStream.Write("~");
+                int i = 0;
+                foreach (var block in ms.Blocks) {
+                    if (block is StorageBlock) {
+                        foreach (var item in (block as StorageBlock).StoredItems) {
+                            fileStream.Write(itemIdVocab.IndexOf(item.Id));
+                            fileStream.Write(",");
+                            fileStream.Write(i);
+                            fileStream.Write(",");
+                            fileStream.Write(item.Count);
+                            fileStream.Write(",");
+                            fileStream.Write(item.Doses);
+                            fileStream.Write(" ");
+                        }
+                    }
+                    i++;
+                }
+                fileStream.WriteLine();
+
+                fileStream.Write("~");
+                foreach (var v in itemIdVocab)
+                {
+                    fileStream.Write(v);
+                    fileStream.Write(" ");
+                }
+                fileStream.WriteLine();
+            }
+            catch (Exception e) {
                 logger.Error(e.ToString);
             }
         }
@@ -302,22 +397,30 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var par = part.Split('~');
 
                 var pos = par[0].Split(',');
-                var blId = par[1].Split(' ').ToList();
-                blId.Remove(blId.Last());
+                var BlockIdList = par[1].Split(' ').ToList();
+                BlockIdList.Remove(BlockIdList.Last());
                 var blIddic = par[2].Split(' ').ToList();
                 blIddic.Remove(blIddic.Last());
-                var blTex = par[3].Split(' ').ToList();
-                blTex.Remove(blTex.Last());
+                var BlockTexList = par[3].Split(' ').ToList();
+                BlockTexList.Remove(BlockTexList.Last());
                 var blTexdic = par[4].Split(' ').ToList();
                 blTexdic.Remove(blTexdic.Last());
-                var flId = par[5].Split(' ').ToList();
-                flId.Remove(flId.Last());
+                var FloorIdList = par[5].Split(' ').ToList();
+                FloorIdList.Remove(FloorIdList.Last());
                 var flIddic = par[6].Split(' ').ToList();
                 flIddic.Remove(flIddic.Last());
-                var flTex = par[7].Split(' ').ToList();
-                flTex.Remove(flTex.Last());
+                var FloorTexList = par[7].Split(' ').ToList();
+                FloorTexList.Remove(FloorTexList.Last());
                 var flTexdic = par[8].Split(' ').ToList();
                 flTexdic.Remove(flTexdic.Last());
+                var MonsterDataList = par[9].Split(' ').ToList();
+                MonsterDataList.Remove(MonsterDataList.Last());
+                var monIddic = par[10].Split(' ').ToList();
+                monIddic.Remove(monIddic.Last());
+                var ItemDataList = par[11].Split(' ').ToList();
+                ItemDataList.Remove(ItemDataList.Last());
+                var itemIddic = par[12].Split(' ').ToList();
+                itemIddic.Remove(itemIddic.Last());
 
                 Point position = new Point(int.Parse(pos[0]), int.Parse(pos[1]));
                 MapSector sector = new MapSector(gl, position.X, position.Y);
@@ -326,7 +429,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Settings.NeedToShowInfoWindow = true;
 
                 int off = 0;
-                foreach (var s in blId)
+                foreach (var s in BlockIdList)
                 {
                     if (s != " ") {
                         if (s.StartsWith("!")) {
@@ -334,42 +437,42 @@ namespace rglikeworknamelib.Dungeon.Level {
                             var id = blIddic[int.Parse(p2[1])];
                             var cou = int.Parse(p2[2]);
                             for (int i = 0; i < cou; i++) {
-                                sector.Blocks[off].Id = id;
+                                sector.Blocks[off] = BlockFactory.GetInstance(id);
                                 off++;
                             }
                         } else {
                             var id = blIddic[int.Parse(s)];
-                            sector.Blocks[off].Id = id;
+                            sector.Blocks[off] = BlockFactory.GetInstance(id);
                             off++;
                         }
                     }
                 }
                 off = 0;
-                foreach (var s in blTex)
+                foreach (var s in BlockTexList)
                 {
                     if (s != " ")
                     {
                         if (s.StartsWith("!"))
                         {
                             var p2 = s.Split('!');
-                            var id = blTexdic[int.Parse(p2[1])];
+                            var mTex = blTexdic[int.Parse(p2[1])];
                             var cou = int.Parse(p2[2]);
                             for (int i = 0; i < cou; i++)
                             {
-                                sector.Blocks[off].MTex = id;
+                                sector.Blocks[off].MTex = mTex;
                                 off++;
                             }
                         }
                         else
                         {
-                            var id = blTexdic[int.Parse(s)];
-                            sector.Blocks[off].MTex = id;
+                            var mTex = blTexdic[int.Parse(s)];
+                            sector.Blocks[off].MTex = mTex;
                             off++;
                         }
                     }
                 }
                 off = 0;
-                foreach (var s in flId)
+                foreach (var s in FloorIdList)
                 {
                     if (s != " ")
                     {
@@ -393,27 +496,51 @@ namespace rglikeworknamelib.Dungeon.Level {
                     }
                 }
                 off = 0;
-                foreach (var s in flTex)
+                foreach (var s in FloorTexList)
                 {
                     if (s != " ")
                     {
                         if (s.StartsWith("!"))
                         {
                             var p2 = s.Split('!');
-                            var id = flTexdic[int.Parse(p2[1])];
+                            var mTex = flTexdic[int.Parse(p2[1])];
                             var cou = int.Parse(p2[2]);
                             for (int i = 0; i < cou; i++)
                             {
-                                sector.Floors[off].MTex = id;
+                                sector.Floors[off].MTex = mTex;
                                 off++;
                             }
                         }
                         else
                         {
-                            var id = flTexdic[int.Parse(s)];
-                            sector.Floors[off].MTex = id;
+                            var mTex = flTexdic[int.Parse(s)];
+                            sector.Floors[off].MTex = mTex;
                             off++;
                         }
+                    }
+                }
+                foreach (var s in MonsterDataList)
+                {
+                    if (s != " ") {
+                        var monparts = s.Split(',');
+                        var id = monIddic[int.Parse(monparts[0])];
+                        var mpos = new Vector2(int.Parse(monparts[1]), int.Parse(monparts[2]));
+                        var mon = CreatureFactory.GetInstance(id, mpos);
+                        sector.Creatures.Add(mon);
+                    }
+                }
+                foreach (var s in ItemDataList)
+                {
+                    if (s != " ")
+                    {
+                        var itemparts = s.Split(',');
+                        var id = itemIddic[int.Parse(itemparts[0])];
+                        var onedim = int.Parse(itemparts[1]);
+                        var icount = int.Parse(itemparts[2]);
+                        var idoses = int.Parse(itemparts[3]);
+                        var item = ItemFactory.GetInstance(id, icount);
+                        item.Doses = idoses;
+                        ((StorageBlock)(sector.Blocks[onedim])).StoredItems.Add(item);
                     }
                 }
                 temp.Add(position, sector);
@@ -429,35 +556,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             fs.Dispose();
             gl.MapJustUpdated = true;
             load_started = false;
-        }
-
-        private bool save_started;
-        public void SaveAll() {
-            if (save_started) {
-                return;
-            }
-
-            Stop();
-            while (!stopped) {
-                Thread.Sleep(50);
-            }
-            int i = 0;
-            //
-            FileStream fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Create);
-            GZipStream stream = new GZipStream(fs, CompressionMode.Compress);
-            StreamWriter sw = new StreamWriter(stream);
-            save_started = true;
-            foreach (var mapSector in onStore_) {
-                SectorSaver(mapSector.Value, sw);
-                Settings.NTS2 = i + "/" + onStore_.Count;
-                i++;
-            }
-            sw.Close();
-            stream.Close();
-            fs.Close();
-            sw.Dispose();
-            stream.Dispose();
-            fs.Dispose();
         }
     }
 }

@@ -17,14 +17,6 @@ using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Dungeon.Creatures {
-    public class MoraleModifer {
-        
-    }
-
-    public class Bodypart {
-        
-    }
-
     public class Player : ShootingCreature {
         private readonly SpriteBatch sb_;
 
@@ -165,7 +157,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Rotation = Settings.rnd.Next()%360,
                 Life = new TimeSpan(0, 0, 1, 0)
             });
-            Achievements.Stat["takedmg"].Count += value;
+            AchievementDataBase.Stat["takedmg"].Count += value;
         }
 
         public override void Update(GameTime gt, MapSector ms, Player hero) {
@@ -221,7 +213,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Vector2 perem = Velocity*time*20;
                 Position += perem; /////////
                 float meters = (perem/32).Length();
-                Achievements.Stat["walk"].Count += meters;
+                AchievementDataBase.Stat["walk"].Count += meters;
                 Abilities.list["atlet"].XpCurrent += meters/300.0;
 
                 if (time != 0) {
@@ -285,7 +277,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                                 ItemAmmo = null;
                             }
                         }
-                        Achievements.Stat["ammouse"].Count++;
+                        AchievementDataBase.Stat["ammouse"].Count++;
                         Abilities.list["shoot"].XpCurrent += 0.2;
                         if (OnShoot != null) {
                             OnShoot(null, null);

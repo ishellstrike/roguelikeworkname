@@ -3,28 +3,16 @@ using System.Collections.Generic;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Generation.Names {
-    public enum NameType {
-        City,
-        Male,
-        Fermale,
-        Unisex
-    }
-
-    public class NameClass {
-        public string Name;
-        public NameType NameType;
-    }
-
     public class NameDataBase {
-        public static List<NameClass> data = new List<NameClass>();
+        public static List<NameData> data = new List<NameData>();
 
 
         public NameDataBase() {
             List<object> temp = ParsersCore.UniversalParseDirectory(Settings.GetNamesDataDirectory(),
-                                                                    UniversalParser.NoIdParser<NameClass>);
+                                                                    UniversalParser.NoIdParser<NameData>);
 
             foreach (object o in temp) {
-                data.Add((NameClass) o);
+                data.Add((NameData) o);
             }
         }
 

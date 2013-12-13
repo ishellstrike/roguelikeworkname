@@ -2,11 +2,11 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
-using rglikeworknamelib.Dungeon.Creatures;
+using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures {
     [Serializable]
     public class CrearureZombie : Creature {
         public DressCreatures Hat = new DressCreatures("haer1",
@@ -27,7 +27,7 @@ namespace rglikeworknamelib.Creatures {
                 Rotation = Settings.rnd.Next()%360,
                 Life = new TimeSpan(0, 0, 1, 0)
             });
-            Achievements.Stat["zombiekill"].Count++;
+            AchievementDataBase.Stat["zombiekill"].Count++;
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {

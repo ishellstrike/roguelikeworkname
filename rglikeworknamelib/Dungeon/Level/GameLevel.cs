@@ -13,6 +13,7 @@ using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Dungeon.Vehicles;
@@ -87,15 +88,6 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         #endregion
-
-        public List<StorageBlock> GetStorageBlocks() {
-            IEnumerable<List<StorageBlock>> a = sectors_.Select(x => x.Value.GetStorageBlocks());
-            var b = new List<StorageBlock>();
-            foreach (var some in a) {
-                b.AddRange(some);
-            }
-            return b;
-        }
 
         //------------------
 
@@ -319,7 +311,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             MapSector sect = GetSectorSync(divx, divy);
             if (sect != null) {
                 int braw = (x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry;
-                sect.SetBlock(braw, blockId);
+                sect.Blocks[braw] = BlockFactory.GetInstance(blockId);
+                IBlock block = sect.Blocks[braw];
+                block.MTex = block.Data.RandomMtexFromAlters();
                 MapJustUpdated = true;
             }
         }
@@ -336,7 +330,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             MapSector sect = GetSector(divx, divy);
             if (sect != null) {
                 int braw = (x - divx*MapSector.Rx)*MapSector.Ry + y - divy*MapSector.Ry;
-                sect.SetBlock(braw, blockId);
+                sect.Blocks[braw] = BlockFactory.GetInstance(blockId);
+                IBlock block = sect.Blocks[braw];
+                block.MTex = block.Data.RandomMtexFromAlters();
                 MapJustUpdated = true;
             }
         }
@@ -371,7 +367,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 else {
                     EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray,
                                  LogEntityType.OpenCloseDor);
-                    Achievements.Stat["dooro"].Count++;
+                    AchievementDataBase.Stat["dooro"].Count++;
                 }
                 SetBlock(x, y, GetBlock(x, y).Data.AfterDeathId);
                 MapJustUpdated = true;

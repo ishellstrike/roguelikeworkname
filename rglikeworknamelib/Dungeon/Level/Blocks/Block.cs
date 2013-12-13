@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]

@@ -186,7 +186,7 @@ namespace jarg {
             MoraleWindow = new Window(new Vector2(400, 400), "Morale", true, ws){Visible = false};
             MoraleContainer = new ListContainer(new Rectangle(0, 0, (int)MoraleWindow.Width, (int)MoraleWindow.Height - 20), MoraleWindow);
 
-            AchievementsWindow = new Window(new Vector2(Settings.Resolution.X - 50, Settings.Resolution.Y - 50), "Achievements", true, ws);
+            AchievementsWindow = new Window(new Vector2(Settings.Resolution.X - 50, Settings.Resolution.Y - 50), "Achievements", true, ws) {Visible = false};
             AchievementContainer = new ListContainer(new Rectangle(10, 10, (int)(AchievementsWindow.Width - 20), (int)(AchievementsWindow.Height - 40)), AchievementsWindow);
 
             for (int i = 0; i < 40; i++) {
@@ -1386,7 +1386,7 @@ namespace jarg {
 
             if (SecondTimespan.TotalSeconds >= 1) {
                 StatistList.Clear();
-                foreach (var statist in Achievements.Stat) {
+                foreach (var statist in AchievementDataBase.Stat) {
                     if (statist.Value.Count != 0) {
                         new Label(Vector2.Zero, statist.Value.Name + ": " + statist.Value.Count, StatistList);
                     }

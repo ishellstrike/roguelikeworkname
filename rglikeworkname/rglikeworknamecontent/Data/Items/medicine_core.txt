@@ -14,7 +14,7 @@ Name=Жгут
 SType=Medicine
 Description=Средство временной остановки кровотечения
 
-~Item,pantoсid
+~Item,pantocid
 Name=Пантоцид в упаковке
 SType=Medicine
 Doses=20

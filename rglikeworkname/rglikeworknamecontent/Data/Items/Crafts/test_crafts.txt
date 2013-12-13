@@ -1,5 +1,5 @@
 ~Craft
-Input1={meatcan1ñl}
+Input1={meatcan1cl}
 Input1Count={1}
 Input2={knife}
 Input2Count={0}

@@ -24,7 +24,8 @@ MTex=briwall1
 
 ~StorageBlock,stelaj_food
 Name=Продовольственный стелаж
-MTex=notex
+MTex=foodpolka
+AlterMtex={foodpolka1,foodpolka2,foodpolka3,foodpolka4}
 swide=28
 SmartAction=ActionOpenContainer
 
@@ -187,6 +188,15 @@ MTex=bath1
 AlterMtex={bath2,bath3,bath4,bath5}
 IsTransparent=true
 
+~StorageBlock,smallsafe
+Name="Небольшой сейф"
+IsTransparent=true
+MTex=safe1
+
+~StorageBlock,bigsafe
+Name="Большой сейф"
+IsTransparent=true
+MTex=safe2
 
 ~Block,stul
 

@@ -3,7 +3,7 @@
 ~stelaj_hospital,pantocid bint1 bint2 cofein,10,20,20,1
 ~stelaj_hospital,pantocid bint1 bint2 cofein,5,10,20,1
 ~stelaj_hospital,pantocid bint1 bint2 cofein,20,30,10,1
-~stelaj_wear,jeans baseball_hat military_boots steeltoed_boots sneakers sun_glases socks t-shirt1 boots winter_boots wool_socks,1,2,80,1
-~scrapbox,opilki izolenta ckotch stick batery,1,2,15,1
+~stelaj_wear,jeans baseball_hat military_boots steeltoed_boots sneakers sun_glasses socks t-shirt1 boots winter_boots wool_socks,1,2,80,1
+~scrapbox,opilki izolenta skotch stick batery,1,2,15,1
 ~scrapbox,nail smallvint,5,10,10,1
 ~scrapbox,emptycan 12 13 paper nocigarets,1,4,80,4

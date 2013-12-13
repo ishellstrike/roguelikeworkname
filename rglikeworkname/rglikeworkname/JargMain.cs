@@ -43,7 +43,7 @@ namespace jarg {
         public float PlayerSeeAngle;
         private Action<GameTime> UpdateAction = x => { };
         private WindowsMediaPlayer WMPs;
-        private Achievements achievements_;
+        private AchievementDataBase achievementDataBase_;
         private Texture2D ardown;
         private Texture2D arup;
         private Texture2D bag;
@@ -255,7 +255,7 @@ namespace jarg {
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
 
-            achievements_ = new Achievements();
+            achievementDataBase_ = new AchievementDataBase();
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             int width = pp.BackBufferWidth;
@@ -350,28 +350,30 @@ namespace jarg {
         private void DataBasesLoadAndThenInitialGeneration() {
             var sw = new Stopwatch();
             sw.Start();
-            ShowInfoWindow("Bases loading :", "1/9");
+            ShowInfoWindow("Bases loading :", "1");
             new CreatureDataBase();
-            ShowInfoWindow("Bases loading :", "2/9");
+            ShowInfoWindow("Bases loading :", "2");
             new BlockDataBase();
-            ShowInfoWindow("Bases loading :", "3/9");
+            ShowInfoWindow("Bases loading :", "3");
             new FloorDataBase();
-            ShowInfoWindow("Bases loading :", "4/9");
+            ShowInfoWindow("Bases loading :", "4");
             new ItemDataBase();
-            ShowInfoWindow("Bases loading :", "5/9");
+            ShowInfoWindow("Bases loading :", "5");
             new SchemesDataBase();
-            ShowInfoWindow("Bases loading :", "6/9");
+            ShowInfoWindow("Bases loading :", "6");
             new BuffDataBase();
-            ShowInfoWindow("Bases loading :", "7/9");
+            ShowInfoWindow("Bases loading :", "7");
             new DialogDataBase();
-            ShowInfoWindow("Bases loading :", "8/9");
+            ShowInfoWindow("Bases loading :", "8");
             new NameDataBase();
-            ShowInfoWindow("Bases loading :", "9/9");
+            ShowInfoWindow("Bases loading :", "9");
             new CraftDataBase();
+            ShowInfoWindow("Bases loading :", "10");
+            new MoraleModiferDataBase();
             HideInfoWindow();
             sw.Stop();
             logger.Info(
-                "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\nloaded in {0}",
+                "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\n     {10} Morale modifers\nloaded in {0}",
                 sw.Elapsed,
                 CreatureDataBase.Data.Count,
                 BlockDataBase.Data.Count,
@@ -381,7 +383,8 @@ namespace jarg {
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,
                 NameDataBase.data.Count,
-                CraftDataBase.Data.Count);
+                CraftDataBase.Data.Count,
+                MoraleModiferDataBase.Data.Count);
 
             sw.Start();
             BasesCheker.CheckAndResolve();

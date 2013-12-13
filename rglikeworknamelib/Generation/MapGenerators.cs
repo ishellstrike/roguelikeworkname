@@ -92,14 +92,12 @@ namespace rglikeworknamelib.Generation {
                         }
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
-                    if (scheme.data[i*scheme.y + j] != "0") {
-                        gl.SetBlockSync(x + i, y + j, scheme.data[i*scheme.y + j]);
-                        
-                        gl.SetBiomAtBlock(x + i, y + j, sb);
-
-                        if (BlockDataBase.Data[scheme.data[i*scheme.y + j]].Prototype == typeof (StorageBlock)) {
+                    string blockId = scheme.data[i*scheme.y + j];
+                    if (blockId != "0") {
+                        gl.SetBlockSync(x + i, y + j, blockId);
+                        if (BlockDataBase.Data[blockId].Prototype == typeof (StorageBlock)) {
                             List<DropGroup> a;
-                            if (ItemDataBase.SpawnLists.TryGetValue(scheme.data[i * scheme.y + j], out a))
+                            if (ItemDataBase.SpawnLists.TryGetValue(blockId, out a))
                             {
                                 foreach (var drop in a)
                                 {
@@ -121,6 +119,7 @@ namespace rglikeworknamelib.Generation {
                     }
                 }
             }
+            gl.SetBiomAtBlock(x, y, sb);
             return l;
         }
 
@@ -243,18 +242,23 @@ namespace rglikeworknamelib.Generation {
             for (int i = startx - width; i < startx + sizex + width; i++) {
                 for (int j = starty - width; j < starty + sizey + width; j++) {
                     gl.SetFloorSync(i, j, "asfalt");
-                    gl.SetBiomAtBlock(i, j, SectorBiom.RoadHevt);
-                    if (clear) {
+                    
+                }
+            }
+            gl.SetBiomAtBlock(startx, starty, SectorBiom.RoadHevt);
+            if (clear) {
+                for (int i = startx - width; i < startx + sizex + width; i++) {
+                    for (int j = starty - width; j < starty + sizey + width; j++) {
                         gl.SetBlockSync(i, j, "0");
                     }
                 }
             }
 
-            for (int i = startx; i < startx + sizex; i++) {
-                for (int j = starty; j < starty + sizey; j++) {
-                    gl.SetFloorSync(i, j, "asfalt_br");
-                }
-            }
+            //for (int i = startx; i < startx + sizex; i++) {
+            //    for (int j = starty; j < starty + sizey; j++) {
+            //        gl.SetFloorSync(i, j, "asfalt_br");
+            //    }
+            //}
         }
 
         internal static double Noise2D(double x, double y) {

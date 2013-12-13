@@ -14,21 +14,21 @@ namespace rglikeworknamelib.Dungeon.Vehicles {
         public float Roration;
         public bool Skipp;
         public float Vel;
-        public Vector2 acceleration;
-        public float angle_acc;
-        private MapSector ms;
-        public Vector2 position_;
+        public Vector2 Acceleration;
+        public float AngleAcc;
+        private MapSector ms_;
+        public Vector2 Position;
 
-        public Vector2 sectoroffset_;
-        private RenderTarget2D tex;
+        public Vector2 SectorOffset;
+        private RenderTarget2D tex_;
 
         public Vehicle(MapSector parent) {
             Parts = new Collection<VehiclePart>();
-            ms = parent;
+            ms_ = parent;
         }
 
         public void Draw(SpriteBatch sb, Vector2 camera) {
-            sb.Draw(tex, WorldPosition() - camera, null, Color.White, Roration, new Vector2(tex.Width/2f, tex.Height/2f),
+            sb.Draw(tex_, WorldPosition() - camera, null, Color.White, Roration, new Vector2(tex_.Width/2f, tex_.Height/2f),
                     1, SpriteEffects.None, 0);
         }
 
@@ -47,8 +47,8 @@ namespace rglikeworknamelib.Dungeon.Vehicles {
 
         public void Prerender(SpriteBatch sb, GraphicsDevice gd) {
             Vector2 f = GetSize();
-            tex = new RenderTarget2D(gd, (int) f.X, (int) f.Y);
-            gd.SetRenderTarget(tex);
+            tex_ = new RenderTarget2D(gd, (int) f.X, (int) f.Y);
+            gd.SetRenderTarget(tex_);
             gd.Clear(Color.Transparent);
             sb.Begin();
             foreach (VehiclePart vehiclePart in Parts) {
@@ -64,70 +64,70 @@ namespace rglikeworknamelib.Dungeon.Vehicles {
 
             driver.Position = WorldPosition();
 
-            acceleration = driver.Velocity;
+            Acceleration = driver.Velocity;
 
-            if (!Skipp || !ms.Ready) {
-                Roration += acceleration.X/500f*(-Vel/10);
-                angle_acc /= 1.1f;
+            if (!Skipp || !ms_.Ready) {
+                Roration += Acceleration.X/500f*(-Vel/10);
+                AngleAcc /= 1.1f;
 
-                Vel = Vector2.Lerp(new Vector2(Vel, Vel), acceleration, (float) time).Y;
+                Vel = Vector2.Lerp(new Vector2(Vel, Vel), Acceleration, (float) time).Y;
                 float mover = (Vel*(float) time*40);
-                position_.X += (float) (Math.Sin(-Roration - 3.14f/4f)*mover + Math.Cos(-Roration - 3.14f/4f)*mover);
-                position_.Y += (float) (Math.Cos(-Roration - 3.14f/4f)*mover - Math.Sin(-Roration - 3.14f/4f)*mover);
-                acceleration /= 1.1f;
+                Position.X += (float) (Math.Sin(-Roration - 3.14f/4f)*mover + Math.Cos(-Roration - 3.14f/4f)*mover);
+                Position.Y += (float) (Math.Cos(-Roration - 3.14f/4f)*mover - Math.Sin(-Roration - 3.14f/4f)*mover);
+                Acceleration /= 1.1f;
 
-                Achievements.Stat["drive"].Count += Math.Abs(mover/32);
+                AchievementDataBase.Stat["drive"].Count += Math.Abs(mover/32);
 
-                if (position_.Y >= 32*MapSector.Ry) {
-                    MapSector t = ms.Parent.GetDownN(ms.SectorOffsetX, ms.SectorOffsetY);
+                if (Position.Y >= 32*MapSector.Ry) {
+                    MapSector t = ms_.Parent.GetDownN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Vehicles.Remove(this);
-                        ms = t;
+                        ms_.Vehicles.Remove(this);
+                        ms_ = t;
                         t.Vehicles.Add(this);
-                        position_.Y = position_.Y - 32*MapSector.Ry;
-                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        Position.Y = Position.Y - 32*MapSector.Ry;
+                        SectorOffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.Y = 32*MapSector.Ry - 1;
+                        Position.Y = 32*MapSector.Ry - 1;
                     }
                 }
-                else if (position_.Y < 0) {
-                    MapSector t = ms.Parent.GetUpN(ms.SectorOffsetX, ms.SectorOffsetY);
+                else if (Position.Y < 0) {
+                    MapSector t = ms_.Parent.GetUpN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Vehicles.Remove(this);
-                        ms = t;
+                        ms_.Vehicles.Remove(this);
+                        ms_ = t;
                         t.Vehicles.Add(this);
-                        position_.Y = position_.Y + 32*MapSector.Ry;
-                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        Position.Y = Position.Y + 32*MapSector.Ry;
+                        SectorOffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.Y = 0;
+                        Position.Y = 0;
                     }
                 }
-                if (position_.X >= 32*MapSector.Rx) {
-                    MapSector t = ms.Parent.GetRightN(ms.SectorOffsetX, ms.SectorOffsetY);
+                if (Position.X >= 32*MapSector.Rx) {
+                    MapSector t = ms_.Parent.GetRightN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Vehicles.Remove(this);
-                        ms = t;
+                        ms_.Vehicles.Remove(this);
+                        ms_ = t;
                         t.Vehicles.Add(this);
-                        position_.X = position_.X - 32*MapSector.Rx;
-                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        Position.X = Position.X - 32*MapSector.Rx;
+                        SectorOffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.X = 32*MapSector.Rx - 1;
+                        Position.X = 32*MapSector.Rx - 1;
                     }
                 }
-                else if (position_.X < 0) {
-                    MapSector t = ms.Parent.GetLeftN(ms.SectorOffsetX, ms.SectorOffsetY);
+                else if (Position.X < 0) {
+                    MapSector t = ms_.Parent.GetLeftN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
-                        ms.Vehicles.Remove(this);
-                        ms = t;
+                        ms_.Vehicles.Remove(this);
+                        ms_ = t;
                         t.Vehicles.Add(this);
-                        position_.X = position_.X + 32*MapSector.Rx;
-                        sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
+                        Position.X = Position.X + 32*MapSector.Rx;
+                        SectorOffset = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
                     else {
-                        position_.X = 0;
+                        Position.X = 0;
                     }
                 }
             }
@@ -145,8 +145,8 @@ namespace rglikeworknamelib.Dungeon.Vehicles {
         }
 
         public Vector2 WorldPosition() {
-            return position_ + new Vector2(-16, -32) +
-                   new Vector2(sectoroffset_.X*MapSector.Rx*32, sectoroffset_.Y*MapSector.Ry*32);
+            return Position + new Vector2(-16, -32) +
+                   new Vector2(SectorOffset.X*MapSector.Rx*32, SectorOffset.Y*MapSector.Ry*32);
         }
     }
 

@@ -103,13 +103,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             //}
         }
 
-        public List<StorageBlock> GetStorageBlocks() {
-            return
-                (from a in Blocks
-                 where a.Id != "0" && a.Data.Prototype == typeof (StorageBlock)
-                 select a as StorageBlock).ToList();
-        }
-
         public void ResetLightingSources() {
             Lights.Clear();
             //int i = 0;
@@ -209,18 +202,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     //case Se
             }
 
-            List<StorageBlock> sb = GetStorageBlocks();
 
-            foreach (StorageBlock block in sb) {
-                //int next = rand.Next(0, 3);
-                //for (int i = 0; i < next; i++) {
-                //    var item =
-                //        ItemFactory.GetInstance(ItemDataBase.Data.ElementAt(rand.Next(0, ItemDataBase.Data.Count)).Key,
-                //                                rand.Next(1, 2));
-                //    block.StoredItems.Add(item);
-                //}
-                
-            }
             int rnd1 = rand.Next(0, 5);
             int rnd2 = rand.Next(0, 3);
             for (int i = 1; i < rnd1; i++) {
@@ -295,7 +277,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="oneDimCoord"></param>
         /// <param name="id"></param>
         public void SetBlock(int oneDimCoord, string id) {
-            Blocks[oneDimCoord] = (IBlock) Activator.CreateInstance(BlockDataBase.Data[id].Prototype);
+            Blocks[oneDimCoord] = BlockFactory.GetInstance(id);
             IBlock block = Blocks[oneDimCoord];
             block.Id = id;
             block.MTex = block.Data.RandomMtexFromAlters();

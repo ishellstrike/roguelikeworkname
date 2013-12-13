@@ -5,15 +5,14 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Xna.Framework;
 using jarg;
-using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Item;
 
-namespace rglikeworknamelib.Dungeon.Item {
+namespace rglikeworknamelib.Dungeon.Items {
     public class InventorySystem {
         private List<IItem> items_ = new List<IItem>();
-        public bool changed = false;
+        public bool Changed = false;
 
         public int TotalWeight {
             get { return items_.Select(x => x.Data.Weight).Sum(); }
@@ -28,13 +27,13 @@ namespace rglikeworknamelib.Dungeon.Item {
             items_.Add(it);
             switch (it.Data.SType) {
                 case ItemType.Ammo:
-                    Achievements.Stat["ammototal"].Count += it.Count;
+                    AchievementDataBase.Stat["ammototal"].Count += it.Count;
                     break;
                 case ItemType.Gun:
-                    Achievements.Stat["guntotal"].Count += it.Count;
+                    AchievementDataBase.Stat["guntotal"].Count += it.Count;
                     break;
                 case ItemType.Food:
-                    Achievements.Stat["foodtotal"].Count += it.Count;
+                    AchievementDataBase.Stat["foodtotal"].Count += it.Count;
                     break;
             }
             Settings.InventoryUpdate = true;
@@ -109,9 +108,9 @@ namespace rglikeworknamelib.Dungeon.Item {
                         }
 
                         if (selectedItem.Data.SType == ItemType.Medicine) {
-                            Achievements.Stat["meduse"].Count++;
+                            AchievementDataBase.Stat["meduse"].Count++;
                         } else {
-                            Achievements.Stat["fooduse"].Count++;
+                            AchievementDataBase.Stat["fooduse"].Count++;
                         }
 
                         if (selectedItem.Doses > 0) {
@@ -142,7 +141,7 @@ namespace rglikeworknamelib.Dungeon.Item {
             foreach (IItem item in inContainer) {
                 AddItem(item);
             }
-            changed = true;
+            Changed = true;
         }
 
         public IItem TryGetId(string itemData) {
