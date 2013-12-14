@@ -8,6 +8,11 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         private string id_;
         [NonSerialized] private Color lightness_;
 
+        public virtual bool IsActive
+        {
+            get { return false; }
+        }
+
         public string Id {
             get { return id_; }
             set {

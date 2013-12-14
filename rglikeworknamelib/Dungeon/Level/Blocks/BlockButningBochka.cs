@@ -8,6 +8,14 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         private readonly Random rand = new Random();
         private TimeSpan sec_;
 
+        public override bool IsActive
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public Color LightColor {
             get { return Color.LightYellow; }
         }

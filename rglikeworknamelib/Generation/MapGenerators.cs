@@ -463,7 +463,7 @@ namespace rglikeworknamelib.Generation {
                     ch = AlterCheme(ch, rnd);
                     string[] aa = GetInnerFloorArrayWithId(ch, "conk_base");
                     FillFloorFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
-                    ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    //ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
                     PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7, rnd);
                     off.X += ch.x;
                     if (maxx < ch.x) {
@@ -483,7 +483,7 @@ namespace rglikeworknamelib.Generation {
                     ch = AlterCheme(ch, rnd);
                     string[] aa = GetInnerFloorArrayWithId(ch, "conk_base");
                     FillFloorFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
-                    ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
+                    //ClearBlocksFromArrayAndOffset(gl, ch.x, ch.y, aa, rect.X + off.X + 7, rect.Y + off.Y + 7);
                     PlaceScheme(gl, ch, rect.X + off.X + 7, rect.Y + off.Y + 7, rnd);
                     off.Y += ch.y;
                 }

@@ -69,6 +69,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             sectors_ = new Dictionary<Point, MapSector>();
             LastSyncGetSector = new MapSector(this, 0, 0);
+            LastGetSector = LastSyncGetSector;
             //{
             //    new KeyValuePair<Point, MapSector>(Point.Zero, new MapSector(this, 0, 0));
             //}
@@ -173,10 +174,15 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private MapSector LastSyncGetSector;
+        private MapSector LastGetSector;
 
         public MapSector GetSector(int sectorOffsetX, int sectorOffsetY, bool noLoading = false) {
+            if(LastGetSector.SectorOffsetX == sectorOffsetX && LastSyncGetSector.SectorOffsetY == sectorOffsetY) {
+                return LastGetSector;
+            }
             MapSector a;
             if (sectors_.TryGetValue(new Point(sectorOffsetX, sectorOffsetY), out a)) {
+                LastGetSector = a;
                 return a;
             }
 
@@ -188,6 +194,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (temp != null) {
                 GlobalMapAdd(temp);
                 sectors_.Add(new Point(temp.SectorOffsetX, temp.SectorOffsetY), temp);
+                LastGetSector = temp;
+                return temp;
             }
             return null;
         }
@@ -997,23 +1005,20 @@ namespace rglikeworknamelib.Dungeon.Level {
                 if (sector.SectorOffsetX*rx > max.X && sector.SectorOffsetY*ry > max.Y) {
                     continue;
                 }
+                float posx = 0 - (int) camera.X + rx*ssx*sector.SectorOffsetX;
                 for (int i = 0; i < rx; i++) {
+                    float posy = 0 - (int) camera.Y + ry*ssy*sector.SectorOffsetY;
                     for (int j = 0; j < ry; j++) {
-                        if (sector.SectorOffsetX*rx + i > min.X &&
-                            sector.SectorOffsetY*ry + j > min.Y &&
-                            sector.SectorOffsetX*rx + i < max.X &&
-                            sector.SectorOffsetY*ry + j < max.Y) {
+                        {
                             int a = i*ry + j;
                             spriteBatch_.Draw(fatlas,
-                                              new Vector2(
-                                                  i*ssx - (int) camera.X +
-                                                  rx*ssx*sector.SectorOffsetX,
-                                                  j*ssy - (int) camera.Y +
-                                                  ry*ssy*sector.SectorOffsetY),
+                                              new Vector2(posx, posy),
                                               sector.Floors[a].Source,
                                               Color.White);
                         }
+                        posy += 32;
                     }
+                    posx += 32;
                 }
             }
         }
@@ -1051,7 +1056,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             float ssx = Settings.FloorSpriteSize.X;
             float ssy = Settings.FloorSpriteSize.Y;
 
-            bool shad = Vector2.Distance(camera, perPrew_) > 2;
+            bool shad = Vector2.Distance(camera, perPrew_) > 0;
 
             if (shad || MapJustUpdated) {
                 points.Clear();
@@ -1067,21 +1072,20 @@ namespace rglikeworknamelib.Dungeon.Level {
                 if (sector.SectorOffsetX*rx > max.X && sector.SectorOffsetY*ry > max.Y) {
                     continue;
                 }
+
+                float xpos = 0 - (int)camera.X + rx * ssx * sector.SectorOffsetX;
+
                 for (int i = 0; i < rx; i++) {
+                    float ypos = 0 - (int)camera.Y + ry * ssy * sector.SectorOffsetY;
                     for (int j = 0; j < ry; j++) {
-                        float xpos = i*(ssx) - (int) camera.X +
-                                     rx*ssx*sector.SectorOffsetX;
-
-                        float ypos = j*(ssy) - (int) camera.Y +
-                                     ry*ssy*sector.SectorOffsetY;
-
                         int a = i*ry + j;
                         IBlock block = sector.GetBlock(a);
 
-                        if (sector.SectorOffsetX*rx + i > min.X &&
-                            sector.SectorOffsetY*ry + j > min.Y &&
-                            sector.SectorOffsetX*rx + i < max.X &&
-                            sector.SectorOffsetY*ry + j < max.Y) {
+                        //if (sector.SectorOffsetX*rx + i > min.X &&
+                        //    sector.SectorOffsetY*ry + j > min.Y &&
+                        //    sector.SectorOffsetX*rx + i < max.X &&
+                        //    sector.SectorOffsetY*ry + j < max.Y)
+                        {
                             if (block.Id != "0") { //&& block.Lightness.B != 0
                                 spriteBatch_.Draw(batlas, new Vector2(xpos, ypos), block.Source, block.Lightness);
                             }
@@ -1094,7 +1098,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                         }
 
                         block.Update(gameTime.ElapsedGameTime, new Vector2(xpos + camera.X, ypos + camera.Y));
+                        ypos += 32;
                     }
+                    xpos += 32;
                 }
 
                 perPrew_ = per.Position;

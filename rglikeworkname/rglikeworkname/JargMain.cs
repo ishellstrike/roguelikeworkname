@@ -485,11 +485,14 @@ namespace jarg {
                 (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
             if (car != null) {
                 float f = -car.Roration - 3.14f/4f;
-                pivotpoint_ += new Vector2((float) (Math.Cos(f)*car.Vel + Math.Sin(f)*car.Vel)*50,
-                                           (float) (-Math.Sin(f)*car.Vel + Math.Cos(f)*car.Vel)*50/
+                pivotpoint_ += new Vector2((int) (Math.Cos(f)*car.Vel + Math.Sin(f)*car.Vel)*50,
+                                           (int) (-Math.Sin(f)*car.Vel + Math.Cos(f)*car.Vel)*50/
                                            GraphicsDevice.DisplayMode.AspectRatio);
             }
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
+            camera_.X = (int)camera_.X;
+            camera_.Y = (int)camera_.Y;
+
             player_last_pos = player_.Position;
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
@@ -504,7 +507,7 @@ namespace jarg {
                 sw_draw.Restart();
             }
 
-            //GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Black);
 
             drawAction_(gameTime);
 
