@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NLog;
@@ -1143,17 +1144,27 @@ namespace rglikeworknamelib.Dungeon.Level {
         #endregion
 
         public void GenerateMegaSectorAround(int arg1, int arg2) {
+            var results = new List<IAsyncResult>();
+            Action<int, int> gen = GenerateMegaSector;
             if (!File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm")) {
                 for (int i = -1 + arg1; i <= 1 + arg1; i++) {
                     for (int j = -1 + arg2; j <= 1 + arg2; j++) {
                         if (i != arg1 || j != arg2) {
-                            GenerateMegaSector(i, j);
+                            //GenerateMegaSector(i, j);
+                            results.Add(gen.BeginInvoke(i, j, null, null));
                         }
                     }
                 }
             }
             else {
                 lw_.LoadAll(this);
+            }
+
+            for(;;) {
+                if(results.All(x=>x.IsCompleted)) {
+                    break;
+                }
+                Thread.Sleep(100);
             }
         }
 

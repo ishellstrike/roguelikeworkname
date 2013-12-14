@@ -163,6 +163,14 @@ Content\Textures\Units\Dress\error.xnb
 Content\Textures\Units\Dress\glass1.xnb
 Content\Textures\Units\Dress\glass2.xnb
 Content\Textures\Units\Dress\glass3.xnb
+Content\Textures\Effects\fl1.xnb
+Content\Textures\Dungeon\Objects\safe1.xnb
+Content\Textures\Dungeon\Objects\safe2.xnb
+Content\Textures\Dungeon\Objects\foodpolka.xnb
+Content\Textures\Dungeon\Objects\foodpolka1.xnb
+Content\Textures\Dungeon\Objects\foodpolka2.xnb
+Content\Textures\Dungeon\Objects\foodpolka3.xnb
+Content\Textures\Dungeon\Objects\foodpolka4.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README
@@ -193,6 +201,9 @@ Content\Data\Items\Crafts\test_crafts.txt
 Content\Data\Items\Crafts\weapons_core.txt
 Content\Data\Schemes\b_part.txt
 Content\Data\Schemes\apteka.txt
+Content\Data\achievements.txt
+Content\Data\statist.txt
+Content\Data\morale.txt
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord
