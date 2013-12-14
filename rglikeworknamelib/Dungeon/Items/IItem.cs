@@ -7,8 +7,8 @@ namespace rglikeworknamelib.Dungeon.Items {
         string Id { get; set; }
         int Count { get; set; }
         int Doses { get; set; }
-        List<ItemAction> Actions { get; set; }
         ItemData Data { get; }
+        List<ItemAction> Actions { get; set; }
         List<IBuff> Buffs { get; set; }
 
         /// <summary>

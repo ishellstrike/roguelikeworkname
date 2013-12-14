@@ -33,3 +33,15 @@ Name=Любимая еда
 Duration=120
 Description=Недавно вы ели свою любимую еду
 Bonus=15
+
+~MoraleModifer,cigaheavysmoker
+Name=Вы недавно выкурили сигарету, которую вам так хотелось.
+Duration=40
+
+~MoraleModifer,cigasmoker
+Name=Вы недавно выкурили сигарету
+Duration=60
+
+~MoraleModifer,ciga
+Name=Вы недавно выкурили сигарету, хотя обычно не курите. Гадость
+Duration=60

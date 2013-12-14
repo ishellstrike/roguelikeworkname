@@ -38,21 +38,18 @@ Name=Пачка сигарет
 Doses=20
 Weight=20
 AfteruseId=nocigarets
-SType=Medicine
 
 ~Item,cigarets10
 Name=Пачка сигарет
 Doses=10
 Weight=20
 AfteruseId=nocigarets
-SType=Medicine
 
 ~Item,cigarets4
 Name=Пачка сигарет
 Doses=4
 Weight=20
 AfteruseId=nocigarets
-SType=Medicine
 
 ~Item,brpencil
 Name=Сломаный карандаш
@@ -73,3 +70,13 @@ Weight=50
 ~Item,partcloth
 Name=Ткань
 Weight=100
+
+~Item,lighter1
+Name=Дешевая зажигалка
+Weight=20
+Doses=100
+
+~Item,lighter2
+Name=Зажигалка
+Weight=20
+Doses=200

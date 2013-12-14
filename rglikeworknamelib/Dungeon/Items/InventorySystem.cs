@@ -84,7 +84,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             return true;
         }
 
-        public void UseItem(Items.Item selectedItem, Player player) {
+        public void UseItem(Item selectedItem, Player player) {
             if (selectedItem == null || player == null) {
                 return;
             }

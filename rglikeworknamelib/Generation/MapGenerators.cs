@@ -27,7 +27,7 @@ namespace rglikeworknamelib.Generation {
     }
 
     public static class MapGenerators {
-        public static int seed = 12345;
+        public static int Seed;
 
         public static void FillFromTo(GameLevel ms, Vector2 from, Vector2 to, string id) {
             if (from.X > to.X) {
@@ -262,7 +262,7 @@ namespace rglikeworknamelib.Generation {
         }
 
         internal static double Noise2D(double x, double y) {
-            return ((0x6C078965*(seed ^ (((int) x*2971902361) ^ ((int) y*3572953751)))) & 0x7FFFFFFF)/
+            return ((0x6C078965*(Seed ^ (((int) x*2971902361) ^ ((int) y*3572953751)))) & 0x7FFFFFFF)/
                    (double) int.MaxValue;
         }
 
@@ -489,12 +489,25 @@ namespace rglikeworknamelib.Generation {
                 }
             }
 
-            i = 0;
             foreach (Rectangle rect in t) {
                 PlaceRoad(gl, rect.X, rect.Y, 0, rect.Height, 6, true);
                 PlaceRoad(gl, rect.X, rect.Y, rect.Width, 0, 6, true);
                 PlaceRoad(gl, rect.X + rect.Width, rect.Y, 0, rect.Height, 6, true);
                 PlaceRoad(gl, rect.X, rect.Y + rect.Height, rect.Width, 0, 6, true);
+
+                for (int n = -1; n < 3; n++) {
+                    for (int k = -1; k < 3; k++) {
+                        var sector = gl.GetSectorSync(rect.X / 16 + n, rect.Y / 16 + k);
+                        int rnd1 = rnd.Next(0, 5);
+                        int rnd2 = rnd.Next(0, 3);
+                        for (int j = 1; j < rnd1; j++) {
+                            sector.Spawn("zombie1", rnd);
+                        }
+                        for (int j = 1; j < rnd2; j++) {
+                            sector.Spawn("hdzombie", rnd);
+                        }
+                    }
+                }
             }
         }
 

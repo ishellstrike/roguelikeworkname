@@ -203,14 +203,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
 
-            int rnd1 = rand.Next(0, 5);
-            int rnd2 = rand.Next(0, 3);
-            for (int i = 1; i < rnd1; i++) {
-                Spawn("zombie1", rand);
-            }
-            for (int i = 1; i < rnd2; i++) {
-                Spawn("hdzombie", rand);
-            }
+            //int rnd1 = rand.Next(0, 5);
+            //int rnd2 = rand.Next(0, 3);
+            //for (int i = 1; i < rnd1; i++) {
+            //    Spawn("zombie1", rand);
+            //}
+            //for (int i = 1; i < rnd2; i++) {
+            //    Spawn("hdzombie", rand);
+            //}
 
             ResetLightingSources();
 

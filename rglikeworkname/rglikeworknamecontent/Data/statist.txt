@@ -26,3 +26,5 @@ Name=На транспортном средстве
 Name=Еды
 ~Statist,meduse
 Name=Медикаментов
+~Statist,sigause
+Name=Сигарет

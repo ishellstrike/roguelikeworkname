@@ -52,7 +52,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         private readonly Effect be_;
 
         public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd, LevelWorker lw) {
-            MapGenerators.seed = MapSeed;
+            MapSeed = Settings.rnd.Next();
+            MapGenerators.Seed = MapSeed;
             whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
             var data = new uint[1];
             data[0] = 0xffffffff;
@@ -67,6 +68,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             megaMap = new Dictionary<Point, MegaMap>();
 
             sectors_ = new Dictionary<Point, MapSector>();
+            LastSyncGetSector = new MapSector(this, 0, 0);
             //{
             //    new KeyValuePair<Point, MapSector>(Point.Zero, new MapSector(this, 0, 0));
             //}
@@ -150,17 +152,27 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="sectorOffsetX"></param>
         /// <param name="sectorOffsetY"></param>
         /// <returns></returns>
-        private MapSector GetSectorSync(int sectorOffsetX, int sectorOffsetY) {
+        internal MapSector GetSectorSync(int sectorOffsetX, int sectorOffsetY) {
+            if(LastSyncGetSector.SectorOffsetX == sectorOffsetX && LastSyncGetSector.SectorOffsetY == sectorOffsetY) {
+                return LastSyncGetSector;
+            }
+
             MapSector a;
             if (Generation_sectors_.TryGetValue(new Point(sectorOffsetX, sectorOffsetY), out a)) {
+                LastSyncGetSector = a;
                 return a;
             }
 
             var t = new MapSector(this, sectorOffsetX, sectorOffsetY);
             t.Rebuild(MapSeed);
             Generation_sectors_.Add(new Point(t.SectorOffsetX, t.SectorOffsetY), t);
+
+            LastSyncGetSector = t;
+
             return t;
         }
+
+        private MapSector LastSyncGetSector;
 
         public MapSector GetSector(int sectorOffsetX, int sectorOffsetY, bool noLoading = false) {
             MapSector a;
@@ -816,6 +828,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void GenerateMegaSector(int megaOffsetX, int megaOffsettY) {
             var sw = new Stopwatch();
             sw.Start();
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
             var point = new Point(megaOffsetX, megaOffsettY);
             if (!megaMap.ContainsKey(point)) {
                 var s = (int) (MapGenerators.Noise2D(megaOffsetX, megaOffsettY)*int.MaxValue);
