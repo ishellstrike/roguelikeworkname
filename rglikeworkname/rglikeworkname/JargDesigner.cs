@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +14,7 @@ using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Items.Subclases;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Window;
@@ -26,6 +28,9 @@ namespace jarg {
         private Window BigLogWindow;
         private ListContainer BigLogContainer;
         private Button ShowBigLogWindow;
+
+        private Window LookWindow;
+        private ListContainer LookContainer;
 
         private Window MoraleWindow;
         private ListContainer MoraleContainer;
@@ -188,6 +193,9 @@ namespace jarg {
 
             AchievementsWindow = new Window(new Vector2(Settings.Resolution.X - 50, Settings.Resolution.Y - 50), "Achievements", true, ws) {Visible = false};
             AchievementContainer = new ListContainer(new Rectangle(10, 10, (int)(AchievementsWindow.Width - 20), (int)(AchievementsWindow.Height - 40)), AchievementsWindow);
+
+            LookWindow = new Window(new Vector2(Settings.Resolution.X/3*2,Settings.Resolution.Y/2), "Item look", true, ws) {Visible = false};
+            LookContainer = new ListContainer(new Rectangle(0,0,(int) LookWindow.Width,(int) (LookWindow.Height-20)), LookWindow);
 
             for (int i = 0; i < 40; i++) {
                 new AchivementBox(Vector2.Zero, "some", bag, AchievementContainer);
@@ -1396,6 +1404,9 @@ namespace jarg {
                     UpdateCaracterWindowItems(null, null);
                 }
             }
+            if (LookWindow.Visible && looklPos != null) {
+                lineBatch_.AddLine(player_.Position - camera_, new Vector2(looklPos.Value.X*32, looklPos.Value.Y*32) - camera_, Color.LimeGreen, 5);
+            }
         }
 
         private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs) {
@@ -1436,6 +1447,38 @@ namespace jarg {
             foreach (Item item in player_.Weared) {
                 var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), ContainerWearList);
             }
+        }
+
+        private void Update_Look_Items() {
+            LookContainer.Clear();
+            looklPos = null;
+
+            var t = currentFloor_.GetVisibleStorages();
+            StringBuilder sb = new StringBuilder();
+            //sb.Append("Вы видите вокруг: ");
+            //List<string> allit = new List<string>();
+
+            foreach (var tuple in t) {
+                string format = string.Format("{0} ({1})", tuple.Item2.Data.Name, tuple.Item2.Count);
+                var lookl = new LabelFixed(Vector2.Zero, format, Color.LightGray,
+                               LookContainer);
+                lookl.Tag = tuple;
+                lookl.OnLeftPressed += lookl_OnLeftPressed;
+                //allit.Add(format);
+            }
+            //sb.Append(String.Join(", ", allit));
+
+            //EventLog.Add(sb.ToString(), Color.LightGreen, LogEntityType.SeeSomething);
+        }
+
+        private Vector2? looklPos;
+        void lookl_OnLeftPressed(object sender, LabelPressEventArgs e) {
+            var t = (Tuple<Vector2, IItem>)(((Label)sender).Tag);
+            looklPos = t.Item1;
+            foreach (var gameComponent in LookContainer.GetItems()) {
+                ((Label)gameComponent).Color = Color.LightGray;
+            }
+            ((Label) sender).Color = Color.LimeGreen;
         }
     }
 

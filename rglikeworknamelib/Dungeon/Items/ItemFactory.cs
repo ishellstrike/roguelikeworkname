@@ -12,7 +12,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             var a = (IItem)Activator.CreateInstance(ItemDataBase.Data[id].Prototype);
             a.Id = id;
             a.Count = count;
-
+            a.OnLoad();
             return a;
         }
     }

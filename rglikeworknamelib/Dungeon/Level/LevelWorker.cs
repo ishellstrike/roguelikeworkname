@@ -132,7 +132,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             {
                 Thread.Sleep(50);
             }
-            int i = 0;
+            //int i = 0;
             //
             FileStream fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Create);
             GZipStream stream = new GZipStream(fs, CompressionMode.Compress);

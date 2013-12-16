@@ -36,7 +36,7 @@ namespace rglikeworknamelib.Window {
             if (Visible) {
                 Vector2 realpos = GetPosition();
 
-                Color col = !aimed_ ? Settings.Hud—olor : Color.White;
+                Color col = !aimed_ ? Settings.Hud—olor : Settings.Hud—olor*2f;
 
                 sb.Draw(whitepixel_, new Vector2(locate_.X, locate_.Y) + Parent.GetPosition(), null, col, 0,
                         Vector2.Zero, new Vector2(locate_.Width, 2), SpriteEffects.None, 0);

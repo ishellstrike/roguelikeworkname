@@ -33,19 +33,19 @@ Weight=100
 Name=Пачка из-под сигарет
 Weight=10
 
-~Item,cigarets
+~ItemCigarets,cigarets
 Name=Пачка сигарет
 Doses=20
 Weight=20
 AfteruseId=nocigarets
 
-~Item,cigarets10
+~ItemCigarets,cigarets10
 Name=Пачка сигарет
 Doses=10
 Weight=20
 AfteruseId=nocigarets
 
-~Item,cigarets4
+~ItemCigarets,cigarets4
 Name=Пачка сигарет
 Doses=4
 Weight=20

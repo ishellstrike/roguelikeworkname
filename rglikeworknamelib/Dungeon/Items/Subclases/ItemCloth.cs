@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Creatures;
 
-namespace rglikeworknamelib.Dungeon.Items {
+namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]
     public class ItemCloth : Item
     {
@@ -10,7 +10,6 @@ namespace rglikeworknamelib.Dungeon.Items {
         {
             base.OnLoad();
             Actions.Add(new ItemAction { Name = "Разорвать на тряпки", Action = DestroyCloth });
-            
         }
 
         public void DestroyCloth(Player p)

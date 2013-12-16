@@ -1224,6 +1224,26 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             return null;
         }
+
+        public List<Tuple<Vector2, IItem>> GetVisibleStorages()
+        {
+            var temp = new List<Tuple<Vector2, IItem>>();
+
+            foreach (var mapSector in sectors_) {
+                for (int i = 0; i < mapSector.Value.Blocks.Count; i++) {
+                    var block = mapSector.Value.Blocks[i];
+
+                    if (block is StorageBlock && block.Lightness.B != 0) {
+                        var store = block as StorageBlock;
+                        foreach (var storedItem in store.StoredItems) {
+                            temp.Add(new Tuple<Vector2, IItem>(new Vector2(i / MapSector.Rx + mapSector.Value.SectorOffsetX * MapSector.Rx + 0.5f, i % MapSector.Ry + mapSector.Value.SectorOffsetY * MapSector.Ry + 0.5f), storedItem));
+                        }
+                    }
+                }
+            }
+
+            return temp;
+        }
     }
 
     [Serializable]

@@ -25,7 +25,7 @@ namespace jarg {
                     }
                 }
                 else {
-                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, col_);
+                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Color);
                     if (Text2 != null) {
                         sb.DrawString(font1_, Text2, Parent.GetPosition() + pos_ + new Vector2(Width, 0),
                                       Color.LightBlue);

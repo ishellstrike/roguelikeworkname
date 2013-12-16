@@ -39,7 +39,7 @@ namespace rglikeworknamelib.Window {
                 sb.DrawString(font1_, line, Parent.GetPosition() + pos_ + microoffset, Settings.Hud—olor);
             }
             else {
-                sb.DrawString(font1_, line, Parent.GetPosition() + pos_ + microoffset, col_);
+                sb.DrawString(font1_, line, Parent.GetPosition() + pos_ + microoffset, Color);
             }
         }
 

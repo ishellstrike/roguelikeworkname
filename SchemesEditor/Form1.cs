@@ -19,7 +19,7 @@ namespace SchemesEditor {
         private SchemesMap gl;
         private PictureBox[] map;
         private bool mouseleftdown;
-        private SpriteBatch sb;
+        //private SpriteBatch sb;
 
         public Form1() {
             InitializeComponent();

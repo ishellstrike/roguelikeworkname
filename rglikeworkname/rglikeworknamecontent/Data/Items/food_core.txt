@@ -28,6 +28,7 @@ NutCal=400
 Nameret=Пакет с едой
 SortType=Food
 SpawnGroup=spawn_shopfood
+Buff={foodbad1}
 
 ~Item,cookie1
 Name=Коробка галет
@@ -127,6 +128,7 @@ NutCal=600
 Buff={foodjoy1}
 SortType=Food
 SpawnGroup=spawn_cookedfood
+Description=Приготовленный толстый кусок мяса
 
 ~Item,goodsteak
 Name=Стейк Солсбери
@@ -135,6 +137,7 @@ NutCal=600
 Buff={foodjoy2}
 SortType=Food
 SpawnGroup=spawn_cookedfood
+Description=Качественно приготовленный толстый кусок мяса
 
 ~Item,chips
 Name=Чипсы
@@ -157,4 +160,92 @@ Weight=90
 NutCal=150
 SortType=Food
 Buff={foodjoy2}
+SpawnGroup=spawn_shopfood
+
+~Item,fastpure
+Name=Пюре быстрого приготовления
+Weight=100
+NutCal=100
+SortType=Food
+Buff={foodbad1}
+SpawnGroup=spawn_shopfood
+
+~Item,apple
+Name=Яблоко
+Weight=100
+NutCal=100
+NutH2O=100
+SortType=Food
+SpawnGroup=spawn_shopfood
+
+~Item,banan
+Name=Банан
+Weight=100
+NutCal=100
+NutH2O=100
+SortType=Food
+SpawnGroup=spawn_shopfood
+
+~Item,grusha
+Name=Груша
+Weight=150
+NutCal=150
+NutH2O=150
+SortType=Food
+SpawnGroup=spawn_shopfood
+
+~Item,carrot
+Name=Морковь
+Weight=70
+NutCal=70
+NutH2O=70
+SortType=Food
+SpawnGroup=spawn_shopfood
+
+~Item,beancan1
+Name=Открытая банка бобов
+Nameret=Банка с едой
+Weight=300
+NutCal=800
+Doses=2
+AfteruseId=emptycan
+SortType=Food
+SpawnGroup=spawn_cookedfood
+
+~ItemCan,beancan1cl
+Name=Закрытая банка бобов
+Nameret=Банка с едой
+AfteruseId=beancan1
+SpawnGroup=spawn_shopfood
+
+~Item,corncan1
+Name=Открытая банка кукурузы
+Nameret=Банка с едой
+Weight=300
+NutCal=800
+Doses=2
+AfteruseId=emptycan
+SortType=Food
+SpawnGroup=spawn_cookedfood
+
+~ItemCan,corncan1cl
+Name=Закрытая банка кукурузы
+Nameret=Банка с едой
+AfteruseId=corncan1
+SpawnGroup=spawn_shopfood
+
+~Item,corncan2
+Name=Открытая банка горошка
+Nameret=Банка с едой
+Weight=300
+NutCal=800
+Doses=2
+AfteruseId=emptycan
+SortType=Food
+SpawnGroup=spawn_cookedfood
+
+~ItemCan,corncan2cl
+Name=Закрытая банка горошка
+Nameret=Банка с едой
+AfteruseId=corncan2
 SpawnGroup=spawn_shopfood

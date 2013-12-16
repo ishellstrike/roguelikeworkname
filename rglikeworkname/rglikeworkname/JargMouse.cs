@@ -12,7 +12,7 @@ namespace jarg {
         private TimeSpan doubleclicktimer_ = TimeSpan.Zero;
         private bool firstclick_;
         private bool rememberShoot_;
-        private TimeSpan sec20glitch;
+        //private TimeSpan sec20glitch;
 
         private void UpdateMouse(GameTime gameTime) {
             lms_ = ms_;

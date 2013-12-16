@@ -16,8 +16,8 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         internal Vector2 Start;
         internal float Vel;
         internal Vector3 Velocity;
-        private ParticleSystem ps;
-        private Random rnd = new Random();
+        //private ParticleSystem ps;
+        //private Random rnd = new Random();
 
         public Bullet(Vector2 pos, float vel, float an, float asp, int texn, TimeSpan ts) {
             Pos = pos;

@@ -11,7 +11,7 @@ namespace jarg {
         private readonly Vector2 acW = new Vector2(0, -10);
         private float acmodifer = 1;
         private Vehicle car;
-        private int iii;
+        //private int iii;
         private Vehicle veh;
 
         private void UpdateKeyboard(GameTime gameTime) {
@@ -23,15 +23,19 @@ namespace jarg {
             if (!ws_.Keyboardhook) {
                 if (ks_[Keys.W] == KeyState.Down) {
                     player_.Accelerate(acW*acmodifer);
+                    LookWindow.Visible = false;
                 }
                 if (ks_[Keys.S] == KeyState.Down) {
                     player_.Accelerate(acS*acmodifer);
+                    LookWindow.Visible = false;
                 }
                 if (ks_[Keys.A] == KeyState.Down) {
                     player_.Accelerate(acA*acmodifer);
+                    LookWindow.Visible = false;
                 }
                 if (ks_[Keys.D] == KeyState.Down) {
                     player_.Accelerate(acD*acmodifer);
+                    LookWindow.Visible = false;
                 }
 
                 if (ks_[Keys.M] == KeyState.Down && lks_[Keys.M] == KeyState.Up) {
@@ -58,6 +62,16 @@ namespace jarg {
                         CraftWindow.OnTop();
                     }
                     Update_Craft_Items();
+                }
+
+                if (ks_[Keys.U] == KeyState.Down && lks_[Keys.U] == KeyState.Up)
+                {
+                    LookWindow.Visible = !LookWindow.Visible;
+                    if (LookWindow.Visible)
+                    {
+                        LookWindow.OnTop();
+                    }
+                    Update_Look_Items();
                 }
 
                 if (ks_[JargBindings.Inventory] == KeyState.Down && lks_[JargBindings.Inventory] == KeyState.Up)

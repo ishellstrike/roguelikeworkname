@@ -10,7 +10,7 @@ namespace rglikeworknamelib.Window {
         protected bool aimed_;
 
         private float calcHeight, calcWidth;
-        protected Color col_;
+        public Color Color;
         protected bool isHudColored;
         protected Vector2 pos_;
 
@@ -20,7 +20,7 @@ namespace rglikeworknamelib.Window {
             font1_ = win.font1_;
             pos_ = position;
             Text = text;
-            col_ = c;
+            Color = c;
             Parent = win;
             Parent.AddComponent(this);
             Visible = true;
@@ -58,11 +58,16 @@ namespace rglikeworknamelib.Window {
                         sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Settings.HudÑolor);
                     }
                     else {
-                        sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, col_);
+                        sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Color);
                     }
                 }
                 else {
-                    sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Color.White);
+                    if (isHudColored) {
+                        sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Settings.HudÑolor * 2f);
+                    }
+                    else {
+                        sb.DrawString(font1_, Text, Parent.GetPosition() + pos_, Color * 2f);
+                    }
                 }
             }
         }
@@ -137,12 +142,12 @@ namespace rglikeworknamelib.Window {
         private readonly SpriteFont Font1;
         private readonly Texture2D image_;
         private IGameContainer Parent;
-        private bool aimed_;
+        //private bool aimed_;
         public Texture2D whitepixel_ { get; set; }
         public string Title, Description;
         public bool Completed;
 
-        private Color col_;
+        //private Color Color;
         private Rectangle location;
 
         public AchivementBox(Vector2 position, string text, Texture2D tex, IGameContainer win)
@@ -201,7 +206,7 @@ namespace rglikeworknamelib.Window {
 
                     if (ms.X >= realpos.X && ms.Y >= realpos.Y && ms.X <= realdl.X && ms.Y <= realdl.Y && mh)
                     {
-                        aimed_ = true;
+                        //aimed_ = true;
                         if (lms.LeftButton == ButtonState.Released && ms.LeftButton == ButtonState.Pressed)
                         {
                             OnOnLeftPressed(ms);
@@ -213,7 +218,7 @@ namespace rglikeworknamelib.Window {
                     }
                     else
                     {
-                        aimed_ = false;
+                        //aimed_ = false;
                     }
                 }
         }

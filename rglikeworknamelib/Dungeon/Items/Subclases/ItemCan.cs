@@ -3,11 +3,10 @@ using Microsoft.Xna.Framework;
 using jarg;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Item;
 
-namespace rglikeworknamelib.Dungeon.Items {
+namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]
-    public class ItemCan : Item {
+    public class ItemCan : Subclases.Item {
 
         public override void OnLoad()
         {

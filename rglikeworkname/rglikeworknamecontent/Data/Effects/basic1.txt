@@ -83,6 +83,30 @@ Duration=120
 Description=Недавно вы ели свою любимую еду
 Value={15}
 
+~MoraleModifer,foodbad1
+Name=Невкусная еда
+Duration=60
+Description=Недавно вы ели невкусную еду
+Value={-5}
+
+~MoraleModifer,foodbad2
+Name=Ужасная еда
+Duration=60
+Description=Недавно вы ели ужасно невкусную еду
+Value={-15}
+
+~MoraleModifer,foodold
+Name=Испорченая еда
+Duration=60
+Description=Недавно вы ели испорченную еду
+Value={-15}
+
+~MoraleModifer,foodnot
+Name=Съел несъедобное
+Duration=60
+Description=Недавно вы съели что-то несъедобное
+Value={-30}
+
 ~MoraleModifer,cigaheavysmoker
 Name=Вы недавно выкурили сигарету, которую вам так хотелось.
 Value={40}

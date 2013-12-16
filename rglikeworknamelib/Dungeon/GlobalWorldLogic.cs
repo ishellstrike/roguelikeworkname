@@ -20,8 +20,8 @@ namespace rglikeworknamelib.Dungeon {
         public static float Temperature = 10;
         private static Seasons currentSeason_ = Seasons.Summer;
         public static DayPart DayPart = DayPart.Day;
-        private static readonly long Hour3 = new TimeSpan(0, 3, 0, 0).Ticks;
-        private static float ler_ = 7;
+        //private static readonly long Hour3 = new TimeSpan(0, 3, 0, 0).Ticks;
+        //private static float ler_ = 7;
 
         public static float GetCurrentSlen() {
             var time = (float)CurrentTime.TimeOfDay.TotalHours;
@@ -52,39 +52,39 @@ namespace rglikeworknamelib.Dungeon {
                 case Seasons.Osen:
                     if (CurrentTime.Month >= 11) {
                         currentSeason_ = Seasons.Winter;
-                        if (onWinterBegins != null) {
+                        /*if (onWinterBegins != null) {
                             onWinterBegins(null, null);
-                        }
+                        }*/
                     }
                     break;
                 case Seasons.Winter:
                     if (CurrentTime.Month > 3) {
                         currentSeason_ = Seasons.Vesna;
-                        if (onVesnaBegins != null) {
+                        /*if (onVesnaBegins != null) {
                             onVesnaBegins(null, null);
-                        }
+                        }*/
                     }
                     break;
                 case Seasons.Vesna:
                     if (CurrentTime.Month >= 11) {
                         currentSeason_ = Seasons.Summer;
-                        if (onSummerBegins != null) {
+                        /*if (onSummerBegins != null) {
                             onSummerBegins(null, null);
-                        }
+                        }*/
                     }
                     break;
                 case Seasons.Summer:
                     if (CurrentTime.Month > 3) {
                         currentSeason_ = Seasons.Osen;
-                        if (onOsenBegins != null) {
+                        /*if (onOsenBegins != null) {
                             onOsenBegins(null, null);
-                        }
+                        }*/
                     }
                     break;
             }
         }
 
-        private static event EventHandler onNightBegins;
+        /*private static event EventHandler onNightBegins;
         private static event EventHandler onDayBegins;
         private static event EventHandler onMorningBegins;
         private static event EventHandler onVecherBegins;
@@ -92,7 +92,7 @@ namespace rglikeworknamelib.Dungeon {
         private static event EventHandler onWinterBegins;
         private static event EventHandler onSummerBegins;
         private static event EventHandler onOsenBegins;
-        private static event EventHandler onVesnaBegins;
+        private static event EventHandler onVesnaBegins;*/
 
         public static float GetNormalTemp(DateTime cur) {
             float temp = 0;

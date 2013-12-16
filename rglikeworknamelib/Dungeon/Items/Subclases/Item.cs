@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
-using rglikeworknamelib.Dungeon.Level;
 
-namespace rglikeworknamelib.Dungeon.Items {
+namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]
     public class Item : IItem {
         public List<IBuff> Buffs { get; set; }

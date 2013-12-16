@@ -93,7 +93,6 @@ namespace rglikeworknamelib.Generation {
             for (int i = 0; i < scheme.x; i++) {
                 for (int j = 0; j < scheme.y; j++) {
                     string blockId = scheme.data[i*scheme.y + j];
-                    if (blockId != "0") {
                         var block = gl.SetBlockSyncAndReturn(x + i, y + j, blockId);
                         if (BlockDataBase.Data[blockId].Prototype == typeof (StorageBlock)) {
                             List<DropGroup> a;
@@ -115,7 +114,7 @@ namespace rglikeworknamelib.Generation {
                                     }
                                 }
                             }
-                        }
+                        
                     }
                 }
             }
