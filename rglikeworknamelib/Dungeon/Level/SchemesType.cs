@@ -1,5 +1,5 @@
 namespace rglikeworknamelib.Dungeon.Level {
-    public enum SchemesType {
+    public enum SchemeSortType {
         House,
         Shop,
         Hospital,

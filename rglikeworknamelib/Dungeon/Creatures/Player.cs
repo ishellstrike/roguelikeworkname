@@ -29,7 +29,6 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public IItem ItemGun;
         public IItem ItemMeele;
         public Stat Morale = new Stat(50);
-        public Collection<MoraleModifer> MoraleModifers = new Collection<MoraleModifer>();
         public Collection<Bodypart> Bodyparts = new Collection<Bodypart>(); 
 
         public PerksSystem Perks;
@@ -68,7 +67,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         public void EquipItem(IItem item, InventorySystem ins) {
             Settings.InventoryUpdate = true;
-            switch (item.Data.SType) {
+            switch (item.Data.SortType) {
                 case ItemType.Wear:
                     EquipWear(item, ins);
                     break;

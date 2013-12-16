@@ -21,7 +21,7 @@ namespace rglikeworknamelib.Dungeon.Items {
         public List<string> Output;
         public List<string> OutputCount;
 
-        public CraftType SType = CraftType.Other;
+        public CraftType SortType = CraftType.Other;
 
         public override string ToString() {
             var sb = new StringBuilder();

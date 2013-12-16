@@ -1,74 +1,84 @@
 ~Item,kitty_collar
 Name=Кошачий ошейник
 Weight=50
-SType=Wear
+SortType=Wear
 Dress=collar1
+SpawnGroup=spawn_commonwear
 
 ~ItemCloth,socks
 Name=Носки
 Weight=50
-SType=Wear
+SortType=Wear
+SpawnGroup=spawn_commonwear
 
 ~ItemCloth,wool_socks
 Name=Шерстяные носки
 Weight=100
-SType=Wear
+SortType=Wear
+SpawnGroup=spawn_commonwear
 
 ~Item,sneakers
 Name=Кросовки
-SType=Wear
+SortType=Wear
 Weight=400
+SpawnGroup=spawn_commonwear
 
 ~Item,boots
 Name=Кожаные ботинки
-SType=Wear
+SortType=Wear
+SpawnGroup=spawn_commonwear
 
 ~Item,steeltoed_boots
 Name=Ботинки с металическим носком
 Weight=1000
-SType=Wear
+SortType=Wear
 
 ~Item,military_boots
 Name=Военные ботинки
 Weight=1300
-SType=Wear
+SortType=Wear
 
 ~Item,winter_boots
 Name=Зимние ботинки
-SType=Wear
+SortType=Wear
 Weight=1000
+SpawnGroup=spawn_commonwear
 
 ~Item,baseball_hat
 Name=Бейсболка
-SType=Wear
+SortType=Wear
 Weight=100
+SpawnGroup=spawn_sportwear
 
 ~Item,sun_glasses
 Name=Солнцезащитные очки
-SType=Wear
+SortType=Wear
 Weight=50
 Dress=glass1
+SpawnGroup=spawn_commonwear
 
 ~Item,resp1
 Name=Респиратор
-SType=Wear
+SortType=Wear
 Weight=800
 Dress=resp1
 
 ~ItemCloth,jeans
 Name=Джинсы
-SType=Wear
+SortType=Wear
 Weight=500
 Dress=jeans
+SpawnGroup=spawn_commonwear
 
 ~ItemCloth,t-shirt1
 Name=Футболка
-SType=Wear
+SortType=Wear
 Weight=200
 Dress=t-shirt1
+SpawnGroup=spawn_commonwear
 
 ~Item,haer1
 Name=Волосы
-Stype=Wear
+SortType=Wear
 Dress=haer1
 Hidden=true

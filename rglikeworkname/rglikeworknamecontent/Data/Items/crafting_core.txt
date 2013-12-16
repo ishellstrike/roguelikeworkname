@@ -1,107 +1,107 @@
 //Craftings from 1000
 ~Item,steelplate
 Name=Стальная пластина
-SType=Craft
+SortType=Craft
 Weight=4000
 
 ~Item,copperwire
 Name=Моток медной проволоки
 Weight=100
 Doses=10
-SType=Craft
+SortType=Craft
 
 ~Item,steelbar
 Name=Стальной прут
-SType=Craft
+SortType=Craft
 Weight=4000
-SType=Craft
+SortType=Craft
 
 ~Item,plank
 Name=Доска
 Fire=100
-SType=Craft
+SortType=Craft
 Weight=2000
 
 ~Item,stick
 Name=Палка
 Fire=30
 Weight=400
-SType=Craft
+SortType=Craft
 
 ~Item,skotch
 Name=Клейкая лента
 Weight=100
 Doses=100
-SType=Craft
+SortType=Craft
 
 ~Item,izolenta
 Name=Изолента
 Weight=70
 Doses=250
-SType=Craft
+SortType=Craft
 
 ~Item,opilki
 Name=Древесные опилки
 Fire=5
-SType=Craft
+SortType=Craft
 Weight=100
 
 
 ~Item,nail
 Name=Гвоздь
-SType=Craft
+SortType=Craft
 Weight=10
 
 ~Item,coal
 Name=Пакет угля
 Fire=2000
-SType=Craft
+SortType=Craft
 Weight=1000
 
 ~Item,log
 Name=Бревно
 Fire=500
-SType=Craft
+SortType=Craft
 Weight=10000
 
 ~Item,hammer
 Name=Молоток
-SType=Craft
+SortType=Craft
 Weight=700
 
 ~Item,otvertka
 Name=Отвертка
-SType=Craft
+SortType=Craft
 Weight=150
 
 ~Item,knife
 Name=Небольшой нож
-SType=Meele
+SortType=Meele
 Weight=200
 
 ~Item,spearknife
 Name=Самодельное копье с ножом
-SType=Meele
+SortType=Meele
 Weight=650
 
 ~Item,chipset
 Name=Печатная плата
-SType=Craft
+SortType=Craft
 Weight=20
 
 ~Item,batery
 Name=Аккумулятор
-SType=Craft
+SortType=Craft
 Weight=20
 
 ~Item,tinymonitor
 Name=маленький ЖК экран
-SType=Craft
+SortType=Craft
 Weight=20
 
 ~Item,smallvint
 Name=Маленькие винты
-SType=Craft
+SortType=Craft
 Weight=1
 
 ~Item,2001

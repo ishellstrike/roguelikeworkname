@@ -8,13 +8,15 @@ NutH2O=500
 Weight=500
 NutCal=20
 AfteruseId=emptycan
-SType=Food
+SortType=Food
+SpawnGroup=spawn_shopfood
+
 
 ~Item,fishcan1
 Name=Банка сардин
 Nameret=Банка с едой
 AfteruseId=emptycan
-SType=Food
+SortType=Food
 Weight=100
 NutCal=500
 Doses=2
@@ -24,7 +26,8 @@ Name=Пакет лапши
 Weight=100
 NutCal=400
 Nameret=Пакет с едой
-SType=Food
+SortType=Food
+SpawnGroup=spawn_shopfood
 
 ~Item,cookie1
 Name=Коробка галет
@@ -32,7 +35,8 @@ Weight=300
 NutCal=700
 Nameret=Коробка с едой
 Doses=20
-SType=Food
+SortType=Food
+SpawnGroup=spawn_shopfood
 
 ~Item,meatcan1
 Name=Открытая банка тушеной говядины
@@ -41,12 +45,14 @@ Weight=300
 NutCal=800
 Doses=2
 AfteruseId=emptycan
-SType=Food
+SortType=Food
+SpawnGroup=spawn_cookedfood
 
 ~ItemCan,meatcan1cl
 Name=Закрытая банка тушеной говядины
 Nameret=Банка с едой
 AfteruseId=meatcan1
+SpawnGroup=spawn_shopfood
 
 ~Item,meatcan2
 Name=Открытая банка паштета
@@ -55,12 +61,14 @@ Weight=300
 NutCal=600
 Doses=2
 AfteruseId=emptycan
-SType=Food
+SortType=Food
+SpawnGroup=spawn_cookedfood
 
 ~ItemCan,meatcan2cl
 Name=Закрытая банка паштета
 Nameret=Банка с едой
 AfteruseId=meatcan2
+SpawnGroup=spawn_shopfood
 
 ~Item,milk1
 Name=Пакет молока
@@ -69,7 +77,8 @@ NutCal=250
 NutH2O=1000
 AfteruseId=13
 Doses=10
-SType=Food
+SortType=Food
+SpawnGroup=spawn_shopfood
 
 
 ~Item,emptycan
@@ -81,7 +90,7 @@ Name=Фляга армейская (полная)
 Weight=600
 NutH2O=500
 AfteruseId=14
-SType=Food
+SortType=Food
 
 ~Item,10
 Name=Аварийный рацион питания
@@ -89,7 +98,7 @@ Nameret=Странная коробка
 Weight=500
 NutCal=1000
 AfteruseId=13
-SType=Food
+SortType=Food
 
 ~Item,watercons
 Name=Вода консервированая
@@ -97,7 +106,7 @@ Nameret=Странный пакет
 NutH2O=500
 Weight=500
 AfteruseId=12
-SType=Food
+SortType=Food
 
 ~Item,12
 Name=Пустой пакет
@@ -110,3 +119,42 @@ Weight=20
 ~Item,14
 Name=Фляга армейская (пустая)
 Weight=100
+
+~Item,steak
+Name=Стейк
+Weight=400
+NutCal=600
+Buff={foodjoy1}
+SortType=Food
+SpawnGroup=spawn_cookedfood
+
+~Item,goodsteak
+Name=Стейк Солсбери
+Weight=400
+NutCal=600
+Buff={foodjoy2}
+SortType=Food
+SpawnGroup=spawn_cookedfood
+
+~Item,chips
+Name=Чипсы
+Weight=90
+NutCal=150
+Buff={foodjoy1}
+SortType=Food
+SpawnGroup=spawn_shopfood
+
+~Item,chips2
+Name=Недорогие чипсы
+Weight=90
+NutCal=100
+SortType=Food
+SpawnGroup=spawn_shopfood
+
+~Item,chips3
+Name=Отличные чипсы
+Weight=90
+NutCal=150
+SortType=Food
+Buff={foodjoy2}
+SpawnGroup=spawn_shopfood

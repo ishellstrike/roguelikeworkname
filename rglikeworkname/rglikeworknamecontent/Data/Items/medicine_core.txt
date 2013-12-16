@@ -2,25 +2,25 @@
 
 ~Item,bint1
 Name=Бинт
-SType=Medicine
+SortType=Medicine
 
 
 ~Item,bint2
 Name=Плотный бинт
-SType=Medicine
+SortType=Medicine
 
 ~Item,jgut
 Name=Жгут
-SType=Medicine
+SortType=Medicine
 Description=Средство временной остановки кровотечения
 
 ~Item,pantocid
 Name=Пантоцид в упаковке
-SType=Medicine
+SortType=Medicine
 Doses=20
 
 ~Item,cofein
 Name=Кофеин в упаковке
 Doses=20
-SType=Medicine
+SortType=Medicine
 Buffs={cofeine8}

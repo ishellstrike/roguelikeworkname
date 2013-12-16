@@ -7,8 +7,12 @@ namespace rglikeworknamelib.Dungeon.Effects {
         /// </summary>
         public int Duration;
 
-        public string Name;
+        public string Name, Description;
         public Type Prototype;
         public string[] Value;
+
+        public override string ToString() {
+            return string.Format("{0} ({1})", Name, Prototype);
+        }
     }
 }

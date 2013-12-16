@@ -30,7 +30,7 @@ int MTex;//Texture ID
 Microsoft.Xna.Framework.Color MMCol; // nothing
 
 int Volume;// range of sound then using in blocks
-ItemType SType;{        
+ItemType SortType;{        
 		Wear,
         	Gun,
         	Meele,

@@ -82,7 +82,6 @@
     <Compile Include="Dungeon\Creatures\DamageType.cs" />
     <Compile Include="Dungeon\Creatures\DressCreatures.cs" />
     <Compile Include="Dungeon\Creatures\ICreature.cs" />
-    <Compile Include="Dungeon\Creatures\MoraleModifer.cs" />
     <Compile Include="Dungeon\Creatures\Perk.cs" />
     <Compile Include="Dungeon\Creatures\PerkData.cs" />
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />

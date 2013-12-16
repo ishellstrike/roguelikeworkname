@@ -4,14 +4,14 @@ Name=Рюкзак походный
 Weight=1000
 Volume=2000
 Container=65000
-SType=Bag
+SortType=Bag
 
 ~Item,bag2
 Name=Рюкзак туристический
 Weight=600
 Volume=1200
 Container=28000
-SType=Bag
+SortType=Bag
 
 ~Item,phone1
 Name=Мобильный телефон

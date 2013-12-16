@@ -7,7 +7,7 @@ Input3={stick}
 Input3Count={1}
 Output={spearknife}
 OutputCount={1}
-SType=Weapon
+SortType=Weapon
 
 ~Craft
 Input1={otvertka}
@@ -16,4 +16,4 @@ Input2={phone1}
 Input2Count={1}
 Output={chipset,batery,tinymonitor,smallvint}
 OutputCount={1,1,1,10}
-SType=Disassemble
+SortType=Disassemble

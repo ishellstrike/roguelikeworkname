@@ -25,7 +25,7 @@ namespace rglikeworknamelib.Dungeon.Items {
         public void AddItem(IItem it) {
             if (it == null) return;
             items_.Add(it);
-            switch (it.Data.SType) {
+            switch (it.Data.SortType) {
                 case ItemType.Ammo:
                     AchievementDataBase.Stat["ammototal"].Count += it.Count;
                     break;
@@ -49,7 +49,7 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public List<IItem> FilterByType(ItemType it) {
-            return it == ItemType.Nothing ? items_ : items_.Where(item => item.Data.SType == it).ToList();
+            return it == ItemType.Nothing ? items_ : items_.Where(item => item.Data.SortType == it).ToList();
         }
 
         public void StackSimilar() {
@@ -88,7 +88,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             if (selectedItem == null || player == null) {
                 return;
             }
-            switch (selectedItem.Data.SType) {
+            switch (selectedItem.Data.SortType) {
                 case ItemType.Wear:
                 case ItemType.Meele:
                 case ItemType.Ammo:
@@ -101,13 +101,13 @@ namespace rglikeworknamelib.Dungeon.Items {
                     if (player.EatItem(selectedItem)) {
                         EventLog.Add(
                             string.Format("{1} {0}", selectedItem.Data.Name,
-                                          selectedItem.Data.SType == ItemType.Medicine ? "Вы приняли" : "Вы употребили"),
+                                          selectedItem.Data.SortType == ItemType.Medicine ? "Вы приняли" : "Вы употребили"),
                             GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
                         foreach (IBuff buff in selectedItem.Buffs) {
                             buff.ApplyToTarget(player);
                         }
 
-                        if (selectedItem.Data.SType == ItemType.Medicine) {
+                        if (selectedItem.Data.SortType == ItemType.Medicine) {
                             AchievementDataBase.Stat["meduse"].Count++;
                         } else {
                             AchievementDataBase.Stat["fooduse"].Count++;

@@ -30,49 +30,49 @@ namespace rglikeworknamelib.Parser {
                     cur.data = new string[cur.x*cur.y];
                     switch (header[2].Replace("\r", string.Empty)) {
                         case "house":
-                            cur.type = SchemesType.House;
+                            cur.type = SchemeSortType.House;
                             break;
                         case "hospital":
-                            cur.type = SchemesType.Hospital;
+                            cur.type = SchemeSortType.Hospital;
                             break;
                         case "store":
-                            cur.type = SchemesType.Shop;
+                            cur.type = SchemeSortType.Shop;
                             break;
                         case "wearstore":
-                            cur.type = SchemesType.WearShop;
+                            cur.type = SchemeSortType.WearShop;
                             break;
                         case "b_part_udlr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_ud":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_lr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_udl":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_udr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_ulr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_dlr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_ul":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_ur":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_dl":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                         case "b_part_dr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SchemeSortType.BunkerParts;
                             break;
                     }
                     cur.filename = string.Format("{0}{1}", cur.type, Settings.rnd.Next());

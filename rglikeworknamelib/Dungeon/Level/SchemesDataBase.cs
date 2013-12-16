@@ -21,11 +21,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Data.Add(pair);
             }
 
-            Houses = Data.Where(x => x.type == SchemesType.House).ToList();
-            Storages = Data.Where(x => x.type == SchemesType.Storage).ToList();
+            Houses = Data.Where(x => x.type == SchemeSortType.House).ToList();
+            Storages = Data.Where(x => x.type == SchemeSortType.Storage).ToList();
             NormalCity =
                 Data.Where(
-                    x => x.type == SchemesType.House || x.type == SchemesType.Shop || x.type == SchemesType.Hospital || x.type == SchemesType.WearShop).
+                    x => x.type == SchemeSortType.House || x.type == SchemeSortType.Shop || x.type == SchemeSortType.Hospital || x.type == SchemeSortType.WearShop).
                     ToList();
         }
     }

@@ -2,37 +2,37 @@
 
 ~Item,a357
 Name=.357 Magnum
-SType=Ammo
+SortType=Ammo
 Weight=20
 
 ~Item,a308
 Name=.308 Winchester
-SType=Ammo
+SortType=Ammo
 Weight=10
 
 ~Item,a233
 Name=.233 ЦМО
-SType=Ammo
+SortType=Ammo
 Weight=15
 
 ~Item,a50
 Name=.50 BMG
 Description=Made in USA. Ужасный 50ый калибр.
-SType=Ammo
+SortType=Ammo
 Weight=50
 
 ~Item,a545
 Name=.50 BMG
 Description=Made in USA. Ужасный 50ый калибр.
-SType=Ammo
+SortType=Ammo
 Weight=50
 
 ~Item,a223
 Name=.223 Remington
 Description=Made in USA. Малоимпульсный промежуточный патрон.
-SType=Ammo
+SortType=Ammo
 
 ~Item,a762
 Name=7,62-мм
 Description=Made in Russia. Gромежуточный патрон, считается третьим по мощности из автоматных патронов в мире.
-SType=Ammo
+SortType=Ammo

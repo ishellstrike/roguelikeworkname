@@ -17,6 +17,9 @@ namespace jarg {
         private void UpdateKeyboard(GameTime gameTime) {
             lks_ = ks_;
             ks_ = Keyboard.GetState();
+            if (ks_.GetPressedKeys().Length == 0) {
+                return;
+            }
             if (!ws_.Keyboardhook) {
                 if (ks_[Keys.W] == KeyState.Down) {
                     player_.Accelerate(acW*acmodifer);
@@ -39,7 +42,8 @@ namespace jarg {
                     }
                 }
 
-                if (ks_[Keys.C] == KeyState.Down && lks_[Keys.C] == KeyState.Up) {
+                if (ks_[JargBindings.Caracter] == KeyState.Down && lks_[JargBindings.Caracter] == KeyState.Up)
+                {
                     CaracterWindow.Visible = !CaracterWindow.Visible;
                     if (CaracterWindow.Visible) {
                         CaracterWindow.OnTop();
@@ -56,7 +60,8 @@ namespace jarg {
                     Update_Craft_Items();
                 }
 
-                if (ks_[Keys.I] == KeyState.Down && lks_[Keys.I] == KeyState.Up) {
+                if (ks_[JargBindings.Inventory] == KeyState.Down && lks_[JargBindings.Inventory] == KeyState.Up)
+                {
                     InventoryWindow.Visible = !InventoryWindow.Visible;
                     if (InventoryWindow.Visible) {
                         InventoryWindow.OnTop();
@@ -80,14 +85,16 @@ namespace jarg {
                     }
                 }
 
-                if (ks_[Keys.O] == KeyState.Down && lks_[Keys.O] == KeyState.Up) {
+                if (ks_[JargBindings.Statist] == KeyState.Down && lks_[JargBindings.Statist] == KeyState.Up)
+                {
                     StatistWindow.Visible = !StatistWindow.Visible;
                     if (StatistWindow.Visible) {
                         StatistWindow.OnTop();
                     }
                 }
 
-                if (ks_[Keys.P] == KeyState.Down && lks_[Keys.P] == KeyState.Up) {
+                if (ks_[JargBindings.Achievements] == KeyState.Down && lks_[JargBindings.Achievements] == KeyState.Up)
+                {
                     AchievementsWindow.Visible = !AchievementsWindow.Visible;
                     if (AchievementsWindow.Visible)
                     {
@@ -99,7 +106,7 @@ namespace jarg {
                     Flashlight = !Flashlight;
                 }
 
-                if (WindowContainer.Visible && ks_[Keys.R] == KeyState.Down && lks_[Keys.R] == KeyState.Up) {
+                if (WindowContainer.Visible && ks_[JargBindings.TakeAll] == KeyState.Down && lks_[JargBindings.TakeAll] == KeyState.Up) {
                     ButtonContainerTakeAll_onPressed(null, null);
                     WindowContainer.Visible = false;
                 }
@@ -136,7 +143,8 @@ namespace jarg {
                 }
             }
 
-            if (ks_[Keys.F1] == KeyState.Down && lks_[Keys.F1] == KeyState.Up) {
+            if (ks_[JargBindings.Debug] == KeyState.Down && lks_[JargBindings.Debug] == KeyState.Up)
+            {
                 Settings.DebugInfo = !Settings.DebugInfo;
             }
 
@@ -153,7 +161,8 @@ namespace jarg {
                 currentFloor_.KillFarSectors(player_, gameTime, camera_, true);
             }
 
-            if (ks_[Keys.F2] == KeyState.Down && lks_[Keys.F2] == KeyState.Up) {
+            if (ks_[JargBindings.Wire] == KeyState.Down && lks_[JargBindings.Wire] == KeyState.Up)
+            {
                 Settings.DebugWire = !Settings.DebugWire;
             }
 

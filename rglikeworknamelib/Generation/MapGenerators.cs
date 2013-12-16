@@ -77,16 +77,16 @@ namespace rglikeworknamelib.Generation {
             var l = new List<StorageBlock>();
             SectorBiom sb = SectorBiom.House;
                         switch (scheme.type) {
-                            case SchemesType.Shop:
+                            case SchemeSortType.Shop:
                                 sb = SectorBiom.Shop;
                                 break;
-                            case SchemesType.Hospital:
+                            case SchemeSortType.Hospital:
                                 sb = SectorBiom.Hospital;
                                 break;
-                            case SchemesType.Storage:
+                            case SchemeSortType.Storage:
                                 sb = SectorBiom.Storage;
                                 break;
-                            case SchemesType.WearShop:
+                            case SchemeSortType.WearShop:
                                 sb = SectorBiom.WearStore;
                                 break;
                         }
@@ -94,7 +94,7 @@ namespace rglikeworknamelib.Generation {
                 for (int j = 0; j < scheme.y; j++) {
                     string blockId = scheme.data[i*scheme.y + j];
                     if (blockId != "0") {
-                        gl.SetBlockSync(x + i, y + j, blockId);
+                        var block = gl.SetBlockSyncAndReturn(x + i, y + j, blockId);
                         if (BlockDataBase.Data[blockId].Prototype == typeof (StorageBlock)) {
                             List<DropGroup> a;
                             if (ItemDataBase.SpawnLists.TryGetValue(blockId, out a))
@@ -109,7 +109,7 @@ namespace rglikeworknamelib.Generation {
                                                                             rand.Next(drop.MaxCount - drop.MinCount) +
                                                                             drop.MinCount);
                                             if (item != null) {
-                                                ((StorageBlock) gl.GetBlockSync(x + i, y + j)).StoredItems.Add(item);
+                                                ((StorageBlock) block).StoredItems.Add(item);
                                             }
                                         }
                                     }
@@ -131,11 +131,11 @@ namespace rglikeworknamelib.Generation {
         /// <param name="posY">offser y</param>
         /// <param name="rnd">seeded random</param>
         /// <returns>Size of placed scheme</returns>
-        internal static Point PlaceRandomSchemeByType(GameLevel gl, SchemesType schemeType, int posX, int posY,
+        internal static Point PlaceRandomSchemeByType(GameLevel gl, SchemeSortType schemeType, int posX, int posY,
                                                       Random rnd) {
             List<Schemes> a;
             switch (schemeType) {
-                case SchemesType.House:
+                case SchemeSortType.House:
                     a = SchemesDataBase.Houses;
                     break;
 

@@ -33,10 +33,12 @@ namespace rglikeworknamelib.Dungeon.Item {
 
         public Type Prototype;
 
-        public ItemType SType;
+        public ItemType SortType;
         public int Volume;
         public int Weight;
         public int hasHealth; //if has health, count became health
         public int stackNo;
+
+        public string SpawnGroup;
     }
 }

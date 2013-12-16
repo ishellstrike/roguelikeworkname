@@ -47,3 +47,51 @@ Name=Придает немного бодрости
 Duration=0
 Value={8}
 
+~MoraleModifer,test
+Name=Тестовый модификатор
+Duration=1000
+Description=А это описание тестового модификатора.
+Value={-6
+Buff={hpup5,burn}
+
+~MoraleModifer,hungry1
+Name=Несильный голод
+Duration=-1
+Description=Вы испытываете несильный голод. Пока он не оказывает на вас влияния.
+
+~MoraleModifer,hungry2
+Name=Голод
+Duration=-1
+Description=Вы испытываете голод
+Value={-5}
+
+~MoraleModifer,hungry3
+Name=Сильный голод
+Duration=-1
+Description=Вы испытываете сильный голод. Вам тяжело сосредоточиться
+Value={-30}
+
+~MoraleModifer,foodjoy1
+Name=Вкусная еда
+Duration=60
+Description=Недавно вы ели вкусную еду
+Value={5}
+
+~MoraleModifer,foodjoy2
+Name=Любимая еда
+Duration=120
+Description=Недавно вы ели свою любимую еду
+Value={15}
+
+~MoraleModifer,cigaheavysmoker
+Name=Вы недавно выкурили сигарету, которую вам так хотелось.
+Value={40}
+
+~MoraleModifer,cigasmoker
+Name=Вы недавно выкурили сигарету
+Value={60}
+
+~MoraleModifer,ciga
+Name=Вы недавно выкурили сигарету, хотя обычно не курите. Гадость
+Value={60}
+

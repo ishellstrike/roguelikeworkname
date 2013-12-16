@@ -340,6 +340,30 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         /// <summary>
+        ///     Sync block setter
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="blockId"></param>
+        public IBlock SetBlockSyncAndReturn(int x, int y, string blockId)
+        {
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
+            MapSector sect = GetSectorSync(divx, divy);
+            if (sect != null)
+            {
+                int braw = (x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry;
+                sect.Blocks[braw] = BlockFactory.GetInstance(blockId);
+                IBlock block = sect.Blocks[braw];
+                block.MTex = block.Data.RandomMtexFromAlters();
+                MapJustUpdated = true;
+                return block;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         ///     Async block setter
         /// </summary>
         /// <param name="x"></param>
@@ -848,7 +872,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 for (int i = 0; i < interestCount; i++) {
                     var a = new InterestPointCity {
                         Name = NameDataBase.GetRandom(rand),
-                        SectorPos = new Point(rand.Next(0, 0) + megaOffsetX * 100, rand.Next(0, 0) + megaOffsettY * 100),
+                        SectorPos = new Point(rand.Next(0, 0) + megaOffsetX * 50, rand.Next(0, 0) + megaOffsettY * 50),
                         Range = 10
                     };
                     mm.InterestPoints.Add(a);
@@ -861,7 +885,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 megaMap.Add(point, mm);
             }
             for (int i = 0; i < Generation_sectors_.Count; i++) {
-                var sector = Generation_sectors_.ElementAt(i);
+                KeyValuePair<Point, MapSector> sector;
+                lock (Generation_sectors_) {
+                    sector = Generation_sectors_.ElementAt(i);
+                }
                 lw_.StoreGenerated(sector.Value);
                 Generation_sectors_.Remove(sector.Key);
             }
@@ -1169,8 +1196,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                 for (int i = -1 + arg1; i <= 1 + arg1; i++) {
                     for (int j = -1 + arg2; j <= 1 + arg2; j++) {
                         if (i != arg1 || j != arg2) {
-                            //GenerateMegaSector(i, j);
-                            results.Add(gen.BeginInvoke(i, j, null, null));
+                            GenerateMegaSector(i, j);
+                            //results.Add(gen.BeginInvoke(i, j, null, null));
                         }
                     }
                 }

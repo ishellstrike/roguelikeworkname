@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using NLog;
 using rglikeworknamelib.Dungeon.Buffs;
@@ -30,10 +32,10 @@ namespace rglikeworknamelib.Dungeon.Items {
                                                                                        UniversalParser.Parser<ItemData>, typeof(Item));
             foreach (var pair in a) {
                 Data.Add(pair.Key, (ItemData) pair.Value);
-                if (((ItemData) pair.Value).SType == ItemType.Medicine) {
+                if (((ItemData) pair.Value).SortType == ItemType.Medicine) {
                     DataMedicineItems.Add(pair.Key, (ItemData) pair.Value);
                 }
-                if (((ItemData) pair.Value).SType == ItemType.Food) {
+                if (((ItemData) pair.Value).SortType == ItemType.Food) {
                     DataFoodItems.Add(pair.Key, (ItemData) pair.Value);
                 }
             }
@@ -52,7 +54,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             }
         }
 
-        public static Dictionary<string, ItemData> GetItemByItemDatasType(ItemType it) {
+        public static Dictionary<string, ItemData> GetItemByItemDataSortType(ItemType it) {
             switch (it) {
                 case ItemType.Nothing:
                     return Data;
@@ -67,6 +69,10 @@ namespace rglikeworknamelib.Dungeon.Items {
 
         public static string GetItemDescription(IItem i) {
             return i.Data.Description;
+        }
+
+        public static List<KeyValuePair<string,ItemData>> GetBySpawnGroup(string group) {
+            return Data.Where(x => x.Value.SpawnGroup == group).ToList();
         }
 
         public static string GetItemFullDescription(IItem i) {
@@ -98,7 +104,7 @@ namespace rglikeworknamelib.Dungeon.Items {
 
                 sb.Append(Environment.NewLine + Data[item.Ammo].Name);
             }
-            //switch (item.stype) {
+            //switch (item.SortType) {
             //    case ItemType.Medicine:
             //        sb.Append(item.)
             //        break;

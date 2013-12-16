@@ -1128,7 +1128,7 @@ namespace jarg {
             var food = new List<Item>();
             var other = new List<Item>();
             foreach (Item x in a) {
-                switch (x.Data.SType) {
+                switch (x.Data.SortType) {
                     case ItemType.Gun:
                         weap.Add(x);
                         break;

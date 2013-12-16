@@ -3,7 +3,7 @@
 ~Item,12000
 Name=SA80
 Description=Made in UK
-SType=Gun
+SortType=Gun
 UpType=Rifle
 some=some some
 some2=some some2
@@ -12,33 +12,33 @@ some2=some some2
 ~Item,12001
 Name=HK417
 Description=Made in Germany
-SType=Gun
+SortType=Gun
 UpType=AssaultRifle
 
 ~Item,12002
 Name=TAR-21
 Description=Made in Israel
-SType=Gun
+SortType=Gun
 UpType=AssaultRifle
 
 ~Item,12003
 Name=СВД
 Description=Made in Russia
-SType=Gun
+SortType=Gun
 UpType=SniperRifle
 Weight=5000
 
 ~Item,12004
 Name=Винтовка M14
 Description=Made in USA
-SType=Gun
+SortType=Gun
 UpType=Rifle
 Weight=4000
 
 ~Item,12005
 Name=Снайперская винтовка М25
 Description=Made in USA
-SType=Gun
+SortType=Gun
 UpType=SniperRifle
 Weight=5000
 Ammo=a308
@@ -50,7 +50,7 @@ Accuracy=10
 
 ~Item,12006
 Name=FAMAS
-SType=Gun
+SortType=Gun
 UpType=AssaultRifle
 Weight=4000
 Magazine=25
@@ -61,7 +61,7 @@ Ammo=a223
 
 ~Item,12007
 Name=Barrett M82
-SType=Gun
+SortType=Gun
 UpType=SniperRifle
 Weight=14000
 Magazine=10
@@ -73,7 +73,7 @@ Ammo=a50
 
 ~Item,12008
 Name=AK-12
-SType=Gun
+SortType=Gun
 UpType=AssaultRifle
 Weight=3500
 Magazine=30
@@ -85,7 +85,7 @@ Ammo=a762
 
 ~Item,ak47
 Name=AK-47
-SType=Gun
+SortType=Gun
 UpType=AssaultRifle
 Weight=3500
 Ammo=a762
@@ -97,7 +97,7 @@ Description=Made in Russia
 
 ~Item,12009
 Name=AK-12 барабанный магазин
-SType=Gun
+SortType=Gun
 UpType=AssaultRifle
 Weight=3800
 Magazine=90

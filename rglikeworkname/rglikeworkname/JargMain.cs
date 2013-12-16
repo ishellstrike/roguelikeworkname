@@ -292,6 +292,9 @@ namespace jarg {
             sw.Start();
             ShowInfoWindow("Initial map generation", "");
             currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice, levelWorker_);
+            if (levelWorker_ != null) {
+                levelWorker_.Stop();
+            }
             levelWorker_ = new LevelWorker();
             Action lw_ = levelWorker_.Run;
             lw_.BeginInvoke(null, null);
@@ -368,8 +371,6 @@ namespace jarg {
             new NameDataBase();
             ShowInfoWindow("Bases loading :", "9");
             new CraftDataBase();
-            ShowInfoWindow("Bases loading :", "10");
-            new MoraleModiferDataBase();
             HideInfoWindow();
             sw.Stop();
             logger.Info(
@@ -383,8 +384,7 @@ namespace jarg {
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,
                 NameDataBase.data.Count,
-                CraftDataBase.Data.Count,
-                MoraleModiferDataBase.Data.Count);
+                CraftDataBase.Data.Count);
 
             sw.Start();
             BasesCheker.CheckAndResolve();
