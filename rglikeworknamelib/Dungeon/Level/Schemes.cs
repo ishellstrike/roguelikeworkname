@@ -1,7 +1,7 @@
 ﻿namespace rglikeworknamelib.Dungeon.Level {
     public class Schemes {
         public string[] data;
-        public SchemeSortType type;
+        public SchemesType type;
         public int x, y;
         public string filename;
 

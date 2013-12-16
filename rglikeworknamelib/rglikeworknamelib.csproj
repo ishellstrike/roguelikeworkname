@@ -72,6 +72,7 @@
     <Compile Include="Atlases.cs" />
     <Compile Include="Dungeon\Buffs\BuffBurn.cs" />
     <Compile Include="Dungeon\Buffs\HealOnce.cs" />
+    <Compile Include="Dungeon\Buffs\MoraleModifer.cs" />
     <Compile Include="Dungeon\Creatures\AbilitiesBasic.cs" />
     <Compile Include="Dungeon\Creatures\Abilities.cs" />
     <Compile Include="Dungeon\Creatures\Ability.cs" />

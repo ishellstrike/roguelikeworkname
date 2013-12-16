@@ -69,7 +69,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             sectors_ = new Dictionary<Point, MapSector>();
             LastSyncGetSector = new MapSector(this, 0, 0);
-            LastGetSector = LastSyncGetSector;
             //{
             //    new KeyValuePair<Point, MapSector>(Point.Zero, new MapSector(this, 0, 0));
             //}
@@ -174,15 +173,10 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private MapSector LastSyncGetSector;
-        private MapSector LastGetSector;
 
         public MapSector GetSector(int sectorOffsetX, int sectorOffsetY, bool noLoading = false) {
-            if(LastGetSector.SectorOffsetX == sectorOffsetX && LastSyncGetSector.SectorOffsetY == sectorOffsetY) {
-                return LastGetSector;
-            }
             MapSector a;
             if (sectors_.TryGetValue(new Point(sectorOffsetX, sectorOffsetY), out a)) {
-                LastGetSector = a;
                 return a;
             }
 
@@ -194,7 +188,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (temp != null) {
                 GlobalMapAdd(temp);
                 sectors_.Add(new Point(temp.SectorOffsetX, temp.SectorOffsetY), temp);
-                LastGetSector = temp;
                 return temp;
             }
             return null;

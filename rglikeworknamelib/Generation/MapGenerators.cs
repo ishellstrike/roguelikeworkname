@@ -77,16 +77,16 @@ namespace rglikeworknamelib.Generation {
             var l = new List<StorageBlock>();
             SectorBiom sb = SectorBiom.House;
                         switch (scheme.type) {
-                            case SchemeSortType.Shop:
+                            case SchemesType.Shop:
                                 sb = SectorBiom.Shop;
                                 break;
-                            case SchemeSortType.Hospital:
+                            case SchemesType.Hospital:
                                 sb = SectorBiom.Hospital;
                                 break;
-                            case SchemeSortType.Storage:
+                            case SchemesType.Storage:
                                 sb = SectorBiom.Storage;
                                 break;
-                            case SchemeSortType.WearShop:
+                            case SchemesType.WearShop:
                                 sb = SectorBiom.WearStore;
                                 break;
                         }
@@ -130,11 +130,11 @@ namespace rglikeworknamelib.Generation {
         /// <param name="posY">offser y</param>
         /// <param name="rnd">seeded random</param>
         /// <returns>Size of placed scheme</returns>
-        internal static Point PlaceRandomSchemeByType(GameLevel gl, SchemeSortType schemeType, int posX, int posY,
+        internal static Point PlaceRandomSchemeByType(GameLevel gl, SchemesType schemeType, int posX, int posY,
                                                       Random rnd) {
             List<Schemes> a;
             switch (schemeType) {
-                case SchemeSortType.House:
+                case SchemesType.House:
                     a = SchemesDataBase.Houses;
                     break;
 
