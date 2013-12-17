@@ -277,7 +277,7 @@ namespace jarg {
             if (isitem) {
                 int phase = 0;
                 foreach (var id in ids) {
-                    var a = new LabelFixed(Vector2.Zero, string.Format("{0} - {1}",id, ItemDataBase.Data[id].Name), phase == 0 ? Color.Gray : Color.Cyan, SpawnSomeList);
+                    var a = new LabelFixed(Vector2.Zero, string.Format("{0} - {1}",id, ItemDataBase.Data[id].Name), phase == 0 ? Color.Gray : Color.CornflowerBlue, SpawnSomeList);
                     phase = 1 - phase;
                     a.Tag = id;
                     a.OnLeftPressed += a_OnLeftPressed;
@@ -1218,7 +1218,8 @@ namespace jarg {
         }
 
         private void AddInventoryItemString(IItem item) {
-            var i = new LabelFixed(Vector2.Zero, item.ToString(), ContainerInventoryItems) {Tag = item};
+            Color col = item.Data.Prototype != typeof(Item) ? Color.LightGoldenrodYellow : Color.LightGray;
+            var i = new LabelFixed(Vector2.Zero, item.ToString(), col, ContainerInventoryItems) {Tag = item};
             i.OnLeftPressed += PressInInventory;
             i.OnRightPressed += RightPressInInventory;
         }
@@ -1459,9 +1460,16 @@ namespace jarg {
             //List<string> allit = new List<string>();
 
             foreach (var tuple in t) {
-                string format = string.Format("{0} ({1})", tuple.Item2.Data.Name, tuple.Item2.Count);
-                var lookl = new LabelFixed(Vector2.Zero, format, Color.LightGray,
-                               LookContainer);
+                string format;
+                if (tuple.Item2.Count == 0 && tuple.Item2.Doses != 0) {
+                    format = string.Format("{0} ({1})", tuple.Item2.Data.Name, tuple.Item2.Doses);
+                }
+                else {
+                    format = string.Format("{0} x{1}", tuple.Item2.Data.Name, tuple.Item2.Count);
+                }
+
+                Color col = tuple.Item2.Data.Prototype != typeof(Item) ? Color.LightGoldenrodYellow : Color.LightGray;
+                var lookl = new LabelFixed(Vector2.Zero, format, col, LookContainer);
                 lookl.Tag = tuple;
                 lookl.OnLeftPressed += lookl_OnLeftPressed;
                 //allit.Add(format);

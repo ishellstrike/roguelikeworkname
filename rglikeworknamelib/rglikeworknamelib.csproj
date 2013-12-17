@@ -106,7 +106,9 @@
     <Compile Include="Dungeon\Items\InventorySystem.cs" />
     <Compile Include="Dungeon\Items\Subclases\Item.cs" />
     <Compile Include="Dungeon\Items\ItemAction.cs" />
+    <Compile Include="Dungeon\Items\Subclases\ItemBottle.cs" />
     <Compile Include="Dungeon\Items\Subclases\ItemCan.cs" />
+    <Compile Include="Dungeon\Items\Subclases\ItemCigarets.cs" />
     <Compile Include="Dungeon\Items\Subclases\ItemCloth.cs" />
     <Compile Include="Dungeon\Items\ItemData.cs" />
     <Compile Include="Dungeon\Items\ItemDataBase.cs" />

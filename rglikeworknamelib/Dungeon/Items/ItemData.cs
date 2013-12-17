@@ -28,6 +28,7 @@ namespace rglikeworknamelib.Dungeon.Item {
         public int Magazine;
         public string Name;
         public string Nameret;
+        public string Using;
         public int NutCal;
         public int NutH2O;
 

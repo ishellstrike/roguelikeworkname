@@ -100,7 +100,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                 case ItemType.Food:
                     if (player.EatItem(selectedItem)) {
                         EventLog.Add(
-                            string.Format("{1} {0}", selectedItem.Data.Name,
+                            string.Format("{1} {0}", selectedItem.Data.Using ?? selectedItem.Data.Name,
                                           selectedItem.Data.SortType == ItemType.Medicine ? "Вы приняли" : "Вы употребили"),
                             GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
                         foreach (IBuff buff in selectedItem.Buffs) {

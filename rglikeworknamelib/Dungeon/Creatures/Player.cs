@@ -305,13 +305,13 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Hunger.Current += selectedItem.Data.NutCal/25f/selectedItem.Data.Doses;
             if (Hunger.Current > Hunger.Max) {
                 Hunger.Current = Hunger.Max;
-                EventLog.Add(string.Format("Вы не смогли съесть {0} целиком", selectedItem),
+                EventLog.Add(string.Format("Вы не смогли съесть {0} целиком", selectedItem.Data.Using ?? selectedItem.Data.Name),
                              GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Consume);
             }
             Thirst.Current += selectedItem.Data.NutH2O/25f/selectedItem.Data.Doses;
             if (Thirst.Current > Hunger.Max) {
                 Thirst.Current = Thirst.Max;
-                EventLog.Add(string.Format("Вы не смогли выпить {0} целиком", selectedItem),
+                EventLog.Add(string.Format("Вы не смогли выпить {0} целиком", selectedItem.Data.Using ?? selectedItem.Data.Name),
                              GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Consume);
             }
             return true;
