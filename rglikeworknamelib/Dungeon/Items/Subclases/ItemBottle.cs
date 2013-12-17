@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]
+    [DataContract]
     public class ItemBottle : Item
     {
 

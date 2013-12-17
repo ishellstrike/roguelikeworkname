@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
+using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
@@ -57,6 +60,25 @@ namespace DropListEditor
                 }
             }
             label1.Text = sb.ToString();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+                var a = new DataContractJsonSerializer(typeof(Dictionary<string, ItemData>));
+            Dictionary<string, ItemData> ibj;
+            using (var stream = new StreamReader("1.json")) {
+                ibj = (Dictionary<string, ItemData>) a.ReadObject(stream.BaseStream);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var a = new DataContractJsonSerializer(typeof(Dictionary<string, ItemData>));
+            Dictionary<string, ItemData> ibj;
+            using (var stream = new StreamWriter("2.json"))
+            {
+                a.WriteObject(stream.BaseStream,ItemDataBase.Data);
+            }
         }
     }
 }

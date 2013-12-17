@@ -118,6 +118,7 @@ namespace jarg {
 
             graphics_ = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
             if (!Directory.Exists(Settings.GetWorldsDirectory())) {
                 Directory.CreateDirectory(Settings.GetWorldsDirectory());
             }

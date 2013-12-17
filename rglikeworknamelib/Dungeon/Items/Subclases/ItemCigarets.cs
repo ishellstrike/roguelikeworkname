@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using jarg;
 using rglikeworknamelib.Dungeon.Creatures;
@@ -6,6 +7,7 @@ using rglikeworknamelib.Dungeon.Effects;
 
 namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]
+    [DataContract]
     public class ItemCigarets : Item
     {
 

@@ -11,9 +11,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public string Description;
 
         public float Hp;
-        public bool IsDestructable;
-        public bool IsTransparent;
-        public bool IsWalkable;
+        public bool IsDestructable, Flame, IsTransparent, IsWalkable, Wallmaker;
         public Color MMCol;
         public string MTex;
         public string Name;
@@ -22,8 +20,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public int StorageSlots;
         public int swide = 32;
-
-        public bool Wallmaker;
 
         //public override bool Equals(object obj) {
         //    if (obj == null || GetType() != obj.GetType()) {

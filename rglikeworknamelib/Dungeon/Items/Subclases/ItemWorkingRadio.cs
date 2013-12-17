@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]
+    [DataContract]
     public class ItemWorkingRadio : Item {
         public override void OnLoad()
         {

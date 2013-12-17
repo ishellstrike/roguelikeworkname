@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
 
 namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]
+    [DataContract]
     public class Item : IItem {
         public List<IBuff> Buffs { get; set; }
         public int Count { get; set; }
