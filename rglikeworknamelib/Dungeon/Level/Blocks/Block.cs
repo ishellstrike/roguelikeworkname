@@ -6,7 +6,6 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]
     public class Block : IBlock {
         private string id_;
-        [NonSerialized] private Color lightness_;
 
         public virtual bool IsActive
         {
@@ -17,40 +16,26 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
             get { return id_; }
             set {
                 id_ = value;
-                data_ = BlockDataBase.Data[value];
+                Data = BlockDataBase.Data[value];
             }
         }
 
-        [NonSerialized]
-        private BlockData data_;
-        public BlockData Data {
-            get { return data_; }
-        }
+        public BlockData Data { get; private set; }
 
-        public Color Lightness {
-            get { return lightness_; }
-            set { lightness_ = value; }
-        }
+        public Color Lightness { get; set; }
 
-        [NonSerialized]
-        private Rectangle source_;
-        public Rectangle Source {
-            get { return source_; }
-        }
+        public Rectangle Source { get; private set; }
 
         private string mTex_;
         public string MTex {
             get { return mTex_; }
             set {
-                source_ = BlockData.GetSource(value);
+                Source = BlockData.GetSource(value);
                 mTex_ = value;
             }
         }
 
-        public void OnLoad() {
-            source_ = BlockData.GetSource(MTex);
-            data_ = BlockDataBase.Data[id_];
-        }
+        public bool Inner { get; set; }
 
         public virtual void Update(TimeSpan ts, Vector2 vector2) {
         }
@@ -64,10 +49,6 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
                 default:
                     return "Осмотреть";
             }
-        }
-
-        public void SetLight(Color color) {
-            Lightness = color;
         }
     }
 }

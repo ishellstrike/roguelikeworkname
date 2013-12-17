@@ -297,6 +297,18 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
+        public Floor GetFloorSync(int x, int y)
+        {
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
+            MapSector sect = GetSectorSync(divx, divy);
+
+            if (sect != null) {
+                return sect.GetFloor(x - divx*MapSector.Rx, y - divy*MapSector.Ry);
+            }
+            return null;
+        }
+
         /// <summary>
         ///     Async floor setter
         /// </summary>
@@ -1236,6 +1248,44 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             return temp;
+        }
+
+        public void DrawAmbient(Vector2 camera, int lightQ) {
+            int rx = MapSector.Rx;
+            int ry = MapSector.Ry;
+            float ssx = Settings.FloorSpriteSize.X;
+            float ssy = Settings.FloorSpriteSize.Y;
+
+            for (int k = 0; k < sectors_.Count; k++)
+            {
+                MapSector sector = sectors_.ElementAt(k).Value;
+                if (sector.SectorOffsetX * rx + rx < min.X &&
+                    sector.SectorOffsetY * ry + ry < min.Y)
+                {
+                    continue;
+                }
+                if (sector.SectorOffsetX * rx > max.X && sector.SectorOffsetY * ry > max.Y)
+                {
+                    continue;
+                }
+                float posx = 0 - (int)camera.X + rx * ssx * sector.SectorOffsetX;
+                for (int i = 0; i < rx; i++)
+                {
+                    float posy = 0 - (int)camera.Y + ry * ssy * sector.SectorOffsetY;
+                    for (int j = 0; j < ry; j++)
+                    {
+                        if (!sector.Blocks[i * MapSector.Ry + j].Inner)
+                        {
+                            int a = i * ry + j;
+                            spriteBatch_.Draw(whitepixel,
+                                              new Vector2(posx, posy)/lightQ, null,
+                                              Color.White, 0, Vector2.Zero, 32f/lightQ, SpriteEffects.None, 0);
+                        }
+                        posy += 32;
+                    }
+                    posx += 32;
+                }
+            }
         }
     }
 

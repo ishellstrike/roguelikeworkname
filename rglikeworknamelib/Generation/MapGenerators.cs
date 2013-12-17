@@ -94,6 +94,11 @@ namespace rglikeworknamelib.Generation {
                 for (int j = 0; j < scheme.y; j++) {
                     string blockId = scheme.data[i*scheme.y + j];
                         var block = gl.SetBlockSyncAndReturn(x + i, y + j, blockId);
+                        var floor = gl.GetFloorSync(x + i, y + j);
+                        if (floor.Id == "conk_base" && !block.Data.Wallmaker)
+                        {
+                        block.Inner = true;
+                        }
                         if (BlockDataBase.Data[blockId].Prototype == typeof (StorageBlock)) {
                             List<DropGroup> a;
                             if (ItemDataBase.SpawnLists.TryGetValue(blockId, out a))
@@ -118,6 +123,34 @@ namespace rglikeworknamelib.Generation {
                     }
                 }
             }
+
+            //inner light part
+            //bool inner = false;
+            //for (int i = 0; i < scheme.x; i++) {
+            //    for (int j = 0; j < scheme.y; j++)
+            //    {
+            //        var block = gl.GetBlockSync(x + i, y + 0 + j);
+            //        block.Inner = inner;
+
+            //        if (block.Id == "1") {
+            //            inner = !inner;
+            //        }
+            //    }
+            //}
+            //inner = false;
+            //for (int j = 0; j < scheme.y; j++)
+            //{
+            //    for (int i = 0; i < scheme.x; i++)
+            //    {
+            //        var block = gl.GetBlockSync(x + i, y + 0 + j);
+            //        block.Inner = inner;
+
+            //        if (block.Id == "1")
+            //        {
+            //            inner = !inner;
+            //        }
+            //    }
+            //}
             gl.SetBiomAtBlock(x, y, sb);
             return l;
         }

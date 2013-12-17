@@ -1484,7 +1484,7 @@ namespace jarg {
             var t = (Tuple<Vector2, IItem>)(((Label)sender).Tag);
             looklPos = t.Item1;
             foreach (var gameComponent in LookContainer.GetItems()) {
-                ((Label)gameComponent).Color = Color.LightGray;
+                ((Label)gameComponent).Color = ((Tuple<Vector2, IItem>)(((Label)gameComponent).Tag)).Item2.Data.Prototype != typeof(Item) ? Color.LightGoldenrodYellow : Color.LightGray;
             }
             ((Label) sender).Color = Color.LimeGreen;
         }

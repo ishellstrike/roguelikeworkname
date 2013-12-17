@@ -263,6 +263,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             Floors[x * Ry + y].MTex = Floors[x * Ry + y].Data.RandomMtexFromAlters();
         }
 
+        public Floor GetFloor(int x, int y)
+        {
+            return Floors[x * Ry + y];
+        }
+
         public string GetId(int x, int y) {
             return Blocks[x*Ry + y].Id;
         }

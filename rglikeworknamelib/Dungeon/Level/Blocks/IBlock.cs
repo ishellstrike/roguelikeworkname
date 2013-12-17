@@ -8,7 +8,7 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         Color Lightness { get; set; }
         Rectangle Source { get; }
         string MTex { get; set; }
-        void OnLoad();
+        bool Inner { get; set; }
         void Update(TimeSpan elapsedGameTime, Vector2 vector2);
     }
 }

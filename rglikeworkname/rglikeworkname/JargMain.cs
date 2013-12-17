@@ -430,6 +430,11 @@ namespace jarg {
                 UpdateMouse(gameTime);
             }
 
+            if (player_ != null)
+            {
+                pivotpoint_ = Vector2.Subtract(player_.Position, Vector2.Divide(Settings.Resolution, 2));
+            }
+
             if (!Settings.GamePause) {
                 UpdateAction(gameTime);
             }
@@ -485,8 +490,8 @@ namespace jarg {
                 (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
             if (car != null) {
                 float f = -car.Roration - 3.14f/4f;
-                pivotpoint_ += new Vector2((int) (Math.Cos(f)*car.Vel + Math.Sin(f)*car.Vel)*50,
-                                           (int) (-Math.Sin(f)*car.Vel + Math.Cos(f)*car.Vel)*50/
+                pivotpoint_ += new Vector2((float) (Math.Cos(f)*car.Vel + Math.Sin(f)*car.Vel)*50,
+                                           (float) (-Math.Sin(f)*car.Vel + Math.Cos(f)*car.Vel)*50/
                                            GraphicsDevice.DisplayMode.AspectRatio);
             }
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
@@ -667,8 +672,7 @@ namespace jarg {
 
         private Matrix ScaleAll2 = Matrix.CreateScale(1);
         private void DrawCombinedMaps() {
-            float value = GlobalWorldLogic.GetCurrentSlen();
-            lightEffect2_.Parameters["ambient"].SetValue(value);
+            lightEffect2_.Parameters["ambient"].SetValue(GlobalWorldLogic.GetCurrentSlen());
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
             //light burst
@@ -690,6 +694,7 @@ namespace jarg {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch_.Begin();
             spriteBatch_.Draw(fltex, (player_.Position - camera_)/LightQ, null, Color.White, PlayerSeeAngle + MathHelper.PiOver2, new Vector2((fltex.Width / 2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
+            //currentFloor_.DrawAmbient(camera_, LightQ);
             spriteBatch_.End();
 
             GraphicsDevice.BlendState = BlendState.Additive;

@@ -132,10 +132,6 @@ namespace jarg {
                         CraftWindow.OnTop();
                     }
                 }
-
-                if (player_ != null) {
-                    pivotpoint_ = Vector2.Subtract(player_.Position, Vector2.Divide(Settings.Resolution, 2));
-                }
             }
 
             if (ks_[Keys.Escape] == KeyState.Down && lks_[Keys.Escape] == KeyState.Up) {

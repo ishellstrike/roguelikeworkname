@@ -23,6 +23,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int StorageSlots;
         public int swide = 32;
 
+        public bool Wallmaker;
+
         //public override bool Equals(object obj) {
         //    if (obj == null || GetType() != obj.GetType()) {
         //        return false;

@@ -13,14 +13,17 @@ MTex=error
 ~Block,1
 Name="Кирпичная кладка"
 MTex=briwall1
+Wallmaker=true
 
 ~Block,w2
 Name="Стена 2"
 MTex=briwall1
+Wallmaker=true
 
 ~Block,w3
 Name="Стена 3"
 MTex=briwall1
+Wallmaker=true
 
 ~StorageBlock,stelaj_food
 Name=Продовольственный стелаж
@@ -64,12 +67,14 @@ Name="Деревянная дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=7
 MTex=door1
+Wallmaker=true
 
 ~Block,6
 Name="Деревянная дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=7
 MTex=door1_open
+Wallmaker=true
 
 ~Block,7
 Name="Деревянная дверь (открыта)"
@@ -78,7 +83,7 @@ AfterDeathId=3
 IsWalkable=true
 IsTransparent=true
 MTex=door1_open
-
+Wallmaker=true
 
 
 ~Block,4
@@ -86,12 +91,14 @@ Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
 MTex=door2
+Wallmaker=true
 
 ~Block,5
 Name="Металлическая дверь (закрыта)"
 SmartAction=ActionOpenClose
 AfterDeathId=8
 MTex=door2
+Wallmaker=true
 
 ~Block,8
 Name="Металлическая дверь (открыта)"
@@ -100,6 +107,7 @@ AfterDeathId=4
 IsWalkable=true
 IsTransparent=true
 MTex=door2_open
+Wallmaker=true
 
 ~Block,9
 Name="Консоль"
@@ -123,27 +131,32 @@ MTex=crates1
 Name="Дерево"
 swide=16
 MTex=tree1
+Wallmaker=true
 
 ~Block,18
 Name="Небольшое дерево"
 swide=16
 MTex=tree2
+Wallmaker=true
 
 ~Block,17
 Name="Куст"
 swide=16
 MTex=bush1
+Wallmaker=true
 
 
 ~Block,19
 Name="Окно"
 IsTransparent=true
 MTex=glass_hor
+Wallmaker=true
 
 ~Block,20
 Name="Окно"
 IsTransparent=true
 MTex=glass_hor
+Wallmaker=true
 
 
 ~Block,21
@@ -168,6 +181,7 @@ IsWalkable=true
 IsTransparent=true
 MTex=mbush1
 AlterMtex={mbush2,mbush3}
+Wallmaker=true
 
 
 ~Block,kustbig
@@ -175,6 +189,7 @@ Name="Густой кустарник"
 IsWalkable=true
 IsTransparent=true
 MTex=bush1
+Wallmaker=true
 
 ~BlockButningBochka,bbochka
 Name="Горящая бочка"
