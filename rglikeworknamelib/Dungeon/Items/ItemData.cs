@@ -1,74 +1,73 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
-using rglikeworknamelib.Dungeon.Items;
-using rglikeworknamelib.Dungeon.Items.Subclases;
+using rglikeworknamelib.Dungeon.Item;
 
-
-namespace rglikeworknamelib.Dungeon.Item {
+namespace rglikeworknamelib.Dungeon.Items {
     [DataContract]
     public class ItemData {
         /// <summary>
         ///     In 0.1 degree offset
         /// </summary>
         [DataMember]
-        public int Accuracy{ get; set; }
+        public int Accuracy;
 
         [DataMember]
-        public string AfteruseId{ get; set; }
+        public string AfteruseId;
 
         [DataMember]
-        public string Ammo{ get; set; }
+        public string Ammo;
         [DataMember]
-        public string[] Buff{ get; set; }
+        public string[] Buff;
         [DataMember]
-        public string BulletParticle{ get; set; }
+        public string BulletParticle;
         [DataMember]
-        public int Damage { get; set; }
+        public int Damage ;
         [DataMember]
-        public string Description{ get; set; }
+        public string Description;
         [DataMember]
-        public string Dress{ get; set; }
+        public string Dress;
         [DataMember]
-        public bool Hidden{ get; set; }
+        public bool Hidden;
 
         [DataMember]
-        public int Doses { get; set; }
+        public int Doses ;
         [DataMember]
-        public int FireRate { get; set; }
+        public int FireRate ;
 
         [DataMember]
-        public Color MMCol{ get; set; }
+        public Color MMCol;
         [DataMember]
-        public int MTex{ get; set; }
+        public int MTex;
         [DataMember]
-        public int Magazine{ get; set; }
+        public int Magazine;
         [DataMember]
-        public string Name{ get; set; }
+        public string Name;
         [DataMember]
-        public string Nameret{ get; set; }
+        public string Nameret;
         [DataMember]
-        public string Using{ get; set; }
+        public string Using;
         [DataMember]
-        public int NutCal{ get; set; }
+        public int NutCal;
         [DataMember]
-        public int NutH2O{ get; set; }
+        public int NutH2O;
 
         [DataMember]
-        public Type Prototype{ get; set; }
+        public string[] ActionsId ;
 
         [DataMember]
-        public ItemType SortType{ get; set; }
+        public ItemType SortType;
         [DataMember]
-        public int Volume{ get; set; }
+        public int Volume;
         [DataMember]
-        public int Weight{ get; set; }
+        public int Weight;
         [DataMember]
-        public int hasHealth{ get; set; } //if has health, count became health
+        public int hasHealth; //if has health, count became health
         [DataMember]
-        public int stackNo{ get; set; }
+        public int stackNo;
 
         [DataMember]
-        public string SpawnGroup{ get; set; }
+        public string SpawnGroup;
     }
 }

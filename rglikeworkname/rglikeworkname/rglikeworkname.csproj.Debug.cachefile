@@ -203,6 +203,7 @@ Content\Data\Schemes\b_part.txt
 Content\Data\Schemes\apteka.txt
 Content\Data\achievements.txt
 Content\Data\statist.txt
+Content\Data\Items\food_core.json
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord

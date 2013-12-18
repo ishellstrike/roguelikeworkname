@@ -9,11 +9,11 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
+using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
-using rglikeworknamelib.Dungeon.Items.Subclases;
 using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Dungeon.Level.Blocks;
+using rglikeworknamelib.Parser;
 
 namespace DropListEditor
 {
@@ -68,28 +68,57 @@ namespace DropListEditor
         {
                 var a = new DataContractJsonSerializer(typeof(Dictionary<string, ItemData>));
             Dictionary<string, ItemData> ibj;
-            using (var stream = new StreamReader("1.json")) {
+            using (var stream = new StreamReader(Settings.GetItemDataDirectory()+"//food_core.json")) {
                 ibj = (Dictionary<string, ItemData>) a.ReadObject(stream.BaseStream);
             }
         }
 
         private void button2_Click(object sender, EventArgs e) {
-            var a = new DataContractJsonSerializer(typeof (Dictionary<string, ItemData>),
-                                                   new[] { typeof(ItemCan), typeof(Item), typeof(Type) });
+            var a = new DataContractJsonSerializer(typeof (Dictionary<string, ItemData>));
             Dictionary<string, ItemData> ibj;
             DataContractResolver cr;
             using (var stream = new StreamWriter("2.json"))
             {
                 Dictionary<string, ItemData> temp = new Dictionary<string, ItemData>();
-                var t2 = new ItemData {Prototype = typeof(ItemCan)};
+                var t2 = new ItemData {SortType = ItemType.Craft};
                 temp.Add("sasas", t2);
+                temp.Add("sasas2", t2);
                 a.WriteObject(stream.BaseStream, temp);
             }
         }
 
         private void label1_Click(object sender, EventArgs e)
         {
+        }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            string[] dir = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.txt");
+            StringBuilder sb = new StringBuilder();
+            foreach (string patch in dir)
+            {
+                var sr = new StreamReader(patch, Encoding.Default);
+                sb.AppendLine(sr.ReadToEnd());
+                sr.Close();
+                sr.Dispose();
+            }
+
+            string ss = sb.ToString();
+            sb.Clear();
+            sb.AppendLine("[");
+
+            var temp = ss.Split('~');
+            foreach (var s in temp) {
+                var lines = s.Split('\n');
+                sb.AppendLine("{");
+                foreach (var line in lines) {
+                    var workline = line.Trim('\r');
+                    if (line != "") {
+                        
+                    }
+                }
+            }
         }
     }
 }

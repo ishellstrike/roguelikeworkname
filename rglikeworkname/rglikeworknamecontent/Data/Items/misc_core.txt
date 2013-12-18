@@ -17,7 +17,7 @@ SortType=Bag
 Name=Мобильный телефон
 Weight=100
 
-~ItemWorkingRadio,radio1
+~Item,radio1
 Name=Небольшое радио
 Weight=300
 
@@ -33,19 +33,19 @@ Weight=100
 Name=Пачка из-под сигарет
 Weight=10
 
-~ItemCigarets,cigarets
+~Item,cigarets
 Name=Пачка сигарет
 Doses=20
 Weight=20
 AfteruseId=nocigarets
 
-~ItemCigarets,cigarets10
+~Item,cigarets10
 Name=Пачка сигарет
 Doses=10
 Weight=20
 AfteruseId=nocigarets
 
-~ItemCigarets,cigarets4
+~Item,cigarets4
 Name=Пачка сигарет
 Doses=4
 Weight=20

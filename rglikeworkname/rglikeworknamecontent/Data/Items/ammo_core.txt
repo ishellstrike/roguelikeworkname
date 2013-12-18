@@ -1,5 +1,3 @@
-//15000
-
 ~Item,a357
 Name=.357 Magnum
 SortType=Ammo
