@@ -1,11 +1,9 @@
 using System;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
-
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Items.Subclases;
+
 
 namespace rglikeworknamelib.Dungeon.Item {
     [DataContract]

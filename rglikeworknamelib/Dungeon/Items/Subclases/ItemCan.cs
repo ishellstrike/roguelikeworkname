@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Creatures;
+using rglikeworknamelib.Dungeon.Item;
 
 namespace rglikeworknamelib.Dungeon.Items.Subclases {
     [Serializable]

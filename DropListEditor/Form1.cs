@@ -5,11 +5,13 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Items.Subclases;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 
@@ -71,14 +73,23 @@ namespace DropListEditor
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            var a = new DataContractJsonSerializer(typeof(Dictionary<string, ItemData>));
+        private void button2_Click(object sender, EventArgs e) {
+            var a = new DataContractJsonSerializer(typeof (Dictionary<string, ItemData>),
+                                                   new[] { typeof(ItemCan), typeof(Item), typeof(Type) });
             Dictionary<string, ItemData> ibj;
+            DataContractResolver cr;
             using (var stream = new StreamWriter("2.json"))
             {
-                a.WriteObject(stream.BaseStream,ItemDataBase.Data);
+                Dictionary<string, ItemData> temp = new Dictionary<string, ItemData>();
+                var t2 = new ItemData {Prototype = typeof(ItemCan)};
+                temp.Add("sasas", t2);
+                a.WriteObject(stream.BaseStream, temp);
             }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
