@@ -1467,7 +1467,7 @@ namespace jarg {
                     format = string.Format("{0} x{1}", tuple.Item2.Data.Name, tuple.Item2.Count);
                 }
 
-                Color col = tuple.Item2.Data.ActionsId.Length > 0 ? Color.LightGoldenrodYellow : Color.LightGray;
+                Color col = tuple.Item2.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
                 var lookl = new LabelFixed(Vector2.Zero, format, col, LookContainer);
                 lookl.Tag = tuple;
                 lookl.OnLeftPressed += lookl_OnLeftPressed;
@@ -1483,7 +1483,7 @@ namespace jarg {
             var t = (Tuple<Vector2, IItem>)(((Label)sender).Tag);
             looklPos = t.Item1;
             foreach (var gameComponent in LookContainer.GetItems()) {
-                ((Label)gameComponent).Color = ((Tuple<Vector2, IItem>)(((Label)gameComponent).Tag)).Item2.Data.ActionsId.Length > 0 ? Color.LightGoldenrodYellow : Color.LightGray;
+                ((Label)gameComponent).Color = ((Tuple<Vector2, IItem>)(((Label)gameComponent).Tag)).Item2.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
             }
             ((Label) sender).Color = Color.LimeGreen;
         }
