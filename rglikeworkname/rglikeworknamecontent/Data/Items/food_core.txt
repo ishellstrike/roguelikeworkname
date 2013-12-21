@@ -20,7 +20,6 @@ SortType=Food
 Weight=100
 NutCal=500
 Doses=2
-ActionsId={opencan}
 
 ~Item,lapsha1
 Name=Пакет лапши
@@ -50,12 +49,11 @@ AfteruseId=emptycan
 SortType=Food
 SpawnGroup=spawn_cookedfood
 
-~Item,meatcan1cl
+~ItemCan,meatcan1cl
 Name=Банка тушеной говядины
 Nameret=Банка с едой
 AfteruseId=meatcan1
 SpawnGroup=spawn_shopfood
-ActionsId={opencan}
 
 ~Item,meatcan2
 Name=Открытая банка паштета
@@ -67,12 +65,11 @@ AfteruseId=emptycan
 SortType=Food
 SpawnGroup=spawn_cookedfood
 
-~Item,meatcan2cl
+~ItemCan,meatcan2cl
 Name=Банка паштета
 Nameret=Банка с едой
 AfteruseId=meatcan2
 SpawnGroup=spawn_shopfood
-ActionsId={opencan}
 
 ~Item,milk1
 Name=Пакет молока
@@ -216,12 +213,11 @@ AfteruseId=emptycan
 SortType=Food
 SpawnGroup=spawn_cookedfood
 
-~Item,beancan1cl
+~ItemCan,beancan1cl
 Name=Банка бобов
 Nameret=Банка с едой
 AfteruseId=beancan1
 SpawnGroup=spawn_shopfood
-ActionsId={opencan}
 
 ~Item,corncan1
 Name=Открытая банка кукурузы
@@ -234,12 +230,11 @@ AfteruseId=emptycan
 SortType=Food
 SpawnGroup=spawn_cookedfood
 
-~Item,corncan1cl
+~ItemCan,corncan1cl
 Name=Банка кукурузы
 Nameret=Банка с едой
 AfteruseId=corncan1
 SpawnGroup=spawn_shopfood
-ActionsId={opencan}
 
 ~Item,corncan2
 Name=Открытая банка горошка
@@ -252,14 +247,13 @@ AfteruseId=emptycan
 SortType=Food
 SpawnGroup=spawn_cookedfood
 
-~Item,corncan2cl
+~ItemCan,corncan2cl
 Name=Банка горошка
 Nameret=Банка с едой
 AfteruseId=corncan2
 SpawnGroup=spawn_shopfood
-ActionsId={opencan}
 
-~Item,vinebottlecl
+~ItemBottle,vinebottlecl
 Name=Бутылка вина
 AfteruseId=vinebottle
 SpawnGroup=spawn_shopfood
@@ -271,7 +265,7 @@ SortType=Food
 Doses=40
 SpawnGroup=spawn_cookedfood
 
-~Item,vodkabottlecl
+~ItemBottle,vodkabottlecl
 Name=Бутылка водки
 AfteruseId=vodkabottle
 SpawnGroup=spawn_shopfood

@@ -1,5 +1,4 @@
 using System;
-using LuaInterface;
 
 namespace rglikeworknamelib.Creatures {
     public class PerkData {
@@ -16,12 +15,6 @@ namespace rglikeworknamelib.Creatures {
 
         public PerkData(string s) {
             Name = s;
-        }
-
-        //TODO: move actions to lua
-        public void RunSctipt(bool b, ICreature target, Lua lua) {
-            // lua["target"]
-            lua.DoString(Script);
         }
     }
 }

@@ -602,12 +602,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\ammo_core.txt">
-      <Name>ammo_core</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Units\biskup.png">
       <Name>biskup</Name>
       <Importer>TextureImporter</Importer>
@@ -903,43 +897,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\wear_core.txt">
-      <Name>wear_core</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Dungeon\Minimap\house1.png">
       <Name>house1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Items\crafting_core.txt">
-      <Name>crafting_core</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Items\food_core.txt">
-      <Name>food_core</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Items\medicine_core.txt">
-      <Name>medicine_core</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Items\misc_core.txt">
-      <Name>misc_core</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Items\test_items.txt">
-      <Name>test_items</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Items\guns_core.txt">
-      <Name>guns_core</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\Dungeon\Objects\asfalt.png">
@@ -1245,9 +1207,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\food_core.json">
+    <None Include="Data\Items\item_core.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>food_core</Name>
+      <Name>item_core</Name>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

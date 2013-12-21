@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using NLog;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using jarg;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Creatures;
@@ -31,17 +34,20 @@ namespace rglikeworknamelib.Dungeon.Items {
             Data = new Dictionary<string, ItemData>();
             DataFoodItems = new Dictionary<string, ItemData>();
             DataMedicineItems = new Dictionary<string, ItemData>();
-            List<KeyValuePair<string, object>> a = ParsersCore.UniversalParseDirectory(Settings.GetItemDataDirectory(),
-                                                                                       UniversalParser.Parser<ItemData>);
-            foreach (var pair in a) {
-                Data.Add(pair.Key, (ItemData) pair.Value);
-                if (((ItemData) pair.Value).SortType == ItemType.Medicine) {
-                    DataMedicineItems.Add(pair.Key, (ItemData) pair.Value);
-                }
-                if (((ItemData) pair.Value).SortType == ItemType.Food) {
-                    DataFoodItems.Add(pair.Key, (ItemData) pair.Value);
+
+            var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+            serializer.Converters.Add(new StringEnumConverter());
+
+            var dir = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.json");
+            foreach (var patch in dir) {
+                using(var sr = new StreamReader(patch, Encoding.Default)) {
+                    var t = serializer.Deserialize<Dictionary<string, ItemData>>(new JsonTextReader(sr));
+                    foreach (var itemData in t) {
+                        Data.Add(itemData.Key, itemData.Value);
+                    }
                 }
             }
+            
 
             SpawnLists = new Dictionary<string, List<DropGroup>>();
 

@@ -6,9 +6,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
@@ -66,31 +67,15 @@ namespace DropListEditor
 
         private void button1_Click(object sender, EventArgs e)
         {
-                var a = new DataContractJsonSerializer(typeof(Dictionary<string, ItemData>));
-            Dictionary<string, ItemData> ibj;
+            object ibj;
+            var serializer =new JsonSerializer();
+            serializer.Converters.Add(new StringEnumConverter());
+            serializer.Formatting = Formatting.Indented;
+
             using (var stream = new StreamReader(Settings.GetItemDataDirectory()+"//food_core.json")) {
-                ibj = (Dictionary<string, ItemData>) a.ReadObject(stream.BaseStream);
+                ibj = serializer.Deserialize<Dictionary<string, ItemData>>(new JsonTextReader(stream));
             }
         }
-
-        private void button2_Click(object sender, EventArgs e) {
-            var a = new DataContractJsonSerializer(typeof (Dictionary<string, ItemData>));
-            Dictionary<string, ItemData> ibj;
-            DataContractResolver cr;
-            using (var stream = new StreamWriter("2.json"))
-            {
-                Dictionary<string, ItemData> temp = new Dictionary<string, ItemData>();
-                var t2 = new ItemData {SortType = ItemType.Craft};
-                temp.Add("sasas", t2);
-                temp.Add("sasas2", t2);
-                a.WriteObject(stream.BaseStream, temp);
-            }
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-        }
-
         private void button3_Click(object sender, EventArgs e)
         {
 
@@ -106,18 +91,63 @@ namespace DropListEditor
 
             string ss = sb.ToString();
             sb.Clear();
-            sb.AppendLine("[");
+            sb.AppendLine("{");
 
             var temp = ss.Split('~');
             foreach (var s in temp) {
-                var lines = s.Split('\n');
-                sb.AppendLine("{");
-                foreach (var line in lines) {
-                    var workline = line.Trim('\r');
-                    if (line != "") {
-                        
+                if(string.IsNullOrEmpty(s)) {
+                    continue;
+                }
+                var lines = s.Split('\n').Select(x=>x.Trim('\r')).ToList();
+                sb.AppendFormat("  \"{0}\":{{{1}", lines[0].Split(',')[1], Environment.NewLine);
+                foreach (var line in lines.Skip(1)) {
+                    if(string.IsNullOrEmpty(line)){continue;}
+                    var par = line.Split('=');
+                    int tryInt;
+                    bool isint;
+                    isint = int.TryParse(par[1], out tryInt);
+                    sb.AppendFormat("    \"{0}\":", par[0]);
+
+                    if(par[1].StartsWith("{")) {
+                        var extracted = par[1].Substring(1, par[1].Length - 2);
+                        IEnumerable<string> arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
+                        string[] ar = arrayextractor.ToArray();
+                        sb.Append("[");
+                        foreach (var s1 in ar.Take(ar.Length - 1)) {
+                            sb.AppendFormat("\"{0}\", ", s1);
+                        }
+                        sb.AppendFormat("\"{0}\"],{1}", ar[ar.Length - 1], Environment.NewLine);
+                        continue;
+                    }
+                    if(isint) {
+                        sb.AppendFormat("{0},\n", tryInt);
+                    } else {
+                        sb.AppendFormat("\"{0}\",{1}", par[1], Environment.NewLine);
                     }
                 }
+                sb.AppendLine("  },");
+            }
+
+            sb.AppendLine("}");
+
+            using (StreamWriter sw = new StreamWriter("a.json", false, Encoding.UTF8)) {
+                sw.Write(sb.ToString());
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var serializer = new JsonSerializer();
+            serializer.Converters.Add(new StringEnumConverter());
+            serializer.Formatting = Formatting.Indented;
+            using (var stream = new StreamWriter("2.json")) {
+                Dictionary<string, ItemData> temp = new Dictionary<string, ItemData>();
+                var t2 = new ItemData {
+                    SortType = ItemType.Craft
+                };
+                temp.Add("sasas", t2);
+                temp.Add("sasas2", t2);
+                serializer.Serialize(stream, temp);
             }
         }
     }
