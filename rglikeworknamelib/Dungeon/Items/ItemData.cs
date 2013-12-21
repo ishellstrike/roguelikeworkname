@@ -1,74 +1,69 @@
 using System;
-using System.Runtime.Serialization;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using rglikeworknamelib.Dungeon.Items;
-using rglikeworknamelib.Dungeon.Items.Subclases;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using rglikeworknamelib.Dungeon.Item;
 
-
-namespace rglikeworknamelib.Dungeon.Item {
-    [DataContract]
+namespace rglikeworknamelib.Dungeon.Items {
     public class ItemData {
         /// <summary>
         ///     In 0.1 degree offset
         /// </summary>
-        [DataMember]
-        public int Accuracy{ get; set; }
+        public int Accuracy;
 
-        [DataMember]
-        public string AfteruseId{ get; set; }
+        public string AfteruseId;
 
-        [DataMember]
-        public string Ammo{ get; set; }
-        [DataMember]
-        public string[] Buff{ get; set; }
-        [DataMember]
-        public string BulletParticle{ get; set; }
-        [DataMember]
-        public int Damage { get; set; }
-        [DataMember]
-        public string Description{ get; set; }
-        [DataMember]
-        public string Dress{ get; set; }
-        [DataMember]
-        public bool Hidden{ get; set; }
+        public string Ammo;
+        
+        public string[] Buff;
+        
+        public string BulletParticle;
+        
+        public int Damage ;
+        
+        public string Description;
+        
+        public string Dress;
+        
+        public bool Hidden;
 
-        [DataMember]
-        public int Doses { get; set; }
-        [DataMember]
-        public int FireRate { get; set; }
+        
+        public int Doses ;
+        
+        public int FireRate ;
 
-        [DataMember]
-        public Color MMCol{ get; set; }
-        [DataMember]
-        public int MTex{ get; set; }
-        [DataMember]
-        public int Magazine{ get; set; }
-        [DataMember]
-        public string Name{ get; set; }
-        [DataMember]
-        public string Nameret{ get; set; }
-        [DataMember]
-        public string Using{ get; set; }
-        [DataMember]
-        public int NutCal{ get; set; }
-        [DataMember]
-        public int NutH2O{ get; set; }
+        
+        public Color MMCol;
+        
+        public int MTex;
+        
+        public int Magazine;
+        
+        public string Name;
+        
+        public string Nameret;
+        
+        public string Using;
+        
+        public int NutCal;
+        
+        public int NutH2O;
 
-        [DataMember]
-        public Type Prototype{ get; set; }
+        
+        public string[] ActionsId ;
 
-        [DataMember]
-        public ItemType SortType{ get; set; }
-        [DataMember]
-        public int Volume{ get; set; }
-        [DataMember]
-        public int Weight{ get; set; }
-        [DataMember]
-        public int hasHealth{ get; set; } //if has health, count became health
-        [DataMember]
-        public int stackNo{ get; set; }
+        public ItemType SortType;
+        
+        public int Volume;
+        
+        public int Weight;
+        
+        public int hasHealth; //if has health, count became health
+        
+        public int stackNo;
 
-        [DataMember]
-        public string SpawnGroup{ get; set; }
+        
+        public string SpawnGroup;
     }
 }

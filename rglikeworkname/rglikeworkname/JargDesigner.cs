@@ -14,7 +14,6 @@ using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
-using rglikeworknamelib.Dungeon.Items.Subclases;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Window;
@@ -1218,7 +1217,7 @@ namespace jarg {
         }
 
         private void AddInventoryItemString(IItem item) {
-            Color col = item.Data.Prototype != typeof(Item) ? Color.LightGoldenrodYellow : Color.LightGray;
+            Color col = item.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
             var i = new LabelFixed(Vector2.Zero, item.ToString(), col, ContainerInventoryItems) {Tag = item};
             i.OnLeftPressed += PressInInventory;
             i.OnRightPressed += RightPressInInventory;
@@ -1227,13 +1226,13 @@ namespace jarg {
         private void RightPressInInventory(object sender, LabelPressEventArgs labelPressEventArgs)
         {
             IItem i = (IItem)((LabelFixed)sender).Tag;
-            if (i.Actions == null || i.Actions.Count == 0) {
+            if (i.Data.ActionsId == null) {
                 return;
             }
             InventoryDropDownContainer.Clear();
-            foreach (var action in i.Actions) {
-                var a = new LabelFixed(Vector2.Zero, action.Name, InventoryDropDownContainer);
-                a.Tag = action;
+            foreach (var actionid in i.Data.ActionsId) {
+                var a = new LabelFixed(Vector2.Zero, ItemDataBase.ItemScripts[actionid].Name, InventoryDropDownContainer);
+                a.Tag = new Tuple<IItem, ItemAction>(i, ItemDataBase.ItemScripts[actionid]);
                 a.OnLeftPressed += AOnOnLeftPressed;
             }
 
@@ -1243,8 +1242,8 @@ namespace jarg {
         }
 
         private void AOnOnLeftPressed(object sender, LabelPressEventArgs labelPressEventArgs) {
-            var action = (ItemAction)((LabelFixed) sender).Tag;
-            action.Action(player_);
+            var action = (Tuple<IItem, ItemAction>)((LabelFixed) sender).Tag;
+            action.Item2.Action(player_, action.Item1);
             InventoryDropDownWindow.Visible = false;
         }
 
@@ -1468,7 +1467,7 @@ namespace jarg {
                     format = string.Format("{0} x{1}", tuple.Item2.Data.Name, tuple.Item2.Count);
                 }
 
-                Color col = tuple.Item2.Data.Prototype != typeof(Item) ? Color.LightGoldenrodYellow : Color.LightGray;
+                Color col = tuple.Item2.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
                 var lookl = new LabelFixed(Vector2.Zero, format, col, LookContainer);
                 lookl.Tag = tuple;
                 lookl.OnLeftPressed += lookl_OnLeftPressed;
@@ -1484,7 +1483,7 @@ namespace jarg {
             var t = (Tuple<Vector2, IItem>)(((Label)sender).Tag);
             looklPos = t.Item1;
             foreach (var gameComponent in LookContainer.GetItems()) {
-                ((Label)gameComponent).Color = ((Tuple<Vector2, IItem>)(((Label)gameComponent).Tag)).Item2.Data.Prototype != typeof(Item) ? Color.LightGoldenrodYellow : Color.LightGray;
+                ((Label)gameComponent).Color = ((Tuple<Vector2, IItem>)(((Label)gameComponent).Tag)).Item2.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
             }
             ((Label) sender).Color = Color.LimeGreen;
         }

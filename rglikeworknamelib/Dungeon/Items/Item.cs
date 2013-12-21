@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Item;
 
-namespace rglikeworknamelib.Dungeon.Items.Subclases {
+namespace rglikeworknamelib.Dungeon.Items {
     [Serializable]
     [DataContract]
     public class Item : IItem {
         public List<IBuff> Buffs { get; set; }
         public int Count { get; set; }
         public int Doses { get; set; }
-        public List<ItemAction> Actions { get; set; }
 
         public string Id {
             get { return id_; }
@@ -39,7 +37,6 @@ namespace rglikeworknamelib.Dungeon.Items.Subclases {
                     Buffs.Add(a);
                 }
             }
-            Actions = new List<ItemAction>();
         }
 
         public override string ToString() {

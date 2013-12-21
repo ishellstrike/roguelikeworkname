@@ -90,6 +90,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.cs" />
     <Compile Include="JargBind.cs" />
     <Compile Include="JargDesigner.cs" />
     <Compile Include="DoubleLabel.cs" />

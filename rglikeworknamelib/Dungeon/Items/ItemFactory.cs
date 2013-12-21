@@ -9,7 +9,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                 logger.Error(string.Format("Missing ItemData id={0}!!!", id));
                 return null;
             }
-            var a = (IItem)Activator.CreateInstance(ItemDataBase.Data[id].Prototype);
+            var a = (IItem)new Item();
             a.Id = id;
             a.Count = count;
             a.OnLoad();

@@ -17,7 +17,6 @@ using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Creatures;
-using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
@@ -25,9 +24,7 @@ using rglikeworknamelib.Generation.Names;
 using rglikeworknamelib.Parser;
 using rglikeworknamelib.Window;
 using Color = Microsoft.Xna.Framework.Color;
-using EventLog = rglikeworknamelib.EventLog;
 using Label = rglikeworknamelib.Window.Label;
-using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace jarg {
@@ -43,7 +40,6 @@ namespace jarg {
         public float PlayerSeeAngle;
         private Action<GameTime> UpdateAction = x => { };
         private WindowsMediaPlayer WMPs;
-        private AchievementDataBase achievementDataBase_;
         private Texture2D ardown;
         private Texture2D arup;
         private Texture2D bag;
@@ -72,7 +68,6 @@ namespace jarg {
         private bool needChangeSesolution_;
         private Vector2 pivotpoint_;
         private Player player_;
-        private Vector2 player_last_pos;
         private ParticleSystem ps_;
         public TimeSpan sec = TimeSpan.Zero;
         public float seeAngleDeg = 60;
@@ -80,7 +75,6 @@ namespace jarg {
         private RenderTarget2D shadowMapRenderTarget_;
         private Texture2D lightMapTexture_;
         private SpriteBatch spriteBatch_;
-        private Stopwatch sw_shadows = new Stopwatch();
         private VertexPositionTexture[] vertices_;
 
         private Texture2D whitepixel_;
@@ -256,7 +250,7 @@ namespace jarg {
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
 
-            achievementDataBase_ = new AchievementDataBase();
+            new AchievementDataBase();
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             int width = pp.BackBufferWidth;
@@ -498,8 +492,6 @@ namespace jarg {
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
             camera_.X = (int)camera_.X;
             camera_.Y = (int)camera_.Y;
-
-            player_last_pos = player_.Position;
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
