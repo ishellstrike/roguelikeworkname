@@ -570,7 +570,7 @@ namespace jarg {
             currentFloor_.ShadowRender();
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             spriteBatch_.Begin();
-            spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(0,0,0,1f));
+            spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.75f));
             currentFloor_.DrawBlocks(gameTime, camera_, player_);
             player_.Draw(gameTime, camera_);
             spriteBatch_.End();
