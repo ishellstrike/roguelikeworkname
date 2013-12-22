@@ -96,6 +96,10 @@
       <Name>README</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Object\block_core.json">
+      <Name>block_core</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Schemes\store1.txt">
       <Name>store1</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -156,12 +160,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Object\standart1.txt">
-      <Name>standart1</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Textures\Dungeon\Items\can1.png">
@@ -1211,6 +1209,60 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>item_core</Name>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Objects\medpolka.png">
+      <Name>medpolka</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\medpolka1.png">
+      <Name>medpolka1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\medpolka2.png">
+      <Name>medpolka2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\medpolka3.png">
+      <Name>medpolka3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\medpolka4.png">
+      <Name>medpolka4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Dungeon\Objects\wearpolka.png">
+      <Name>wearpolka</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\wearpolka1.png">
+      <Name>wearpolka1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\wearpolka2.png">
+      <Name>wearpolka2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\wearpolka3.png">
+      <Name>wearpolka3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Dungeon\Objects\wearpolka4.png">
+      <Name>wearpolka4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -99,7 +99,7 @@ namespace rglikeworknamelib.Generation {
                         {
                         block.Inner = true;
                         }
-                        if (BlockDataBase.Data[blockId].Prototype == typeof (StorageBlock)) {
+                        if (BlockDataBase.Data[blockId].SmartAction == SmartAction.ActionOpenContainer) {
                             List<DropGroup> a;
                             if (ItemDataBase.SpawnLists.TryGetValue(blockId, out a))
                             {

@@ -151,7 +151,7 @@ namespace DropListEditor
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e) {
-            textBox1.Text = new StreamReader(openFileDialog1.FileName, Encoding.UTF8).ReadToEnd();
+            textBox1.Text = new StreamReader(openFileDialog1.FileName, Encoding.Default).ReadToEnd();
         }
     }
 }

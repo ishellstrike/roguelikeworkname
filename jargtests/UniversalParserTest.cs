@@ -44,26 +44,6 @@ namespace jargtests {
             Assert.AreEqual(null, ((BlockData) a.Value).Name);
         }
 
-        [TestMethod]
-        public void ParserTest3() {
-            KeyValuePair<string, object> a = ParserTestHelper<BlockData>("~StorageBlock,1", @"C:\filepos\",
-                                                                         typeof (Block));
-            Assert.AreEqual(typeof (StorageBlock), ((BlockData) a.Value).Prototype);
-        }
-
-        [TestMethod]
-        public void ParserTest4() {
-            KeyValuePair<string, object> a = ParserTestHelper<BlockData>("~NoSuchBlock,1", @"C:\filepos\",
-                                                                         typeof (Block));
-            Assert.AreEqual(typeof (Block), ((BlockData) a.Value).Prototype);
-        }
-
-        [TestMethod]
-        public void ParserTest5() {
-            KeyValuePair<string, object> a = ParserTestHelper<BlockData>("~NoSuchBlock,1", @"C:\filepos\",
-                                                                         typeof (Block));
-            Assert.AreEqual(typeof (Block), ((BlockData) a.Value).Prototype);
-        }
 
         [TestMethod]
         public void ParserTestNoPrototypeField() {

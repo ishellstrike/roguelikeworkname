@@ -12,6 +12,7 @@ using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Item;
+using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Items {
@@ -35,18 +36,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             DataFoodItems = new Dictionary<string, ItemData>();
             DataMedicineItems = new Dictionary<string, ItemData>();
 
-            var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-            serializer.Converters.Add(new StringEnumConverter());
-
-            var dir = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.json");
-            foreach (var patch in dir) {
-                using(var sr = new StreamReader(patch, Encoding.Default)) {
-                    var t = serializer.Deserialize<Dictionary<string, ItemData>>(new JsonTextReader(sr));
-                    foreach (var itemData in t) {
-                        Data.Add(itemData.Key, itemData.Value);
-                    }
-                }
-            }
+            Data = UniversalParser.JsonDataLoader<ItemData>(Settings.GetItemDataDirectory());
             
 
             SpawnLists = new Dictionary<string, List<DropGroup>>();
@@ -97,7 +87,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             var sb = new StringBuilder();
             sb.Append(item.Name);
             if (item.Description != null) {
-                sb.Append(Environment.NewLine + Environment.NewLine + item.Description);
+                sb.Append(Environment.NewLine + item.Description);
             }
             sb.Append(Environment.NewLine + string.Format("{0} г", item.Weight));
             sb.Append(Environment.NewLine + string.Format("{0} места", item.Volume));

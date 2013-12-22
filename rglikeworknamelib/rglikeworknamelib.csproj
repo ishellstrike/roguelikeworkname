@@ -154,6 +154,7 @@
     <Compile Include="StatistData.cs" />
     <Compile Include="StatistType.cs" />
     <Compile Include="UniqueIds.cs" />
+    <Compile Include="Window\AchivementBox.cs" />
     <Compile Include="Window\Button.cs" />
     <Compile Include="Window\CheckBox.cs" />
     <Compile Include="Window\IGameComponent.cs" />

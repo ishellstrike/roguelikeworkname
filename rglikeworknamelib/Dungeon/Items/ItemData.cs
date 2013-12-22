@@ -7,42 +7,37 @@ using rglikeworknamelib.Dungeon.Item;
 
 namespace rglikeworknamelib.Dungeon.Items {
     public class ItemData {
-        /// <summary>
-        ///     In 0.1 degree offset
-        /// </summary>
-        public int Accuracy;
-
         public string AfteruseId;
 
-        public string Ammo;
-        
         public string[] Buff;
         
         public string BulletParticle;
-        
-        public int Damage ;
-        
+
+
+        public string Name;
+        public string Nameret;
         public string Description;
         
         public string Dress;
         
         public bool Hidden;
 
-        
-        public int Doses ;
-        
-        public int FireRate ;
-
+        /// <summary>
+        ///     In 0.1 degree offset
+        /// </summary>
+        public int Accuracy;
+        public int Damage;
+        public int Doses;
+        /// <summary>
+        /// In milliseconds between shoots
+        /// </summary>
+        public int FireRate;
+        public int Magazine;
+        public string Ammo;
         
         public Color MMCol;
         
         public int MTex;
-        
-        public int Magazine;
-        
-        public string Name;
-        
-        public string Nameret;
         
         public string Using;
         
@@ -58,10 +53,6 @@ namespace rglikeworknamelib.Dungeon.Items {
         public int Volume;
         
         public int Weight;
-        
-        public int hasHealth; //if has health, count became health
-        
-        public int stackNo;
 
         
         public string SpawnGroup;

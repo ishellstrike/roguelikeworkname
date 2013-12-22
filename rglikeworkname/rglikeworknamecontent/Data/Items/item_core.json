@@ -197,6 +197,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan1",
     "SpawnGroup":"spawn_shopfood",
+	"ActionsId":["opencan"]
   },
   "meatcan2":{
     "Name":"Открытая банка паштета",
@@ -213,6 +214,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan2",
     "SpawnGroup":"spawn_shopfood",
+	"ActionsId":["opencan"]
   },
   "milk1":{
     "Name":"Пакет молока",
@@ -360,6 +362,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"beancan1",
     "SpawnGroup":"spawn_shopfood",
+	"ActionsId":["opencan"]
   },
   "corncan1":{
     "Name":"Открытая банка кукурузы",
@@ -377,6 +380,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan1",
     "SpawnGroup":"spawn_shopfood",
+	"ActionsId":["opencan"]
   },
   "corncan2":{
     "Name":"Открытая банка горошка",
@@ -394,11 +398,13 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan2",
     "SpawnGroup":"spawn_shopfood",
+	"ActionsId":["opencan"]
   },
   "vinebottlecl":{
     "Name":"Бутылка вина",
     "AfteruseId":"vinebottle",
     "SpawnGroup":"spawn_shopfood",
+	"ActionsId":["openbottle"]
   },
   "vinebottle":{
     "Name":"Открытая бутылка вина",
@@ -411,6 +417,7 @@
     "Name":"Бутылка водки",
     "AfteruseId":"vodkabottle",
     "SpawnGroup":"spawn_shopfood",
+	"ActionsId":["openbottle"],
   },
   "vodkabottle":{
     "Name":"Открытая бутылка водки",
@@ -584,22 +591,30 @@
     "Doses":20,
     "Weight":20,
     "AfteruseId":"nocigarets",
+	"ActionsId":["smoke"]
+	"Description":"Открытая пачка сиграет. Вы нашли ее полной"
+	"SpawnGroup":"spawn_shopfood"
   },
   "cigarets10":{
     "Name":"Пачка сигарет",
     "Doses":10,
     "Weight":20,
     "AfteruseId":"nocigarets",
+	"ActionsId":["smoke"]
+	"Description":"Давно открытая пачка сигарет. Вы нашли ее наполовину полной"
   },
   "cigarets4":{
     "Name":"Пачка сигарет",
     "Doses":4,
     "Weight":20,
     "AfteruseId":"nocigarets",
+	"ActionsId":["smoke"],
+	"Description":"Давно открытая пачка сигарет. Вы нашли ее уже практически пустой"
   },
   "brpencil":{
     "Name":"Сломаный карандаш",
     "Weight":10,
+	"Description":"Переломленый карандаш, неудобно, но им можно писать"
   },
   "brpen":{
     "Name":"Сломаная шариковая ручка",
@@ -611,21 +626,25 @@
   },
   "brcloth":{
     "Name":"Обрывки ткани",
+	"Description":"Небольшие куски ткани, мало для чего пригодны",
     "Weight":50,
   },
   "partcloth":{
     "Name":"Ткань",
     "Weight":100,
+	"Description":"Большой кусок крепкой ткани"
   },
   "lighter1":{
     "Name":"Дешевая зажигалка",
     "Weight":20,
     "Doses":100,
+	"SpawnGroup":"spawn_shopfood",
   },
   "lighter2":{
     "Name":"Зажигалка",
     "Weight":20,
     "Doses":200,
+	"SpawnGroup":"spawn_shopfood",
   },
   "testhat":{
     "Name":"Тестовая шляпа",
@@ -633,6 +652,7 @@
     "Weight":100,
     "Volume":300,
     "SortType":"Wear",
+	"ActionsId":["destroycloth"]
   },
   "testhat2":{
     "Name":"Тестовая шляпа2",
@@ -640,6 +660,7 @@
     "Weight":100,
     "Volume":300,
     "SortType":"Wear",
+	"ActionsId":["destroycloth"]
   },
   "kitty_collar":{
     "Name":"Кошачий ошейник",
@@ -653,6 +674,7 @@
     "Weight":50,
     "SortType":"Wear",
     "SpawnGroup":"spawn_commonwear",
+	"ActionsId":["destroycloth"]
   },
   "wool_socks":{
     "Name":"Шерстяные носки",
@@ -712,6 +734,7 @@
     "Weight":500,
     "Dress":"jeans",
     "SpawnGroup":"spawn_commonwear",
+	"ActionsId":["destroycloth"]
   },
   "t-shirt1":{
     "Name":"Футболка",
@@ -719,6 +742,7 @@
     "Weight":200,
     "Dress":"t-shirt1",
     "SpawnGroup":"spawn_commonwear",
+	"ActionsId":["destroycloth"],
   },
   "haer1":{
     "Name":"Волосы",

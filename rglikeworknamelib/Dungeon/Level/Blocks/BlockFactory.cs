@@ -10,8 +10,7 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
                 logger.Error(string.Format("Missing BlockData id={0}!!!", id));
                 return null;
             }
-            var a = (IBlock)Activator.CreateInstance(BlockDataBase.Data[id].Prototype);
-            a.Id = id;
+            var a = new StorageBlock {Id = id};
 
             return a;
         }

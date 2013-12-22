@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using NLog;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace rglikeworknamelib.Parser {
     [Serializable]
@@ -98,7 +102,6 @@ namespace rglikeworknamelib.Parser {
             logger.Info("{0} entities for {1} loaded from {2}", temp.Count, typeof (T).ToString(), filePos);
             return temp;
         }
-
         public static List<object> NoIdParser<T>(string dataString, string filePos, Type basetype = null) {
             var temp = new List<object>();
 
@@ -174,6 +177,28 @@ namespace rglikeworknamelib.Parser {
             }
             logger.Info("{0} entities for {1} loaded from {2}", temp.Count, typeof (T).ToString(), filePos);
             return temp;
+        }
+
+        public static Dictionary<string, T> JsonDataLoader<T>(string directory)
+        {
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+            serializer.Converters.Add(new StringEnumConverter());
+            var data = new Dictionary<string, T>();
+
+            var dir = Directory.GetFiles(directory, "*.json");
+            foreach (var patch in dir)
+            {
+                using (var sr = new StreamReader(patch, Encoding.Default))
+                {
+                    var t = serializer.Deserialize<Dictionary<string, T>>(new JsonTextReader(sr));
+                    foreach (var itemData in t)
+                    {
+
+                        data.Add(itemData.Key, itemData.Value);
+                    }
+                }
+            }
+            return data;
         }
     }
 }
