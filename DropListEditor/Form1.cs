@@ -78,60 +78,55 @@ namespace DropListEditor
         }
         private void button3_Click(object sender, EventArgs e)
         {
+            try {
+                StringBuilder sb = new StringBuilder();
+                string ss = textBox1.Text;
+                sb.Clear();
+                sb.AppendLine("{");
 
-            string[] dir = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.txt");
-            StringBuilder sb = new StringBuilder();
-            foreach (string patch in dir)
-            {
-                var sr = new StreamReader(patch, Encoding.Default);
-                sb.AppendLine(sr.ReadToEnd());
-                sr.Close();
-                sr.Dispose();
-            }
-
-            string ss = sb.ToString();
-            sb.Clear();
-            sb.AppendLine("{");
-
-            var temp = ss.Split('~');
-            foreach (var s in temp) {
-                if(string.IsNullOrEmpty(s)) {
-                    continue;
-                }
-                var lines = s.Split('\n').Select(x=>x.Trim('\r')).ToList();
-                sb.AppendFormat("  \"{0}\":{{{1}", lines[0].Split(',')[1], Environment.NewLine);
-                foreach (var line in lines.Skip(1)) {
-                    if(string.IsNullOrEmpty(line)){continue;}
-                    var par = line.Split('=');
-                    int tryInt;
-                    bool isint;
-                    isint = int.TryParse(par[1], out tryInt);
-                    sb.AppendFormat("    \"{0}\":", par[0]);
-
-                    if(par[1].StartsWith("{")) {
-                        var extracted = par[1].Substring(1, par[1].Length - 2);
-                        IEnumerable<string> arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
-                        string[] ar = arrayextractor.ToArray();
-                        sb.Append("[");
-                        foreach (var s1 in ar.Take(ar.Length - 1)) {
-                            sb.AppendFormat("\"{0}\", ", s1);
-                        }
-                        sb.AppendFormat("\"{0}\"],{1}", ar[ar.Length - 1], Environment.NewLine);
+                var temp = ss.Split('~');
+                foreach (var s in temp) {
+                    if (string.IsNullOrEmpty(s)) {
                         continue;
                     }
-                    if(isint) {
-                        sb.AppendFormat("{0},\n", tryInt);
-                    } else {
-                        sb.AppendFormat("\"{0}\",{1}", par[1], Environment.NewLine);
+                    var lines = s.Split('\n').Select(x => x.Trim('\r')).ToList();
+                    sb.AppendFormat("  \"{0}\":{{{1}", lines[0].Split(',')[1], Environment.NewLine);
+                    foreach (var line in lines.Skip(1)) {
+                        if (string.IsNullOrEmpty(line)) {
+                            continue;
+                        }
+                        var par = line.Split('=');
+                        int tryInt;
+                        bool isint;
+                        isint = int.TryParse(par[1], out tryInt);
+                        sb.AppendFormat("    \"{0}\":", par[0]);
+
+                        if (par[1].StartsWith("{")) {
+                            var extracted = par[1].Substring(1, par[1].Length - 2);
+                            IEnumerable<string> arrayextractor = extracted.Split(',').Select(x => x.Trim(' '));
+                            string[] ar = arrayextractor.ToArray();
+                            sb.Append("[");
+                            foreach (var s1 in ar.Take(ar.Length - 1)) {
+                                sb.AppendFormat("\"{0}\", ", s1);
+                            }
+                            sb.AppendFormat("\"{0}\"],{1}", ar[ar.Length - 1], Environment.NewLine);
+                            continue;
+                        }
+                        if (isint) {
+                            sb.AppendFormat("{0},\n", tryInt);
+                        }
+                        else {
+                            sb.AppendFormat("\"{0}\",{1}", par[1], Environment.NewLine);
+                        }
                     }
+                    sb.AppendLine("  },");
                 }
-                sb.AppendLine("  },");
-            }
 
-            sb.AppendLine("}");
+                sb.AppendLine("}");
 
-            using (StreamWriter sw = new StreamWriter("a.json", false, Encoding.UTF8)) {
-                sw.Write(sb.ToString());
+                textBox2.Text = sb.ToString();
+            } catch(Exception ex) {
+                MessageBox.Show(string.Format("{0} in Parser", ex));
             }
         }
 
@@ -149,6 +144,14 @@ namespace DropListEditor
                 temp.Add("sasas2", t2);
                 serializer.Serialize(stream, temp);
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e) {
+            openFileDialog1.ShowDialog();
+        }
+
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e) {
+            textBox1.Text = new StreamReader(openFileDialog1.FileName, Encoding.UTF8).ReadToEnd();
         }
     }
 }
