@@ -581,27 +581,29 @@
   "newspaper":{
     "Name":"Газета",
     "Weight":100,
+	"SpawnGroup":"spawn_trash",
   },
   "nocigarets":{
     "Name":"Пачка из-под сигарет",
     "Weight":10,
+	"SpawnGroup":"spawn_trash",
   },
   "cigarets":{
     "Name":"Пачка сигарет",
     "Doses":20,
     "Weight":20,
     "AfteruseId":"nocigarets",
-	"ActionsId":["smoke"]
-	"Description":"Открытая пачка сиграет. Вы нашли ее полной"
-	"SpawnGroup":"spawn_shopfood"
+	"ActionsId":["smoke"],
+	"Description":"Открытая пачка сиграет. Вы нашли ее полной",
+	"SpawnGroup":"spawn_shopfood",
   },
   "cigarets10":{
     "Name":"Пачка сигарет",
     "Doses":10,
     "Weight":20,
     "AfteruseId":"nocigarets",
-	"ActionsId":["smoke"]
-	"Description":"Давно открытая пачка сигарет. Вы нашли ее наполовину полной"
+	"ActionsId":["smoke"],
+	"Description":"Давно открытая пачка сигарет. Вы нашли ее наполовину полной",
   },
   "cigarets4":{
     "Name":"Пачка сигарет",
@@ -609,25 +611,29 @@
     "Weight":20,
     "AfteruseId":"nocigarets",
 	"ActionsId":["smoke"],
-	"Description":"Давно открытая пачка сигарет. Вы нашли ее уже практически пустой"
+	"Description":"Давно открытая пачка сигарет. Вы нашли ее уже практически пустой",
   },
   "brpencil":{
     "Name":"Сломаный карандаш",
     "Weight":10,
-	"Description":"Переломленый карандаш, неудобно, но им можно писать"
+	"Description":"Переломленый карандаш, неудобно, но им можно писать",
+	"SpawnGroup":"spawn_trash",
   },
   "brpen":{
     "Name":"Сломаная шариковая ручка",
     "Weight":10,
+	"SpawnGroup":"spawn_trash",
   },
   "brpaper":{
     "Name":"Скомканая бумага",
     "Weight":10,
+	"SpawnGroup":"spawn_trash",
   },
   "brcloth":{
     "Name":"Обрывки ткани",
 	"Description":"Небольшие куски ткани, мало для чего пригодны",
     "Weight":50,
+	"SpawnGroup":"spawn_trash",
   },
   "partcloth":{
     "Name":"Ткань",

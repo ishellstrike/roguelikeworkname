@@ -64,12 +64,12 @@ namespace jarg {
                 }
 
                 if (currentFloor_ != null) {
-                    IBlock nxny = currentFloor_.GetBlock(nx, ny);
+                    Block nxny = currentFloor_.GetBlock(nx, ny);
                     bool nothingUndermouse = true;
                     if (nxny != null && nxny.Lightness == Color.White && !rememberShoot_)
                         // currentFloor_.IsExplored(aa))
                     {
-                        IBlock a = currentFloor_.GetBlock(nx, ny);
+                        Block a = currentFloor_.GetBlock(nx, ny);
                         if (a != null) {
                             BlockData b = BlockDataBase.Data[a.Id];
                             string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
@@ -89,7 +89,7 @@ namespace jarg {
                                         case SmartAction.ActionOpenContainer:
                                             WindowContainer.Visible = true;
                                             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
-                                            UpdateContainerContainer(((StorageBlock) a).StoredItems);
+                                            UpdateContainerContainer(a.StoredItems);
                                             ContainerOn = new Vector2(nx, ny);
                                             break;
                                         case SmartAction.ActionOpenClose:

@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+
 namespace rglikeworknamelib.Dungeon.Items {
     public class DropGroup {
-        public string[] Ids;
-        public int MinCount, MaxCount, Prob, Repeat;
+        public List<string> Ids;
+        public int Min, Max, Prob, Repeat;
     }
 }

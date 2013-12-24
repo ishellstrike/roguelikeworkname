@@ -78,11 +78,9 @@
     <Compile Include="Dungeon\Creatures\Ability.cs" />
     <Compile Include="Dungeon\Creatures\AbilityNameStyle.cs" />
     <Compile Include="Dungeon\Creatures\Bodypart.cs" />
-    <Compile Include="Dungeon\Creatures\CrearureZombie.cs" />
     <Compile Include="Dungeon\Creatures\CreatureFactory.cs" />
     <Compile Include="Dungeon\Creatures\DamageType.cs" />
     <Compile Include="Dungeon\Creatures\DressCreatures.cs" />
-    <Compile Include="Dungeon\Creatures\ICreature.cs" />
     <Compile Include="Dungeon\Creatures\Perk.cs" />
     <Compile Include="Dungeon\Creatures\PerkData.cs" />
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />
@@ -110,13 +108,10 @@
     <Compile Include="Dungeon\Items\ItemDataBase.cs" />
     <Compile Include="Dungeon\Items\ItemFactory.cs" />
     <Compile Include="Dungeon\Items\ItemType.cs" />
-    <Compile Include="Dungeon\Items\SpawnlistParser.cs" />
     <Compile Include="Dungeon\Level\Blocks\Block.cs" />
-    <Compile Include="Dungeon\Level\Blocks\BlockButningBochka.cs" />
     <Compile Include="Dungeon\Level\Blocks\BlockData.cs" />
     <Compile Include="Dungeon\Level\Blocks\BlockDataBase.cs" />
     <Compile Include="Dungeon\Level\Blocks\BlockFactory.cs" />
-    <Compile Include="Dungeon\Level\Blocks\IBlock.cs" />
     <Compile Include="Dungeon\Level\Floor.cs" />
     <Compile Include="Dungeon\Level\FloorData.cs" />
     <Compile Include="Dungeon\Level\FloorDataBase.cs" />
@@ -130,7 +125,6 @@
     <Compile Include="Dungeon\Level\SchemesType.cs" />
     <Compile Include="Dungeon\Level\SectorBiom.cs" />
     <Compile Include="Dungeon\Level\SmartAction.cs" />
-    <Compile Include="Dungeon\Level\Blocks\StorageBlock.cs" />
     <Compile Include="Dungeon\Level\StreetOld__.cs" />
     <Compile Include="Dungeon\Particles\Particles.cs" />
     <Compile Include="Dungeon\Vehicles\Vehicle.cs" />
@@ -138,6 +132,7 @@
     <Compile Include="Generation\Names\NameData.cs" />
     <Compile Include="Generation\Names\NameDataBase.cs" />
     <Compile Include="Generation\Names\NameType.cs" />
+    <Compile Include="Inits.cs" />
     <Compile Include="LineBatch.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Dungeon\Creatures\AIStyle.cs" />

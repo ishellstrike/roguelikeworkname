@@ -197,7 +197,7 @@ namespace jarg {
             LookContainer = new ListContainer(new Rectangle(0,0,(int) LookWindow.Width,(int) (LookWindow.Height-20)), LookWindow);
 
             for (int i = 0; i < 40; i++) {
-                new AchivementBox(Vector2.Zero, "some", bag, AchievementContainer);
+                new AchivementBox(Vector2.Zero, "some", bag_, AchievementContainer);
             }
 
             InitWindowUI(ws);
@@ -704,7 +704,7 @@ namespace jarg {
                 new Window(
                     new Rectangle((int) Settings.Resolution.X - 32, (int) Settings.Resolution.Y/2 - 32, 32, 32*3 + 20),
                     "", false, ws) {NoBorder = true, Moveable = false};
-            IBBag = new ImageButton(new Vector2(0, 0), "", bag, WindowUIButtons);
+            IBBag = new ImageButton(new Vector2(0, 0), "", bag_, WindowUIButtons);
             IBBag.OnPressed += IBBag_onPressed;
             IBCaracter = new ImageButton(new Vector2(0, 32), "", caracter, WindowUIButtons);
             IBCaracter.OnPressed += IBCaracter_onPressed;
@@ -809,25 +809,25 @@ namespace jarg {
             ModLoaderContainer.Clear();
 
             new LabelFixed(Vector2.Zero, "Units", Color.Cyan, ModLoaderContainer);
-            string[] f = Directory.GetFiles(Settings.GetDataDirectory() + @"\Units", "*.txt");
+            string[] f = Directory.GetFiles(Settings.GetDataDirectory() + @"\Units", "*.json");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
             new LabelFixed(Vector2.Zero, "Blocks", Color.Cyan, ModLoaderContainer);
-            f = Directory.GetFiles(Settings.GetObjectDataDirectory(), "*.txt");
+            f = Directory.GetFiles(Settings.GetObjectDataDirectory(), "*.json");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
             new LabelFixed(Vector2.Zero, "Items", Color.Cyan, ModLoaderContainer);
-            f = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.txt");
+            f = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.json");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
 
             new LabelFixed(Vector2.Zero, "Buffs", Color.Cyan, ModLoaderContainer);
-            f = Directory.GetFiles(Settings.GetEffectDataDirectory(), "*.txt");
+            f = Directory.GetFiles(Settings.GetEffectDataDirectory(), "*.json");
             foreach (string s in f) {
                 new CheckBox(Vector2.Zero, s, ModLoaderContainer);
             }
@@ -861,12 +861,12 @@ namespace jarg {
         }
 
         private void ButtonRadioOff_onPressed(object sender, EventArgs e) {
-            WMPs.controls.stop();
+            wmPs_.controls.stop();
             WindowRadio.Visible = false;
         }
 
         private void ButtonRadioGB_onPressed(object sender, EventArgs e) {
-            WMPs.controls.play();
+            wmPs_.controls.play();
             WindowRadio.Visible = true;
         }
 
@@ -1301,7 +1301,7 @@ namespace jarg {
         private void ButtonCaracterConfirm_onPressed(object sender, EventArgs e) {
             WindowCaracterCration.Visible = false;
             drawAction_ = GameDraw;
-            UpdateAction = GameUpdate;
+            updateAction_ = GameUpdate;
             EventLogWindow.Visible = true;
         }
 

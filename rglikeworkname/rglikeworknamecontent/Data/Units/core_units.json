@@ -1,0 +1,20 @@
+{
+	"0":{
+		"Name":" ",
+		"MTex":0,
+	},
+	
+	"zombie1":{
+		"Name":"Зомби житель",
+		"MTex":"zombie",
+		"Hp":20,
+	},
+	
+	"hdzombie":{
+		"Name":"Изувеченый зомби",
+		"MTex":"hdzombie",
+		"Damage":2,
+		"Speed":25,
+		"Hp":30,
+	},
+}

@@ -223,7 +223,7 @@ namespace rglikeworknamelib.Dungeon.Level
             }
         }
 
-        public IBlock GetBlock(int x, int y, bool noLoading = false)
+        public Block GetBlock(int x, int y, bool noLoading = false)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
@@ -236,7 +236,7 @@ namespace rglikeworknamelib.Dungeon.Level
             return null;
         }
 
-        public ICreature GetCreatureAtCoord(Vector2 pos, Vector2 start, out bool nosector)
+        public Creature GetCreatureAtCoord(Vector2 pos, Vector2 start, out bool nosector)
         {
             Vector2 p = GetInSectorPosition(GetPositionInBlocks(pos));
             MapSector sect;
@@ -254,7 +254,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
             for (int i = 0; i < sect.Creatures.Count; i++)
             {
-                ICreature crea = sect.Creatures[i];
+                Creature crea = sect.Creatures[i];
                 if (Intersects(start, pos, new Vector2(crea.Position.X - 16, crea.Position.Y - 32) + adder,
                                new Vector2(crea.Position.X + 16, crea.Position.Y) + adder))
                 {
@@ -382,7 +382,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 int braw = (x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry;
                 sect.Blocks[braw] = BlockFactory.GetInstance(blockId);
-                IBlock block = sect.Blocks[braw];
+                Block block = sect.Blocks[braw];
                 block.MTex = block.Data.RandomMtexFromAlters();
                 MapJustUpdated = true;
             }
@@ -394,7 +394,7 @@ namespace rglikeworknamelib.Dungeon.Level
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="blockId"></param>
-        public IBlock SetBlockSyncAndReturn(int x, int y, string blockId)
+        public Block SetBlockSyncAndReturn(int x, int y, string blockId)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
@@ -403,7 +403,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 int braw = (x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry;
                 sect.Blocks[braw] = BlockFactory.GetInstance(blockId);
-                IBlock block = sect.Blocks[braw];
+                Block block = sect.Blocks[braw];
                 block.MTex = block.Data.RandomMtexFromAlters();
                 MapJustUpdated = true;
                 return block;
@@ -427,7 +427,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 int braw = (x - divx * MapSector.Rx) * MapSector.Ry + y - divy * MapSector.Ry;
                 sect.Blocks[braw] = BlockFactory.GetInstance(blockId);
-                IBlock block = sect.Blocks[braw];
+                Block block = sect.Blocks[braw];
                 block.MTex = block.Data.RandomMtexFromAlters();
                 MapJustUpdated = true;
             }
@@ -457,7 +457,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public void OpenCloseDoor(int x, int y)
         {
-            IBlock a = GetBlock(x, y);
+            Block a = GetBlock(x, y);
             if (a.Data.SmartAction == SmartAction.ActionOpenClose)
             {
                 if (a.Data.IsWalkable)
@@ -622,7 +622,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 {
                     for (int j = -16; j < 16; j++)
                     {
-                        IBlock t = GetBlock((int)a.X + i, (int)a.Y + j);
+                        Block t = GetBlock((int)a.X + i, (int)a.Y + j);
                         if (t != null)
                         {
                             t.Lightness = Settings.SeeAll ? Color.White : colb;
@@ -632,7 +632,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 // return;
                 // }
 
-                IBlock temp2;
+                Block temp2;
                 Color lightness = Color.White;
                 for (int i = -16; i < 16; i++)
                 {
@@ -646,7 +646,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     }
                 }
 
-                IBlock temp = GetBlock((int)a.X, (int)a.Y);
+                Block temp = GetBlock((int)a.X, (int)a.Y);
                 if (temp != null)
                 {
                     temp.Lightness = lightness;
@@ -656,7 +656,7 @@ namespace rglikeworknamelib.Dungeon.Level
             for (int i = 0; i < sectors_.Count; i++)
             {
                 MapSector sector = sectors_.ElementAt(i).Value;
-                foreach (ICreature crea in sector.Creatures)
+                foreach (Creature crea in sector.Creatures)
                 {
                     if (Vector2.Distance(who.Position, crea.WorldPosition()) < 1000 && PathClear(a,
                                                                                                  new Vector2(
@@ -702,7 +702,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     {
                         checkPoint.X = start.X + (int)Math.Round(x * unitX, 2);
                         checkPoint.Y = start.Y + (int)Math.Round(x * uintY, 2);
-                        IBlock key = GetBlock((int)checkPoint.X, (int)checkPoint.Y);
+                        Block key = GetBlock((int)checkPoint.X, (int)checkPoint.Y);
                         if (key != null && !key.Data.IsTransparent)
                         {
                             GetBlock((int)checkPoint.X, (int)checkPoint.Y).Lightness = Color.White;
@@ -728,7 +728,7 @@ namespace rglikeworknamelib.Dungeon.Level
                         checkPoint.X = start.X + (int)Math.Round(x * unitX, 2);
                         checkPoint.Y = start.Y + (int)Math.Round(x * uintY, 2);
 
-                        IBlock t = GetBlock((int)checkPoint.X, (int)checkPoint.Y);
+                        Block t = GetBlock((int)checkPoint.X, (int)checkPoint.Y);
 
                         if (t != null && t.Id != null && !t.Data.IsTransparent)
                         {
@@ -765,7 +765,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 MapSector sector = sectors_.ElementAt(k).Value;
                 for (int m = 0; m < sector.Creatures.Count; m++)
                 {
-                    ICreature crea = sector.Creatures[m];
+                    Creature crea = sector.Creatures[m];
 
                     if (crea.isDead)
                     {
@@ -1096,7 +1096,7 @@ namespace rglikeworknamelib.Dungeon.Level
             int i = 0;
             foreach (var sector in sectors_)
             {
-                foreach (ICreature cre in sector.Value.Creatures)
+                foreach (Creature cre in sector.Value.Creatures)
                 {
                     cre.Kill(sector.Value);
                     i++;
@@ -1159,6 +1159,7 @@ namespace rglikeworknamelib.Dungeon.Level
             var i4 = (int)((camera.X) / 32);
             var i5 = (int)((camera.X + resolution.X / 2) / 32);
             var i6 = (int)((camera.Y + resolution.Y / 2) / 32);
+
             GetBlock(i1, i2);
             GetBlock(i1, i3);
             GetBlock(i4, i2);
@@ -1273,7 +1274,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     for (int j = 0; j < ry; j++)
                     {
                         int a = i * ry + j;
-                        IBlock block = sector.GetBlock(a);
+                        Block block = sector.GetBlock(a);
 
                         //if (sector.SectorOffsetX*rx + i > min.X &&
                         // sector.SectorOffsetY*ry + j > min.Y &&
@@ -1350,7 +1351,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
                 for (int m = 0; m < sector.Creatures.Count; m++)
                 {
-                    ICreature crea = sector.Creatures[m];
+                    Creature crea = sector.Creatures[m];
                     crea.Draw(spriteBatch_, camera, sector);
                 }
             }
@@ -1399,7 +1400,7 @@ namespace rglikeworknamelib.Dungeon.Level
             }
         }
 
-        public IBlock GetBlockSync(int x, int y)
+        public Block GetBlockSync(int x, int y)
         {
             int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
             int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
@@ -1422,10 +1423,9 @@ namespace rglikeworknamelib.Dungeon.Level
                 {
                     var block = mapSector.Value.Blocks[i];
 
-                    if (block is StorageBlock && block.Lightness.B != 0)
+                    if (block.StoredItems.Count > 0 && block.Lightness.B != 0)
                     {
-                        var store = block as StorageBlock;
-                        foreach (var storedItem in store.StoredItems)
+                        foreach (var storedItem in block.StoredItems)
                         {
                             temp.Add(new Tuple<Vector2, IItem>(new Vector2(i / MapSector.Rx + mapSector.Value.SectorOffsetX * MapSector.Rx + 0.5f, i % MapSector.Ry + mapSector.Value.SectorOffsetY * MapSector.Ry + 0.5f), storedItem));
                         }

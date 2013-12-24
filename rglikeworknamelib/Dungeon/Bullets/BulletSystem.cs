@@ -50,7 +50,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                 bullet.Start += new Vector2(f/2, f1/2);
 
                 Vector2 positionInBlocks = bullet.GetPositionInBlocks();
-                IBlock bl = level.GetBlock((int) positionInBlocks.X, (int) positionInBlocks.Y,
+                Block bl = level.GetBlock((int) positionInBlocks.X, (int) positionInBlocks.Y,
                                            true);
                 if (bl != null) {
                     if (!bl.Data.IsWalkable) {
@@ -58,7 +58,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                     }
 
                     bool nosector;
-                    ICreature sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start, out nosector);
+                    Creature sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start, out nosector);
 
                     if (nosector) {
                         bullet.Life = TimeSpan.Zero;

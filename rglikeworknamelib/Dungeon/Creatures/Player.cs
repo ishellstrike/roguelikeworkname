@@ -191,7 +191,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     if (!Settings.Noclip) {
                         Velocity.X = 0;
                     }
-                    IBlock key = ms.Parent.GetBlock(a, b);
+                    Block key = ms.Parent.GetBlock(a, b);
                     if (key == null) {
                         return;
                     }
@@ -203,7 +203,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     if (!Settings.Noclip) {
                         Velocity.Y = 0;
                     }
-                    IBlock block = ms.Parent.GetBlock(c, d);
+                    Block block = ms.Parent.GetBlock(c, d);
                     if (block != null && block.Data.SmartAction == SmartAction.ActionOpenClose) {
                         ms.Parent.OpenCloseDoor(c, d);
                     }

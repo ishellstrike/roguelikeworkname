@@ -607,12 +607,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Units\test_u1.txt">
-      <Name>test_u1</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Dungeon\Objects\palka.png">
       <Name>palka</Name>
       <Importer>TextureImporter</Importer>
@@ -1263,6 +1257,12 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Units\core_units.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>core_units</Name>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

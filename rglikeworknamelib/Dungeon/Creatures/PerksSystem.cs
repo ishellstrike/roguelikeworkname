@@ -6,9 +6,9 @@ namespace rglikeworknamelib.Creatures {
     [Serializable]
     public class PerksSystem {
         private readonly Dictionary<string, Perk> Perks;
-        [NonSerialized] internal ICreature Owner;
+        [NonSerialized] internal Creature Owner;
 
-        public PerksSystem(ICreature owner) {
+        public PerksSystem(Creature owner) {
             Owner = owner;
             Perks = new Dictionary<string, Perk>();
             for (int i = 0; i < PerkDataBase.Perks.Count; i++) {
@@ -38,7 +38,7 @@ namespace rglikeworknamelib.Creatures {
         /// <param name="perkId"></param>
         public void SetPerk(string perkId) {
             Perks[perkId].selected_ = !Perks[perkId].selected_;
-            Action<bool, ICreature> addRemove = PerkDataBase.Perks[perkId].AddRemove;
+            Action<bool, Creature> addRemove = PerkDataBase.Perks[perkId].AddRemove;
             if (addRemove != null) {
                 addRemove(Perks[perkId].selected_, Owner);
             }

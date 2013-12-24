@@ -24,8 +24,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         internal SectorBiom Biom;
 
-        internal List<IBlock> Blocks;
-        internal List<ICreature> Creatures;
+        internal List<Block> Blocks;
+        internal List<Creature> Creatures;
         internal List<Particle> Decals;
         internal Floor[] Floors;
 
@@ -39,9 +39,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
 
-            Blocks = new List<IBlock>(Rx*Ry);
+            Blocks = new List<Block>(Rx*Ry);
             Floors = new Floor[Rx*Ry];
-            Creatures = new List<ICreature>();
+            Creatures = new List<Creature>();
 
             int i = Rx*Ry;
             while (i-- != 0) {
@@ -55,9 +55,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetY = sectorOffsetY;
             Parent = parent;
 
-            Blocks = new List<IBlock>(Rx*Ry);
+            Blocks = new List<Block>(Rx*Ry);
             Floors = new Floor[Rx*Ry];
-            Creatures = new List<ICreature>();
+            Creatures = new List<Creature>();
             Decals = new List<Particle>();
             Vehicles = new List<Vehicle>();
 
@@ -86,10 +86,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetY = (int) sectorOffsetY;
             Parent = parent;
 
-            Blocks = blocksArray as List<IBlock>;
+            Blocks = blocksArray as List<Block>;
             Floors = floorsArray as Floor[];
             Biom = (SectorBiom) obiom;
-            Creatures = (List<ICreature>) creat;
+            Creatures = (List<Creature>) creat;
             Decals = (List<Particle>) decal;
             Lights = new List<Light>();
             Vehicles = new List<Vehicle>();
@@ -115,7 +115,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             //}
         }
 
-        private Light GetLights(IBlock block, int x, int y) {
+        private Light GetLights(Block block, int x, int y) {
             //var a1 = block as ILightSource;
             //var t = new Light {
             //    Color = a1.LightColor,
@@ -250,11 +250,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             Creatures.Add(CreatureFactory.GetInstance(creatureId, new Vector2(x * 32, y * 32)));
         }
 
-        public IBlock GetBlock(int x, int y) {
+        public Block GetBlock(int x, int y) {
             return Blocks[x*Ry + y];
         }
 
-        public IBlock GetBlock(int a) {
+        public Block GetBlock(int a) {
             return Blocks[a];
         }
 
@@ -283,7 +283,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <param name="id"></param>
         public void SetBlock(int oneDimCoord, string id) {
             Blocks[oneDimCoord] = BlockFactory.GetInstance(id);
-            IBlock block = Blocks[oneDimCoord];
+            Block block = Blocks[oneDimCoord];
             block.Id = id;
             block.MTex = block.Data.RandomMtexFromAlters();
         }

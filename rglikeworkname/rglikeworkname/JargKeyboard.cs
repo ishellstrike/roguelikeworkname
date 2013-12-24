@@ -117,7 +117,7 @@ namespace jarg {
                 }
 
                 if (ks_[Keys.F] == KeyState.Down && lks_[Keys.F] == KeyState.Up) {
-                    Flashlight = !Flashlight;
+                   // Flashlight = !Flashlight;
                 }
 
                 if (WindowContainer.Visible && ks_[JargBindings.TakeAll] == KeyState.Down && lks_[JargBindings.TakeAll] == KeyState.Up) {

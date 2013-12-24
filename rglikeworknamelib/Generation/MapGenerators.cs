@@ -73,8 +73,8 @@ namespace rglikeworknamelib.Generation {
             return scheme;
         }
 
-        public static List<StorageBlock> PlaceScheme(GameLevel gl, Schemes scheme, int x, int y, Random rand) {
-            var l = new List<StorageBlock>();
+        public static List<Block> PlaceScheme(GameLevel gl, Schemes scheme, int x, int y, Random rand) {
+            var l = new List<Block>();
             SectorBiom sb = SectorBiom.House;
                         switch (scheme.type) {
                             case SchemesType.Shop:
@@ -100,20 +100,19 @@ namespace rglikeworknamelib.Generation {
                         block.Inner = true;
                         }
                         if (BlockDataBase.Data[blockId].SmartAction == SmartAction.ActionOpenContainer) {
-                            List<DropGroup> a;
-                            if (ItemDataBase.SpawnLists.TryGetValue(blockId, out a))
+                            if (block.Data.ItemSpawn != null)
                             {
-                                foreach (var drop in a)
+                                foreach (var drop in block.Data.ItemSpawn)
                                 {
                                     var thr = rand.Next(100) + 1;
                                     if (drop.Prob >= thr)
                                     {
                                         for (int k = 0; k < drop.Repeat; k++) {
-                                            var item = ItemFactory.GetInstance(drop.Ids[rand.Next(drop.Ids.Length)],
-                                                                            rand.Next(drop.MaxCount - drop.MinCount) +
-                                                                            drop.MinCount);
+                                            var item = ItemFactory.GetInstance(drop.Ids[rand.Next(drop.Ids.Count)],
+                                                                            rand.Next(drop.Max - drop.Min) +
+                                                                            drop.Min);
                                             if (item != null) {
-                                                ((StorageBlock) block).StoredItems.Add(item);
+                                                ((Block) block).StoredItems.Add(item);
                                             }
                                         }
                                     }

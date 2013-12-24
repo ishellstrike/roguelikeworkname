@@ -10,7 +10,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         public int Damage;
         internal TimeSpan Life;
         internal int Mtex;
-        public ICreature Owner;
+        public Creature Owner;
 
         internal Vector2 Pos;
         internal Vector2 Start;

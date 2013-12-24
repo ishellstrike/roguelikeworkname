@@ -5,7 +5,7 @@ namespace rglikeworknamelib.Creatures {
         /// <summary>
         ///     Добавляет действие перка, если true, и вычитает, если false, на цель ICreature
         /// </summary>
-        public Action<bool, ICreature> AddRemove;
+        public Action<bool, Creature> AddRemove;
 
         public int Cost;
         public bool Initial;

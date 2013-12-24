@@ -11,7 +11,7 @@ using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Creatures {
     [Serializable]
-    public class Creature : ICreature {
+    public class Creature {
         internal Color Col;
 
         internal float Percenter = (float) Settings.rnd.NextDouble()/5f + 0.8f;
@@ -109,7 +109,7 @@ namespace rglikeworknamelib.Creatures {
             if (!Skipp || !ms_.Ready) {
                 sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
-                IBlock block = ms_.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
+                Block block = ms_.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
                 if (block != null && block.Lightness == Color.White &&
                     reactionT_.TotalMilliseconds > Data.ReactionTime) {
                     remPos_ = hero.Position - WorldPosition() + Position;
@@ -263,7 +263,7 @@ namespace rglikeworknamelib.Creatures {
                 Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
 
                 Dictionary<string, BlockData> blockDatas = BlockDataBase.Data;
-                IBlock key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
+                Block key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
                 if (key != null && key.Id != null && key.Data.IsWalkable) {
                     position_.X += mover.X;
                 }

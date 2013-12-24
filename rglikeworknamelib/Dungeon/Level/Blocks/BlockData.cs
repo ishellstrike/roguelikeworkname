@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class BlockData {
@@ -16,6 +17,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public string MTex;
         public string Name;
         public SmartAction SmartAction;
+
+        public List<DropGroup> ItemSpawn;
 
         public int StorageSlots;
         public int swide = 32;

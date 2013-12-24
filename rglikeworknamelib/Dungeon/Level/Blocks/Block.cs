@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Level.Blocks {
     [Serializable]
-    public class Block : IBlock {
+    public class Block {
         private string id_;
+
+        public List<IItem> StoredItems = new List<IItem>();
 
         public virtual bool IsActive
         {

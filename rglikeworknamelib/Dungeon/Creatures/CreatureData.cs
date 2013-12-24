@@ -5,7 +5,6 @@ namespace rglikeworknamelib.Creatures {
         public int Damage = 5;
         public string MTex;
         public string Name = "";
-        public Type Prototype;
 
         /// <summary>
         ///     in milliseconds

@@ -23,8 +23,6 @@ namespace rglikeworknamelib.Dungeon.Items {
         public static Dictionary<string, ItemData> DataFoodItems;
         public static Dictionary<string, ItemAction> ItemScripts;
 
-        public static Dictionary<string, List<DropGroup>> SpawnLists; 
-
         private static Logger logger_ = LogManager.GetCurrentClassLogger();
 
         /// <summary>
@@ -37,20 +35,8 @@ namespace rglikeworknamelib.Dungeon.Items {
             DataMedicineItems = new Dictionary<string, ItemData>();
 
             Data = UniversalParser.JsonDataLoader<ItemData>(Settings.GetItemDataDirectory());
-            
 
-            SpawnLists = new Dictionary<string, List<DropGroup>>();
-
-            var b = ParsersCore.ParseDirectory(Settings.GetSpawnlistsDataDirectory(), SpawnlistParser.Parser);
-
-            foreach (var pair in b) {
-                if(SpawnLists.ContainsKey(pair.Key)) {
-                    SpawnLists[pair.Key].Add(pair.Value);
-                }
-                else {
-                    SpawnLists.Add(pair.Key, new List<DropGroup>{ pair.Value });
-                }
-            }
+            //var b = ParsersCore.ParseDirectory(Settings.GetSpawnlistsDataDirectory(), SpawnlistParser.Parser);
 
             ItemScripts = new Dictionary<string, ItemAction>();
             ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));

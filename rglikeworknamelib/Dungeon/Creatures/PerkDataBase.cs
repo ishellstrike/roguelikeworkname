@@ -25,30 +25,30 @@ namespace rglikeworknamelib.Creatures {
             Perks.Add("darkph", new PerkData("Боязнь темноты") {Initial = true});
         }
 
-        private static void AddRemoveAtlat(bool arg1, ICreature arg2) {
+        private static void AddRemoveAtlat(bool arg1, Creature arg2) {
             int ar = arg1 ? 1 : -1;
             arg2.Abilities.list["atlet"].XpLevel += ar*2;
             arg2.Abilities.list["martial"].XpLevel += ar*2;
         }
 
-        private static void AddRemoveColldb(bool arg1, ICreature arg2) {
+        private static void AddRemoveColldb(bool arg1, Creature arg2) {
             int ar = arg1 ? 1 : -1;
             arg2.Abilities.list["survive"].XpLevel -= ar*2;
         }
 
-        private static void AddRemoveClever(bool x, ICreature owner) {
+        private static void AddRemoveClever(bool x, Creature owner) {
             int ar = x ? 1 : -1;
             owner.Abilities.list["phys"].XpLevel += ar;
             owner.Abilities.list["bio"].XpLevel += ar;
             owner.Abilities.list["chem"].XpLevel += ar;
         }
 
-        private static void AddRemoveEvil(bool x, ICreature owner) {
+        private static void AddRemoveEvil(bool x, Creature owner) {
             int ar = x ? 1 : -1;
             owner.Abilities.list["survive"].XpLevel += ar*2;
         }
 
-        private static void AddRemoveBandit(bool x, ICreature owner) {
+        private static void AddRemoveBandit(bool x, Creature owner) {
             int ar = x ? 1 : -1;
             owner.Abilities.list["pickpocket"].XpLevel += ar*2;
             owner.Abilities.list["lockpick"].XpLevel += ar*2;
@@ -57,7 +57,7 @@ namespace rglikeworknamelib.Creatures {
             owner.Abilities.list["chem"].XpLevel -= ar*2;
         }
 
-        private static void AddRemoveHuge(bool x, ICreature owner) {
+        private static void AddRemoveHuge(bool x, Creature owner) {
             int ar = x ? 1 : -1;
             owner.Hp = new Stat(owner.Hp.Current, owner.Hp.Max + 50*ar);
         }

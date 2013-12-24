@@ -215,9 +215,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var itemIdVocab = new List<string>();
                 foreach (var block in ms.Blocks)
                 {
-                    if (block is StorageBlock)
+                    if (block is Block)
                     {
-                        foreach (var item in (block as StorageBlock).StoredItems)
+                        foreach (var item in (block as Block).StoredItems)
                         {
                             if (!itemIdVocab.Contains(item.Id))
                             {
@@ -266,9 +266,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     int i = 0;
                     foreach (var block in ms.Blocks)
                     {
-                        if (block is StorageBlock)
-                        {
-                            foreach (var item in (block as StorageBlock).StoredItems)
+                            foreach (var item in block.StoredItems)
                             {
                                 stringBuilder.Append(itemIdVocab.IndexOf(item.Id));
                                 stringBuilder.Append(",");
@@ -279,7 +277,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                                 stringBuilder.Append(item.Doses);
                                 stringBuilder.Append(" ");
                             }
-                        }
                         i++;
                     }
                     stringBuilder.AppendLine();
@@ -608,7 +605,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         var idoses = int.Parse(itemparts[3]);
                         var item = ItemFactory.GetInstance(id, icount);
                         item.Doses = idoses;
-                        ((StorageBlock) (sector.Blocks[onedim])).StoredItems.Add(item);
+                        sector.Blocks[onedim].StoredItems.Add(item);
                     }
                 }
                 temp.Add(position, sector);

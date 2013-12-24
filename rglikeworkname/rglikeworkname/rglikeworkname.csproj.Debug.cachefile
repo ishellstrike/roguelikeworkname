@@ -206,10 +206,10 @@ Content\Data\Schemes\apteka.txt
 Content\Data\achievements.txt
 Content\Data\statist.txt
 Content\Data\Items\item_core.json
+Content\Data\Units\core_units.json
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord
 Content\Textures\Units\textureloadorder.ord
-Content\Data\Units\test_u1.txt
 Content\Data\Effects\basic1.txt
 NLog.config

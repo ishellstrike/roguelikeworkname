@@ -29,20 +29,20 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace jarg {
     public partial class JargMain : Game {
-        private static readonly Logger logger = LogManager.GetLogger("JargMain");
+        private static readonly Logger Logger = LogManager.GetLogger("JargMain");
         public static bool ErrorExit;
         private readonly GraphicsDeviceManager graphics_;
-        private readonly Color lwstatus_color = new Color(1, 1, 1, 0.2f);
-        private readonly Stopwatch sw_draw = new Stopwatch();
-        private readonly Stopwatch sw_update = new Stopwatch();
-        private Effect EffectOmnilight;
-        private bool Flashlight = true;
+        private readonly Color lwstatusColor_ = new Color(1, 1, 1, 0.2f);
+        private readonly Stopwatch swDraw_ = new Stopwatch();
+        private readonly Stopwatch swUpdate_ = new Stopwatch();
+        private Effect effectOmnilight_;
+        private bool flashlight_ = true;
         public float PlayerSeeAngle;
-        private Action<GameTime> UpdateAction = x => { };
-        private WindowsMediaPlayer WMPs;
-        private Texture2D ardown;
-        private Texture2D arup;
-        private Texture2D bag;
+        private Action<GameTime> updateAction_ = x => { };
+        private WindowsMediaPlayer wmPs_;
+        private Texture2D ardown_;
+        private Texture2D arup_;
+        private Texture2D bag_;
         private BulletSystem bs_;
         private Vector2 camera_;
         private Texture2D caracter;
@@ -52,7 +52,6 @@ namespace jarg {
         private SpriteFont font1_;
         private Texture2D gear;
         private InventorySystem inventory_;
-        public int jji = -2, jjj = -2;
         private KeyboardState ks_;
         private Label labelMainVer_;
         private LevelWorker levelWorker_;
@@ -137,11 +136,10 @@ namespace jarg {
             graphics_.IsFullScreen = false;
             graphics_.PreferredBackBufferHeight = (int) Settings.Resolution.Y;
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
-            graphics_.SynchronizeWithVerticalRetrace = false;
             InactiveSleepTime = TimeSpan.FromMilliseconds(200);
 
-            IsFixedTimeStep = false;
-            graphics_.SynchronizeWithVerticalRetrace = true;
+            IsFixedTimeStep = true;
+            graphics_.SynchronizeWithVerticalRetrace = false;
             IsMouseVisible = true;
             graphics_.ApplyChanges();
             UpdateTitle();
@@ -155,11 +153,11 @@ namespace jarg {
         }
 
         private void RunRadioGhostBox() {
-            WMPs = new WindowsMediaPlayer();
-            WMPs.settings.volume = 20;
-            WMPs.URL = "http://208.43.42.26:8086";
-            WMPs.controls.play();
-            WMPs.MediaChange += WMPs_MediaChange;
+            wmPs_ = new WindowsMediaPlayer();
+            wmPs_.settings.volume = 20;
+            wmPs_.URL = "http://208.43.42.26:8086";
+            wmPs_.controls.play();
+            wmPs_.MediaChange += WMPs_MediaChange;
         }
 
         private void WMPs_MediaChange(object item) {
@@ -203,8 +201,8 @@ namespace jarg {
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
-            EffectOmnilight.Parameters["screenWidth"].SetValue(width);
-            EffectOmnilight.Parameters["screenHeight"].SetValue(height);
+            effectOmnilight_.Parameters["screenWidth"].SetValue(width);
+            effectOmnilight_.Parameters["screenHeight"].SetValue(height);
             lineBatch_.UpdateProjection(GraphicsDevice);
             Atlases.RebuildAtlases(GraphicsDevice);
         }
@@ -232,12 +230,12 @@ namespace jarg {
             Settings.Font = font1_;
 
             lig1 = Content.Load<Effect>(@"Effects/Lighting1");
-            EffectOmnilight = Content.Load<Effect>(@"Effects/Effect1");
+            effectOmnilight_ = Content.Load<Effect>(@"Effects/Effect1");
 
-            arup = Content.Load<Texture2D>(@"Textures/arrow_up");
-            ardown = Content.Load<Texture2D>(@"Textures/arrow_down");
+            arup_ = Content.Load<Texture2D>(@"Textures/arrow_up");
+            ardown_ = Content.Load<Texture2D>(@"Textures/arrow_down");
             gear = Content.Load<Texture2D>(@"Textures/gear");
-            bag = Content.Load<Texture2D>(@"Textures/bag");
+            bag_ = Content.Load<Texture2D>(@"Textures/bag");
             caracter = Content.Load<Texture2D>(@"Textures/caracter");
             map = Content.Load<Texture2D>(@"Textures/map");
             fltex = Content.Load<Texture2D>(@"Textures/Effects/fl1");
@@ -280,7 +278,7 @@ namespace jarg {
         //invoke after DataBasesLoadAndThenInitialGeneration
         private void InitialGeneration() {
             RunRadioGhostBox();
-            WMPs.controls.stop();
+            wmPs_.controls.stop();
             WindowRadio.Visible = false;
 
             var sw = new Stopwatch();
@@ -335,7 +333,7 @@ namespace jarg {
 
             HideInfoWindow();
             sw.Stop();
-            logger.Info("Initial generation in {0}", sw.Elapsed);
+            Logger.Info("Initial generation in {0}", sw.Elapsed);
         }
 
         private void player__onShoot(object sender, EventArgs e) {
@@ -348,27 +346,9 @@ namespace jarg {
         private void DataBasesLoadAndThenInitialGeneration() {
             var sw = new Stopwatch();
             sw.Start();
-            ShowInfoWindow("Bases loading :", "1");
-            new CreatureDataBase();
-            ShowInfoWindow("Bases loading :", "2");
-            new BlockDataBase();
-            ShowInfoWindow("Bases loading :", "3");
-            new FloorDataBase();
-            ShowInfoWindow("Bases loading :", "4");
-            new ItemDataBase();
-            ShowInfoWindow("Bases loading :", "5");
-            new SchemesDataBase();
-            ShowInfoWindow("Bases loading :", "6");
-            new BuffDataBase();
-            ShowInfoWindow("Bases loading :", "7");
-            new DialogDataBase();
-            ShowInfoWindow("Bases loading :", "8");
-            new NameDataBase();
-            ShowInfoWindow("Bases loading :", "9");
-            new CraftDataBase();
-            HideInfoWindow();
+            Inits.InitBasesSequence();
             sw.Stop();
-            logger.Info(
+            Logger.Info(
                 "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\n     {10} Morale modifers\nloaded in {0}",
                 sw.Elapsed,
                 CreatureDataBase.Data.Count,
@@ -384,7 +364,7 @@ namespace jarg {
             sw.Start();
             BasesCheker.CheckAndResolve();
             sw.Stop();
-            logger.Info(string.Format("Check end in {0}", sw.Elapsed));
+            Logger.Info(string.Format("Check end in {0}", sw.Elapsed));
 
             SchemeEditorInit();
 
@@ -393,7 +373,7 @@ namespace jarg {
         }
 
         protected override void UnloadContent() {
-            WMPs.close();
+            wmPs_.close();
             levelWorker_.Stop();
         }
 
@@ -403,7 +383,7 @@ namespace jarg {
             //first
 
             if (di) {
-                sw_update.Restart();
+                swUpdate_.Restart();
             }
 
             if (ErrorExit || Settings.NeedExit) {
@@ -431,12 +411,12 @@ namespace jarg {
             }
 
             if (!Settings.GamePause) {
-                UpdateAction(gameTime);
+                updateAction_(gameTime);
             }
 
             if (di) {
                 FrameRateCounter.Update(gameTime);
-                sw_update.Stop();
+                swUpdate_.Stop();
             }
 
             // last
@@ -502,7 +482,7 @@ namespace jarg {
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
             if (Settings.DebugInfo) {
-                sw_draw.Restart();
+                swDraw_.Restart();
             }
 
             GraphicsDevice.Clear(Color.Black);
@@ -515,10 +495,10 @@ namespace jarg {
             lineBatch_.Clear();
 
             if (Settings.DebugInfo) {
-                sw_draw.Stop();
+                swDraw_.Stop();
                 DebugInfoDraw();
                 FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int) Settings.Resolution.X,
-                                      (int) Settings.Resolution.Y, sw_draw, sw_update);
+                                      (int) Settings.Resolution.Y, swDraw_, swUpdate_);
             }
         }
 
@@ -617,13 +597,13 @@ namespace jarg {
 
             spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
             if (levelWorker_.Generating()) {
-                spriteBatch_.Draw(gear, new Vector2(10, 10), lwstatus_color);
+                spriteBatch_.Draw(gear, new Vector2(10, 10), lwstatusColor_);
             }
             if (levelWorker_.Loading()) {
-                spriteBatch_.Draw(arup, new Vector2(42, 10), lwstatus_color);
+                spriteBatch_.Draw(arup_, new Vector2(42, 10), lwstatusColor_);
             }
             if (levelWorker_.Storing()) {
-                spriteBatch_.Draw(ardown, new Vector2(74, 10), lwstatus_color);
+                spriteBatch_.Draw(ardown_, new Vector2(74, 10), lwstatusColor_);
             }
             if (Settings.DebugInfo) {
                 spriteBatch_.DrawString(font1_, levelWorker_.GenerationCount().ToString(), new Vector2(10, 10),
