@@ -132,7 +132,6 @@
     <Compile Include="Generation\Names\NameData.cs" />
     <Compile Include="Generation\Names\NameDataBase.cs" />
     <Compile Include="Generation\Names\NameType.cs" />
-    <Compile Include="Inits.cs" />
     <Compile Include="LineBatch.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Dungeon\Creatures\AIStyle.cs" />

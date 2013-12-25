@@ -138,8 +138,8 @@ namespace jarg {
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             InactiveSleepTime = TimeSpan.FromMilliseconds(200);
 
-            IsFixedTimeStep = true;
-            graphics_.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = false;
+            graphics_.SynchronizeWithVerticalRetrace = true;
             IsMouseVisible = true;
             graphics_.ApplyChanges();
             UpdateTitle();
@@ -346,7 +346,15 @@ namespace jarg {
         private void DataBasesLoadAndThenInitialGeneration() {
             var sw = new Stopwatch();
             sw.Start();
-            Inits.InitBasesSequence();
+            new CreatureDataBase();
+            new ItemDataBase();
+            new FloorDataBase();
+            new BlockDataBase();
+            new SchemesDataBase();
+            new BuffDataBase();
+            new DialogDataBase();
+            new NameDataBase();
+            new CraftDataBase();
             sw.Stop();
             Logger.Info(
                 "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\n     {10} Morale modifers\nloaded in {0}",

@@ -558,12 +558,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Items\Spawnlists\house.txt">
-      <Name>house</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Textures\Dungeon\Objects\tree2.png">
       <Name>tree2</Name>
       <Importer>TextureImporter</Importer>
@@ -1259,9 +1253,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Units\core_units.json">
+    <None Include="Data\Units\unit_core.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>core_units</Name>
+      <Name>unit_core</Name>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

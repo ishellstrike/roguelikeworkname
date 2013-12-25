@@ -45,24 +45,24 @@ namespace DropListEditor
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            StringBuilder sb = new StringBuilder();
-            if(ItemDataBase.SpawnLists.ContainsKey(BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key)) {
-                foreach (var list in ItemDataBase.SpawnLists[BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key]) {
-                    sb.Append("x");
-                    sb.Append(list.Repeat);
-                    sb.Append(" :: ");
-                    sb.Append(string.Join(", ", list.Ids));
-                    sb.Append("\n       ");
-                    sb.Append(list.MinCount);
-                    sb.Append("-");
-                    sb.Append(list.MaxCount);
-                    sb.Append(" : ");
-                    sb.Append(list.Prob);
-                    sb.Append("%");
-                    sb.AppendLine();
-                }
-            }
-            label1.Text = sb.ToString();
+            //StringBuilder sb = new StringBuilder();
+            //if(ItemDataBase.SpawnLists.ContainsKey(BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key)) {
+            //    foreach (var list in ItemDataBase.SpawnLists[BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key]) {
+            //        sb.Append("x");
+            //        sb.Append(list.Repeat);
+            //        sb.Append(" :: ");
+            //        sb.Append(string.Join(", ", list.Ids));
+            //        sb.Append("\n       ");
+            //        sb.Append(list.Min);
+            //        sb.Append("-");
+            //        sb.Append(list.Max;
+            //        sb.Append(" : ");
+            //        sb.Append(list.Prob);
+            //        sb.Append("%");
+            //        sb.AppendLine();
+            //    }
+            //}
+            //label1.Text = sb.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -136,12 +136,12 @@ namespace DropListEditor
             serializer.Converters.Add(new StringEnumConverter());
             serializer.Formatting = Formatting.Indented;
             using (var stream = new StreamWriter("2.json")) {
-                Dictionary<string, ItemData> temp = new Dictionary<string, ItemData>();
+                var temp = new List<KeyValuePair<string, ItemData>>();
                 var t2 = new ItemData {
                     SortType = ItemType.Craft
                 };
-                temp.Add("sasas", t2);
-                temp.Add("sasas2", t2);
+                temp.Add(new KeyValuePair<string, ItemData>("sasas", t2));
+                temp.Add(new KeyValuePair<string, ItemData>("sasas2", t2));
                 serializer.Serialize(stream, temp);
             }
         }

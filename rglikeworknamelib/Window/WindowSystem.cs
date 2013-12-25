@@ -66,7 +66,7 @@ namespace rglikeworknamelib.Window {
 
         internal void ToTop(Window win) {
             Windows.Remove(win);
-            Windows.Insert(Windows.Count, win);
+            Windows.Add(win);
         }
 
         public void AddWindow(Window window) {

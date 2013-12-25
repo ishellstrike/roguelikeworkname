@@ -192,7 +192,6 @@ Content\Textures\Dungeon\Objects\textureloadorder.ord
 Content\Textures\Dungeon\Vehicle\textureloadorder.ord
 Content\Data\Schemes\houseSmall1.txt
 Content\Data\Schemes\houseTiny1.txt
-Content\Data\Items\Spawnlists\house.txt
 Content\Data\Schemes\bunker1.txt
 Content\Data\Dialogs\testdialog1.txt
 Content\Data\Names\towannames.txt
@@ -206,7 +205,7 @@ Content\Data\Schemes\apteka.txt
 Content\Data\achievements.txt
 Content\Data\statist.txt
 Content\Data\Items\item_core.json
-Content\Data\Units\core_units.json
+Content\Data\Units\unit_core.json
 Content\Textures\Dungeon\Minimap\textureloadorder.ord
 Content\Textures\Particles\textureloadorder.ord
 Content\Textures\Units\Dress\textureloadorder.ord

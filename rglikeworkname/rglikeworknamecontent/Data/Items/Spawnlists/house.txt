@@ -1,9 +1,0 @@
-~stelaj_food,spawn_shopfood cigarets,5,30,50,1
-~stelaj_food,spawn_shopfood cigarets,5,30,25,1
-~stelaj_hospital,pantocid bint1 bint2 cofein,10,20,20,1
-~stelaj_hospital,pantocid bint1 bint2 cofein,5,10,20,1
-~stelaj_hospital,pantocid bint1 bint2 cofein,20,30,10,1
-~stelaj_wear,spawn_commonwear,1,2,80,1
-~scrapbox,opilki izolenta skotch stick batery,1,2,15,1
-~scrapbox,nail smallvint,5,10,10,1
-~scrapbox,emptycan 12 13 paper nocigarets,1,4,80,4
