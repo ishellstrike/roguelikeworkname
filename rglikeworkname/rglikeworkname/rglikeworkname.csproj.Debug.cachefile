@@ -181,9 +181,12 @@ Content\Textures\Dungeon\Objects\wearpolka1.xnb
 Content\Textures\Dungeon\Objects\wearpolka2.xnb
 Content\Textures\Dungeon\Objects\wearpolka3.xnb
 Content\Textures\Dungeon\Objects\wearpolka4.xnb
+Content\Textures\Dungeon\Objects\shkaf2.xnb
+Content\Textures\Dungeon\Objects\shkaf3.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README
+Content\Data\Items\item_mod1.json
 Content\Data\Object\block_core.json
 Content\Data\Schemes\store1.txt
 Content\Textures\Dungeon\Floor\textureloadorder.ord

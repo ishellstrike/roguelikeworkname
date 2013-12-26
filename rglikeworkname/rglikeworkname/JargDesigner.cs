@@ -596,7 +596,7 @@ namespace jarg {
             ButtonNewGame.OnPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
             DeleteLastWorldButton = new Button(new Vector2(ButtonNewGame.GetPosition().X + ButtonNewGame.Width + 20, ButtonNewGame.GetPosition().Y), "Delete Last World", WindowMainMenu);
-            DeleteLastWorldButton.OnPressed += new EventHandler(DeleteLastWorldButton_OnPressed);
+            DeleteLastWorldButton.OnPressed += DeleteLastWorldButton_OnPressed;
 
             ModLoaderButton = new Button(new Vector2(10, 100 + 40*4), "ModLoader", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ModLoaderButton);
@@ -1310,8 +1310,12 @@ namespace jarg {
             WindowCaracterCration.Visible = true;
         }
 
+        private bool started;
         private void ButtonOpenGit_onPressed(object sender, EventArgs e) {
-            Process.Start("https://github.com/ishellstrike/roguelikeworkname/issues");
+            if (!started) {
+                Process.Start("https://github.com/ishellstrike/roguelikeworkname/issues");
+                started = true;
+            }
         }
 
         private void ButtonIngameMenuSettings_onPressed(object sender, EventArgs e) {

@@ -26,6 +26,21 @@
     "MTex":"briwall1",
     "Wallmaker":true,
   },
+  "shkaf":{
+    "Name":"Шкаф",
+    "MTex":"shkaf",
+    "Flame":true,
+  },
+  "shkaf2":{
+    "Name":"Шкаф",
+    "MTex":"shkaf2",
+    "Flame":true,
+  },
+  "shkaf3":{
+    "Name":"Шкаф",
+    "MTex":"shkaf3",
+    "Flame":true,
+  },
   "stelaj_food":{
     "Name":"Продовольственный стелаж",
     "MTex":"foodpolka",

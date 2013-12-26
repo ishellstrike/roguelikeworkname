@@ -193,8 +193,11 @@ namespace rglikeworknamelib.Parser {
                     var t = serializer.Deserialize<Dictionary<string, T>>(new JsonTextReader(sr));
                     foreach (var itemData in t)
                     {
-
-                        data.Add(itemData.Key, itemData.Value);
+                        try {
+                            data.Add(itemData.Key, itemData.Value);
+                        } catch (ArgumentException ex) {
+                            logger.Error("Key Duplicate in {2} with id={0} from {1}", itemData.Key, patch, typeof(T).Name);
+                        }
                     }
                 }
             }
