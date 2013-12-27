@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using rglikeworknamelib.Dungeon.Item;
 
 namespace rglikeworknamelib.Dungeon.Items {
     public class ItemData {

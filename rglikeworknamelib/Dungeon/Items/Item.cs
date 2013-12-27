@@ -6,8 +6,7 @@ using rglikeworknamelib.Dungeon.Effects;
 
 namespace rglikeworknamelib.Dungeon.Items {
     [Serializable]
-    [DataContract]
-    public class Item : IItem {
+    public class Item {
         public List<IBuff> Buffs { get; set; }
         public int Count { get; set; }
         public int Doses { get; set; }
@@ -18,19 +17,19 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public int Uid;
-        [NonSerialized] internal ItemData data_;
+        [NonSerialized]internal ItemData data_;
         private string id_;
 
         public ItemData Data { get { return data_; }
         }
 
         public virtual void OnLoad() {
-            data_ = ItemDataBase.Data[Id];
+            data_ = ItemDataBase.Instance.Data[Id];
             Doses = Data.Doses;
             Buffs = new List<IBuff>();
-            if (ItemDataBase.Data[Id].Buff != null)
+            if (ItemDataBase.Instance.Data[Id].Buff != null)
             {
-                foreach (string buff in ItemDataBase.Data[Id].Buff)
+                foreach (string buff in ItemDataBase.Instance.Data[Id].Buff)
                 {
                     var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[buff].Prototype);
                     a.Id = buff;
@@ -41,8 +40,8 @@ namespace rglikeworknamelib.Dungeon.Items {
 
         public override string ToString() {
             return Doses != 0
-                       ? string.Format("{0} ({1})", ItemDataBase.Data[Id].Name, Doses)
-                       : string.Format("{0} x{1}", ItemDataBase.Data[Id].Name, Count);
+                       ? string.Format("{0} ({1})", ItemDataBase.Instance.Data[Id].Name, Doses)
+                       : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count);
         }
     }
 }

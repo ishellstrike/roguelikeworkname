@@ -1,4 +1,4 @@
-namespace rglikeworknamelib.Dungeon.Item {
+namespace rglikeworknamelib.Dungeon.Items {
     public enum ItemType {
         Nothing,
 

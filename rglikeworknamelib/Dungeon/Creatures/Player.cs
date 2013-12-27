@@ -10,7 +10,6 @@ using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
@@ -25,9 +24,9 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         public Stat Heat = new Stat(100);
         public Stat Hunger = new Stat(100);
-        public IItem ItemAmmo;
-        public IItem ItemGun;
-        public IItem ItemMeele;
+        public Item ItemAmmo;
+        public Item ItemGun;
+        public Item ItemMeele;
         public Stat Morale = new Stat(50);
         public Collection<Bodypart> Bodyparts = new Collection<Bodypart>(); 
 
@@ -35,7 +34,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public Stat Sleep = new Stat(100);
         public Texture2D Tex;
         public Stat Thirst = new Stat(100);
-        public Collection<IItem> Weared;
+        public Collection<Item> Weared;
         public InventorySystem Inventory;
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Tex = tex;
             Position = new Vector2(1, 1);
             Perks = new PerksSystem(this);
-            Weared = new Collection<IItem>();
+            Weared = new Collection<Item>();
         }
 
         public Vector2 CurrentActiveRoom { get; set; }
@@ -65,7 +64,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         }
 
 
-        public void EquipItem(IItem item, InventorySystem ins) {
+        public void EquipItem(Item item, InventorySystem ins) {
             Settings.InventoryUpdate = true;
             switch (item.Data.SortType) {
                 case ItemType.Wear:
@@ -86,7 +85,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        private void EquipWear(IItem i, InventorySystem ins) {
+        private void EquipWear(Item i, InventorySystem ins) {
             if (i != null) {
                 //if (Weared.Contains(i))
                 //{
@@ -111,7 +110,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        private void EquipSloted(IItem i, InventorySystem ins, ref IItem ite) {
+        private void EquipSloted(Item i, InventorySystem ins, ref Item ite) {
             if (i != null) {
                 if (ite != null) {
                     ins.AddItem(ite);
@@ -328,7 +327,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Position = (Vector2) binaryFormatter.Deserialize(gZipStream);
                 Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
                 Perks.Owner = this;
-                Weared = (Collection<IItem>) binaryFormatter.Deserialize(gZipStream);
+                Weared = (Collection<Item>) binaryFormatter.Deserialize(gZipStream);
                 foreach (Items.Item item in Weared) {
                     foreach (IBuff buff in item.Buffs) {
                         buff.Target = this;

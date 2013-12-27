@@ -100,7 +100,6 @@
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
     <Compile Include="Dungeon\Items\Craft.cs" />
     <Compile Include="Dungeon\Items\DropGroup.cs" />
-    <Compile Include="Dungeon\Items\IItem.cs" />
     <Compile Include="Dungeon\Items\InventorySystem.cs" />
     <Compile Include="Dungeon\Items\Item.cs" />
     <Compile Include="Dungeon\Items\ItemAction.cs" />

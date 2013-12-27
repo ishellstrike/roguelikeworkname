@@ -5,9 +5,9 @@ namespace rglikeworknamelib.Dungeon.Items {
     [Serializable]
     public class ItemAction {
         public string Name;
-        public Action<Player, IItem> Action;
+        public Action<Player, Item> Action;
 
-        public ItemAction(Action<Player, IItem> openCan, string s) {
+        public ItemAction(Action<Player, Item> openCan, string s) {
             Name = s;
             Action = openCan;
         }

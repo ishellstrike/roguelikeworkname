@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using rglikeworknamelib;
-using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
@@ -30,9 +29,8 @@ namespace DropListEditor
             listBox1.Items.Clear();
             listBox1.Items.Clear();
 
-            new ItemDataBase();
 
-            foreach (var itemData in ItemDataBase.Data) {
+            foreach (var itemData in ItemDataBase.Instance.Data) {
                 listBox1.Items.Add(string.Format("id {0} -- {1}", itemData.Key, itemData.Value.Name));
             }
 

@@ -13,7 +13,6 @@ using NLog;
 using jarg;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Creatures;
-using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
@@ -1413,9 +1412,9 @@ namespace rglikeworknamelib.Dungeon.Level
             return null;
         }
 
-        public List<Tuple<Vector2, IItem>> GetVisibleStorages()
+        public List<Tuple<Vector2, Item>> GetVisibleStorages()
         {
-            var temp = new List<Tuple<Vector2, IItem>>();
+            var temp = new List<Tuple<Vector2, Item>>();
 
             foreach (var mapSector in sectors_)
             {
@@ -1427,7 +1426,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     {
                         foreach (var storedItem in block.StoredItems)
                         {
-                            temp.Add(new Tuple<Vector2, IItem>(new Vector2(i / MapSector.Rx + mapSector.Value.SectorOffsetX * MapSector.Rx + 0.5f, i % MapSector.Ry + mapSector.Value.SectorOffsetY * MapSector.Ry + 0.5f), storedItem));
+                            temp.Add(new Tuple<Vector2, Item>(new Vector2(i / MapSector.Rx + mapSector.Value.SectorOffsetX * MapSector.Rx + 0.5f, i % MapSector.Ry + mapSector.Value.SectorOffsetY * MapSector.Ry + 0.5f), storedItem));
                         }
                     }
                 }

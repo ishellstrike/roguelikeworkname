@@ -8,7 +8,7 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
     public class Block {
         private string id_;
 
-        public List<IItem> StoredItems = new List<IItem>();
+        public List<Item> StoredItems = new List<Item>();
 
         public virtual bool IsActive
         {

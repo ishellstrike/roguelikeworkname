@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Forms;
-using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 
 namespace DataEditor {
@@ -36,9 +35,7 @@ namespace DataEditor {
                 dataGridView1.Columns.Add(dgc2);
             }
 
-            new ItemDataBase();
-
-            foreach (var a in ItemDataBase.Data) {
+            foreach (var a in ItemDataBase.Instance.Data) {
                 var bb = new DataGridViewRow();
                 bb.Cells.Add(new DataGridViewTextBoxCell {Value = a.Key});
                 foreach (FieldInfo fieldInfo in a.Value.GetType().GetFields()) {

@@ -26,13 +26,15 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Storages.Add(pair.Key, pair.Value);
             }
 
+            var idb = ItemDataBase.Instance;
+
             foreach (var source in Data.Where(pair => pair.Value.ItemSpawn != null)) {
                 foreach (var dropGroup in source.Value.ItemSpawn) {
                     for (int i = 0; i < dropGroup.Ids.Count; i++) {
                         var id = dropGroup.Ids[i];
                         if (id.StartsWith("spawn_")) {
                             dropGroup.Ids.Remove(id);
-                            dropGroup.Ids.AddRange(ItemDataBase.GetBySpawnGroup(id).Select(itemData => itemData.Key));
+                            dropGroup.Ids.AddRange(idb.GetBySpawnGroup(id).Select(itemData => itemData.Key));
                         }
                     }
                 }

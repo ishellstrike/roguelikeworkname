@@ -12,7 +12,6 @@ using rglikeworknamelib;
 using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
-using rglikeworknamelib.Dungeon.Item;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
@@ -155,10 +154,10 @@ namespace jarg {
 
         #endregion
 
-        private IItem ContainerSelected;
+        private Item ContainerSelected;
         private TimeSpan SecondTimespan;
-        private List<IItem> inContainer_ = new List<IItem>();
-        private List<IItem> inInv_ = new List<IItem>();
+        private List<Item> inContainer_ = new List<Item>();
+        private List<Item> inInv_ = new List<Item>();
         private ItemType nowSort_ = ItemType.Nothing;
         private Item selectedItem;
 
@@ -266,17 +265,19 @@ namespace jarg {
 
         void SpawnItemButton_OnPressed(object sender, EventArgs e)
         {
-            ShowSpawnSomeWindow(ItemDataBase.Data.Keys.ToList(), true);
+            ShowSpawnSomeWindow(ItemDataBase.Instance.Data.Keys.ToList(), true);
         }
 
         private void ShowSpawnSomeWindow(List<string> ids, bool isitem) {
             SpawnSomeWindow.Visible = true;
             SpawnSomeWindow.OnTop();
             SpawnSomeList.Clear();
+            ItemDataBase itemDataBase = ItemDataBase.Instance;
             if (isitem) {
                 int phase = 0;
                 foreach (var id in ids) {
-                    var a = new LabelFixed(Vector2.Zero, string.Format("{0} - {1}",id, ItemDataBase.Data[id].Name), phase == 0 ? Color.Gray : Color.CornflowerBlue, SpawnSomeList);
+                    
+                    var a = new LabelFixed(Vector2.Zero, string.Format("{0} - {1}",id, itemDataBase.Data[id].Name), phase == 0 ? Color.Gray : Color.CornflowerBlue, SpawnSomeList);
                     phase = 1 - phase;
                     a.Tag = id;
                     a.OnLeftPressed += a_OnLeftPressed;
@@ -781,8 +782,9 @@ namespace jarg {
             selectedCraft = null;
             CraftMoreInfo.Text = string.Empty;
 
+            ItemDataBase itemDataBase = ItemDataBase.Instance;
             foreach (var craftData in CraftDataBase.Data) {
-                var a = new LabelFixed(Vector2.Zero,  craftData.OutputCount[0] + " " + ItemDataBase.Data[craftData.Output[0]].Name,
+                var a = new LabelFixed(Vector2.Zero,  craftData.OutputCount[0] + " " + itemDataBase.Data[craftData.Output[0]].Name,
                                        CraftItems) { Tag = craftData };
                 a.OnLeftPressed += CraftItemsLabelOnLeftPressed;
             }
@@ -990,7 +992,7 @@ namespace jarg {
             }
             if (s.Contains("spawn i ")) {
                 string ss = s.Substring(8);
-                if (ItemDataBase.Data.ContainsKey(ss))
+                if (ItemDataBase.Instance.Data.ContainsKey(ss))
                 {
                     var a = ItemFactory.GetInstance(ss, 1);
                     inventory_.AddItem(a);
@@ -1042,7 +1044,8 @@ namespace jarg {
                 inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
                 inventory_.AddItem(new Item {Id = "meatcan1", Count = 1});
                 inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
-                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
+                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
+                inventory_.AddItem(new Item{Id = "meatcan1", Count = 1});
                UpdateInventoryContainer();
             }
             ConsoleTB.Text = string.Empty;
@@ -1123,7 +1126,7 @@ namespace jarg {
             selectedItem = null;
             InventoryMoreInfo.Text = "";
 
-            List<IItem> a = inventory_.FilterByType(nowSort_);
+            List<Item> a = inventory_.FilterByType(nowSort_);
             inInv_ = a;
 
             ContainerInventoryItems.Clear();
@@ -1216,7 +1219,7 @@ namespace jarg {
                                                   inventory_.TotalVolume, player_.MaxVolume);
         }
 
-        private void AddInventoryItemString(IItem item) {
+        private void AddInventoryItemString(Item item) {
             Color col = item.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
             var i = new LabelFixed(Vector2.Zero, item.ToString(), col, ContainerInventoryItems) {Tag = item};
             i.OnLeftPressed += PressInInventory;
@@ -1225,14 +1228,16 @@ namespace jarg {
 
         private void RightPressInInventory(object sender, LabelPressEventArgs labelPressEventArgs)
         {
-            IItem i = (IItem)((LabelFixed)sender).Tag;
+            Item i = (Item)((LabelFixed)sender).Tag;
             if (i.Data.ActionsId == null) {
                 return;
             }
             InventoryDropDownContainer.Clear();
+            var itemDataBase = ItemDataBase.Instance;
             foreach (var actionid in i.Data.ActionsId) {
-                var a = new LabelFixed(Vector2.Zero, ItemDataBase.ItemScripts[actionid].Name, InventoryDropDownContainer);
-                a.Tag = new Tuple<IItem, ItemAction>(i, ItemDataBase.ItemScripts[actionid]);
+                
+                var a = new LabelFixed(Vector2.Zero, itemDataBase.ItemScripts[actionid].Name, InventoryDropDownContainer);
+                a.Tag = new Tuple<Item, ItemAction>(i, itemDataBase.ItemScripts[actionid]);
                 a.OnLeftPressed += AOnOnLeftPressed;
             }
 
@@ -1242,12 +1247,12 @@ namespace jarg {
         }
 
         private void AOnOnLeftPressed(object sender, LabelPressEventArgs labelPressEventArgs) {
-            var action = (Tuple<IItem, ItemAction>)((LabelFixed) sender).Tag;
+            var action = (Tuple<Item, ItemAction>)((LabelFixed) sender).Tag;
             action.Item2.Action(player_, action.Item1);
             InventoryDropDownWindow.Visible = false;
         }
 
-        private void UpdateContainerContainer(List<IItem> a) {
+        private void UpdateContainerContainer(List<Item> a) {
             inContainer_ = a;
 
             ContainerContainer.Clear();
@@ -1268,7 +1273,7 @@ namespace jarg {
                 selectedItem = a;
 
                 if (!doubleclick_) {
-                    InventoryMoreInfo.Text = ItemDataBase.GetItemFullDescription(a);
+                    InventoryMoreInfo.Text = ItemDataBase.Instance.GetItemFullDescription(a);
                 }
                 else {
                     IntentoryEquip_onPressed(null, null);
@@ -1280,7 +1285,7 @@ namespace jarg {
             var a = (int) (sender as Label).Tag;
             if (inInv_.Count > a) {
                 ContainerSelected = inContainer_[a];
-                LabelContainer.Text = ItemDataBase.GetItemFullDescription(ContainerSelected);
+                LabelContainer.Text = ItemDataBase.Instance.GetItemFullDescription(ContainerSelected);
                 if (doubleclick_) {
                     if (inContainer_.Contains(ContainerSelected)) {
                         inventory_.AddItem(ContainerSelected);
@@ -1416,6 +1421,8 @@ namespace jarg {
         private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs) {
             LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
 
+            var itemDataBase = ItemDataBase.Instance;
+
             for (int i = 0; i < LabelsAbilities.Count; i++) {
                 LabelsAbilities[i].Text = string.Format("{0} {1} ({2}/{3})", player_.Abilities.ToShow[i].Name,
                                                         player_.Abilities.ToShow[i],
@@ -1423,14 +1430,14 @@ namespace jarg {
                                                         Ability.XpNeeds[player_.Abilities.ToShow[i].XpLevel]);
             }
 
-            LabelCaracterGun.Text2 = player_.ItemGun != null ? ItemDataBase.Data[player_.ItemGun.Id].Name : "";
+            
+            LabelCaracterGun.Text2 = player_.ItemGun != null ? itemDataBase.Data[player_.ItemGun.Id].Name : "";
             LabelCaracterAmmo.Text2 = player_.ItemAmmo != null
-                                          ? ItemDataBase.Data[player_.ItemAmmo.Id].Name + " x" +
-                                            player_.ItemAmmo.Count
-                                          : "";
+                                          ? string.Format("{0} x{1}", itemDataBase.Data[player_.ItemAmmo.Id].Name, player_.ItemAmmo.Count)
+                                          : string.Empty;
             LabelCaracterMeele.Text2 = player_.ItemMeele != null
-                                           ? ItemDataBase.Data[player_.ItemMeele.Id].Name
-                                           : "";
+                                           ? itemDataBase.Data[player_.ItemMeele.Id].Name
+                                           : string.Empty;
 
             EffectsContainer.Clear();
             for (int i = 0; i < player_.Buffs.Count; i++) {
@@ -1484,10 +1491,10 @@ namespace jarg {
 
         private Vector2? looklPos;
         void lookl_OnLeftPressed(object sender, LabelPressEventArgs e) {
-            var t = (Tuple<Vector2, IItem>)(((Label)sender).Tag);
+            var t = (Tuple<Vector2, Item>)(((Label)sender).Tag);
             looklPos = t.Item1;
             foreach (var gameComponent in LookContainer.GetItems()) {
-                ((Label)gameComponent).Color = ((Tuple<Vector2, IItem>)(((Label)gameComponent).Tag)).Item2.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
+                ((Label)gameComponent).Color = ((Tuple<Vector2, Item>)(((Label)gameComponent).Tag)).Item2.Data.ActionsId != null ? Color.LightGoldenrodYellow : Color.LightGray;
             }
             ((Label) sender).Color = Color.LimeGreen;
         }

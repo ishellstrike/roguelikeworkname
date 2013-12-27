@@ -11,20 +11,20 @@ namespace rglikeworknamelib.Parser
     public class BasesCheker
     {
         private static readonly Logger Logger = LogManager.GetLogger("BasesCheker");
-        public static void CheckAndResolve() {
+        public static void CheckAndResolve()
+        {
             var errorBDB = ErrorBdb();
 
             int errorIDB = 0;
-            foreach (var data in ItemDataBase.Data) {
-                if (data.Value.Dress != null && !Atlases.DressAtlas.ContainsKey(data.Value.Dress))
-                {
+            ItemDataBase idb = ItemDataBase.Instance;
+            foreach (var data in idb.Data) {
+                if (data.Value.Dress != null && !Atlases.DressAtlas.ContainsKey(data.Value.Dress)) {
                     Logger.Error(string.Format("texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
                     data.Value.Dress = "error";
                     errorIDB++;
                 }
-                if (data.Value.AfteruseId != null)
-                {
-                    if (!ItemDataBase.Data.ContainsKey(data.Value.AfteruseId)) {
+                if (data.Value.AfteruseId != null) {
+                    if (!idb.Data.ContainsKey(data.Value.AfteruseId)) {
                         Logger.Error(string.Format("object \"{0}\" for ItemDataBase.AfteruseId not found", data.Value.AfteruseId));
                         data.Value.AfteruseId = "0";
                         errorIDB++;
@@ -34,19 +34,15 @@ namespace rglikeworknamelib.Parser
 
             int errorFDB = 0;
             foreach (var data in FloorDataBase.Data) {
-                if (!Atlases.FloorIndexes.ContainsKey(data.Value.MTex))
-                {
+                if (!Atlases.FloorIndexes.ContainsKey(data.Value.MTex)) {
                     Logger.Error(string.Format("texture \"{0}\" for FloorDataBase.MTex not found", data.Value.MTex));
                     data.Value.MTex = "error";
                     errorFDB++;
                 }
-                if (data.Value.AlterMtex != null)
-                {
-                    for (int i = 0; i < data.Value.AlterMtex.Length; i++)
-                    {
+                if (data.Value.AlterMtex != null) {
+                    for (int i = 0; i < data.Value.AlterMtex.Length; i++) {
                         var s = data.Value.AlterMtex[i];
-                        if (!Atlases.FloorIndexes.ContainsKey(s))
-                        {
+                        if (!Atlases.FloorIndexes.ContainsKey(s)) {
                             Logger.Error(string.Format("texture \"{0}\" for FloorDataBase.AlterMtex not found", s));
                             data.Value.AlterMtex[i] = "error";
                             errorFDB++;
@@ -72,7 +68,7 @@ namespace rglikeworknamelib.Parser
                 if (craftData.Input1 != null) {
                     for (int index = 0; index < craftData.Input1.Count; index++) {
                         var s = craftData.Input1[index];
-                        if (!ItemDataBase.Data.ContainsKey(s)) {
+                        if (!idb.Data.ContainsKey(s)) {
                             var pos = craftData.Input1.IndexOf(s);
                             craftData.Input1.RemoveAt(pos);
                             craftData.Input1Count.RemoveAt(pos);
@@ -83,7 +79,7 @@ namespace rglikeworknamelib.Parser
                 if (craftData.Input2 != null) {
                     for (int index = 0; index < craftData.Input2.Count; index++) {
                         var s = craftData.Input2[index];
-                        if (!ItemDataBase.Data.ContainsKey(s)) {
+                        if (!idb.Data.ContainsKey(s)) {
                             var pos = craftData.Input2.IndexOf(s);
                             craftData.Input2.RemoveAt(pos);
                             craftData.Input2Count.RemoveAt(pos);
@@ -95,7 +91,7 @@ namespace rglikeworknamelib.Parser
                 if (craftData.Input3 != null) {
                     for (int index = 0; index < craftData.Input3.Count; index++) {
                         var s = craftData.Input3[index];
-                        if (!ItemDataBase.Data.ContainsKey(s)) {
+                        if (!idb.Data.ContainsKey(s)) {
                             var pos = craftData.Input3.IndexOf(s);
                             craftData.Input3.RemoveAt(pos);
                             craftData.Input3Count.RemoveAt(pos);
@@ -107,7 +103,7 @@ namespace rglikeworknamelib.Parser
                 if (craftData.Input4 != null) {
                     for (int index = 0; index < craftData.Input4.Count; index++) {
                         var s = craftData.Input4[index];
-                        if (!ItemDataBase.Data.ContainsKey(s)) {
+                        if (!idb.Data.ContainsKey(s)) {
                             var pos = craftData.Input4.IndexOf(s);
                             craftData.Input4.RemoveAt(pos);
                             craftData.Input4Count.RemoveAt(pos);
@@ -118,7 +114,7 @@ namespace rglikeworknamelib.Parser
 
                 for (int index = 0; index < craftData.Output.Count; index++) {
                     var s = craftData.Output[index];
-                    if (!ItemDataBase.Data.ContainsKey(s)) {
+                    if (!idb.Data.ContainsKey(s)) {
                         var pos = craftData.Output.IndexOf(s);
                         craftData.Output.RemoveAt(pos);
                         craftData.OutputCount.RemoveAt(pos);
@@ -137,7 +133,8 @@ namespace rglikeworknamelib.Parser
             Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in CraftDataBase\n     {1} in ItemDataBase\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB));
         }
 
-        public static int ErrorBdb() {
+        public static int ErrorBdb()
+        {
             int errorBDB = 0;
             foreach (var data in BlockDataBase.Data) {
                 if (!Atlases.BlockIndexes.ContainsKey(data.Value.MTex)) {

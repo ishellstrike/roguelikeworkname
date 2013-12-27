@@ -347,12 +347,10 @@ namespace jarg {
             var sw = new Stopwatch();
             sw.Start();
             new CreatureDataBase();
-            new ItemDataBase();
             new FloorDataBase();
             new BlockDataBase();
             new SchemesDataBase();
             new BuffDataBase();
-            new DialogDataBase();
             new NameDataBase();
             new CraftDataBase();
             sw.Stop();
@@ -362,7 +360,7 @@ namespace jarg {
                 CreatureDataBase.Data.Count,
                 BlockDataBase.Data.Count,
                 FloorDataBase.Data.Count,
-                ItemDataBase.Data.Count,
+                ItemDataBase.Instance.Data.Count,
                 SchemesDataBase.Data.Count,
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,

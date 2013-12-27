@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dialogs {
@@ -8,7 +9,20 @@ namespace rglikeworknamelib.Dialogs {
     public class DialogDataBase {
         public static Dictionary<string, DialogData> data;
 
-        public DialogDataBase() {
+        private static DialogDataBase instance_ = new DialogDataBase();
+
+        /// <summary>
+        /// Первое обращение порождает первичную загрузку
+        /// </summary>
+        public static DialogDataBase Instance
+        {
+            get
+            {
+                return instance_;
+            }
+        }
+
+        private DialogDataBase() {
             data = new Dictionary<string, DialogData>();
 
             List<KeyValuePair<string, object>> temp =

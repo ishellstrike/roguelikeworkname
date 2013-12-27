@@ -1,42 +1,46 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using NLog;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using jarg;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Item;
-using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
 
-namespace rglikeworknamelib.Dungeon.Items {
-    
-    public class ItemDataBase {
-        public static Dictionary<string, ItemData> Data;
-        public static Dictionary<string, ItemData> DataMedicineItems;
-        public static Dictionary<string, ItemData> DataFoodItems;
-        public static Dictionary<string, ItemAction> ItemScripts;
+namespace rglikeworknamelib.Dungeon.Items
+{
+    public sealed class ItemDataBase
+    {
+        public Dictionary<string, ItemData> Data;
+        public Dictionary<string, ItemAction> ItemScripts;
 
         private static Logger logger_ = LogManager.GetCurrentClassLogger();
+
+        private static ItemDataBase instance_ = new ItemDataBase();
+
+        /// <summary>
+        /// Первое обращение порождает первичную загрузку
+        /// </summary>
+        public static ItemDataBase Instance
+        {
+            get
+            {
+                return instance_;
+            }
+        }
 
         /// <summary>
         ///     WARNING! Also loading all data from standart patch
         /// </summary>
-        public ItemDataBase() {
+        private ItemDataBase()
+        {
             //texatlas = texatlas_;
             Data = new Dictionary<string, ItemData>();
-            DataFoodItems = new Dictionary<string, ItemData>();
-            DataMedicineItems = new Dictionary<string, ItemData>();
 
             Data = UniversalParser.JsonDataLoader<ItemData>(Settings.GetItemDataDirectory());
-
-            //var b = ParsersCore.ParseDirectory(Settings.GetSpawnlistsDataDirectory(), SpawnlistParser.Parser);
 
             ItemScripts = new Dictionary<string, ItemAction>();
             ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));
@@ -47,28 +51,18 @@ namespace rglikeworknamelib.Dungeon.Items {
             ItemScripts.Add("smoke", new ItemAction(Smoke, "Выкурить сигарету"));
         }
 
-        public static Dictionary<string, ItemData> GetItemByItemDataSortType(ItemType it) {
-            switch (it) {
-                case ItemType.Nothing:
-                    return Data;
-                case ItemType.Medicine:
-                    return DataMedicineItems;
-                case ItemType.Food:
-                    return DataFoodItems;
-                default:
-                    return null;
-            }
-        }
-
-        public static string GetItemDescription(IItem i) {
+        public string GetItemDescription(Item i)
+        {
             return i.Data.Description;
         }
 
-        public static List<KeyValuePair<string,ItemData>> GetBySpawnGroup(string group) {
+        public List<KeyValuePair<string, ItemData>> GetBySpawnGroup(string group)
+        {
             return Data.Where(x => x.Value.SpawnGroup == group).ToList();
         }
 
-        public static string GetItemFullDescription(IItem i) {
+        public string GetItemFullDescription(Item i)
+        {
             ItemData item = Data[i.Id];
             var sb = new StringBuilder();
             sb.Append(item.Name);
@@ -106,52 +100,46 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         #region ItemScripts
-        public void OpenCan(Player p, IItem target) {
-            if (p.Inventory.ContainsId("knife") || p.Inventory.ContainsId("otvertka"))
-            {
+        public void OpenCan(Player p, Item target)
+        {
+            if (p.Inventory.ContainsId("knife") || p.Inventory.ContainsId("otvertka")) {
                 p.Inventory.TryRemoveItem(target.Id, 1);
                 p.Inventory.AddItem(ItemFactory.GetInstance(Data[target.Id].AfteruseId, 1));
-            }
-            else {
+            } else {
                 EventLog.Add("Чтобы открывать банки вам нужен нож или отвертка", Color.Yellow, LogEntityType.NoAmmoWeapon);
             }
         }
-        private void Disass(Player p, IItem target)
+        private void Disass(Player p, Item target)
         {
-            if (p.Inventory.ContainsId("otvertka"))
-            {
+            if (p.Inventory.ContainsId("otvertka")) {
                 p.Inventory.TryRemoveItem(target.Id, 1);
                 p.Inventory.AddItem(ItemFactory.GetInstance("chipset", 1));
                 p.Inventory.AddItem(ItemFactory.GetInstance("batery", 1));
                 p.Inventory.AddItem(ItemFactory.GetInstance("smallvint", Settings.rnd.Next(5) + 10));
 
                 EventLog.Add(string.Format("Вы успешно разбираете {0}", target.Data.Name), Color.Yellow, LogEntityType.NoAmmoWeapon);
-            }
-            else
-            {
+            } else {
                 EventLog.Add("Чтобы разбирать электронику вам нужна отвертка", Color.Yellow, LogEntityType.NoAmmoWeapon);
             }
 
         }
-        private void RadioOnOff(Player p, IItem target)
+        private void RadioOnOff(Player p, Item target)
         {
             EventLog.Add("Радио включается", Color.White, LogEntityType.Default);
         }
-        public void OpenBottle(Player p, IItem target)
+        public void OpenBottle(Player p, Item target)
         {
             p.Inventory.TryRemoveItem(target.Id, 1);
             p.Inventory.AddItem(ItemFactory.GetInstance(Data[target.Id].AfteruseId, 1));
         }
-        public void DestroyCloth(Player p, IItem target)
+        public void DestroyCloth(Player p, Item target)
         {
             var weight = target.Data.Weight;
-            if (weight > 10000)
-            {
+            if (weight > 10000) {
                 EventLog.Add("Предмет слишком большой", Color.Yellow, LogEntityType.NoAmmoWeapon);
                 return;
             }
-            if (weight < 100)
-            {
+            if (weight < 100) {
                 EventLog.Add("Предмет слишком маленький", Color.Yellow, LogEntityType.NoAmmoWeapon);
                 return;
             }
@@ -159,11 +147,9 @@ namespace rglikeworknamelib.Dungeon.Items {
             int smallparts = 0;
             int bigparts = 0;
             var rnd = Settings.rnd;
-            while (weight >= 50)
-            {
+            while (weight >= 50) {
                 var part = rnd.Next(2);
-                switch (part)
-                {
+                switch (part) {
                     case 0:
                         weight -= 50;
                         p.Inventory.AddItem(ItemFactory.GetInstance("brcloth", 1));
@@ -177,41 +163,34 @@ namespace rglikeworknamelib.Dungeon.Items {
                 }
             }
             string mess = string.Format("Вы успешно разорвали {0} на", target.Data.Name);
-            if (bigparts > 0)
-            {
+            if (bigparts > 0) {
                 mess += string.Format(" {0} {1}", bigparts, Data["brcloth"].Name);
             }
-            if (smallparts > 0)
-            {
+            if (smallparts > 0) {
                 mess += string.Format(" {0} {1}", smallparts, Data["partcloth"].Name);
             }
             EventLog.Add(mess, Color.Yellow, LogEntityType.NoAmmoWeapon);
         }
-        public void Smoke(Player p, IItem target)
+        public void Smoke(Player p, Item target)
         {
-            if (p.Inventory.ContainsId("lighter1") || p.Inventory.ContainsId("lighter2"))
-            {
+            if (p.Inventory.ContainsId("lighter1") || p.Inventory.ContainsId("lighter2")) {
                 EventLog.Add(
                     string.Format("Вы выкурили сигарету "),
                     GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
-                foreach (IBuff buff in target.Buffs)
-                {
+                foreach (IBuff buff in target.Buffs) {
                     buff.ApplyToTarget(p);
                 }
 
                 AchievementDataBase.Stat["sigause"].Count++;
 
                 target.Doses--;
-                if (target.Doses <= 0)
-                {
+                if (target.Doses <= 0) {
                     p.Inventory.RemoveItem(target);
                 }
-            }
-            else
-            {
+            } else {
                 EventLog.Add("Чтобы курить вам нужна зажигалка", Color.Yellow, LogEntityType.NoAmmoWeapon);
             }
         }
-#endregion
+        #endregion
     }
 }

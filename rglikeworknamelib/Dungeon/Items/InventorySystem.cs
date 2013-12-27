@@ -7,11 +7,10 @@ using Microsoft.Xna.Framework;
 using jarg;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Item;
 
 namespace rglikeworknamelib.Dungeon.Items {
     public class InventorySystem {
-        private List<IItem> items_ = new List<IItem>();
+        private List<Item> items_ = new List<Item>();
         public bool Changed = false;
 
         public int TotalWeight {
@@ -22,7 +21,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             get { return items_.Select(x => x.Data.Volume).Sum(); }
         }
 
-        public void AddItem(IItem it) {
+        public void AddItem(Item it) {
             if (it == null) return;
             items_.Add(it);
             switch (it.Data.SortType) {
@@ -39,24 +38,24 @@ namespace rglikeworknamelib.Dungeon.Items {
             Settings.InventoryUpdate = true;
         }
 
-        public void RemoveItem(IItem it) {
+        public void RemoveItem(Item it) {
             items_.Remove(it);
             Settings.InventoryUpdate = true;
         }
 
-        public bool ContainsItem(IItem it) {
+        public bool ContainsItem(Item it) {
             return items_.Contains(it);
         }
 
-        public List<IItem> FilterByType(ItemType it) {
+        public List<Item> FilterByType(ItemType it) {
             return it == ItemType.Nothing ? items_ : items_.Where(item => item.Data.SortType == it).ToList();
         }
 
         public void StackSimilar() {
-            var a = new List<IItem>();
+            var a = new List<Item>();
 
-            foreach (IItem item in items_) {
-                IItem it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses == 0);
+            foreach (Item item in items_) {
+                Item it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses == 0);
                 if (it != null) {
                     it.Count += item.Count;
                 }
@@ -137,14 +136,14 @@ namespace rglikeworknamelib.Dungeon.Items {
             Settings.InventoryUpdate = true;
         }
 
-        public void AddItemRange(List<IItem> inContainer) {
-            foreach (IItem item in inContainer) {
+        public void AddItemRange(List<Item> inContainer) {
+            foreach (Item item in inContainer) {
                 AddItem(item);
             }
             Changed = true;
         }
 
-        public IItem TryGetId(string itemData) {
+        public Item TryGetId(string itemData) {
             Settings.InventoryUpdate = true;
             return items_.FirstOrDefault(x => x.Id == itemData);
         }
@@ -172,8 +171,8 @@ namespace rglikeworknamelib.Dungeon.Items {
                 var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
                                                 FileMode.Open);
                 var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                items_ = (List<IItem>) binaryFormatter.Deserialize(gZipStream);
-                foreach (IItem item in items_) {
+                items_ = (List<Item>) binaryFormatter.Deserialize(gZipStream);
+                foreach (Item item in items_) {
                     item.OnLoad();
                 }
                 gZipStream.Close();
