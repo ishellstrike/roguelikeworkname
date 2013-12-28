@@ -19,7 +19,7 @@ namespace rglikeworknamelib.Dungeon.Items
 
         private static Logger logger_ = LogManager.GetCurrentClassLogger();
 
-        private static ItemDataBase instance_ = new ItemDataBase();
+        private static volatile ItemDataBase instance_;
 
         /// <summary>
         /// ѕервое обращение порождает первичную загрузку

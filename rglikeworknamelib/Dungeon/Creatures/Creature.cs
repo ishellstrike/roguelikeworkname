@@ -144,6 +144,7 @@ namespace rglikeworknamelib.Creatures {
                     MoveByMover(ms_, time);
                 }
 
+                //Sector changer
                 if (Position.Y >= 32*MapSector.Ry) {
                     MapSector t = ms_.Parent.GetDownN(ms_.SectorOffsetX, ms_.SectorOffsetY);
                     if (t != null) {
@@ -280,7 +281,6 @@ namespace rglikeworknamelib.Creatures {
                 Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
                 Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
 
-                Dictionary<string, BlockData> blockDatas = BlockDataBase.Data;
                 Block key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
                 if (key != null && key.Id != null && key.Data.IsWalkable) {
                     position_.X += mover.X;

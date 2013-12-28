@@ -275,6 +275,7 @@ namespace jarg {
             {Color = Color.Brown, LightRadius = 2000f, Position = Vector3.Zero, Power = 100});
         }
 
+        private bool InitialFinish;
         //invoke after DataBasesLoadAndThenInitialGeneration
         private void InitialGeneration() {
             RunRadioGhostBox();
@@ -334,6 +335,7 @@ namespace jarg {
             HideInfoWindow();
             sw.Stop();
             Logger.Info("Initial generation in {0}", sw.Elapsed);
+            InitialFinish = true;
         }
 
         private void player__onShoot(object sender, EventArgs e) {
@@ -344,6 +346,7 @@ namespace jarg {
         }
 
         private void DataBasesLoadAndThenInitialGeneration() {
+            ShowInfoWindow("Loading...", "");
             var sw = new Stopwatch();
             sw.Start();
             new CreatureDataBase();
@@ -403,8 +406,10 @@ namespace jarg {
                 InfoWindow.Visible = false;
             }
 
-            WindowsUpdate(gameTime);
-            ws_.Update(gameTime, ms_, lms_, ks_, lks_, false);
+            if (InitialFinish) {
+                WindowsUpdate(gameTime);
+                ws_.Update(gameTime, ms_, lms_, ks_, lks_, false);
+            }
 
             if (IsActive) {
                 UpdateKeyboard(gameTime);
