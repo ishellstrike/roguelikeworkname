@@ -16,10 +16,7 @@ namespace rglikeworknamelib.Dialogs {
         /// </summary>
         public static DialogDataBase Instance
         {
-            get
-            {
-                return instance_;
-            }
+            get { return instance_ ?? (instance_ = new DialogDataBase()); }
         }
 
         private DialogDataBase() {

@@ -26,10 +26,7 @@ namespace rglikeworknamelib.Dungeon.Items
         /// </summary>
         public static ItemDataBase Instance
         {
-            get
-            {
-                return instance_;
-            }
+            get { return instance_ ?? (instance_ = new ItemDataBase()); }
         }
 
         /// <summary>

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using rglikeworknamelib.Creatures;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures {
     [Serializable]
     public class PerksSystem {
         private readonly Dictionary<string, Perk> Perks;
