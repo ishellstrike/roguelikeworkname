@@ -80,6 +80,12 @@ namespace jarg {
                             if (currentFloor_.IsCreatureMeele(nx, ny, player_)) {
                                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
                                     BlockData undermouseblock = BlockDataBase.Data[a.Id];
+                                    if(a.StoredItems != null && a.StoredItems.Count > 0) {
+                                        WindowContainer.Visible = true;
+                                        WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
+                                        UpdateContainerContainer(a.StoredItems);
+                                        ContainerOn = new Vector2(nx, ny);
+                                    } else
                                     switch (undermouseblock.SmartAction) {
                                         case SmartAction.ActionSee:
                                             EventLog.Add("Вы видите " + undermouseblock.Name,

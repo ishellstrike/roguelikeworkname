@@ -218,10 +218,10 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     Velocity /= Settings.H()/time;
                 }
 
-                TimeSpan elapsetGWL = GlobalWorldLogic.Elapse;
-                Hunger.Current -= (float) elapsetGWL.TotalDays/4*100;
-                Thirst.Current -= (float) elapsetGWL.TotalDays*100;
-                Sleep.Current -= (float) elapsetGWL.TotalDays/1.5f*100;
+                TimeSpan elapsetGwl = GlobalWorldLogic.Elapse;
+                Hunger.Current -= (float) elapsetGwl.TotalDays/4*100;
+                Thirst.Current -= (float) elapsetGwl.TotalDays*100;
+                Sleep.Current -= (float) elapsetGwl.TotalDays/1.5f*100;
 
                 secShoot_ += gt.ElapsedGameTime;
 
@@ -299,7 +299,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        public bool EatItem(Items.Item selectedItem) {
+        public bool EatItem(Item selectedItem) {
             //25 -- 2500 ml per day / 100 percent
             Hunger.Current += selectedItem.Data.NutCal/25f/selectedItem.Data.Doses;
             if (Hunger.Current > Hunger.Max) {
@@ -328,7 +328,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
                 Perks.Owner = this;
                 Weared = (Collection<Item>) binaryFormatter.Deserialize(gZipStream);
-                foreach (Items.Item item in Weared) {
+                foreach (Item item in Weared) {
                     foreach (IBuff buff in item.Buffs) {
                         buff.Target = this;
                     }
@@ -336,7 +336,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 }
                 var t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
-                    ItemAmmo = (Items.Item) binaryFormatter.Deserialize(gZipStream);
+                    ItemAmmo = (Item) binaryFormatter.Deserialize(gZipStream);
                     foreach (IBuff buff in ItemAmmo.Buffs) {
                         buff.Target = this;
                     }
@@ -345,7 +345,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
-                    ItemGun = (Items.Item) binaryFormatter.Deserialize(gZipStream);
+                    ItemGun = (Item) binaryFormatter.Deserialize(gZipStream);
                     foreach (IBuff buff in ItemGun.Buffs) {
                         buff.Target = this;
                     }
@@ -354,7 +354,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
-                    ItemMeele = (Items.Item) binaryFormatter.Deserialize(gZipStream);
+                    ItemMeele = (Item) binaryFormatter.Deserialize(gZipStream);
                     foreach (IBuff buff in ItemMeele.Buffs) {
                         buff.Target = this;
                     }

@@ -20,7 +20,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public List<DropGroup> ItemSpawn;
 
-        public int StorageSlots;
         public int swide = 32;
 
         public string RandomMtexFromAlters() {

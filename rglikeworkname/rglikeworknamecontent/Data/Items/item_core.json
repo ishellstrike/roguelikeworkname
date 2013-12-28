@@ -404,7 +404,8 @@
     "Name":"Бутылка вина",
     "AfteruseId":"vinebottle",
     "SpawnGroup":"spawn_shopfood",
-	"ActionsId":["openbottle"]
+	"ActionsId":["openbottle"],
+	"Weight":1000,
   },
   "vinebottle":{
     "Name":"Открытая бутылка вина",
@@ -412,19 +413,22 @@
     "SortType":"Food",
     "Doses":40,
     "SpawnGroup":"spawn_cookedfood",
+	"Weight":1000,
   },
   "vodkabottlecl":{
     "Name":"Бутылка водки",
     "AfteruseId":"vodkabottle",
     "SpawnGroup":"spawn_shopfood",
 	"ActionsId":["openbottle"],
+	"Weight":500,
   },
   "vodkabottle":{
     "Name":"Открытая бутылка водки",
     "Using":"водку из бутылки",
     "SortType":"Food",
-    "Doses":40,
+    "Doses":20,
     "SpawnGroup":"spawn_cookedfood",
+	"Weight":500,
   },
   "12000":{
     "Name":"SA80",
@@ -755,5 +759,19 @@
     "SortType":"Wear",
     "Dress":"haer1",
     "Hidden":"true",
+  },
+
+  "soap":{
+	"Name":"Мыло",
+	"Weight":100,
+  },
+
+  "glasscup":{
+	"Name":"Стеклянный стакан",
+	"Weight":200,
+  },
+  "papercup":{
+	"Name":"Бумажный стакан",
+	"Weight":20,
   },
 }

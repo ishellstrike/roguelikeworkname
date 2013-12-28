@@ -321,6 +321,29 @@
     "MTex":"notex",
     "Flame":true,
   },
+  "tumba":{
+    "Name":"Тумбочка",
+    "IsTransparent":true,
+	"AlterMtex":["tumba2"],
+    "MTex":"tumba1",
+    "Flame":true,
+  },
+  "rakovina":{
+    "Name":"Раковина",
+    "IsTransparent":true,
+	"AlterMtex":["rakovina2", "rakovina3", "rakovina4"],
+    "MTex":"rakovina",
+    "Flame":true,
+	"ItemSpawn": [
+		{
+			"Ids":["soap"],
+			"Max":1,
+			"Min":1,
+			"Prob":30,
+			"Repeat":1
+		}
+	],
+  },
   "lavka":{
     "Name":"Лавка",
     "IsTransparent":true,

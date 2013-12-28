@@ -114,7 +114,6 @@ Content\Textures\Dungeon\Objects\mbush2.xnb
 Content\Textures\Dungeon\Objects\mbush3.xnb
 Content\Textures\Units\hdzombie.xnb
 Content\Textures\Dungeon\Objects\notex.xnb
-Content\Textures\Dungeon\Normals\bricks.xnb
 Content\Textures\Dungeon\Minimap\house1.xnb
 Content\Textures\Dungeon\Objects\asfalt.xnb
 Content\Textures\Dungeon\Objects\asfalt_br.xnb
@@ -183,6 +182,12 @@ Content\Effects\Effect111.xnb
 Content\Effects\ShadersLightningShadow.xnb
 Content\Effects\ShadersLightningCombined.xnb
 Content\Effects\ToWhite.xnb
+Content\Textures\Dungeon\Objects\rakovina.xnb
+Content\Textures\Dungeon\Objects\rakovina2.xnb
+Content\Textures\Dungeon\Objects\rakovina3.xnb
+Content\Textures\Dungeon\Objects\rakovina4.xnb
+Content\Textures\Dungeon\Objects\tumba1.xnb
+Content\Textures\Dungeon\Objects\tumba2.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README
@@ -191,7 +196,6 @@ Content\Data\Object\block_core.json
 Content\Data\Schemes\store1.txt
 Content\Textures\Dungeon\Floor\textureloadorder.ord
 Content\Textures\Dungeon\Items\textureloadorder.ord
-Content\Textures\Dungeon\Objects\textureloadorder.ord
 Content\Textures\Dungeon\Vehicle\textureloadorder.ord
 Content\Data\Schemes\houseSmall1.txt
 Content\Data\Schemes\houseTiny1.txt

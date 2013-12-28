@@ -48,9 +48,6 @@ namespace rglikeworknamelib {
             DressAtlas = ParsersCore.LoadTexturesDirectory(Settings.GetDressTexturesDirectory(), Content);
             MinimapAtlas = ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"\textureloadorder.ord",
                                                Content);
-
-            NormalAtlas = new Collection<Texture2D>();
-            NormalAtlas.Add(Content.Load<Texture2D>(@"Textures/Dungeon/Normals/bricks"));
         }
 
         public static void RebuildAtlases(GraphicsDevice gd) {
