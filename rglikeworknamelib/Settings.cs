@@ -69,7 +69,7 @@ namespace rglikeworknamelib {
         }
 
         public static string GetObjectDataDirectory() {
-            return GetDataDirectory() + @"\Object";
+            return GetDataDirectory() + @"\Blocks";
         }
 
         public static string GetItemDataDirectory() {
@@ -105,15 +105,15 @@ namespace rglikeworknamelib {
         }
 
         public static string GetMinimapTexturesDirectory() {
-            return GetTextureDirectory() + @"\Dungeon\Minimap";
+            return GetTextureDirectory() + @"\Minimap";
         }
 
         public static string GetFloorTextureDirectory() {
-            return GetTextureDirectory() + @"\Dungeon\Floor";
+            return GetTextureDirectory() + @"\Floor";
         }
 
         public static string GetObjectTextureDirectory() {
-            return GetTextureDirectory() + @"\Dungeon\Objects";
+            return GetTextureDirectory() + @"\Blocks";
         }
 
         public static string GetEffectDataDirectory() {
@@ -129,7 +129,7 @@ namespace rglikeworknamelib {
         }
 
         public static string GetVehicleTextureDirectory() {
-            return GetTextureDirectory() + @"\Dungeon\Vehicle";
+            return GetTextureDirectory() + @"\Vehicle";
         }
 
         public static string GetCraftsDirectory() {
