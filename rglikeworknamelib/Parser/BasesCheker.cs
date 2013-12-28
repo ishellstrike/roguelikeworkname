@@ -17,8 +17,9 @@ namespace rglikeworknamelib.Parser
 
             int errorIDB = 0;
             ItemDataBase idb = ItemDataBase.Instance;
+            var atlases = Atlases.Instance;
             foreach (var data in idb.Data) {
-                if (data.Value.Dress != null && !Atlases.DressAtlas.ContainsKey(data.Value.Dress)) {
+                if (data.Value.Dress != null && !atlases.MajorIndexes.ContainsKey(data.Value.Dress)) {
                     Logger.Error(string.Format("texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
                     data.Value.Dress = "error";
                     errorIDB++;
@@ -34,7 +35,7 @@ namespace rglikeworknamelib.Parser
 
             int errorFDB = 0;
             foreach (var data in FloorDataBase.Data) {
-                if (!Atlases.FloorIndexes.ContainsKey(data.Value.MTex)) {
+                if (!atlases.MajorIndexes.ContainsKey(data.Value.MTex)) {
                     Logger.Error(string.Format("texture \"{0}\" for FloorDataBase.MTex not found", data.Value.MTex));
                     data.Value.MTex = "error";
                     errorFDB++;
@@ -42,7 +43,7 @@ namespace rglikeworknamelib.Parser
                 if (data.Value.AlterMtex != null) {
                     for (int i = 0; i < data.Value.AlterMtex.Length; i++) {
                         var s = data.Value.AlterMtex[i];
-                        if (!Atlases.FloorIndexes.ContainsKey(s)) {
+                        if (!atlases.MajorIndexes.ContainsKey(s)) {
                             Logger.Error(string.Format("texture \"{0}\" for FloorDataBase.AlterMtex not found", s));
                             data.Value.AlterMtex[i] = "error";
                             errorFDB++;
@@ -136,8 +137,9 @@ namespace rglikeworknamelib.Parser
         public static int ErrorBdb()
         {
             int errorBDB = 0;
+            var instance = Atlases.Instance;
             foreach (var data in BlockDataBase.Data) {
-                if (!Atlases.BlockIndexes.ContainsKey(data.Value.MTex)) {
+                if (!instance.MajorIndexes.ContainsKey(data.Value.MTex)) {
                     Logger.Error(string.Format("texture \"{0}\" for BlockDataBase.MTex not found", data.Value.MTex));
                     data.Value.MTex = "error";
                     errorBDB++;
@@ -145,7 +147,7 @@ namespace rglikeworknamelib.Parser
                 if (data.Value.AlterMtex != null) {
                     for (int i = 0; i < data.Value.AlterMtex.Length; i++) {
                         var s = data.Value.AlterMtex[i];
-                        if (!Atlases.BlockIndexes.ContainsKey(s)) {
+                        if (!instance.MajorIndexes.ContainsKey(s)) {
                             Logger.Error(string.Format("texture \"{0}\" for BlockDataBase.AlterMtex not found", s));
                             data.Value.AlterMtex[i] = "error";
                             errorBDB++;

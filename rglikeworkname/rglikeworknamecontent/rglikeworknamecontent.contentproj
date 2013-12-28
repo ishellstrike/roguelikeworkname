@@ -519,11 +519,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\Floor\error.png">
-      <Name>error</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Textures\Floor\grass1.png">
       <Name>grass1</Name>
       <Importer>TextureImporter</Importer>
@@ -634,16 +629,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Textures\Blocks\asfalt.png">
-      <Name>asfalt</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Blocks\asfalt_br.png">
-      <Name>asfalt_br</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Textures\Blocks\bath1.png">
       <Name>bath1</Name>
       <Importer>TextureImporter</Importer>
@@ -691,11 +676,6 @@
     </Compile>
     <Compile Include="Textures\Blocks\bed5.png">
       <Name>bed5</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Textures\Blocks\biskup.png">
-      <Name>biskup</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

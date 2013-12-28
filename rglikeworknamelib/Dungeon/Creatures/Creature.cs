@@ -32,9 +32,6 @@ namespace rglikeworknamelib.Creatures {
         [NonSerialized]
         private CreatureData data_;
 
-        [NonSerialized]
-        private Texture2D mTex_;
-
         public Vector2 LastPos {
             get { return lastpos_; }
             set { lastpos_ = value; }
@@ -57,15 +54,40 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public bool isDead { get; internal set; }
-        public string Id { get; internal set; }
+        private string id_;
+        public string Id {
+            get { return id_; }
+            set
+            {
+                id_ = value;
+                Data = CreatureDataBase.Data[value];
+            }
+        }
+
         public CreatureData Data {
             get { return data_; }
             internal set { data_ = value; }
         }
 
-        public Texture2D MTex {
-            get { return mTex_; }
-            internal set { mTex_ = value; }
+        public Rectangle Source
+        {
+            get;
+            private set;
+        }
+
+        [NonSerialized]
+        private string mTex_;
+        public string MTex
+        {
+            get
+            {
+                return mTex_;
+            }
+            set
+            {
+                Source = BlockData.GetSource(value);
+                mTex_ = value;
+            }
         }
 
         /// <summary>
@@ -81,10 +103,6 @@ namespace rglikeworknamelib.Creatures {
 
         public event EventHandler OnDamageRecieve;
         public event EventHandler OnDeath;
-        public void OnLoad() {
-            Data = CreatureDataBase.Data[Id];
-            MTex = Atlases.CreatureAtlas[Data.MTex];
-        }
 
         public List<IBuff> Buffs {
             get { return buffs_; }
@@ -190,7 +208,7 @@ namespace rglikeworknamelib.Creatures {
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
             Vector2 a = GetPositionInBlocks();
             Vector2 p = WorldPosition() - camera;
-            spriteBatch.Draw(MTex, p + new Vector2(-16, 0), Col);
+            spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
             if (Settings.DebugInfo) {
                 spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
             }

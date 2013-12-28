@@ -302,7 +302,7 @@ namespace jarg {
             SchemesImages = new Image[20,20];
             for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                 for (int j = 0; j < SchemesImages.GetLength(1); j++) {
-                        SchemesImages[i, j] = new Image(new Vector2(20 + 32*i, 20 + 32*j), Atlases.BlockArray["none"],
+                        SchemesImages[i, j] = new Image(new Vector2(20 + 32*i, 20 + 32*j), whitepixel_,
                                                         Color.White, SchemesEditorWindow);
                         SchemesImages[i, j].Tag = new Point(i, j);
                         SchemesImages[i, j].OnMouseDown += JargMain_OnMouseDown;
@@ -1373,7 +1373,7 @@ namespace jarg {
                     for (int j = 0; j < SchemesImages.GetLength(1); j++) {
                         if (scheme.rx > (int)schemesOffset.X + i && scheme.ry > (int)schemesOffset.Y + j && (int)schemesOffset.X + i >= 0 && (int)schemesOffset.Y + j >= 0)
                         {
-                            SchemesImages[i, j].image = Atlases.BlockArray[scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex];
+                            SchemesImages[i, j].image = Atlases.Instance.BlockArray[scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex];
                             if (scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].Id == "0")
                             {
                                 scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex = "notex";
@@ -1382,7 +1382,7 @@ namespace jarg {
                                 SchemesImages[i, j].col_ = Color.White;
                             }
                         } else {
-                            SchemesImages[i, j].image = Atlases.BlockArray["bush1"];
+                            SchemesImages[i, j].image = Atlases.Instance.BlockArray["bush1"];
                             SchemesImages[i, j].col_ = Color.White;
                         }
                         

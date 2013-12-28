@@ -541,7 +541,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     }
                 }
             }
-            sb.Draw(Atlases.MinimapAtlas["cross1"], new Vector2(5 * 11, 5 * 11), Color.Red);
+            sb.Draw(Atlases.Instance.MinimapAtlas["cross1"], new Vector2(5 * 11, 5 * 11), Color.Red);
             sb.End();
             gd.SetRenderTarget(null);
         }
@@ -567,7 +567,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 }
             }
             Vector2 posh = GetInSectorPosition(pl.GetPositionInBlocks());
-            sb.Draw(Atlases.MinimapAtlas["cross1"], new Vector2(30 * 11 - (int)off.X * 11, 30 * 11 - (int)off.Y * 11), Color.Red);
+            sb.Draw(Atlases.Instance.MinimapAtlas["cross1"], new Vector2(30 * 11 - (int)off.X * 11, 30 * 11 - (int)off.Y * 11), Color.Red);
             sb.End();
             gd.SetRenderTarget(null);
         }
@@ -581,27 +581,27 @@ namespace rglikeworknamelib.Dungeon.Level
                 case SectorBiom.Forest:
                 case SectorBiom.WildForest:
                 case SectorBiom.SuperWildForest:
-                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["forest1"], Color.Green);
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["forest1"], Color.Green);
                     break;
                 case SectorBiom.House:
-                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.White);
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.White);
                     break;
                 case SectorBiom.Shop:
-                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.Yellow);
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Yellow);
                     break;
                 case SectorBiom.Hospital:
-                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.Teal);
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Teal);
                     break;
                 case SectorBiom.WearStore:
-                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["house1"], Color.Orange);
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Orange);
                     break;
                 case SectorBiom.RoadCross:
                 case SectorBiom.RoadHevt:
                 case SectorBiom.RoadHor:
-                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["cross1"], Color.Gray);
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["cross1"], Color.Gray);
                     break;
                 default:
-                    a = new Tuple<Texture2D, Color>(Atlases.MinimapAtlas["nothing1"], Color.White);
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["nothing1"], Color.White);
                     break;
             }
 
@@ -1143,7 +1143,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public void DrawFloors(GameTime gameTime, Vector2 camera)
         {
-            Texture2D fatlas = Atlases.FloorAtlas; // Make field's non-static
+            Texture2D fatlas = Atlases.Instance.MajorAtlas; // Make field's non-static
             Dictionary<string, FloorData> fdb = FloorDataBase.Data;
             int rx = MapSector.Rx;
             int ry = MapSector.Ry;
@@ -1207,7 +1207,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public void DrawDecals(GameTime gameTime, Vector2 camera)
         {
-            Collection<Texture2D> atl = Atlases.ParticleAtlas;
+            Collection<Texture2D> atl = Atlases.Instance.ParticleAtlas;
             int rx = MapSector.Rx;
             int ry = MapSector.Ry;
 
@@ -1227,7 +1227,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 for (int index = 0; index < sector.Decals.Count; index++)
                 {
                     Particle dec = sector.Decals[index];
-                    spriteBatch_.Draw(Atlases.ParticleAtlas[dec.MTex],
+                    spriteBatch_.Draw(Atlases.Instance.ParticleAtlas[dec.MTex],
                                       dec.Pos - camera,
                                       null, dec.Color, dec.Rotation,
                                       new Vector2(atl[dec.MTex].Height / 2f, atl[dec.MTex].Width / 2f), dec.Scale,
@@ -1238,7 +1238,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public void DrawBlocks(GameTime gameTime, Vector2 camera, Creature per)
         {
-            Texture2D batlas = Atlases.BlockAtlas; // Make field's non-static
+            Texture2D batlas = Atlases.Instance.MajorAtlas; // Make field's non-static
             int rx = MapSector.Rx;
             int ry = MapSector.Ry;
             float ssx = Settings.FloorSpriteSize.X;

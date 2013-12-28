@@ -29,7 +29,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (s == null) {
                 return new Rectangle(0, 0, 0, 0);
             }
-            int index = Atlases.FloorIndexes[s];
+            int index = Atlases.Instance.MajorIndexes[s];
             return new Rectangle(index%32*32, index/32*32, 32, 32);
         }
     }

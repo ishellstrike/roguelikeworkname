@@ -120,9 +120,9 @@ namespace jarg {
         protected Vector2 ContainerOn { get; set; }
 
         private void Application_ApplicationExit(object sender, EventArgs e) {
-            if (currentFloor_.SectorCount() > 0) {
-                currentFloor_.SaveAllAndExit(player_, inventory_);
-            }
+            //if (currentFloor_.SectorCount() > 0) {
+            //    currentFloor_.SaveAllAndExit(player_, inventory_);
+            //}
         }
 
         protected override void Initialize() {
@@ -204,7 +204,7 @@ namespace jarg {
             effectOmnilight_.Parameters["screenWidth"].SetValue(width);
             effectOmnilight_.Parameters["screenHeight"].SetValue(height);
             lineBatch_.UpdateProjection(GraphicsDevice);
-            Atlases.RebuildAtlases(GraphicsDevice);
+            Atlases.Instance.RebuildAtlases(GraphicsDevice);
         }
 
         protected override void OnActivated(object sender, EventArgs args) {
@@ -628,7 +628,7 @@ namespace jarg {
         public void DrawDebugRenderTargets(GameTime time) {
             GameDraw(time);
             // Draw some debug textures
-            GraphicsDevice.Clear(Color.DarkGreen);
+            //GraphicsDevice.Clear(Color.DarkGreen);
             spriteBatch_.Begin();
 
             var size = new Rectangle(0, 0, colorMapRenderTarget_.Width/2, colorMapRenderTarget_.Height/2);
@@ -649,13 +649,31 @@ namespace jarg {
             spriteBatch_.End();
         }
 
+        public void DrawMajorAtlas(GameTime time)
+        {
+            GameDraw(time);
+            spriteBatch_.Begin();
+
+            var size = new Rectangle(0, 0, Atlases.Instance.MajorAtlas.Width, Atlases.Instance.MajorAtlas.Height);
+            spriteBatch_.Draw(
+                Atlases.Instance.MajorAtlas,
+                size,
+                Color.White);
+            string s = string.Format("{0}/{1} ({2}x{3})", Atlases.Instance.MajorCount, Atlases.Instance.MajorCapacity,
+                                     Atlases.Instance.MajorAtlas.Width, Atlases.Instance.MajorAtlas.Height);
+            spriteBatch_.DrawString(font1_, s, Vector2.Zero, Color.Black);
+            spriteBatch_.DrawString(font1_, s, Vector2.One, Color.White);
+
+            spriteBatch_.End();
+        }
+
         private Matrix ScaleAll2 = Matrix.CreateScale(1);
         private void DrawCombinedMaps() {
             lightEffect2_.Parameters["ambient"].SetValue(GlobalWorldLogic.GetCurrentSlen());
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
             //light burst
-            lightEffect2_.Parameters["lightAmbient"].SetValue(4);
+            lightEffect2_.Parameters["lightAmbient"].SetValue(1);
             lightEffect2_.Parameters["ColorMap"].SetValue(colorMapRenderTarget_);
             lightEffect2_.Parameters["ShadingMap"].SetValue(lightMapTexture_);
 

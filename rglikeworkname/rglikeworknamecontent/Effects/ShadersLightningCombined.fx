@@ -24,8 +24,8 @@ float4 CombinedPixelShader(float4 color : COLOR0, float2 texCoords : TEXCOORD0) 
     float4 shading = tex2D(ShadingMapSampler, texCoords);
  
     float4 finalColor = color2 * ambientColor * ambient;
+	finalColor += color2 * shading * lightAmbient;
  
-    finalColor += color2 * shading * lightAmbient;
 
 	if(finalColor.r > color2.r*1.4f){
 	finalColor.r = color2.r*1.4f;

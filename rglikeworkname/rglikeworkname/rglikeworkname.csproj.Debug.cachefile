@@ -53,7 +53,6 @@ Content\Textures\Floor\blank4.xnb
 Content\Textures\Floor\conk1.xnb
 Content\Textures\Floor\conk2.xnb
 Content\Textures\Floor\dirt1.xnb
-Content\Textures\Floor\error.xnb
 Content\Textures\Floor\grass1.xnb
 Content\Textures\Floor\grass2.xnb
 Content\Textures\Floor\grass3.xnb
@@ -83,8 +82,6 @@ Content\Textures\Vehicle\plate3.xnb
 Content\Textures\Vehicle\plate4.xnb
 Content\Textures\Vehicle\seat1.xnb
 Content\Textures\Vehicle\wheel1.xnb
-Content\Textures\Blocks\asfalt.xnb
-Content\Textures\Blocks\asfalt_br.xnb
 Content\Textures\Blocks\bath1.xnb
 Content\Textures\Blocks\bath2.xnb
 Content\Textures\Blocks\bath3.xnb
@@ -95,7 +92,6 @@ Content\Textures\Blocks\bed2.xnb
 Content\Textures\Blocks\bed3.xnb
 Content\Textures\Blocks\bed4.xnb
 Content\Textures\Blocks\bed5.xnb
-Content\Textures\Blocks\biskup.xnb
 Content\Textures\Blocks\bochka.xnb
 Content\Textures\Blocks\briwall1.xnb
 Content\Textures\Blocks\bush1.xnb

@@ -242,7 +242,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                      SpriteEffects.None, 1);
             foreach (var dress in Weared) {
                 if (!string.IsNullOrEmpty(dress.Data.Dress)) {
-                    sb_.Draw(Atlases.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin, 1,
+                    sb_.Draw(Atlases.Instance.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin, 1,
                              SpriteEffects.None, 1);
                 }
             }

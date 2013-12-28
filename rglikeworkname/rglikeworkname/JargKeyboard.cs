@@ -177,10 +177,18 @@ namespace jarg {
             }
 
             if (ks_[Keys.F3] == KeyState.Down && lks_[Keys.F3] == KeyState.Up) {
-                if (drawAction_ == GameDraw) {
+                if (drawAction_ == GameDraw || drawAction_ == DrawMajorAtlas) {
                     drawAction_ = DrawDebugRenderTargets;
                 }
                 else if (drawAction_ == DrawDebugRenderTargets) {
+                    drawAction_ = GameDraw;
+                }
+            }
+
+            if (ks_[Keys.F4] == KeyState.Down && lks_[Keys.F4] == KeyState.Up) {
+                if (drawAction_ == GameDraw || drawAction_ == DrawDebugRenderTargets) {
+                    drawAction_ = DrawMajorAtlas;
+                } else if (drawAction_ == DrawMajorAtlas) {
                     drawAction_ = GameDraw;
                 }
             }

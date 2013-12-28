@@ -63,10 +63,10 @@ namespace SchemesEditor {
                 imdict.Add(info.Name.Replace(info.Extension, string.Empty), tr);
             }
 
-            Atlases.BlockIndexes = new Dictionary<string, int>();
+            Atlases.Instance.BlockIndexes = new Dictionary<string, int>();
             foreach (var blockData in BlockDataBase.Data) {
-                if(!Atlases.BlockIndexes.ContainsKey(blockData.Value.MTex)) {
-                    Atlases.BlockIndexes.Add(blockData.Value.MTex, 0);
+                if (!Atlases.Instance.BlockIndexes.ContainsKey(blockData.Value.MTex)) {
+                    Atlases.Instance.BlockIndexes.Add(blockData.Value.MTex, 0);
                 }
             }
 

@@ -25,7 +25,7 @@ namespace rglikeworknamelib.Dungeon {
 
         public static float GetCurrentSlen() {
             var time = (float)CurrentTime.TimeOfDay.TotalHours;
-            return -0.0716092f*time*time+1.7802f*time-0.764538f;
+            return -((time - 12) / 12) * ((time - 12) / 12) + 1;
         }
 
         public static void Update(GameTime gt) {

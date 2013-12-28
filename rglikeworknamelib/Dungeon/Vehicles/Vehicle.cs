@@ -50,9 +50,10 @@ namespace rglikeworknamelib.Dungeon.Vehicles {
             tex_ = new RenderTarget2D(gd, (int) f.X, (int) f.Y);
             gd.SetRenderTarget(tex_);
             gd.Clear(Color.Transparent);
+            var atlases = Atlases.Instance;
             sb.Begin();
             foreach (VehiclePart vehiclePart in Parts) {
-                sb.Draw(Atlases.VehicleAtlas, vehiclePart.Offset, vehiclePart.Source, vehiclePart.Color);
+                sb.Draw(atlases.MajorAtlas, vehiclePart.Offset, vehiclePart.Source, vehiclePart.Color);
             }
             sb.End();
             gd.SetRenderTarget(null);
@@ -203,7 +204,7 @@ namespace rglikeworknamelib.Dungeon.Vehicles {
             if (s == null) {
                 return new Rectangle(0, 0, 0, 0);
             }
-            int index = Atlases.VehicleIndexes[s];
+            int index = Atlases.Instance.MajorIndexes[s];
             return new Rectangle(index%32*32, index/32*32, 32, 32);
         }
     }
