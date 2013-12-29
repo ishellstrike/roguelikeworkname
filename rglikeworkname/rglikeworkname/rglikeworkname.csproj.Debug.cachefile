@@ -75,13 +75,6 @@ Content\Textures\Minimap\forest1.xnb
 Content\Textures\Minimap\house1.xnb
 Content\Textures\Minimap\nothing1.xnb
 Content\Textures\Normals\bricks.xnb
-Content\Textures\Vehicle\engine1.xnb
-Content\Textures\Vehicle\plate1.xnb
-Content\Textures\Vehicle\plate2.xnb
-Content\Textures\Vehicle\plate3.xnb
-Content\Textures\Vehicle\plate4.xnb
-Content\Textures\Vehicle\seat1.xnb
-Content\Textures\Vehicle\wheel1.xnb
 Content\Textures\Blocks\bath1.xnb
 Content\Textures\Blocks\bath2.xnb
 Content\Textures\Blocks\bath3.xnb
@@ -162,6 +155,13 @@ Content\Textures\Blocks\wearpolka1.xnb
 Content\Textures\Blocks\wearpolka2.xnb
 Content\Textures\Blocks\wearpolka3.xnb
 Content\Textures\Blocks\wearpolka4.xnb
+Content\Textures\Vehicle\engine1.xnb
+Content\Textures\Vehicle\plate1.xnb
+Content\Textures\Vehicle\plate2.xnb
+Content\Textures\Vehicle\plate3.xnb
+Content\Textures\Vehicle\plate4.xnb
+Content\Textures\Vehicle\seat1.xnb
+Content\Textures\Vehicle\wheel1.xnb
 Content\Data\Floor\example
 Content\Data\Floor\standart1.txt
 Content\Data\Items\README

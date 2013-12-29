@@ -18,6 +18,7 @@ using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
 using IGameComponent = rglikeworknamelib.Window.IGameComponent;
+using Version = rglikeworknamelib.Version;
 
 namespace jarg {
     public partial class JargMain {
@@ -596,8 +597,13 @@ namespace jarg {
             ButtonNewGame = new Button(new Vector2(10, 120 + 40*1), "New game", WindowMainMenu);
             ButtonNewGame.OnPressed += ButtonNewGame_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonNewGame);
-            DeleteLastWorldButton = new Button(new Vector2(ButtonNewGame.GetPosition().X + ButtonNewGame.Width + 20, ButtonNewGame.GetPosition().Y), "Delete Last World", WindowMainMenu);
+
+            DeleteLastWorldButton = new Button(new Vector2(ButtonNewGame.GetPosition().X + ButtonNewGame.Width + 20, ButtonNewGame.GetPosition().Y - 20), "Delete Last World", WindowMainMenu);
             DeleteLastWorldButton.OnPressed += DeleteLastWorldButton_OnPressed;
+
+            ButtonConnect = new Button(new Vector2(10, 120 + 40 * 2), "New game", WindowMainMenu);
+            WindowMainMenu.CenterComponentHor(ButtonConnect);
+            ButtonConnect.OnPressed += new EventHandler(ButtonConnect_OnPressed);
 
             ModLoaderButton = new Button(new Vector2(10, 100 + 40*4), "ModLoader", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ModLoaderButton);
@@ -618,6 +624,16 @@ namespace jarg {
                                        WindowMainMenu);
             ButtonOpenGit.OnPressed += ButtonOpenGit_onPressed;
             WindowMainMenu.CenterComponentHor(ButtonOpenGit);
+        }
+
+        private JargClient client;
+        void ButtonConnect_OnPressed(object sender, EventArgs e) {
+            client = new JargClient("some");
+
+            for (int i = 0; i < 10; i++) {
+                client.SendStruct(new JargPack {action = "aim", name = "some", x = 1, y = 2});
+                Thread.Sleep(100);
+            }
         }
 
         void DeleteLastWorldButton_OnPressed(object sender, EventArgs e) {
@@ -1490,6 +1506,8 @@ namespace jarg {
         }
 
         private Vector2? looklPos;
+        private Button ButtonConnect;
+
         void lookl_OnLeftPressed(object sender, LabelPressEventArgs e) {
             var t = (Tuple<Vector2, Item>)(((Label)sender).Tag);
             looklPos = t.Item1;

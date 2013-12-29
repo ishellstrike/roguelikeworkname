@@ -19,10 +19,12 @@ namespace rglikeworknamelib.Parser
             ItemDataBase idb = ItemDataBase.Instance;
             var atlases = Atlases.Instance;
             foreach (var data in idb.Data) {
-                if (data.Value.Dress != null && !atlases.MajorIndexes.ContainsKey(data.Value.Dress)) {
-                    Logger.Error(string.Format("texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
-                    data.Value.Dress = "error";
-                    errorIDB++;
+                if (atlases != null) {
+                    if (data.Value.Dress != null && !atlases.MajorIndexes.ContainsKey(data.Value.Dress)) {
+                        Logger.Error(string.Format("texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
+                        data.Value.Dress = "error";
+                        errorIDB++;
+                    }
                 }
                 if (data.Value.AfteruseId != null) {
                     if (!idb.Data.ContainsKey(data.Value.AfteruseId)) {
@@ -35,6 +37,9 @@ namespace rglikeworknamelib.Parser
 
             int errorFDB = 0;
             foreach (var data in FloorDataBase.Data) {
+                if (atlases == null) {
+                    continue;
+                }
                 if (!atlases.MajorIndexes.ContainsKey(data.Value.MTex)) {
                     Logger.Error(string.Format("texture \"{0}\" for FloorDataBase.MTex not found", data.Value.MTex));
                     data.Value.MTex = "error";
@@ -139,6 +144,9 @@ namespace rglikeworknamelib.Parser
             int errorBDB = 0;
             var instance = Atlases.Instance;
             foreach (var data in BlockDataBase.Data) {
+                if (instance == null) {
+                    continue;
+                }
                 if (!instance.MajorIndexes.ContainsKey(data.Value.MTex)) {
                     Logger.Error(string.Format("texture \"{0}\" for BlockDataBase.MTex not found", data.Value.MTex));
                     data.Value.MTex = "error";

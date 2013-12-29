@@ -26,6 +26,7 @@ using rglikeworknamelib.Window;
 using Color = Microsoft.Xna.Framework.Color;
 using Label = rglikeworknamelib.Window.Label;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Version = rglikeworknamelib.Version;
 
 namespace jarg {
     public partial class JargMain : Game {
@@ -98,16 +99,12 @@ namespace jarg {
             myProcess.Dispose();
 #endif
 
-            Application.ApplicationExit += Application_ApplicationExit;
-
             if (File.Exists("JARGLog_previous.txt")) {
                 File.Delete("JARGLog_previous.txt");
             }
             if (File.Exists("JARGLog.txt")) {
                 File.Move("JARGLog.txt", "JARGLog_previous.txt");
             }
-
-            Version.Init();
 
             graphics_ = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -118,12 +115,6 @@ namespace jarg {
         }
 
         protected Vector2 ContainerOn { get; set; }
-
-        private void Application_ApplicationExit(object sender, EventArgs e) {
-            //if (currentFloor_.SectorCount() > 0) {
-            //    currentFloor_.SaveAllAndExit(player_, inventory_);
-            //}
-        }
 
         protected override void Initialize() {
             var gameWindowForm = (Form) Control.FromHandle(Window.Handle);
@@ -150,6 +141,9 @@ namespace jarg {
         private void gameWindowForm_FormClosing(object sender, FormClosingEventArgs e) {
             e.Cancel = !Settings.NeedExit;
             currentFloor_.SaveAllAndExit(player_, inventory_);
+            if (client != null) {
+                client.Disconnect();
+            }
         }
 
         private void RunRadioGhostBox() {
@@ -326,8 +320,6 @@ namespace jarg {
             player_.Load();
             inventory_.Load();
             UpdateInventoryContainer();
-
-            currentFloor_.MegaMapPreload();
 
             var inv = new Action<int, int>(currentFloor_.GenerateMegaSectorAround);
             inv.BeginInvoke(0, 0, null, null);

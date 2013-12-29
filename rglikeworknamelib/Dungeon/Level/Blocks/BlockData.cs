@@ -30,7 +30,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public static Rectangle GetSource(string s) {
-            if (s == null) {
+            //server notex
+            if (Atlases.Instance == null)
+            {
                 return new Rectangle(0, 0, 0, 0);
             }
             int index = Atlases.Instance.MajorIndexes[s];

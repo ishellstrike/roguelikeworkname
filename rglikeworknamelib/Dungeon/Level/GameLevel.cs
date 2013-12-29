@@ -56,17 +56,26 @@ namespace rglikeworknamelib.Dungeon.Level
         {
             MapSeed = Settings.rnd.Next();
             MapGenerators.Seed = MapSeed;
-            whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            var data = new uint[1];
-            data[0] = 0xffffffff;
-            whitepixel.SetData(data);
+            if (spriteBatch != null) {
+                whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+                var data = new uint[1];
+                data[0] = 0xffffffff;
+                whitepixel.SetData(data);
 
-            transparentpixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            data[0] = 0x0;
-            transparentpixel.SetData(data);
+                transparentpixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+                data[0] = 0x0;
+                transparentpixel.SetData(data);
 
-            minimap_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 121, 121);
-            map_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 671, 671);
+
+                minimap_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 121, 121);
+                map_ = new RenderTarget2D(spriteBatch.GraphicsDevice, 671, 671);
+
+                spriteBatch_ = spriteBatch;
+                font_ = sf;
+                gd_ = gd;
+                be_ = new BasicEffect(gd_);
+                (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
+            }
             megaMap = new Dictionary<Point, MegaMap>();
 
             sectors_ = new Dictionary<Point, MapSector>();
@@ -76,12 +85,6 @@ namespace rglikeworknamelib.Dungeon.Level
             //}
 
             //sectors_.Last().Value.Rebuild(MapSeed);
-
-            spriteBatch_ = spriteBatch;
-            font_ = sf;
-            gd_ = gd;
-            be_ = new BasicEffect(gd_);
-            (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
 
             lw_ = lw;
 
@@ -973,10 +976,6 @@ namespace rglikeworknamelib.Dungeon.Level
             lw_.SaveAll();
 
             Settings.NeedExit = true;
-        }
-
-        public void MegaMapPreload()
-        {
         }
 
         /// <summary>
