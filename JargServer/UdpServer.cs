@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using rglikeworknamelib;
+using rglikeworknamelib.Dungeon.Level;
 
 namespace JargServer
 {
@@ -63,8 +64,8 @@ namespace JargServer
             listenthread = new Thread(ListenAndHandleMessages);
             listenthread.Start();
 
-            //sendthread  = new Thread(updateAndSendStructs);
-            //sendthread.Start();
+            sendthread  = new Thread(UpdateAndSendStructs);
+            sendthread.Start();
 
             //logicThread = new Thread(updateLogic);
             //logicThread.Start();
@@ -106,7 +107,6 @@ namespace JargServer
                                     msg.x = c2.Value.aim_x;
                                     msg.y = c2.Value.aim_y;
                                     SendStruct(msg, c.Key);
-                                    Console.Write("s");
                                 }
                             }
                         }
@@ -131,19 +131,32 @@ namespace JargServer
                     {
                         EndConnection(ds.name, ipendpoint);
                     }
-                    else if (actions.ContainsKey(ds.action)) {
-                        Console.WriteLine(ds.action);
-                        actions[ds.action].Start();
+                    if (ds.action == "bases")
+                    {
+                        GiveBases(ds.name);
+                    }
+                    if (ds.action == "position")
+                    {
+                        if (connected.ContainsKey(ds.name)) {
+                            connected[ds.name].x = ds.x;
+                            connected[ds.name].y = ds.y;
+                        }
                     }
                     else {
-                        Console.WriteLine("Action is not \"connect\" (" + ds.action + ")");
+                        Console.WriteLine("Unknown message (" + ds.action + ")");
                     }
                 }
 
             Console.Write("Listening thread stops.");
         }
 
-        public void SendStruct(JargPack msg, string name)
+        private void GiveBases(string name) {
+            List<object> bases = new List<object>();
+            bases.Add(BlockDataBase.Data);
+            SendStruct(bases, name);
+        }
+
+        public void SendStruct<T>(T msg, string name)
         {
             byte[] data = MarshalHelper.SerializeMessage(msg);
             if (connected.ContainsKey(name))

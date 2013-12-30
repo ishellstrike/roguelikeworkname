@@ -49,10 +49,12 @@ namespace JargServer
 
             ServerHello();
 
+            DataBasesLoadAndThenInitialGeneration();
+
+            WriteColoredLine("Initial ready!", ConsoleColor.Cyan);
+
             udps = new UDPServer();
             udps.StartServer(ServerPort);
-
-            DataBasesLoadAndThenInitialGeneration();
 
             WriteColoredLine("Server ready!", ConsoleColor.Cyan);
 

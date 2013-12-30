@@ -18,10 +18,11 @@ namespace rglikeworknamelib
         public string name;
         public Dictionary<string, OtherClient> otherclients;
 
+        // Send connection sequence
         public JargClient(string n)
         {
             name = n;
-            ipendpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 80);
+            ipendpoint = new IPEndPoint(IPAddress.Parse("81.24.186.54"), 80);
             udpclient = new UdpClient();
             udpclient.Connect(ipendpoint);
 
@@ -33,10 +34,12 @@ namespace rglikeworknamelib
             connectmessage.action = "connect";
             connectmessage.name = name;
             SendStruct(connectmessage);
+            otherclients = new Dictionary<string, OtherClient>();
         }
 
         public void Disconnect() {
             SendStruct(new JargPack {action = "disconnect", name = name});
+            listenthread.Abort();
         }
 
         void ListenForStructs()

@@ -455,6 +455,9 @@ namespace jarg {
             //    car.Update(gameTime, player_);
             //}
             player_.Update(gameTime, currentFloor_.GetSector((int) aa.X, (int) aa.Y), player_);
+            if (client != null) {
+                client.SendStruct("position", client.name, player_.Position.X, player_.Position.Y);
+            }
             currentFloor_.KillFarSectors(player_, gameTime, camera_);
             bs_.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
@@ -555,7 +558,10 @@ namespace jarg {
             spriteBatch_.Begin();
             spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.75f));
             currentFloor_.DrawBlocks(gameTime, camera_, player_);
-            player_.Draw(gameTime, camera_);
+            player_.Draw(gameTime, camera_, null);
+            foreach (var otherclient in client.otherclients) {
+                player_.Draw(gameTime, camera_, otherclient);
+            }
             spriteBatch_.End();
             currentFloor_.DrawEntities(gameTime, camera_);
             spriteBatch_.Begin();

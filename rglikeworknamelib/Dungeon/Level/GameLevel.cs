@@ -1350,7 +1350,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 for (int m = 0; m < sector.Creatures.Count; m++)
                 {
                     Creature crea = sector.Creatures[m];
-                    crea.Draw(spriteBatch_, camera, sector);
+                    crea.Draw(spriteBatch_, camera);
                 }
             }
             foreach (var mapSector in sectors_)

@@ -206,13 +206,12 @@ namespace rglikeworknamelib.Creatures {
 
         public bool Skipp { get; set; }
 
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera, MapSector ms) {
-            Vector2 a = GetPositionInBlocks();
-            Vector2 p = WorldPosition() - camera;
-            spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
-            if (Settings.DebugInfo) {
-                spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
-            }
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera) {
+                Vector2 p = WorldPosition() - camera;
+                spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
+                if (Settings.DebugInfo) {
+                    spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
+                }
         }
 
         public Vector2 WorldPosition() {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
@@ -235,23 +236,33 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        public void Draw(GameTime gt, Vector2 cam) {
-            Vector2 position = Position - cam;
-            var origin = new Vector2(Tex.Width/2f, Tex.Height);
-            sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
-                     SpriteEffects.None, 1);
-            foreach (var dress in Weared) {
-                if (!string.IsNullOrEmpty(dress.Data.Dress)) {
-                    sb_.Draw(Atlases.Instance.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin, 1,
-                             SpriteEffects.None, 1);
+        public void Draw(GameTime gt, Vector2 cam, KeyValuePair<string, OtherClient>? other) {
+            if (!other.HasValue) {
+                Vector2 position = Position - cam;
+                var origin = new Vector2(Tex.Width/2f, Tex.Height);
+                sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
+                         SpriteEffects.None, 1);
+                foreach (var dress in Weared) {
+                    if (!string.IsNullOrEmpty(dress.Data.Dress)) {
+                        sb_.Draw(Atlases.Instance.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin,
+                                 1,
+                                 SpriteEffects.None, 1);
+                    }
+                }
+
+                if (Settings.DebugInfo) {
+                    sb_.DrawString(Font,
+                                   string.Format("Po:{0}{5}Hu:{1} Th:{2}{5}Sl:{3} He:{4}", Position, Hunger, Thirst,
+                                                 Sleep,
+                                                 Heat, Environment.NewLine),
+                                   new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
                 }
             }
-
-            if (Settings.DebugInfo) {
-                sb_.DrawString(Font,
-                               string.Format("Po:{0}{5}Hu:{1} Th:{2}{5}Sl:{3} He:{4}", Position, Hunger, Thirst, Sleep,
-                                             Heat, Environment.NewLine),
-                               new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
+            else {
+                Vector2 position = new Vector2(other.Value.Value.x, other.Value.Value.y) - cam;
+                var origin = new Vector2(Tex.Width / 2f, Tex.Height);
+                sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
+                         SpriteEffects.None, 1);
             }
         }
 

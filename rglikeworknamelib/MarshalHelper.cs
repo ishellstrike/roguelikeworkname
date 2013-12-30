@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace rglikeworknamelib {
     public static class MarshalHelper
     {
-        public static T DeserializeMsg<T>(Byte[] data) where T : struct
+        public static T DeserializeMsg<T>(Byte[] data)
         {
             int objsize = Marshal.SizeOf(typeof(T));
             IntPtr buff = Marshal.AllocHGlobal(objsize);
@@ -13,7 +13,7 @@ namespace rglikeworknamelib {
             Marshal.FreeHGlobal(buff);
             return retStruct;
         }
-        public static Byte[] SerializeMessage<T>(T msg) where T : struct
+        public static Byte[] SerializeMessage<T>(T msg)
         {
             int objsize = Marshal.SizeOf(typeof(T));
             Byte[] ret = new Byte[objsize];

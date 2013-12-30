@@ -628,11 +628,9 @@ namespace jarg {
 
         private JargClient client;
         void ButtonConnect_OnPressed(object sender, EventArgs e) {
-            client = new JargClient("some");
-
-            for (int i = 0; i < 10; i++) {
-                client.SendStruct(new JargPack {action = "aim", name = "some", x = 1, y = 2});
-                Thread.Sleep(100);
+            if (client == null) {
+                string s = "some" + (char) Settings.rnd.Next(60, 70);
+                client = new JargClient(s);
             }
         }
 
