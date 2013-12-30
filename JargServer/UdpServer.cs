@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
+using Microsoft.Xna.Framework;
 using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Level;
 
@@ -18,14 +20,17 @@ namespace JargServer
         private Thread logicThread;
         private UdpClient udp;
         private bool running;
-        private Dictionary<string, ConnectedClient> connected;
+        private Dictionary<string, OtherClient> connected;
         Random rand;
         private Dictionary<string, Thread> actions;
+        private LevelWorker lw_;
+        private GameLevel gl_;
 
-        public UDPServer()
-        {
+        public UDPServer(LevelWorker lw, GameLevel gl) {
+            lw_ = lw;
+            gl_ = gl;
             running = false;
-            connected = new Dictionary<string, ConnectedClient>();
+            connected = new Dictionary<string, OtherClient>();
             rand = new Random();
             threads = new List<Thread>();
             actions = new Dictionary<string, Thread>();
@@ -36,24 +41,6 @@ namespace JargServer
         {
             Thread t = new Thread(function);
             actions.Add(action, t);
-        }
-
-        public class ConnectedClient
-        {
-            public string name;
-            public IPEndPoint ipendpoint;
-            public float x;
-            public float y;
-            public float aim_x;
-            public float aim_y;
-
-            public ConnectedClient(string n, IPEndPoint ipep, int X, int Y)
-            {
-                name = n;
-                ipendpoint = ipep;
-                x = X;    // sets to random when created from server..
-                y = Y;
-            }
         }
 
         public void StartServer(int port)
@@ -80,7 +67,7 @@ namespace JargServer
         void UpdateAndSendStructs(Object obj)
         {
             #region send messages
-            while (true)
+            while (running)
             {
                 Thread.Sleep(50);
 
@@ -88,9 +75,9 @@ namespace JargServer
                 {
                     lock (connected)
                     {
-                        foreach (KeyValuePair<string, ConnectedClient> c in connected)
+                        foreach (KeyValuePair<string, OtherClient> c in connected)
                         {
-                            foreach (KeyValuePair<string, ConnectedClient> c2 in connected)
+                            foreach (KeyValuePair<string, OtherClient> c2 in connected)
                             {
                                 if (c2.Key != c.Key)
                                 {
@@ -100,12 +87,7 @@ namespace JargServer
                                     msg.name = c2.Key;
                                     msg.x = c2.Value.x;
                                     msg.y = c2.Value.y;
-                                    SendStruct(msg, c.Key);
-
-                                    // Update aim.
-                                    msg.action = "aim";
-                                    msg.x = c2.Value.aim_x;
-                                    msg.y = c2.Value.aim_y;
+                                    msg.angle = c2.Value.angle;
                                     SendStruct(msg, c.Key);
                                 }
                             }
@@ -120,43 +102,51 @@ namespace JargServer
         {
                 while (running) {
                     var ipendpoint = new IPEndPoint(IPAddress.Any, 80); // Listen for anywhere
-                    byte[] data = udp.Receive(ref ipendpoint); // Get some data
-                    object d = MarshalHelper.DeserializeMsg<JargPack>(data);
+                    byte[] data;
+                    try {
+                        data = udp.Receive(ref ipendpoint); // Get some data
+                    }
+                    catch (SocketException) {
+                        continue;
+                    }
+                    object d = MarshalHelper.DeserializeMsg(data);
                     var ds = (JargPack) d;
 
-                    if (ds.action == "connect") {
-                        HandleConnection(ds.name, ipendpoint);
-                    }
-                    if (ds.action == "disconnect")
-                    {
-                        EndConnection(ds.name, ipendpoint);
-                    }
-                    if (ds.action == "bases")
-                    {
-                        GiveBases(ds.name);
-                    }
-                    if (ds.action == "position")
-                    {
-                        if (connected.ContainsKey(ds.name)) {
-                            connected[ds.name].x = ds.x;
-                            connected[ds.name].y = ds.y;
-                        }
-                    }
-                    else {
-                        Console.WriteLine("Unknown message (" + ds.action + ")");
+                    switch (ds.action) {
+                        case "connect":
+                            HandleConnection(ds.name, ipendpoint);
+                            break;
+                        case "disconnect":
+                            EndConnection(ds.name, ipendpoint);
+                            break;
+                        case "mapsector":
+                            GiveSector(ds.name, ds.x, ds.y);
+                            break;
+                        case "position":
+                            if (connected.ContainsKey(ds.name)) {
+                                connected[ds.name].x = ds.x;
+                                connected[ds.name].y = ds.y;
+                                connected[ds.name].angle = ds.angle;
+                            }
+                            break;
+                        default:
+                            Console.WriteLine("Unknown message (" + ds.action + ")");
+                            break;
                     }
                 }
 
             Console.Write("Listening thread stops.");
         }
 
-        private void GiveBases(string name) {
-            List<object> bases = new List<object>();
-            bases.Add(BlockDataBase.Data);
-            SendStruct(bases, name);
+        private void GiveSector(string name, float f, float f1) {
+            StringBuilder n = new StringBuilder();
+            var pack = new[] {lw_.TryGet(new Point((int)f, (int)f1), gl_)};
+            if(pack[0] == null){ return; }
+            lw_.SectorSaver(pack, n);
+            SendStruct(new JargPack{action = "mapsector", name = "name", mapsector = n.ToString()}, name);
         }
 
-        public void SendStruct<T>(T msg, string name)
+        public void SendStruct(JargPack msg, string name)
         {
             byte[] data = MarshalHelper.SerializeMessage(msg);
             if (connected.ContainsKey(name))
@@ -203,7 +193,7 @@ namespace JargServer
                 if (!connected.ContainsKey(name))
                 {
                     // Add to connections
-                    connected.Add(name, new ConnectedClient(name, ipep, rand.Next(0, 500), rand.Next(0, 500)));
+                    connected.Add(name, new OtherClient(name, ipep, rand.Next(0, 500), rand.Next(0, 500)));
                     #region console it
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(" Accepted");
@@ -229,6 +219,11 @@ namespace JargServer
             #endregion
             Console.WriteLine("Total connected: " + connected.Count.ToString());
             //Console.Title = "Connections: " + connected.Count.ToString();
+        }
+
+        public void Close() {
+            running = false;
+            udp.Close();
         }
     }
 }

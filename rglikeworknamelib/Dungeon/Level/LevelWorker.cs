@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
@@ -19,8 +20,14 @@ namespace rglikeworknamelib.Dungeon.Level {
         private Dictionary<Point, GameLevel> onLoadOrGenerate_;
         private Dictionary<Point, MapSector> onStore_;
         public Dictionary<Point, MapSector> Buffer;
+        public bool ServerGame;
+        public JargClient client;
         private bool exit;
 
+        /// <summary>
+        /// Using local generation - false, Using server generation - true
+        /// </summary>
+        /// <param name="server"></param>
         public LevelWorker() {
             onLoadOrGenerate_ = new Dictionary<Point, GameLevel>();
             onStore_ = new Dictionary<Point, MapSector>();
@@ -67,8 +74,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                         Buffer.Add(kvp.Key, trget);
                         onStore_.Remove(kvp.Key);
                     } else {
-                        if (load_started) {
+                        if (load_started || ServerGame) {
                             onLoadOrGenerate_.Remove(kvp.Key);
+                             if (client != null) {
+                                 client.SendStruct(new JargPack { action = "mapsector", name = client.name, x = kvp.Key.X, y = kvp.Key.Y });
+                             }
                             continue;
                         }
                         var ms = new MapSector(kvp.Value, kvp.Key.X, kvp.Key.Y);
@@ -91,26 +101,23 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private bool stopped;
-        private void LoadOrGenerate(Point p, GameLevel gl) {
-            if (!onLoadOrGenerate_.ContainsKey(p)) {
-                onLoadOrGenerate_.Add(p, gl);
-            }
-        }
 
         public MapSector TryGet(Point p, GameLevel gl) {
             if (Buffer.ContainsKey(p)) {
                 return Buffer[p];
             }
-            LoadOrGenerate(p, gl);
+            if (!onLoadOrGenerate_.ContainsKey(p)) {
+                onLoadOrGenerate_.Add(p, gl);
+            }
             return null;
         }
 
         public void StoreGenerated(MapSector ms) {
             var point = new Point(ms.SectorOffsetX, ms.SectorOffsetY);
-            if(onStore_.ContainsKey(point)) {
-                onStore_.Remove(point);
+            if(Buffer.ContainsKey(point)) {
+                Buffer.Remove(point);
             }
-            onStore_.Add(point, ms);
+            Buffer.Add(point, ms);
         }
 
         public void Stop() {
@@ -174,7 +181,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             stream.Dispose();
             fs.Dispose();
         }
-        private void SectorSaver(IEnumerable<MapSector> array, StringBuilder stringBuilder)
+
+        public void SectorSaver(IEnumerable<MapSector> array, StringBuilder stringBuilder)
         {
             foreach (var ms in array) {
                 var blockIdVocab = new List<string>();
@@ -295,7 +303,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
         }
-        private static void BlockPart(MapSector ms, List<string> blockMtexVocab, List<string> blockIdVocab, StringBuilder stringBuilder) {
+        private void BlockPart(MapSector ms, List<string> blockMtexVocab, List<string> blockIdVocab, StringBuilder stringBuilder) {
             for (int i = 0; i < ms.Blocks.Count; i++) {
                 int id = blockIdVocab.IndexOf(ms.Blocks[i].Id);
                 int count = 1;
@@ -358,7 +366,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 stringBuilder.Append(" ");
             }
         }
-        private static void FloorPart(MapSector ms, List<string> floorMtexVocab, List<string> floorIdVocab, StringBuilder stringBuilder)
+        private void FloorPart(MapSector ms, List<string> floorMtexVocab, List<string> floorIdVocab, StringBuilder stringBuilder)
         {
             for (int i = 0; i < ms.Floors.Length; i++) {
                 int id = floorIdVocab.IndexOf(ms.Floors[i].Id);
@@ -422,7 +430,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         private bool load_started;
 
         internal void LoadAll(GameLevel gl) {
-            if (load_started) {
+            if (load_started || ServerGame) {
                 return;
             }
 
@@ -473,7 +481,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             load_started = false;
         }
 
-        private static Dictionary<Point, MapSector> PartLoader(GameLevel gl, IEnumerable<string> parts)
+        public Dictionary<Point, MapSector> PartLoader(GameLevel gl, IEnumerable<string> parts)
         {
             Dictionary<Point, MapSector> temp = new Dictionary<Point, MapSector>();
             foreach (var part in parts) {
@@ -508,7 +516,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var itemIddic = par[12].Split(' ').ToList();
                 itemIddic.Remove(itemIddic.Last());
 
-                Point position = new Point(int.Parse(pos[0]), int.Parse(pos[1]));
+                Point position = new Point(int.Parse(pos[0].Trim('#')), int.Parse(pos[1].Trim('\r').Trim('\n')));
                 MapSector sector = new MapSector(gl, position.X, position.Y);
 
                 int off = 0;

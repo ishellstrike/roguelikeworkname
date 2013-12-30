@@ -141,9 +141,6 @@ namespace jarg {
         private void gameWindowForm_FormClosing(object sender, FormClosingEventArgs e) {
             e.Cancel = !Settings.NeedExit;
             currentFloor_.SaveAllAndExit(player_, inventory_);
-            if (client != null) {
-                client.Disconnect();
-            }
         }
 
         private void RunRadioGhostBox() {
@@ -321,9 +318,6 @@ namespace jarg {
             inventory_.Load();
             UpdateInventoryContainer();
 
-            var inv = new Action<int, int>(currentFloor_.GenerateMegaSectorAround);
-            inv.BeginInvoke(0, 0, null, null);
-
             HideInfoWindow();
             sw.Stop();
             Logger.Info("Initial generation in {0}", sw.Elapsed);
@@ -376,6 +370,11 @@ namespace jarg {
         protected override void UnloadContent() {
             wmPs_.close();
             levelWorker_.Stop();
+            if (client_ != null)
+            {
+                client_.Disconnect();
+            }
+            client_ = null;
         }
 
         protected override void Update(GameTime gameTime) {
@@ -455,8 +454,8 @@ namespace jarg {
             //    car.Update(gameTime, player_);
             //}
             player_.Update(gameTime, currentFloor_.GetSector((int) aa.X, (int) aa.Y), player_);
-            if (client != null) {
-                client.SendStruct("position", client.name, player_.Position.X, player_.Position.Y);
+            if (client_ != null) {
+                client_.SendStruct(new JargPack { action = "position", name = client_.name, x = player_.Position.X, y = player_.Position.Y, angle = PlayerSeeAngle});
             }
             currentFloor_.KillFarSectors(player_, gameTime, camera_);
             bs_.Update(gameTime);
@@ -545,7 +544,7 @@ namespace jarg {
             //{player_.Position.X - camera_.X, player_.Position.Y - camera_.Y});
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            //GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Black);
             //color maps
             spriteBatch_.Begin();
             currentFloor_.DrawFloors(gameTime, camera_);
@@ -559,8 +558,10 @@ namespace jarg {
             spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.75f));
             currentFloor_.DrawBlocks(gameTime, camera_, player_);
             player_.Draw(gameTime, camera_, null);
-            foreach (var otherclient in client.otherclients) {
-                player_.Draw(gameTime, camera_, otherclient);
+            if (client_ != null) {
+                foreach (var otherclient in client_.otherclients) {
+                    player_.Draw(gameTime, camera_, otherclient);
+                }
             }
             spriteBatch_.End();
             currentFloor_.DrawEntities(gameTime, camera_);
@@ -692,8 +693,15 @@ namespace jarg {
             //GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.SetRenderTarget(lightMapRenderTarget_);
             GraphicsDevice.Clear(Color.Black);
-            spriteBatch_.Begin();
+            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
             spriteBatch_.Draw(fltex, (player_.Position - camera_)/LightQ, null, Color.White, PlayerSeeAngle + MathHelper.PiOver2, new Vector2((fltex.Width / 2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
+            if (client_ != null) {
+                foreach (var otherclient in client_.otherclients) {
+                    spriteBatch_.Draw(fltex, (new Vector2(otherclient.Value.x, otherclient.Value.y) - camera_)/LightQ,
+                                      null, Color.White, otherclient.Value.angle + MathHelper.PiOver2,
+                                      new Vector2((fltex.Width/2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
+                }
+            }
             //currentFloor_.DrawAmbient(camera_, LightQ);
             spriteBatch_.End();
 

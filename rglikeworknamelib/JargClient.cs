@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib
 {
@@ -16,12 +17,17 @@ namespace rglikeworknamelib
         public int x;
         public int y;
         public string name;
+        public bool running;
         public Dictionary<string, OtherClient> otherclients;
+        private LevelWorker lw_;
+        private GameLevel gl_;
 
         // Send connection sequence
-        public JargClient(string n)
-        {
+        public JargClient(string n, LevelWorker lw, GameLevel gl) {
+            gl_ = gl;
+            lw_ = lw;
             name = n;
+            running = true;
             ipendpoint = new IPEndPoint(IPAddress.Parse("81.24.186.54"), 80);
             udpclient = new UdpClient();
             udpclient.Connect(ipendpoint);
@@ -39,15 +45,21 @@ namespace rglikeworknamelib
 
         public void Disconnect() {
             SendStruct(new JargPack {action = "disconnect", name = name});
-            listenthread.Abort();
+            running = false;
+            udpclient.Close();
         }
 
         void ListenForStructs()
         {
-            while (true)
-            {
-                byte[] data = udpclient.Receive(ref ipendpoint);
-                object d = MarshalHelper.DeserializeMsg<JargPack>(data);
+            while (running) {
+                byte[] data;
+                try {
+                    data = udpclient.Receive(ref ipendpoint);
+                }
+                catch (SocketException) {
+                    break;
+                }
+                object d = MarshalHelper.DeserializeMsg(data);
                 JargPack ds = (JargPack)d;
 
                 if (ds.action == "accept" && ds.name == name)
@@ -62,23 +74,17 @@ namespace rglikeworknamelib
                         case "position":
                             if (otherclients.ContainsKey(ds.name))
                             {
-                                otherclients[ds.name].x = (int)ds.x;
-                                otherclients[ds.name].y = (int)ds.y;
+                                OtherClient client = otherclients[ds.name];
+                                client.x = (ds.x + client.x)/2;
+                                client.y = (ds.y + client.y)/2;
+                                client.angle = (ds.angle + client.angle) / 2;
                             }
                             else
                             {
                                 lock (otherclients)
                                 {
-                                    otherclients.Add(ds.name, new OtherClient(ds.name, ds.x, ds.y));
+                                    otherclients.Add(ds.name, new OtherClient(ds.name, ds.x, ds.y, ds.angle));
                                 }
-                            }
-                            break;
-
-                        case "aim":
-                            if (otherclients.ContainsKey(ds.name))
-                            {
-                                otherclients[ds.name].aim_x = (int)ds.x;
-                                otherclients[ds.name].aim_y = (int)ds.y;
                             }
                             break;
 
@@ -86,6 +92,9 @@ namespace rglikeworknamelib
                             if (otherclients.ContainsKey(ds.name)) {
                                 otherclients.Remove(ds.name);
                             }
+                            break;
+                        case "mapsector":
+                            lw_.StoreGenerated(lw_.PartLoader(gl_, new[] {ds.mapsector}).First().Value);
                             break;
 
                         default:

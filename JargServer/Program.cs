@@ -50,10 +50,11 @@ namespace JargServer
             ServerHello();
 
             DataBasesLoadAndThenInitialGeneration();
+            currentFloor_.GenerateMegaSectorAround(0, 0);
 
             WriteColoredLine("Initial ready!", ConsoleColor.Cyan);
 
-            udps = new UDPServer();
+            udps = new UDPServer(levelWorker_, currentFloor_);
             udps.StartServer(ServerPort);
 
             WriteColoredLine("Server ready!", ConsoleColor.Cyan);
@@ -68,7 +69,6 @@ namespace JargServer
                         ServerGoodbye();
                         levelWorker_.SaveAll();
                         Console.WriteLine("Saving map...");
-                        levelWorker_.Stop();
                         Environment.Exit(0);
                         break;
                 }
@@ -97,8 +97,8 @@ namespace JargServer
             Console.WriteLine();
         }
 
-        public static void ServerGoodbye()
-        {
+        public static void ServerGoodbye() {
+            udps.Close();
             Console.Write("Server ");
             WriteColored(rglikeworknamelib.Version.GetLong(), ConsoleColor.Cyan);
             Console.WriteLine(" closing");

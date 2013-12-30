@@ -601,7 +601,7 @@ namespace jarg {
             DeleteLastWorldButton = new Button(new Vector2(ButtonNewGame.GetPosition().X + ButtonNewGame.Width + 20, ButtonNewGame.GetPosition().Y - 20), "Delete Last World", WindowMainMenu);
             DeleteLastWorldButton.OnPressed += DeleteLastWorldButton_OnPressed;
 
-            ButtonConnect = new Button(new Vector2(10, 120 + 40 * 2), "New game", WindowMainMenu);
+            ButtonConnect = new Button(new Vector2(10, 120 + 40 * 2), "Connect to server", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ButtonConnect);
             ButtonConnect.OnPressed += new EventHandler(ButtonConnect_OnPressed);
 
@@ -626,11 +626,13 @@ namespace jarg {
             WindowMainMenu.CenterComponentHor(ButtonOpenGit);
         }
 
-        private JargClient client;
+        private JargClient client_;
         void ButtonConnect_OnPressed(object sender, EventArgs e) {
-            if (client == null) {
+            if (client_ == null) {
                 string s = "some" + (char) Settings.rnd.Next(60, 70);
-                client = new JargClient(s);
+                client_ = new JargClient(s, levelWorker_, currentFloor_);
+                levelWorker_.client = client_;
+                levelWorker_.ServerGame = true;
             }
         }
 
@@ -1031,6 +1033,7 @@ namespace jarg {
                         mousemapoffset = Vector2.Zero;
                         EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y),
                                      GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                        camera_ = player_.Position - Settings.Resolution/2;
                     }
                     else {
                         EventLog.Add(string.Format("Wrong number to tp <x> <y>"),
@@ -1327,6 +1330,10 @@ namespace jarg {
         private void ButtonNewGame_onPressed(object sender, EventArgs e) {
             WindowMainMenu.Visible = false;
             WindowCaracterCration.Visible = true;
+            if (client_ == null) {
+                var inv = new Action<int, int>(currentFloor_.GenerateMegaSectorAround);
+                inv.BeginInvoke(0, 0, null, null);
+            }
         }
 
         private bool started;
