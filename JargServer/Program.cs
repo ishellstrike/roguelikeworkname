@@ -60,7 +60,16 @@ namespace JargServer
             WriteColoredLine("Server ready!", ConsoleColor.Cyan);
 
             while (running) {
-                var command = Console.ReadLine();
+                string command = string.Empty;
+                if (IsMonitor) {
+                    Console.ReadKey();
+                    Console.Clear();
+                    Console.WriteLine("Stop monitoring");
+                }
+                else {
+                    command = Console.ReadLine();
+                }
+                IsMonitor = false;
 
                 switch (command) {
                     case "stop":
@@ -71,8 +80,39 @@ namespace JargServer
                         Console.WriteLine("Saving map...");
                         Environment.Exit(0);
                         break;
+
+                    case "monitor":
+                        IsMonitor = true;
+                        Action a = Monitor;
+                        a.BeginInvoke(null, null);
+                        break;
                 }
             }
+        }
+
+        public static bool IsMonitor;
+        public static void Monitor() {
+            while (IsMonitor) {
+                Console.Clear();
+                Console.WriteLine("Clients: {0}", udps.GetClients.Count);
+                Console.WriteLine("Traffic:{0}      In: {1}{0}      Out: {2}", Environment.NewLine, TrafSimp(udps.GetInnerTraffic), TrafSimp(udps.GetOuterTraffic));
+                Thread.Sleep(300);
+            }
+        }
+
+        public static string TrafSimp(int traf) {
+            if (traf > 1024*1024*1024) {
+                return string.Format("{0:0.00} GiB", traf/(1024.0*1024.0*1024.0));
+            }
+            if (traf > 1024 * 1024)
+            {
+                return string.Format("{0:0.00} MiB", traf / (1024.0 * 1024.0));
+            }
+            if (traf > 1024)
+            {
+                return string.Format("{0:0.00} KiB", traf / 1024.0);
+            }
+            return string.Format("{0} B", traf);
         }
 
         public static void WriteColored(object s, ConsoleColor color) {

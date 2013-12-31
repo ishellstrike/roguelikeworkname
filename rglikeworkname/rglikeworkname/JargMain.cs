@@ -140,7 +140,12 @@ namespace jarg {
 
         private void gameWindowForm_FormClosing(object sender, FormClosingEventArgs e) {
             e.Cancel = !Settings.NeedExit;
-            currentFloor_.SaveAllAndExit(player_, inventory_);
+            if (client_ != null) {
+                currentFloor_.SaveAllAndExit(player_, inventory_);
+            }
+            else {
+                Settings.NeedExit = true;
+            }
         }
 
         private void RunRadioGhostBox() {

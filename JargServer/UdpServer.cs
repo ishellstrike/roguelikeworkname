@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -25,6 +26,21 @@ namespace JargServer
         private Dictionary<string, Thread> actions;
         private LevelWorker lw_;
         private GameLevel gl_;
+        private int inTraf, outTraf;
+        
+
+        public List<OtherClient> GetClients {
+            get { return connected.Values.ToList(); }
+        }
+
+        public int GetInnerTraffic {
+            get { return inTraf; }
+        }
+
+        public int GetOuterTraffic
+        {
+            get { return outTraf; }
+        }
 
         public UDPServer(LevelWorker lw, GameLevel gl) {
             lw_ = lw;
@@ -105,6 +121,7 @@ namespace JargServer
                     byte[] data;
                     try {
                         data = udp.Receive(ref ipendpoint); // Get some data
+                        inTraf += data.Length;
                     }
                     catch (SocketException) {
                         continue;
@@ -149,6 +166,7 @@ namespace JargServer
         public void SendStruct(JargPack msg, string name)
         {
             byte[] data = MarshalHelper.SerializeMessage(msg);
+            outTraf += data.Length;
             if (connected.ContainsKey(name))
             {
                 if (connected[name].ipendpoint != null)
