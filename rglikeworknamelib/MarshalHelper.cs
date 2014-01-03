@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace rglikeworknamelib {
     public static class MarshalHelper
@@ -12,16 +13,18 @@ namespace rglikeworknamelib {
         static JargPack error = new JargPack {action = "error"};
         public static JargPack DeserializeMsg(Byte[] data)
         {
-            JargPack retStruct = new JargPack();
-            //int objsize = Marshal.SizeOf(typeof(T));
-            //IntPtr buff = Marshal.AllocHGlobal(objsize);
-            //Marshal.Copy(data, 0, buff, objsize);
-            //T retStruct = (T)Marshal.PtrToStructure(buff, typeof(T));
-            //Marshal.FreeHGlobal(buff);
-            JargPack a;
+            JargPack a = new JargPack();
             var ms = new MemoryStream(data);
             try {
-                a = (JargPack) bf.Deserialize(ms);
+                //a = (JargPack) bf.Deserialize(ms);
+                string geted = Encoding.ASCII.GetString(data);
+                var parts = geted.Split('@');
+                a.action = parts[0];
+                a.name = parts[1];
+                a.x = float.Parse(parts[2]);
+                a.y = float.Parse(parts[3]);
+                a.angle = float.Parse(parts[4]);
+                a.mapsector = parts[5];
             }
             catch (Exception) {
                 return error;
@@ -30,15 +33,11 @@ namespace rglikeworknamelib {
         }
         public static Byte[] SerializeMessage(JargPack msg)
         {
-            //int objsize = Marshal.SizeOf(typeof(T));
-            //Byte[] ret = new Byte[objsize];
-            //IntPtr buff = Marshal.AllocHGlobal(objsize);
-            //Marshal.StructureToPtr(msg, buff, true);
-            //Marshal.Copy(buff, ret, 0, objsize);
-            //Marshal.FreeHGlobal(buff);
-            var ms = new MemoryStream();
-            bf.Serialize(ms, msg);
-            return ms.GetBuffer();
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("{0}@{1}@{2}@{3}@{4}@{5}", msg.action, msg.name, msg.x, msg.y, msg.angle, msg.mapsector);
+            var data = Encoding.ASCII.GetBytes(sb.ToString());
+            
+            return data;
         }
     }
 }

@@ -42,6 +42,16 @@ namespace JargServer
             get { return outTraf; }
         }
 
+        public double GetInnerSpeed
+        {
+            get { return inSpeed; }
+        }
+
+        public double GetOuterSpeed
+        {
+            get { return outSpeed; }
+        }
+
         public UDPServer(LevelWorker lw, GameLevel gl) {
             lw_ = lw;
             gl_ = gl;
@@ -67,8 +77,10 @@ namespace JargServer
             listenthread = new Thread(ListenAndHandleMessages);
             listenthread.Start();
 
-            sendthread  = new Thread(UpdateAndSendStructs);
+            sendthread = new Thread(UpdateAndSendStructs);
             sendthread.Start();
+
+            new Thread(MonitorThread).Start();
 
             //logicThread = new Thread(updateLogic);
             //logicThread.Start();
@@ -80,12 +92,27 @@ namespace JargServer
         }
 
 
-        void UpdateAndSendStructs(Object obj)
+        int traf1, traf2;
+        double inSpeed, outSpeed;
+
+        void MonitorThread()
+        {
+            while (running)
+            {
+                traf1 = inTraf;
+                traf2 = outTraf;
+                Thread.Sleep(1000);
+                inSpeed = inTraf - traf1;
+                outSpeed = outTraf - traf2;
+            }
+        }
+
+        void UpdateAndSendStructs()
         {
             #region send messages
             while (running)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(100);
 
                 if (connected.Count > 0)
                 {
@@ -176,13 +203,11 @@ namespace JargServer
             }
             else
             {
-                #region console it
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write(name);
                 Console.ResetColor();
                 Console.Write(" could not be found");
                 Console.WriteLine();
-                #endregion
             }
         }
 
@@ -198,13 +223,10 @@ namespace JargServer
 
         public void HandleConnection(string name, IPEndPoint ipep)
         {
-            #region Accept/Reject
-            #region console it
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write(name);
             Console.ResetColor();
             Console.Write(" is trying to connect");
-            #endregion
 
             lock (connected)
             {
@@ -212,12 +234,10 @@ namespace JargServer
                 {
                     // Add to connections
                     connected.Add(name, new OtherClient(name, ipep, rand.Next(0, 500), rand.Next(0, 500)));
-                    #region console it
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(" Accepted");
                     Console.ResetColor();
                     Console.Write(" ({0})\n", ipep.ToString());
-                    #endregion
 
                     // Send out authorized.msg
                     var ds = new JargPack{action = "accept", name = name};
@@ -226,17 +246,13 @@ namespace JargServer
                 }
                 else
                 {
-                    #region console it
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write(" Rejected");
                     Console.ResetColor();
                     Console.Write(" (name exists)\n");
-                    #endregion
                 }
             }
-            #endregion
             Console.WriteLine("Total connected: " + connected.Count.ToString());
-            //Console.Title = "Connections: " + connected.Count.ToString();
         }
 
         public void Close() {

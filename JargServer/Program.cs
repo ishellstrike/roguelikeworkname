@@ -95,12 +95,13 @@ namespace JargServer
             while (IsMonitor) {
                 Console.Clear();
                 Console.WriteLine("Clients: {0}", udps.GetClients.Count);
-                Console.WriteLine("Traffic:{0}      In: {1}{0}      Out: {2}", Environment.NewLine, TrafSimp(udps.GetInnerTraffic), TrafSimp(udps.GetOuterTraffic));
+                Console.WriteLine("Traffic:{0}      In: {1} ({2}){0}      Out: {3} ({4})", Environment.NewLine, TrafSimp(udps.GetInnerTraffic), TrafSpeedSimp(udps.GetInnerSpeed), TrafSimp(udps.GetOuterTraffic), TrafSpeedSimp(udps.GetOuterSpeed));
+                Console.WriteLine("Map Generator:{0}      Total: {1}{0}      Session: {2}{0}", Environment.NewLine, levelWorker_.StoreCount, levelWorker_.Generated);
                 Thread.Sleep(300);
             }
         }
 
-        public static string TrafSimp(int traf) {
+        public static string TrafSimp(double traf){
             if (traf > 1024*1024*1024) {
                 return string.Format("{0:0.00} GiB", traf/(1024.0*1024.0*1024.0));
             }
@@ -113,6 +114,23 @@ namespace JargServer
                 return string.Format("{0:0.00} KiB", traf / 1024.0);
             }
             return string.Format("{0} B", traf);
+        }
+
+        public static string TrafSpeedSimp(double traf)
+        {
+            if (traf > 1024 * 1024 * 1024)
+            {
+                return string.Format("{0:0.00} GiB/s", traf / (1024.0 * 1024.0 * 1024.0));
+            }
+            if (traf > 1024 * 1024)
+            {
+                return string.Format("{0:0.00} MiB/s", traf / (1024.0 * 1024.0));
+            }
+            if (traf > 1024)
+            {
+                return string.Format("{0:0.00} KiB/s", traf / 1024.0);
+            }
+            return string.Format("{0} B/s", traf);
         }
 
         public static void WriteColored(object s, ConsoleColor color) {
@@ -158,14 +176,13 @@ namespace JargServer
             var sw = new Stopwatch();
             sw.Start();
             Console.WriteLine("Initial map generation", "");
-            currentFloor_ = new GameLevel(null, null, null, levelWorker_);
+            currentFloor_ = new GameLevel(null, null, null, null, levelWorker_);
             if (levelWorker_ != null)
             {
                 levelWorker_.Stop();
             }
             levelWorker_ = new LevelWorker();
-            Action lw_ = levelWorker_.Run;
-            lw_.BeginInvoke(null, null);
+            levelWorker_.Start();
             currentFloor_.lw_ = levelWorker_;
 
             currentFloor_.GenerateMegaSectorAround(0, 0);

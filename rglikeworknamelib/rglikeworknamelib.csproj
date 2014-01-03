@@ -81,6 +81,7 @@
     <Compile Include="Dungeon\Creatures\CreatureFactory.cs" />
     <Compile Include="Dungeon\Creatures\DamageType.cs" />
     <Compile Include="Dungeon\Creatures\DressCreatures.cs" />
+    <Compile Include="Dungeon\Creatures\Order.cs" />
     <Compile Include="Dungeon\Creatures\Perk.cs" />
     <Compile Include="Dungeon\Creatures\PerkData.cs" />
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />

@@ -28,7 +28,7 @@ namespace rglikeworknamelib
             lw_ = lw;
             name = n;
             running = true;
-            ipendpoint = new IPEndPoint(IPAddress.Parse("81.24.186.54"), 80);
+            ipendpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 80);
             udpclient = new UdpClient();
             udpclient.Connect(ipendpoint);
 

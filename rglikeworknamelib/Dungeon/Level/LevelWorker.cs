@@ -46,24 +46,29 @@ namespace rglikeworknamelib.Dungeon.Level {
             return false;
         }
 
-        public int LoadCount() {
-            return onLoadOrGenerate_.Count;
+        public int LoadCount {
+            get {return onLoadOrGenerate_.Count;}
         }
 
         public int GenerationCount() {
             return 0;
         }
 
-        public int StoreCount() {
-            return onStore_.Count;
+        public int StoreCount {
+            get { return onStore_.Count; }
         }
 
-        public int ReadyCount()
+        public int ReadyCount
         {
-            return Buffer.Count;
+            get {return Buffer.Count;}
         }
 
-        public void Run() {
+        public void Start()
+        {
+            new Thread(Run).Start();
+        }
+
+        private void Run() {
             Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
             Thread.CurrentThread.IsBackground = true;
             while (!exit) {
@@ -82,6 +87,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                             continue;
                         }
                         var ms = new MapSector(kvp.Value, kvp.Key.X, kvp.Key.Y);
+                        generated++;
                         ms.Rebuild(kvp.Value.MapSeed);
                         Buffer.Add(kvp.Key, ms);
                     }
@@ -90,10 +96,13 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 if (!Generating() && !Loading()) {
                     Thread.Sleep(300);
-                    var t = Buffer.Select(x=>x).ToList();
-                    foreach (var pair in t) {
-                        Buffer.Remove(pair.Key);
-                        onStore_.Add(pair.Key, pair.Value);
+                    lock (Buffer)
+                    {
+                        var t = Buffer.Select(x=>x).ToList();
+                        foreach (var pair in t) {
+                            Buffer.Remove(pair.Key);
+                            onStore_.Add(pair.Key, pair.Value);
+                        }
                     }
                 }
             }
@@ -103,8 +112,12 @@ namespace rglikeworknamelib.Dungeon.Level {
         private bool stopped;
 
         public MapSector TryGet(Point p, GameLevel gl) {
-            if (Buffer.ContainsKey(p)) {
-                return Buffer[p];
+            lock (Buffer)
+            {
+                if (Buffer.ContainsKey(p))
+                {
+                    return Buffer[p];
+                }
             }
             if (!onLoadOrGenerate_.ContainsKey(p)) {
                 onLoadOrGenerate_.Add(p, gl);
@@ -465,7 +478,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             foreach (var asyncResult in results) {
                 var result = pl.EndInvoke(asyncResult);
                 foreach (var mapSector in result) {
-                    temp.Add(mapSector.Key, mapSector.Value);
+                        temp.Add(mapSector.Key, mapSector.Value);
                 }
             }
 
@@ -620,5 +633,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
             return temp;
         }
+
+        private int generated;
+        public int Generated { get { return generated; } }
     }
 }

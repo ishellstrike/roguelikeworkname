@@ -27,6 +27,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using Label = rglikeworknamelib.Window.Label;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Version = rglikeworknamelib.Version;
+using System.Threading;
 
 namespace jarg {
     public partial class JargMain : Game {
@@ -140,7 +141,7 @@ namespace jarg {
 
         private void gameWindowForm_FormClosing(object sender, FormClosingEventArgs e) {
             e.Cancel = !Settings.NeedExit;
-            if (client_ != null) {
+            if (client_ == null) {
                 currentFloor_.SaveAllAndExit(player_, inventory_);
             }
             else {
@@ -241,6 +242,8 @@ namespace jarg {
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(ws_);
 
+            levelWorker_ = new LevelWorker();
+            levelWorker_.Start();
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
 
@@ -281,13 +284,13 @@ namespace jarg {
             var sw = new Stopwatch();
             sw.Start();
             ShowInfoWindow("Initial map generation", "");
-            currentFloor_ = new GameLevel(spriteBatch_, font1_, GraphicsDevice, levelWorker_);
+            currentFloor_ = new GameLevel(spriteBatch_, lineBatch_, font1_, GraphicsDevice, levelWorker_);
             if (levelWorker_ != null) {
                 levelWorker_.Stop();
+                levelWorker_ = new LevelWorker();
+                levelWorker_.Start();
             }
-            levelWorker_ = new LevelWorker();
-            Action lw_ = levelWorker_.Run;
-            lw_.BeginInvoke(null, null);
+
             currentFloor_.lw_ = levelWorker_;
             ps_ = new ParticleSystem(spriteBatch_,
                                      ParsersCore.LoadTexturesInOrder(
@@ -434,6 +437,7 @@ namespace jarg {
         }
 
         private Vector2 aa, sectorLast;
+        int SendTick;
         private void GameUpdate(GameTime gameTime) {
             sec += gameTime.ElapsedGameTime;
 
@@ -459,9 +463,11 @@ namespace jarg {
             //    car.Update(gameTime, player_);
             //}
             player_.Update(gameTime, currentFloor_.GetSector((int) aa.X, (int) aa.Y), player_);
-            if (client_ != null) {
+            if (client_ != null && SendTick >= 6) {
+                SendTick = 0;
                 client_.SendStruct(new JargPack { action = "position", name = client_.name, x = player_.Position.X, y = player_.Position.Y, angle = PlayerSeeAngle});
             }
+            SendTick++;
             currentFloor_.KillFarSectors(player_, gameTime, camera_);
             bs_.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
@@ -480,8 +486,6 @@ namespace jarg {
                                            GraphicsDevice.DisplayMode.AspectRatio);
             }
             camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
-            camera_.X = (int)camera_.X;
-            camera_.Y = (int)camera_.Y;
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
@@ -577,27 +581,6 @@ namespace jarg {
 
 
             if (Settings.Lighting) {
-                //GraphicsDevice.SetRenderTarget(normalMapRenderTarget_);
-                //GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
-                //normal maps
-                //spriteBatch_.Begin();
-                //for (int i = 0; i < Settings.Resolution.X / 32 + 1; i++)
-                //{
-                //    for (int j = 0; j < Settings.Resolution.Y / 32 + 1; j++)
-                //    {
-                //        spriteBatch_.Draw(Atlases.NormalAtlas[0],
-                //                          new Vector2(i*32 - camera_.X%32 - 32, j*32 - camera_.Y%32 - 32), Color.White);
-                //    }
-                //}
-                //spriteBatch_.End();
-
-                //GraphicsDevice.SetRenderTarget(depthMapRenderTarget_);
-                //GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1, 0);
-                //depth maps
-                //spriteBatch_.Begin();
-                //    currentFloor_.DrawFloorsInnerDepth(gameTime, camera_);
-                //spriteBatch_.End();
-
                 lightMapTexture_ = GenerateShadowMap();
 
                 GraphicsDevice.SetRenderTarget(null);
@@ -610,24 +593,18 @@ namespace jarg {
                 spriteBatch_.End();
             }
 
-            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-            if (levelWorker_.Generating()) {
-                spriteBatch_.Draw(gear, new Vector2(10, 10), lwstatusColor_);
-            }
-            if (levelWorker_.Loading()) {
-                spriteBatch_.Draw(arup_, new Vector2(42, 10), lwstatusColor_);
-            }
-            if (levelWorker_.Storing()) {
-                spriteBatch_.Draw(ardown_, new Vector2(74, 10), lwstatusColor_);
-            }
+            
             if (Settings.DebugInfo) {
-                spriteBatch_.DrawString(font1_, levelWorker_.GenerationCount().ToString(), new Vector2(10, 10),
-                                        Color.White);
-                spriteBatch_.DrawString(font1_, levelWorker_.LoadCount().ToString(), new Vector2(42, 10), Color.White);
-                spriteBatch_.DrawString(font1_, levelWorker_.StoreCount().ToString(), new Vector2(74, 10), Color.White);
-                spriteBatch_.DrawString(font1_, levelWorker_.ReadyCount().ToString(), new Vector2(140, 10), Color.Red);
+                spriteBatch_.Begin();
+                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(11, 101), Color.Black);
+                spriteBatch_.DrawString(font1_, "req:"+levelWorker_.LoadCount.ToString(), new Vector2(10, 100), Color.White);
+                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(11, 121), Color.Black);
+                spriteBatch_.DrawString(font1_, "store:"+levelWorker_.StoreCount.ToString(), new Vector2(10, 120), Color.White);
+                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(11, 141), Color.Black);
+                spriteBatch_.DrawString(font1_, "ready:"+levelWorker_.ReadyCount.ToString(), new Vector2(10, 140), Color.White);
+                spriteBatch_.End();
             }
-            spriteBatch_.End();
+            
         }
 
         private Texture2D GetRenderedFlashlight() {

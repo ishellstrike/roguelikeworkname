@@ -8,6 +8,7 @@ using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
+using jarg;
 
 namespace rglikeworknamelib.Creatures {
     [Serializable]
@@ -21,9 +22,13 @@ namespace rglikeworknamelib.Creatures {
         internal Stat hp_ = new Stat(200);
         private Vector2 lastpos_;
 
+        private Order order_ = new Order(), lastOrder_;
+
+        public Order CurrentOrder { get { return order_; } }
+        public Order LastOrder { get { return lastOrder_; } }
+
         internal Vector2 position_;
         private TimeSpan reactionT_ = TimeSpan.Zero;
-        private Vector2 remPos_;
         private TimeSpan sec_ = TimeSpan.Zero;
         private Vector2 sectoroffset_;
         [NonSerialized]
@@ -91,6 +96,39 @@ namespace rglikeworknamelib.Creatures {
         }
 
         /// <summary>
+        /// Issure concrete order
+        /// </summary>
+        /// <param name="value"></param>
+        public void IssureOrder(Order value)
+        {
+            lastOrder_ = order_;
+            order_ = value;
+        }
+        /// <summary>
+        /// Issure move order
+        /// </summary>
+        /// <param name="value"></param>
+        public void IssureOrder(Vector2 value)
+        {
+            lastOrder_ = order_;
+            order_ = new Order(OrderType.Move, value);
+        }
+        /// <summary>
+        /// Issure idle order
+        /// </summary>
+        public void IssureOrder()
+        {
+            order_ = new Order();
+        }
+        /// <summary>
+        /// Issure attack order
+        /// </summary>
+        public void IssureOrder(Creature value)
+        {
+            order_ = new Order(OrderType.Attack, value);
+        }
+
+        /// <summary>
         ///     Returns creature position in game blocks
         /// </summary>
         /// <returns></returns>
@@ -119,6 +157,8 @@ namespace rglikeworknamelib.Creatures {
             set { ms_ = value; }
         }
 
+        public bool IsIddle { get { return order_.Type == OrderType.Iddle; } }
+
         public virtual void Update(GameTime gt, MapSector ms_, Player hero) {
             ms = ms_;
             double time = gt.ElapsedGameTime.TotalSeconds;
@@ -128,10 +168,11 @@ namespace rglikeworknamelib.Creatures {
                 sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
                 Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
                 Block block = ms_.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
-                if (block != null && block.Lightness == Color.White &&
+                if (IsIddle && block != null && block.Lightness == Color.White &&
                     reactionT_.TotalMilliseconds > Data.ReactionTime) {
-                    remPos_ = hero.Position - WorldPosition() + Position;
-                    MoveByMover(ms_, time);
+
+                    //IssureOrder(hero);
+                    IssureOrder(WorldPosition() + new Vector2(Settings.rnd.Next(-100, 100), Settings.rnd.Next(-100, 100)));
 
                     Col = Color.White;
                     if (sec_.TotalSeconds > 1 && ms_.Parent.IsCreatureMeele(hero, this)) {
@@ -141,8 +182,9 @@ namespace rglikeworknamelib.Creatures {
                 }
                 else {
                     Col = Color.Black;
-                    MoveByMover(ms_, time);
                 }
+
+                OrdersMaker(ms_, time);
 
                 //Sector changer
                 if (Position.Y >= 32*MapSector.Ry) {
@@ -206,11 +248,13 @@ namespace rglikeworknamelib.Creatures {
 
         public bool Skipp { get; set; }
 
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 camera) {
+        public virtual void Draw(SpriteBatch spriteBatch, LineBatch lineBatch, Vector2 camera) {
                 Vector2 p = WorldPosition() - camera;
                 spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
                 if (Settings.DebugInfo) {
-                    spriteBatch.DrawString(Settings.Font, position_.ToString(), p, Color.White);
+                    spriteBatch.DrawString(Settings.Font, order_.Type+", "+position_.ToString(), p, Color.White);
+                    if (order_.Type == OrderType.Move) { lineBatch.AddLine(WorldPosition() - camera, order_.Point - camera, Color.LimeGreen, 1); }
+                    if (order_.Type == OrderType.Attack) { lineBatch.AddLine(WorldPosition() - camera, order_.Target.Position - camera, Color.Red, 1); }
                 }
         }
 
@@ -266,29 +310,69 @@ namespace rglikeworknamelib.Creatures {
             return abilities_.list[s];
         }
 
-        private void MoveByMover(MapSector ms, double time) {
-            if (remPos_ != Vector2.Zero &&
-                ((int) remPos_.X != (int) position_.X || (int) remPos_.Y != (int) position_.Y)) {
-                Vector2 mover = - position_ + remPos_;
-                float percenterMax = Data.Speed*Percenter;
+        private void OrdersMaker(MapSector ms, double time) {
+            if (order_.Type == OrderType.Move) {
+                Vector2 wp = WorldPosition();
+                Vector2 mover = order_.Point - wp;
+                float percenterMax = Data.Speed * Percenter;
 
-                if (mover.Length() > time*percenterMax) {
+                if (mover.Length() > time * percenterMax)
+                {
                     mover.Normalize();
-                    mover *= (float) time*percenterMax;
+                    mover *= (float)time * percenterMax;
                 }
 
                 Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
                 Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
 
-                Block key = ms.Parent.GetBlock((int) newwposx.X, (int) newwposx.Y);
-                if (key != null && key.Id != null && key.Data.IsWalkable) {
+                Block key = ms.Parent.GetBlock((int)newwposx.X, (int)newwposx.Y);
+                if (key != null && key.Id != null && key.Data.IsWalkable)
+                {
                     position_.X += mover.X;
                 }
-                key = ms.Parent.GetBlock((int) newwposy.X, (int) newwposy.Y);
-                if (key != null && (key.Id != null && key.Data.IsWalkable)) {
+                key = ms.Parent.GetBlock((int)newwposy.X, (int)newwposy.Y);
+                if (key != null && (key.Id != null && key.Data.IsWalkable))
+                {
                     position_.Y += mover.Y;
                 }
-            }
+
+                wp = WorldPosition();
+                if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
+                {
+                    IssureOrder();
+                }
+            } else if (order_.Type == OrderType.Attack)
+                {
+                    Vector2 wp = WorldPosition();
+                    Vector2 mover = order_.Target.Position - wp;
+                    float percenterMax = Data.Speed * Percenter;
+
+                    if (mover.Length() > time * percenterMax)
+                    {
+                        mover.Normalize();
+                        mover *= (float)time * percenterMax;
+                    }
+
+                    Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
+                    Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
+
+                    Block key = ms.Parent.GetBlock((int)newwposx.X, (int)newwposx.Y);
+                    if (key != null && key.Id != null && key.Data.IsWalkable)
+                    {
+                        position_.X += mover.X;
+                    }
+                    key = ms.Parent.GetBlock((int)newwposy.X, (int)newwposy.Y);
+                    if (key != null && (key.Id != null && key.Data.IsWalkable))
+                    {
+                        position_.Y += mover.Y;
+                    }
+
+                    wp = WorldPosition();
+                    if (Math.Abs(wp.X - order_.Target.Position.X) < 10 && Math.Abs(wp.Y - order_.Target.Position.Y) < 10)
+                    {
+                        IssureOrder();
+                    }
+                }
         }
     }
 }

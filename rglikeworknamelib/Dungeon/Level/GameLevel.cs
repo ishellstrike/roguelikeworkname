@@ -34,6 +34,7 @@ namespace rglikeworknamelib.Dungeon.Level
         private readonly Dictionary<Point, MapSector> sectors_;
         private readonly Dictionary<Point, MapSector> Generation_sectors_ = new Dictionary<Point, MapSector>();
         private readonly SpriteBatch spriteBatch_;
+        LineBatch lineBatch_;
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
         private readonly Texture2D transparentpixel;
         private readonly Texture2D whitepixel;
@@ -52,7 +53,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         private readonly Effect be_;
 
-        public GameLevel(SpriteBatch spriteBatch, SpriteFont sf, GraphicsDevice gd, LevelWorker lw)
+        public GameLevel(SpriteBatch spriteBatch, LineBatch lb, SpriteFont sf, GraphicsDevice gd, LevelWorker lw)
         {
             MapSeed = Settings.rnd.Next();
             MapGenerators.Seed = MapSeed;
@@ -75,6 +76,8 @@ namespace rglikeworknamelib.Dungeon.Level
                 gd_ = gd;
                 be_ = new BasicEffect(gd_);
                 (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
+
+                lineBatch_ = lb;
             }
             megaMap = new Dictionary<Point, MegaMap>();
 
@@ -1112,17 +1115,17 @@ namespace rglikeworknamelib.Dungeon.Level
         public IEnumerable<Light> GetLights()
         {
             var a = new List<Light>();
-            if (sectors_.Count > 0)
-            {
-                for (int i = 0; i < sectors_.Count; i++)
-                {
-                    KeyValuePair<Point, MapSector> sec = sectors_.ElementAt(i);
-                    if (sec.Value.Lights != null)
-                    {
-                        a.AddRange(sec.Value.Lights);
-                    }
-                }
-            }
+            //if (sectors_.Count > 0)
+            //{
+            //    for (int i = 0; i < sectors_.Count; i++)
+            //    {
+            //        KeyValuePair<Point, MapSector> sec = sectors_.ElementAt(i);
+            //        if (sec.Value.Lights != null)
+            //        {
+            //            a.AddRange(sec.Value.Lights);
+            //        }
+            //    }
+            //}
             return a;
         }
 
@@ -1350,7 +1353,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 for (int m = 0; m < sector.Creatures.Count; m++)
                 {
                     Creature crea = sector.Creatures[m];
-                    crea.Draw(spriteBatch_, camera);
+                    crea.Draw(spriteBatch_, lineBatch_, camera);
                 }
             }
             foreach (var mapSector in sectors_)
