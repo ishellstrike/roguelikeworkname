@@ -453,6 +453,14 @@ namespace rglikeworknamelib.Dungeon.Creatures
         public static float GetLength(float x, float y){
             return new Vector2(x, y).Length();
         }
+        public static Vector2 GetInDirection(float centerx, float centery, float targx, float targy, float distance)
+        {
+            var p2 = new Vector3(centerx, centery, 0);
+            var p1 = new Vector3(targx, targy, 0);
+            Ray a = new Ray(p1, -Vector3.Normalize(p2 - p1));
+            var t = a.Position + a.Direction * distance;
+            return new Vector2(t.X, t.Y);
+        }
     }
 
     public delegate void CreatureScript(GameTime gt, MapSector ms_, Player hero, Creature target);
