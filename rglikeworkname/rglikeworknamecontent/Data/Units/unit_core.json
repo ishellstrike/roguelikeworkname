@@ -7,7 +7,9 @@
 	"zombie1":{
 		"Name":"Зомби житель",
 		"MTex":"zombie",
+		"Speed":50,
 		"Hp":20,
+		"BehaviorScript":"bs_zombie",
 	},
 	
 	"hdzombie":{
@@ -16,5 +18,14 @@
 		"Damage":2,
 		"Speed":25,
 		"Hp":30,
+		"BehaviorScript":"bs_zombie",
+	},
+
+	"rabbit":{
+		"Name":"Кролик",
+		"MTex":"rabbit",
+		"Speed":200,
+		"Hp":2,
+		"BehaviorScript":"bs_rabbit",
 	},
 }

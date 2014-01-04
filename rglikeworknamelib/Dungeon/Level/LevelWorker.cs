@@ -478,7 +478,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             foreach (var asyncResult in results) {
                 var result = pl.EndInvoke(asyncResult);
                 foreach (var mapSector in result) {
+                    try
+                    {
                         temp.Add(mapSector.Key, mapSector.Value);
+                    }
+                    catch(Exception ex)
+                    {
+                        logger.Error(ex);
+                    }
                 }
             }
 

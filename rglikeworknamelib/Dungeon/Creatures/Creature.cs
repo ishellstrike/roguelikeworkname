@@ -21,6 +21,7 @@ namespace rglikeworknamelib.Creatures {
         private List<IBuff> buffs_ = new List<IBuff>();
         internal Stat hp_ = new Stat(200);
         private Vector2 lastpos_;
+        public CreatureScript behaviorScript;
 
         private Order order_ = new Order(), lastOrder_;
 
@@ -28,9 +29,9 @@ namespace rglikeworknamelib.Creatures {
         public Order LastOrder { get { return lastOrder_; } }
 
         internal Vector2 position_;
-        private TimeSpan reactionT_ = TimeSpan.Zero;
-        private TimeSpan sec_ = TimeSpan.Zero;
-        private Vector2 sectoroffset_;
+        public TimeSpan reactionT_ = TimeSpan.Zero;
+        public TimeSpan sec_ = TimeSpan.Zero;
+        public Vector2 sectoroffset_;
         [NonSerialized]
         private MapSector ms_;
 
@@ -159,79 +160,82 @@ namespace rglikeworknamelib.Creatures {
 
         public bool IsIddle { get { return order_.Type == OrderType.Iddle; } }
 
+        public bool IsIddleOrWander { get { return order_.Type == OrderType.Iddle || order_.Type == OrderType.Wander; } }
+
         public virtual void Update(GameTime gt, MapSector ms_, Player hero) {
             ms = ms_;
-            double time = gt.ElapsedGameTime.TotalSeconds;
+            
             reactionT_ += gt.ElapsedGameTime;
             sec_ += gt.ElapsedGameTime;
-            if (!Skipp || !ms_.Ready) {
+            Col = Color.White;
+            if ((!Skipp || !ms_.Ready))
+            {
                 sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
-                Vector2 worldPositionInBlocks = GetWorldPositionInBlocks();
-                Block block = ms_.Parent.GetBlock((int) worldPositionInBlocks.X, (int) worldPositionInBlocks.Y);
-                if (IsIddle && block != null && block.Lightness == Color.White &&
-                    reactionT_.TotalMilliseconds > Data.ReactionTime) {
-
-                    //IssureOrder(hero);
-                    IssureOrder(WorldPosition() + new Vector2(Settings.rnd.Next(-100, 100), Settings.rnd.Next(-100, 100)));
-
-                    Col = Color.White;
-                    if (sec_.TotalSeconds > 1 && ms_.Parent.IsCreatureMeele(hero, this)) {
-                        hero.GiveDamage(Data.Damage, DamageType.Default, ms_);
-                        sec_ = TimeSpan.Zero;
-                    }
-                }
-                else {
-                    Col = Color.Black;
+                if (behaviorScript != null)
+                {
+                    behaviorScript(gt, ms_, hero, this);
                 }
 
-                OrdersMaker(ms_, time);
+                OrdersMaker(ms_, gt);
 
                 //Sector changer
-                if (Position.Y >= 32*MapSector.Ry) {
+                if (Position.Y >= 32 * MapSector.Ry)
+                {
                     MapSector t = ms_.Parent.GetDownN(ms_.SectorOffsetX, ms_.SectorOffsetY);
-                    if (t != null) {
+                    if (t != null)
+                    {
                         ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.Y = position_.Y - 32*MapSector.Ry;
+                        position_.Y = position_.Y - 32 * MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
-                    else {
-                        position_.Y = 32*MapSector.Ry - 1;
+                    else
+                    {
+                        position_.Y = 32 * MapSector.Ry - 1;
                     }
                 }
-                else if (Position.Y < 0) {
+                else if (Position.Y < 0)
+                {
                     MapSector t = ms_.Parent.GetUpN(ms_.SectorOffsetX, ms_.SectorOffsetY);
-                    if (t != null) {
+                    if (t != null)
+                    {
                         ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.Y = position_.Y + 32*MapSector.Ry;
+                        position_.Y = position_.Y + 32 * MapSector.Ry;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
-                    else {
+                    else
+                    {
                         position_.Y = 0;
                     }
                 }
-                if (Position.X >= 32*MapSector.Rx) {
+                if (Position.X >= 32 * MapSector.Rx)
+                {
                     MapSector t = ms_.Parent.GetRightN(ms_.SectorOffsetX, ms_.SectorOffsetY);
-                    if (t != null) {
+                    if (t != null)
+                    {
                         ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.X = position_.X - 32*MapSector.Rx;
+                        position_.X = position_.X - 32 * MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
-                    else {
-                        position_.X = 32*MapSector.Rx - 1;
+                    else
+                    {
+                        position_.X = 32 * MapSector.Rx - 1;
                     }
                 }
-                else if (Position.X < 0) {
+                else if (Position.X < 0)
+                {
                     MapSector t = ms_.Parent.GetLeftN(ms_.SectorOffsetX, ms_.SectorOffsetY);
-                    if (t != null) {
+                    if (t != null)
+                    {
                         ms_.Creatures.Remove(this);
                         t.Creatures.Add(this);
-                        position_.X = position_.X + 32*MapSector.Rx;
+                        position_.X = position_.X + 32 * MapSector.Rx;
                         sectoroffset_ = new Vector2(t.SectorOffsetX, t.SectorOffsetY);
                     }
-                    else {
+                    else
+                    {
                         position_.X = 0;
                     }
                 }
@@ -253,8 +257,9 @@ namespace rglikeworknamelib.Creatures {
                 spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
                 if (Settings.DebugInfo) {
                     spriteBatch.DrawString(Settings.Font, order_.Type+", "+position_.ToString(), p, Color.White);
-                    if (order_.Type == OrderType.Move) { lineBatch.AddLine(WorldPosition() - camera, order_.Point - camera, Color.LimeGreen, 1); }
-                    if (order_.Type == OrderType.Attack) { lineBatch.AddLine(WorldPosition() - camera, order_.Target.Position - camera, Color.Red, 1); }
+                    if (order_.Type == OrderType.Move) { lineBatch.AddLine(p, order_.Point - camera, Color.LimeGreen, 1); }
+                    if (order_.Type == OrderType.Attack) { lineBatch.AddLine(p, order_.Target.Position - camera, Color.Red, 1); }
+                    if (order_.Type == OrderType.Wander) { lineBatch.AddLine(p, order_.Point - camera, Color.LightBlue, 1); }
                 }
         }
 
@@ -310,7 +315,8 @@ namespace rglikeworknamelib.Creatures {
             return abilities_.list[s];
         }
 
-        private void OrdersMaker(MapSector ms, double time) {
+        private void OrdersMaker(MapSector ms, GameTime gt) {
+            double time = gt.ElapsedGameTime.TotalSeconds;
             if (order_.Type == OrderType.Move) {
                 Vector2 wp = WorldPosition();
                 Vector2 mover = order_.Point - wp;
@@ -368,11 +374,66 @@ namespace rglikeworknamelib.Creatures {
                     }
 
                     wp = WorldPosition();
-                    if (Math.Abs(wp.X - order_.Target.Position.X) < 10 && Math.Abs(wp.Y - order_.Target.Position.Y) < 10)
+                    if (Math.Abs(wp.X - order_.Target.Position.X) < 10 && Math.Abs(wp.Y - order_.Target.Position.Y) < 10 || (wp - order_.Target.Position).Length() > 640)
                     {
                         IssureOrder();
                     }
                 }
+            else if (order_.Type == OrderType.Wander)
+            {
+                Vector2 wp = WorldPosition();
+                if (order_.Point.Y == 0)
+                {
+                    order_.Point = new Vector2(wp.X + Settings.rnd.Next(-100, 100), wp.Y + Settings.rnd.Next(-100, 100));
+                }
+
+                Vector2 mover = order_.Point - wp;
+                float percenterMax = Data.Speed * Percenter * 0.25f;
+
+                if (mover.Length() > time * percenterMax)
+                {
+                    mover.Normalize();
+                    mover *= (float)time * percenterMax;
+                }
+
+                Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
+                Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
+
+                Block key = ms.Parent.GetBlock((int)newwposx.X, (int)newwposx.Y);
+                if (key != null && key.Id != null && key.Data.IsWalkable)
+                {
+                    position_.X += mover.X;
+                }
+                key = ms.Parent.GetBlock((int)newwposy.X, (int)newwposy.Y);
+                if (key != null && (key.Id != null && key.Data.IsWalkable))
+                {
+                    position_.Y += mover.Y;
+                }
+
+                wp = WorldPosition();
+                if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
+                {
+                    IssureOrder();
+                }
+            }
+            else if (order_.Type == OrderType.Sleep)
+            {
+                if (sleep <= TimeSpan.Zero)
+                {
+                    sleep = new TimeSpan(order_.Value*10000);
+                }
+
+                sleep -= gt.ElapsedGameTime;
+
+                if (sleep <= TimeSpan.Zero)
+                {
+                    IssureOrder();
+                }
+            }
         }
+
+        public TimeSpan sleep = TimeSpan.Zero;
     }
+
+    public delegate void CreatureScript(GameTime gt, MapSector ms_, Player hero, Creature target);
 }

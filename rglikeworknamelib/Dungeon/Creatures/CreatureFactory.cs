@@ -20,6 +20,21 @@ namespace rglikeworknamelib.Creatures {
             a.Position = pos;
             a.Hp = new Stat(creatureData.Hp, creatureData.Hp);
 
+            if (a.Data.BehaviorScript == "bs_zombie")
+            {
+                a.behaviorScript = CreatureDataBase.Bs_zombie;
+            }
+
+            if (a.Data.BehaviorScript == "bs_wander")
+            {
+                a.behaviorScript = CreatureDataBase.Bs_wander;
+            }
+
+            if (a.Data.BehaviorScript == "bs_rabbit")
+            {
+                a.behaviorScript = CreatureDataBase.Bs_rabbit;
+            }
+
             return a;
         }
     }

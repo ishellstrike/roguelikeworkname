@@ -205,9 +205,11 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             //int rnd1 = rand.Next(0, 5);
             //int rnd2 = rand.Next(0, 3);
-            //for (int i = 1; i < rnd1; i++) {
-            //    Spawn("zombie1", rand);
-            //}
+            if(rand.Next(5) == 1){
+                for (int i = 0; i < 3; i++) {
+                    Spawn("rabbit", rand);
+                }
+            }
             //for (int i = 1; i < rnd2; i++) {
             //    Spawn("hdzombie", rand);
             //}

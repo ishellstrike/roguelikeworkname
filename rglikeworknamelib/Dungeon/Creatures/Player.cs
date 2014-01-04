@@ -163,6 +163,12 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             if (ms != null) {
                 var time = (float) gt.ElapsedGameTime.TotalSeconds;
 
+                //if (Velocity.X != 0 && Velocity.Y != 0)
+                //{
+                //    Velocity.Normalize();
+                //    Velocity *= 10;
+                //}
+
                 Vector2 tpos = Position;
                 tpos.X += Velocity.X;
                 Vector2 tpos2 = Position;

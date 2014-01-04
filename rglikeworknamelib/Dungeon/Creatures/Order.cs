@@ -11,7 +11,9 @@ namespace rglikeworknamelib.Dungeon.Creatures
     {
         Iddle,
         Move,
-        Attack
+        Attack,
+        Wander,
+        Sleep
     }
 
     public class Order
@@ -19,6 +21,11 @@ namespace rglikeworknamelib.Dungeon.Creatures
         public Order()
         {
             Type = OrderType.Iddle;
+        }
+
+        public Order(OrderType orderType)
+        {
+            Type = orderType;
         }
 
         public Order(OrderType orderType, Vector2 value)
@@ -33,10 +40,18 @@ namespace rglikeworknamelib.Dungeon.Creatures
             Target = value;
         }
 
+        public Order(OrderType orderType, int p)
+        {
+            Type = orderType;
+            Value = p;
+        }
+
         public OrderType Type;
 
         public Vector2 Point;
 
         public Creature Target;
+
+        public int Value;
     }
 }
