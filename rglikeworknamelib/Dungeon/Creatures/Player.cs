@@ -244,13 +244,14 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         public void Draw(GameTime gt, Vector2 cam, KeyValuePair<string, OtherClient>? other) {
             if (!other.HasValue) {
+                var atlas = Atlases.Instance;
                 Vector2 position = Position - cam;
                 var origin = new Vector2(Tex.Width/2f, Tex.Height);
                 sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
                          SpriteEffects.None, 1);
                 foreach (var dress in Weared) {
                     if (!string.IsNullOrEmpty(dress.Data.Dress)) {
-                        sb_.Draw(Atlases.Instance.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin,
+                        sb_.Draw(atlas.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin,
                                  1,
                                  SpriteEffects.None, 1);
                     }

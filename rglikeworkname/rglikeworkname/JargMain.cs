@@ -218,7 +218,9 @@ namespace jarg {
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
             lineBatch_ = new LineBatch(GraphicsDevice);
 
-            new Atlases(Content, GraphicsDevice);
+            ContentProvider.Init(GraphicsDevice);
+
+            new Atlases(GraphicsDevice);
 
             whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             whitepixel_.SetData(new[] {Color.White});
@@ -229,15 +231,17 @@ namespace jarg {
             lig1 = Content.Load<Effect>(@"Effects/Lighting1");
             effectOmnilight_ = Content.Load<Effect>(@"Effects/Effect1");
 
-            arup_ = Content.Load<Texture2D>(@"Textures/arrow_up");
-            ardown_ = Content.Load<Texture2D>(@"Textures/arrow_down");
-            gear = Content.Load<Texture2D>(@"Textures/gear");
-            bag_ = Content.Load<Texture2D>(@"Textures/bag");
-            caracter = Content.Load<Texture2D>(@"Textures/caracter");
-            map = Content.Load<Texture2D>(@"Textures/map");
-            fltex = Content.Load<Texture2D>(@"Textures/Effects/fl1");
+            arup_ = ContentProvider.LoadTexture(@"Textures/arrow_up");
+            ardown_ = ContentProvider.LoadTexture(@"Textures/arrow_down");
+            gear = ContentProvider.LoadTexture(@"Textures/gear");
+            bag_ = ContentProvider.LoadTexture(@"Textures/bag");
+            caracter = ContentProvider.LoadTexture(@"Textures/caracter");
+            map = ContentProvider.LoadTexture(@"Textures/map");
+            fltex = ContentProvider.LoadTexture(@"Textures/Effects/fl1");
 
-            player_ = new Player(spriteBatch_, Content.Load<Texture2D>(@"Textures/Units/car"), font1_);
+
+
+            player_ = new Player(spriteBatch_, ContentProvider.LoadTexture(@"Textures/Units/car"), font1_);
 
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(ws_);
@@ -294,10 +298,10 @@ namespace jarg {
             currentFloor_.lw_ = levelWorker_;
             ps_ = new ParticleSystem(spriteBatch_,
                                      ParsersCore.LoadTexturesInOrder(
-                                         Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content));
+                                         Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"));
             bs_ = new BulletSystem(spriteBatch_,
                                    ParsersCore.LoadTexturesInOrder(
-                                       Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord", Content),
+                                       Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"),
                                    currentFloor_, font1_, lineBatch_);
             inventory_ = new InventorySystem();
             player_.Inventory = inventory_;

@@ -52,7 +52,7 @@ namespace rglikeworknamelib.Parser {
         }
 
         [Obsolete]
-        public static Collection<Texture2D> LoadTexturesInOrder(string s, ContentManager content) {
+        public static Collection<Texture2D> LoadTexturesInOrder(string s) {
             var temp = new Collection<Texture2D>();
 
             var sr = new StreamReader(s, Encoding.Default);
@@ -61,14 +61,14 @@ namespace rglikeworknamelib.Parser {
                 if (t == null || t.Length < 3) {
                     break;
                 }
-                temp.Add(content.Load<Texture2D>(t));
+                temp.Add(ContentProvider.LoadTexture(t));
             }
 
             return temp;
         }
 
         [Obsolete]
-        public static Dictionary<string, Texture2D> LoadTexturesTagged(string s, ContentManager content) {
+        public static Dictionary<string, Texture2D> LoadTexturesTagged(string s) {
             var temp = new Dictionary<string, Texture2D>();
 
             var sr = new StreamReader(s, Encoding.Default);
@@ -78,7 +78,7 @@ namespace rglikeworknamelib.Parser {
                     break;
                 }
                 temp.Add(t.Substring(t.IndexOf(' ') + 1, t.Length - (t.IndexOf(' ') + 1)),
-                         content.Load<Texture2D>(t.Substring(0, t.IndexOf(' '))));
+                         ContentProvider.LoadTexture(t.Substring(0, t.IndexOf(' '))));
             }
 
             return temp;
@@ -90,12 +90,12 @@ namespace rglikeworknamelib.Parser {
         /// <param name="s">directory patch</param>
         /// <param name="content">content manager</param>
         /// <returns>texture dictionary</returns>
-        public static Dictionary<string, Texture2D> LoadTexturesDirectory(string s, ContentManager content) {
+        public static Dictionary<string, Texture2D> LoadTexturesDirectory(string s) {
             var dictionary = new Dictionary<string, Texture2D>();
-            foreach (string file in Directory.GetFiles(s, "*.xnb")) {
+            foreach (string file in Directory.GetFiles(s, "*.png")) {
                 var info = new FileInfo(file);
                 string t = info.Name.Replace(info.Extension, string.Empty);
-                dictionary.Add(t, content.Load<Texture2D>(s.Replace("Content\\", string.Empty)+"\\"+t));
+                dictionary.Add(t, ContentProvider.LoadTexture(s.Replace("Content\\", string.Empty) + "\\" + t));
             }
             return dictionary;
         }

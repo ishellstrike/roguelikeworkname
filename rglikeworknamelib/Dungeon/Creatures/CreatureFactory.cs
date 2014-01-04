@@ -35,6 +35,11 @@ namespace rglikeworknamelib.Creatures {
                 a.behaviorScript = CreatureDataBase.Bs_rabbit;
             }
 
+            if (a.Data.BehaviorScript == "bs_dog")
+            {
+                a.behaviorScript = CreatureDataBase.Bs_dog;
+            }
+
             return a;
         }
     }

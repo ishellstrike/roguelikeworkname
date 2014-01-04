@@ -82,6 +82,32 @@ namespace rglikeworknamelib.Creatures {
                 }
             }
         }
+
+        public static void Bs_dog(GameTime gt, MapSector ms_, Player hero, Creature target)
+        {
+            if (target.behaviorTag != null && (int)target.behaviorTag > 0 && target.IsIddle)
+            {
+                target.IssureOrder(hero.Position + new Vector2(Settings.rnd.Next(-128, 128), Settings.rnd.Next(-128, 128)));
+                target.behaviorTag = ((int)target.behaviorTag) - 1;
+            }
+
+            if (target.IsIddle)
+            {
+                var a = Settings.rnd.Next(3); 
+                if (a == 1)
+                {
+                    target.IssureOrder(new Order(OrderType.Wander));
+                }
+                else if (a == 2)
+                {
+                    target.IssureOrder(new Order(OrderType.Sleep, Settings.rnd.Next(1000, 3000)));
+                } else if ((hero.Position - target.WorldPosition()).Length() < 256)
+                {
+                    target.IssureOrder(hero.Position + new Vector2(Settings.rnd.Next(-128, 128), Settings.rnd.Next(-128, 128)));
+                    target.behaviorTag = (int)10;
+                }
+            }
+        }
         
     }
 }

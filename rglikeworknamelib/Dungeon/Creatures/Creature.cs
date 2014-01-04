@@ -21,7 +21,12 @@ namespace rglikeworknamelib.Creatures {
         private List<IBuff> buffs_ = new List<IBuff>();
         internal Stat hp_ = new Stat(200);
         private Vector2 lastpos_;
+
         public CreatureScript behaviorScript;
+        /// <summary>
+        /// can be used for behavior proposes
+        /// </summary>
+        public object behaviorTag;
 
         private Order order_ = new Order(), lastOrder_;
 

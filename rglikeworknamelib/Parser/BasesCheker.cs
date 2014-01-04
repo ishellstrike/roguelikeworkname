@@ -20,7 +20,7 @@ namespace rglikeworknamelib.Parser
             var atlases = Atlases.Instance;
             foreach (var data in idb.Data) {
                 if (atlases != null) {
-                    if (data.Value.Dress != null && !atlases.MajorIndexes.ContainsKey(data.Value.Dress)) {
+                    if (data.Value.Dress != null && !atlases.DressAtlas.ContainsKey(data.Value.Dress)) {
                         Logger.Error(string.Format("texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
                         data.Value.Dress = "error";
                         errorIDB++;

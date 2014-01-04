@@ -70,6 +70,7 @@
     <Compile Include="AcievementType.cs" />
     <Compile Include="AutoVersion.cs" />
     <Compile Include="Atlases.cs" />
+    <Compile Include="ContentProvider.cs" />
     <Compile Include="Dungeon\Buffs\BuffBurn.cs" />
     <Compile Include="Dungeon\Buffs\HealOnce.cs" />
     <Compile Include="Dungeon\Buffs\MoraleModifer.cs" />

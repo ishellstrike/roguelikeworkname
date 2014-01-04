@@ -40,8 +40,7 @@ namespace rglikeworknamelib {
             get { return MajorAtlas.Width*4096/1024; /* 1024 -- square of sprite*/ }
         }
 
-        public Atlases(ContentManager c, GraphicsDevice gd) {
-            Content = c;
+        public Atlases(GraphicsDevice gd) {
             sb_ = new SpriteBatch(gd);
             Load(gd);
 
@@ -49,21 +48,19 @@ namespace rglikeworknamelib {
         }
 
         private void Load(GraphicsDevice gd) {           
-            ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"\textureloadorder.ord",
-                                                Content);
-            DressAtlas = ParsersCore.LoadTexturesDirectory(Settings.GetDressTexturesDirectory(), Content);
-            MinimapAtlas = ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"\textureloadorder.ord",
-                                               Content);
+            ParticleAtlas = ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"\textureloadorder.ord");
+            DressAtlas = ParsersCore.LoadTexturesDirectory(Settings.GetDressTexturesDirectory());
+            MinimapAtlas = ParsersCore.LoadTexturesTagged(Settings.GetMinimapTexturesDirectory() + @"\textureloadorder.ord");
 
             
             RebuildAtlases(gd);
         }
 
         public void RebuildAtlases(GraphicsDevice gd) {
-            CreatureArray = ParsersCore.LoadTexturesDirectory(Settings.GetUnitTextureDirectory(), Content);
-            FloorArray = ParsersCore.LoadTexturesDirectory(Settings.GetFloorTextureDirectory(), Content);
-            BlockArray = ParsersCore.LoadTexturesDirectory(Settings.GetObjectTextureDirectory(), Content);
-            VehicleArray = ParsersCore.LoadTexturesTagged(Settings.GetVehicleTextureDirectory() + @"\textureloadorder.ord", Content);
+            CreatureArray = ParsersCore.LoadTexturesDirectory(Settings.GetUnitTextureDirectory());
+            FloorArray = ParsersCore.LoadTexturesDirectory(Settings.GetFloorTextureDirectory());
+            BlockArray = ParsersCore.LoadTexturesDirectory(Settings.GetObjectTextureDirectory());
+            VehicleArray = ParsersCore.LoadTexturesTagged(Settings.GetVehicleTextureDirectory() + @"\textureloadorder.ord");
 
             MajorAtlas = GenerateMajorAtlas(gd, out MajorIndexes, BlockArray, FloorArray, VehicleArray, CreatureArray);
 

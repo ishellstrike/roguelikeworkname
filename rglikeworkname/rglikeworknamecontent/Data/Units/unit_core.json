@@ -28,4 +28,12 @@
 		"Hp":2,
 		"BehaviorScript":"bs_rabbit",
 	},
+
+	"dog":{
+		"Name":"Собака",
+		"MTex":"dog",
+		"Speed":100,
+		"Hp":25,
+		"BehaviorScript":"bs_dog",
+	},
 }
