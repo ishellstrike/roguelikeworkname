@@ -9,8 +9,10 @@ using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
 using jarg;
+using rglikeworknamelib.Creatures;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures
+{
     [Serializable]
     public class Creature {
         internal Color Col;
@@ -118,6 +120,15 @@ namespace rglikeworknamelib.Creatures {
         {
             lastOrder_ = order_;
             order_ = new Order(OrderType.Move, value);
+        }
+        /// <summary>
+        /// Issure move order
+        /// </summary>
+        /// <param name="value"></param>
+        public void IssureOrder(float x, float y)
+        {
+            lastOrder_ = order_;
+            order_ = new Order(OrderType.Move, x, y);
         }
         /// <summary>
         /// Issure idle order
@@ -438,6 +449,10 @@ namespace rglikeworknamelib.Creatures {
         }
 
         public TimeSpan sleep = TimeSpan.Zero;
+
+        public static float GetLength(float x, float y){
+            return new Vector2(x, y).Length();
+        }
     }
 
     public delegate void CreatureScript(GameTime gt, MapSector ms_, Player hero, Creature target);

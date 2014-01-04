@@ -1,6 +1,6 @@
 using System;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures {
     public class PerkData {
         /// <summary>
         ///     Добавляет действие перка, если true, и вычитает, если false, на цель ICreature

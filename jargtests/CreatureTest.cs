@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xna.Framework;
-using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Creatures;
 
 namespace jargtests {
     /// <summary>

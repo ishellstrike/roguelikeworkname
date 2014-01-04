@@ -34,6 +34,12 @@ namespace rglikeworknamelib.Dungeon.Creatures
             Point = value;
         }
 
+        public Order(OrderType orderType, float x, float y)
+        {
+            Type = orderType;
+            Point = new Vector2(x,y);
+        }
+
         public Order(OrderType orderType, Creature value)
         {
             Type = orderType;

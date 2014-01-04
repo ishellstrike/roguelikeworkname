@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures
+{
     public class CreatureData {
         public int Damage;
         public string MTex;

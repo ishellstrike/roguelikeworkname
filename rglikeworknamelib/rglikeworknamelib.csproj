@@ -87,6 +87,7 @@
     <Compile Include="Dungeon\Creatures\PerkData.cs" />
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />
     <Compile Include="Dungeon\Creatures\PerksSystem.cs" />
+    <Compile Include="Dungeon\Creatures\PythonEngine.cs" />
     <Compile Include="Dungeon\Creatures\ShootingCreature.cs" />
     <Compile Include="Dungeon\Creatures\Stat.cs" />
     <Compile Include="Dungeon\Creatures\Dialogs\Dialog.cs" />
@@ -182,6 +183,10 @@
     <Folder Include="obj\x86\Debug\TempPE\" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />

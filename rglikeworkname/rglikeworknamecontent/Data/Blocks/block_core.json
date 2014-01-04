@@ -16,6 +16,12 @@
     "MTex":"briwall1",
     "Wallmaker":true,
   },
+  "st_wall":{
+    "Name":"Стальная стена",
+    "MTex":"steelwall1",
+    "Wallmaker":true,
+	"AlterMtex":["steelwall6","steelwall2","steelwall3","steelwall4","steelwall5"],
+  },
   "w2":{
     "Name":"Стена 2",
     "MTex":"briwall1",

@@ -6,13 +6,40 @@ using System;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Level.Blocks;
+using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures {
     public class CreatureDataBase {
         public static Dictionary<string, CreatureData> Data;
+        public static Dictionary<string, dynamic> Scripts;
+        private static dynamic bs_nothing;
+        static ScriptRuntime ipy = Python.CreateRuntime();
 
         public CreatureDataBase() {
             Data = UniversalParser.JsonDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
+
+
+            ipy.LoadAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+            bs_nothing = ipy.UseFile(Settings.GetCreatureDataDirectory() + "\\bs_nothing.py");
+            var files = Directory.GetFiles(Settings.GetCreatureDataDirectory(), "*.py");
+            Scripts = new Dictionary<string,dynamic>();
+            foreach (var f in files)
+            {
+                var r = new FileInfo(f);
+                string name = r.Name.Replace(r.Extension, string.Empty);
+                dynamic temp = null;
+                try
+                {
+                    temp = ipy.UseFile(f);
+                }
+                catch
+                {
+                    Scripts.Add(name, bs_nothing);
+                    continue;
+                }
+                Scripts.Add(name, temp);
+            }
         }
 
         public static void Bs_zombie(GameTime gt, MapSector ms_, Player hero, Creature target)
@@ -107,6 +134,12 @@ namespace rglikeworknamelib.Creatures {
                     target.behaviorTag = (int)10;
                 }
             }
+        }
+
+
+        public static void ScriptExecute(GameTime gt, MapSector ms_, Player hero, Creature target)
+        {
+            Scripts[target.Data.BehaviorScript].BehaviorScript(gt, ms_, hero, target, Settings.rnd);
         }
         
     }

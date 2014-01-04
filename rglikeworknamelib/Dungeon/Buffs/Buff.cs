@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
-using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
+using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Buffs {
     [Serializable]

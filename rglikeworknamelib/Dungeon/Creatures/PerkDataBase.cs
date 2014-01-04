@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures
+{
     public static class PerkDataBase {
         public static Dictionary<string, PerkData> Perks;
 

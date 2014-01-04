@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using jarg;
-using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 

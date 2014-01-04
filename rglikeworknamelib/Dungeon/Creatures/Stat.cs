@@ -1,6 +1,7 @@
 using System;
 
-namespace rglikeworknamelib.Creatures {
+namespace rglikeworknamelib.Dungeon.Creatures
+{
     [Serializable]
     public struct Stat {
         public float Current, Max;

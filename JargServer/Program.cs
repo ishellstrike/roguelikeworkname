@@ -15,6 +15,7 @@ using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Generation.Names;
 using rglikeworknamelib.Parser;
+using rglikeworknamelib.Dungeon.Creatures;
 
 namespace JargServer
 {

@@ -5,6 +5,7 @@ using System.Text;
 using NLog;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Parser
 {
@@ -21,14 +22,14 @@ namespace rglikeworknamelib.Parser
             foreach (var data in idb.Data) {
                 if (atlases != null) {
                     if (data.Value.Dress != null && !atlases.DressAtlas.ContainsKey(data.Value.Dress)) {
-                        Logger.Error(string.Format("texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
+                        Logger.Error(string.Format("Texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
                         data.Value.Dress = "error";
                         errorIDB++;
                     }
                 }
                 if (data.Value.AfteruseId != null) {
                     if (!idb.Data.ContainsKey(data.Value.AfteruseId)) {
-                        Logger.Error(string.Format("object \"{0}\" for ItemDataBase.AfteruseId not found", data.Value.AfteruseId));
+                        Logger.Error(string.Format("Object \"{0}\" for ItemDataBase.AfteruseId not found", data.Value.AfteruseId));
                         data.Value.AfteruseId = "0";
                         errorIDB++;
                     }
@@ -41,7 +42,7 @@ namespace rglikeworknamelib.Parser
                     continue;
                 }
                 if (!atlases.MajorIndexes.ContainsKey(data.Value.MTex)) {
-                    Logger.Error(string.Format("texture \"{0}\" for FloorDataBase.MTex not found", data.Value.MTex));
+                    Logger.Error(string.Format("Texture \"{0}\" for FloorDataBase.MTex not found", data.Value.MTex));
                     data.Value.MTex = "error";
                     errorFDB++;
                 }
@@ -49,7 +50,7 @@ namespace rglikeworknamelib.Parser
                     for (int i = 0; i < data.Value.AlterMtex.Length; i++) {
                         var s = data.Value.AlterMtex[i];
                         if (!atlases.MajorIndexes.ContainsKey(s)) {
-                            Logger.Error(string.Format("texture \"{0}\" for FloorDataBase.AlterMtex not found", s));
+                            Logger.Error(string.Format("Texture \"{0}\" for FloorDataBase.AlterMtex not found", s));
                             data.Value.AlterMtex[i] = "error";
                             errorFDB++;
                         }
@@ -57,11 +58,22 @@ namespace rglikeworknamelib.Parser
                 }
             }
 
+            int errorCScript = 0;
+            foreach (var crea in CreatureDataBase.Data)
+            {
+                if (crea.Value.BehaviorScript != null && !CreatureDataBase.Scripts.ContainsKey(crea.Value.BehaviorScript))
+                {
+                    Logger.Error(string.Format("Behavior script \"{0}\" not found", crea.Value.BehaviorScript));
+                    crea.Value.BehaviorScript = "bs_nothing";
+                    errorCScript++;
+                }
+            }
+
             int errorScDB = 0;
             foreach (var schemese in SchemesDataBase.Data) {
                 for (int i = 0; i < schemese.data.Length; i++) {
                     if (!BlockDataBase.Data.ContainsKey(schemese.data[i])) {
-                        Logger.Error(string.Format("block \"{0}\" for SchemesDataBase not found", schemese.data[i]));
+                        Logger.Error(string.Format("Block \"{0}\" for SchemesDataBase not found", schemese.data[i]));
                         schemese.data[i] = "error";
                         errorScDB++;
                     }
@@ -136,7 +148,7 @@ namespace rglikeworknamelib.Parser
                 }
             }
 
-            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in CraftDataBase\n     {1} in ItemDataBase\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB));
+            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in CraftDataBase\n     {1} in ItemDataBase     {6} in Creature behavior scripts\n\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB, errorCScript));
         }
 
         public static int ErrorBdb()

@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Particles;
 
 namespace rglikeworknamelib.Dungeon.Bullets {

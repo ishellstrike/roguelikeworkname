@@ -107,6 +107,11 @@ namespace jarg {
                 File.Move("JARGLog.txt", "JARGLog_previous.txt");
             }
 
+#if DEBUG   
+            CopyDir(@"..\..\..\..\rglikeworknamecontent\Data", @"Content\Data");
+            CopyDir(@"..\..\..\..\rglikeworknamecontent\Textures", @"Content\Textures");
+#endif
+
             graphics_ = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
@@ -114,6 +119,21 @@ namespace jarg {
                 Directory.CreateDirectory(Settings.GetWorldsDirectory());
             }
         }
+
+        void CopyDir(string FromDir, string ToDir)
+        {
+            Directory.CreateDirectory(ToDir);
+            foreach (string s1 in Directory.GetFiles(FromDir))
+            {
+                string s2 = ToDir + "\\" + Path.GetFileName(s1);
+                File.Copy(s1, s2, true);
+            }
+            foreach (string s in Directory.GetDirectories(FromDir))
+            {
+                CopyDir(s, ToDir + "\\" + Path.GetFileName(s));
+            }
+        }
+
 
         protected Vector2 ContainerOn { get; set; }
 
@@ -225,23 +245,25 @@ namespace jarg {
             whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             whitepixel_.SetData(new[] {Color.White});
 
-            font1_ = Content.Load<SpriteFont>(@"Fonts/Font1");
+            font1_ = Content.Load<SpriteFont>(@"Fonts\Font1");
             Settings.Font = font1_;
 
-            lig1 = Content.Load<Effect>(@"Effects/Lighting1");
-            effectOmnilight_ = Content.Load<Effect>(@"Effects/Effect1");
+            lig1 = Content.Load<Effect>(@"Effects\Lighting1");
+            effectOmnilight_ = Content.Load<Effect>(@"Effects\Effect1");
 
-            arup_ = ContentProvider.LoadTexture(@"Textures/arrow_up");
-            ardown_ = ContentProvider.LoadTexture(@"Textures/arrow_down");
-            gear = ContentProvider.LoadTexture(@"Textures/gear");
-            bag_ = ContentProvider.LoadTexture(@"Textures/bag");
-            caracter = ContentProvider.LoadTexture(@"Textures/caracter");
-            map = ContentProvider.LoadTexture(@"Textures/map");
-            fltex = ContentProvider.LoadTexture(@"Textures/Effects/fl1");
+            arup_ = ContentProvider.LoadTexture(@"Textures\arrow_up");
+            ardown_ = ContentProvider.LoadTexture(@"Textures\arrow_down");
+            gear = ContentProvider.LoadTexture(@"Textures\gear");
+            bag_ = ContentProvider.LoadTexture(@"Textures\bag");
+            caracter = ContentProvider.LoadTexture(@"Textures\caracter");
+            map = ContentProvider.LoadTexture(@"Textures\map");
+            fltex = ContentProvider.LoadTexture(@"Textures\Effects\fl1");
 
 
 
-            player_ = new Player(spriteBatch_, ContentProvider.LoadTexture(@"Textures/Units/car"), font1_);
+            player_ = new Player(spriteBatch_, ContentProvider.LoadTexture(@"Textures\Units\car"), font1_);
+
+            Logger.Info("ContentProvider loaded {0} textures", ContentProvider.TotalLoaded());
 
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(ws_);

@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Creatures;
+using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Effects {
     public interface IBuff {
