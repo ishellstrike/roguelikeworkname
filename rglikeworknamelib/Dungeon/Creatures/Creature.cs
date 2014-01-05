@@ -464,7 +464,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public static void Say(Creature c, string s)
         {
-            EventLog.Add(c.Data.Name+" : "+s, Color.LightGray, LogEntityType.Default);
+            EventLog.Add(c.Data.Name+": \""+s+"\"", Color.LightGray, LogEntityType.Default);
         }
     }
 

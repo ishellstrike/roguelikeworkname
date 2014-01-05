@@ -36,4 +36,12 @@
 		"Hp":25,
 		"BehaviorScript":"bs_dog",
 	},
+
+	"spider":{
+		"Name":"Огромный паук",
+		"MTex":"dog",
+		"Speed":200,
+		"Hp":70,
+		"BehaviorScript":"bs_spider",
+	},
 }

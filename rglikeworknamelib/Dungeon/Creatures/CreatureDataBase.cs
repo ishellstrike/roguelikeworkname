@@ -9,6 +9,7 @@ using rglikeworknamelib.Dungeon.Level.Blocks;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 using NLog;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Creatures {
     public class CreatureDataBase {
@@ -22,7 +23,11 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Data = UniversalParser.JsonDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
 
 
-            ipy.LoadAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+            ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Creature)));
+            ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Block)));
+            ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Item)));
+
+
             bs_nothing = ipy.UseFile(Settings.GetCreatureDataDirectory() + "\\bs_nothing.py");
             var files = Directory.GetFiles(Settings.GetCreatureDataDirectory(), "*.py");
             Scripts = new Dictionary<string,dynamic>();
