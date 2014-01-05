@@ -61,6 +61,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 }
                 Scripts.Add(name, temp);
             }
+            Settings.NTS2 = string.Empty;
             Settings.NeedToShowInfoWindow = false;
         }
 

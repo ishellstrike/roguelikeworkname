@@ -1004,27 +1004,17 @@ namespace rglikeworknamelib.Dungeon.Level
                     var a = new InterestPointCity
                     {
                         Name = NameDataBase.GetRandom(rand),
-                        SectorPos = new Point(rand.Next(0, 0) + megaOffsetX * 50, rand.Next(0, 0) + megaOffsettY * 50),
+                        SectorPos = new Point(rand.Next(0, 0) + megaOffsetX * 20, rand.Next(0, 0) + megaOffsettY * 20),
                         Range = 10
                     };
                     mm.InterestPoints.Add(a);
 
-                    MapGenerators.GenerateCity(this, rand, 500, 500, a.SectorPos.X * MapSector.Rx - 2,
+                    MapGenerators.GenerateCity(this, rand, 400, 400, a.SectorPos.X * MapSector.Rx - 2,
                                                a.SectorPos.Y * MapSector.Ry - 2);
                 }
 
                 Settings.NeedToShowInfoWindow = false;
                 megaMap.Add(point, mm);
-            }
-            for (int i = 0; i < Generation_sectors_.Count; i++)
-            {
-                KeyValuePair<Point, MapSector> sector;
-                lock (Generation_sectors_)
-                {
-                    sector = Generation_sectors_.ElementAt(i);
-                }
-                lw_.StoreGenerated(sector.Value);
-                Generation_sectors_.Remove(sector.Key);
             }
             sw.Stop();
             logger.Info(string.Format("megamap sector {0} generation in {1}", point, sw.Elapsed));
@@ -1379,13 +1369,16 @@ namespace rglikeworknamelib.Dungeon.Level
                 {
                     for (int j = -1 + arg2; j <= 1 + arg2; j++)
                     {
-                        if (i != arg1 || j != arg2)
+                        //if (i != arg1 || j != arg2)
                         {
                             GenerateMegaSector(i, j);
                             //results.Add(gen.BeginInvoke(i, j, null, null));
                         }
                     }
                 }
+
+                lw_.onStore_ = Generation_sectors_;
+                Generation_sectors_.Clear();
             }
             else
             {

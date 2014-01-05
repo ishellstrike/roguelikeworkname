@@ -34,6 +34,18 @@ namespace rglikeworknamelib.Parser
                         errorIDB++;
                     }
                 }
+                if (data.Value.ItemScript != null)
+                {
+                    for (int i = 0; i < data.Value.ItemScript.Length; i++) {
+                        var script = data.Value.ItemScript[i];
+                        if (!ItemDataBase.Instance.ItemScripts.ContainsKey(script)) {
+                            Logger.Error(string.Format("Item script \"{0}\" not found", script));
+                            data.Value.ItemScript[i] = "is_nothing";
+                            errorIDB++;
+                        }
+                        
+                    }
+                }
             }
 
             int errorFDB = 0;

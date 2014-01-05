@@ -75,10 +75,25 @@ namespace rglikeworknamelib.Dungeon.Items
 #endif
                 }
                 var ia = new ItemAction(temp, disc);
+                string ss;
+                try {
+                    ss = (string) temp.Name();
+                } catch (Exception ex) {
+                    ia.Name = "error";
+                    ItemScripts.Add(name, ia);
+#if DEBUG
+                    throw;
+#else
+                    continue;
+#endif
+                }
+
+                ia.Name = ss;
                 ItemScripts.Add(name, ia);
-                temp.Name(ia);
+                
             }
 
+            Settings.NTS2 = string.Empty;
             Settings.NeedToShowInfoWindow = false;
 
             //ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));

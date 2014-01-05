@@ -1,4 +1,6 @@
-from rglikeworknamelib.Dungeon.Creatures import *
+from rglikeworknamelib.Dungeon.Creatures import Order
+from rglikeworknamelib.Dungeon.Creatures import OrderType
+from rglikeworknamelib.Dungeon.Creatures import Creature
 
 def BehaviorScript(gt, ms_, hero, target, rnd):
 	if Creature.GetLength(hero.Position.X - target.WorldPosition().X, hero.Position.Y - target.WorldPosition().Y) < 600 and target.behaviorTag == 1:

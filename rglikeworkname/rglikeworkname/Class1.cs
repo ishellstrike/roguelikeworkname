@@ -163,7 +163,7 @@
     "Weight":100,
     "NutCal":500,
     "Doses":2,
-    "ActionsId":["opencan"]
+    "ItemScript":["opencan"]
   },
   "lapsha1":{
     "Name":"Пакет лапши",
@@ -198,7 +198,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan1",
     "SpawnGroup":"spawn_shopfood",
-    "ActionsId":["opencan"]
+    "ItemScript":["opencan"]
   },
   "meatcan2":{
     "Name":"Открытая банка паштета",
@@ -215,7 +215,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan2",
     "SpawnGroup":"spawn_shopfood",
-    "ActionsId":["opencan"]
+    "ItemScript":["opencan"]
   },
   "milk1":{
     "Name":"Пакет молока",
@@ -363,7 +363,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"beancan1",
     "SpawnGroup":"spawn_shopfood",
-    "ActionsId":["opencan"]
+    "ItemScript":["opencan"]
   },
   "corncan1":{
     "Name":"Открытая банка кукурузы",
@@ -381,7 +381,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan1",
     "SpawnGroup":"spawn_shopfood",
-    "ActionsId":["opencan"]
+    "ItemScript":["opencan"]
   },
   "corncan2":{
     "Name":"Открытая банка горошка",
@@ -399,7 +399,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan2",
     "SpawnGroup":"spawn_shopfood",
-    "ActionsId":["opencan"]
+    "ItemScript":["opencan"]
   },
   "vinebottlecl":{
     "Name":"Бутылка вина",

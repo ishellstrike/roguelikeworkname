@@ -18,7 +18,7 @@ namespace rglikeworknamelib.Dungeon.Level {
     public class LevelWorker {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<Point, GameLevel> onLoadOrGenerate_;
-        private Dictionary<Point, MapSector> onStore_;
+        internal Dictionary<Point, MapSector> onStore_;
         public Dictionary<Point, MapSector> Buffer;
         public bool ServerGame;
         public JargClient client;

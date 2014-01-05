@@ -1,4 +1,5 @@
-from rglikeworknamelib.Dungeon.Creatures import *
+from rglikeworknamelib.Dungeon.Creatures import Order
+from rglikeworknamelib.Dungeon.Creatures import OrderType
 
 def BehaviorScript(gt, ms_, hero, target, rnd):
     if target.IsIddle:
