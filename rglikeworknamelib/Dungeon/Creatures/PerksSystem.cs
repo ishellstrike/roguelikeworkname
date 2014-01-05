@@ -12,7 +12,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public PerksSystem(Creature owner) {
             Owner = owner;
             Perks = new Dictionary<string, Perk>();
-            for (int i = 0; i < PerkDataBase.Perks.Count; i++) {
+            for (var i = 0; i < PerkDataBase.Perks.Count; i++) {
                 Perks.Add(PerkDataBase.Perks.ElementAt(i).Key, new Perk());
             }
         }
@@ -39,7 +39,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         /// <param name="perkId"></param>
         public void SetPerk(string perkId) {
             Perks[perkId].selected_ = !Perks[perkId].selected_;
-            Action<bool, Creature> addRemove = PerkDataBase.Perks[perkId].AddRemove;
+            var addRemove = PerkDataBase.Perks[perkId].AddRemove;
             if (addRemove != null) {
                 addRemove(Perks[perkId].selected_, Owner);
             }

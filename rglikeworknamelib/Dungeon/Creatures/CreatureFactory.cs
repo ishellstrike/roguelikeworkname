@@ -14,12 +14,13 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 logger.Error(string.Format("Missing CreatureData id={0}!!!", id));
                 return null;
             }
-            CreatureData creatureData = CreatureDataBase.Data[id];
-            var a = new Creature();
-            a.Id = id;
-            a.MTex = creatureData.MTex;
-            a.Position = pos;
-            a.Hp = new Stat(creatureData.Hp, creatureData.Hp);
+            var creatureData = CreatureDataBase.Data[id];
+            var a = new Creature {
+                Id = id,
+                MTex = creatureData.MTex,
+                Position = pos,
+                Hp = new Stat(creatureData.Hp, creatureData.Hp)
+            };
 
             if (a.Data.BehaviorScript != null)
             {

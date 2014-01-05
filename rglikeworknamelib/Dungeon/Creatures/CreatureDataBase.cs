@@ -15,7 +15,6 @@ namespace rglikeworknamelib.Dungeon.Creatures {
     public class CreatureDataBase {
         public static Dictionary<string, CreatureData> Data;
         public static Dictionary<string, dynamic> Scripts;
-        private static dynamic bs_nothing;
         static ScriptRuntime ipy = Python.CreateRuntime();
         static Logger logger = LogManager.GetLogger("CreatureDataBase");
 
@@ -32,10 +31,10 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Settings.NeedToShowInfoWindow = true;
             Settings.NTS1 = "Creature base script loading";
 
-            bs_nothing = ipy.UseFile(Settings.GetCreatureDataDirectory() + "\\bs_nothing.py");
+            dynamic bsNothing = ipy.UseFile(Settings.GetCreatureDataDirectory() + "\\bs_nothing.py");
             var files = Directory.GetFiles(Settings.GetCreatureDataDirectory(), "*.py");
-            Scripts = new Dictionary<string,dynamic>();
-            int i = 0;
+            Scripts = new Dictionary<string, dynamic>();
+            var i = 0;
             foreach (var f in files)
             {
                 var r = new FileInfo(f);
@@ -43,20 +42,22 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Settings.NTS1 = "BScripts: ";
                 Settings.NTS2 = string.Format("{0}/{1} ({2})", i+1, files.Length, r.Name);
                 i++;
-                string name = r.Name.Replace(r.Extension, string.Empty);
-                dynamic temp = null;
+                var name = r.Name.Replace(r.Extension, string.Empty);
+                dynamic temp;
                 try
                 {
                     temp = ipy.UseFile(f);
                 }
                 catch(Exception ex)
                 {
-                    Scripts.Add(name, bs_nothing);
+                    Scripts.Add(name, bsNothing);
                     logger.Error(ex);
 #if DEBUG
-                    throw ex;
-#endif
+                    throw;
+#else
                     continue;
+#endif
+
                 }
                 Scripts.Add(name, temp);
             }

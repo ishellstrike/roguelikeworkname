@@ -58,6 +58,6 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public Creature Target;
 
-        public int Value;
+        public float Value;
     }
 }

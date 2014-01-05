@@ -35,9 +35,11 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
         }
 
         private string mTex_;
-        public string MTex {
+        public string MTex
+        {
             get { return mTex_; }
-            set {
+            set
+            {
                 Source = BlockData.GetSource(value);
                 mTex_ = value;
             }
@@ -45,11 +47,14 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
 
         public bool Inner { get; set; }
 
-        public virtual void Update(TimeSpan ts, Vector2 vector2) {
+        public virtual void Update(TimeSpan ts, Vector2 vector2)
+        {
         }
 
-        public static string GetSmartActionName(SmartAction smartAction) {
-            switch (smartAction) {
+        public static string GetSmartActionName(SmartAction smartAction)
+        {
+            switch (smartAction)
+            {
                 case SmartAction.ActionOpenContainer:
                     return "Осмотреть содержимое";
                 case SmartAction.ActionOpenClose:

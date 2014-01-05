@@ -94,11 +94,11 @@ namespace rglikeworknamelib.Generation {
                 for (int j = 0; j < scheme.y; j++) {
                     string blockId = scheme.data[i*scheme.y + j];
                         var block = gl.SetBlockSyncAndReturn(x + i, y + j, blockId);
-                        var floor = gl.GetFloorSync(x + i, y + j);
-                        if (floor.Id == "conk_base" && !block.Data.Wallmaker)
-                        {
-                        block.Inner = true;
-                        }
+                        //var floor = gl.GetFloorSync(x + i, y + j);
+                        //if (floor.Id == "conk_base" && !block.Data.Wallmaker)
+                        //{
+                        //block.Inner = true;
+                        //}
                         if (BlockDataBase.Data[blockId].SmartAction == SmartAction.ActionOpenContainer) {
                             if (block.Data.ItemSpawn != null)
                             {
@@ -112,7 +112,7 @@ namespace rglikeworknamelib.Generation {
                                                                             rand.Next(drop.Max - drop.Min) +
                                                                             drop.Min);
                                             if (item != null) {
-                                                ((Block) block).StoredItems.Add(item);
+                                                block.StoredItems.Add(item);
                                             }
                                         }
                                     }

@@ -104,7 +104,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 }
                 EventLog.Add(string.Format("Вы надели {0}", i.Data.Name), GlobalWorldLogic.CurrentTime, Color.Yellow,
                              LogEntityType.Equip);
-                foreach (IBuff buff in i.Buffs) {
+                foreach (var buff in i.Buffs) {
                     Buffs.Add(buff);
                     buff.ApplyToTarget(this);
                 }
@@ -117,7 +117,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     ins.AddItem(ite);
                     EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ite.Data.Name), GlobalWorldLogic.CurrentTime,
                                  Color.Yellow, LogEntityType.Equip);
-                    foreach (IBuff buff in ite.Buffs.Where(buff => Buffs.Contains(buff))) {
+                    foreach (var buff in ite.Buffs.Where(buff => Buffs.Contains(buff))) {
                         Buffs.Remove(buff);
                         buff.RemoveFromTarget(this);
                     }
@@ -128,7 +128,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 }
                 EventLog.Add(string.Format("Вы экипировали {0}", i.Data.Name), GlobalWorldLogic.CurrentTime,
                              Color.Yellow, LogEntityType.Equip);
-                foreach (IBuff buff in i.Buffs) {
+                foreach (var buff in i.Buffs) {
                     Buffs.Add(buff);
                     buff.ApplyToTarget(this);
                 }
@@ -159,7 +159,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             AchievementDataBase.Stat["takedmg"].Count += value;
         }
 
-        public override void Update(GameTime gt, MapSector ms, Player hero) {
+        public override void Update(GameTime gt, MapSector ms, Player hero, bool test = false) {
             if (ms != null) {
                 var time = (float) gt.ElapsedGameTime.TotalSeconds;
 
@@ -169,9 +169,9 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 //    Velocity *= 10;
                 //}
 
-                Vector2 tpos = Position;
+                var tpos = Position;
                 tpos.X += Velocity.X;
-                Vector2 tpos2 = Position;
+                var tpos2 = Position;
                 tpos2.Y += Velocity.Y;
 
                 var a = (int) (tpos.X/32.0);
@@ -197,7 +197,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     if (!Settings.Noclip) {
                         Velocity.X = 0;
                     }
-                    Block key = ms.Parent.GetBlock(a, b);
+                    var key = ms.Parent.GetBlock(a, b);
                     if (key == null) {
                         return;
                     }
@@ -209,15 +209,15 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     if (!Settings.Noclip) {
                         Velocity.Y = 0;
                     }
-                    Block block = ms.Parent.GetBlock(c, d);
+                    var block = ms.Parent.GetBlock(c, d);
                     if (block != null && block.Data.SmartAction == SmartAction.ActionOpenClose) {
                         ms.Parent.OpenCloseDoor(c, d);
                     }
                 }
 
-                Vector2 perem = Velocity*time*20;
+                var perem = Velocity*time*20;
                 Position += perem; /////////
-                float meters = (perem/32).Length();
+                var meters = (perem/32).Length();
                 AchievementDataBase.Stat["walk"].Count += meters;
                 Abilities.list["atlet"].XpCurrent += meters/300.0;
 
@@ -225,15 +225,15 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     Velocity /= Settings.H()/time;
                 }
 
-                TimeSpan elapsetGwl = GlobalWorldLogic.Elapse;
+                var elapsetGwl = GlobalWorldLogic.Elapse;
                 Hunger.Current -= (float) elapsetGwl.TotalDays/4*100;
                 Thirst.Current -= (float) elapsetGwl.TotalDays*100;
                 Sleep.Current -= (float) elapsetGwl.TotalDays/1.5f*100;
 
                 secShoot_ += gt.ElapsedGameTime;
 
-                for (int i = 0; i < Buffs.Count; i++) {
-                    IBuff buff = Buffs[i];
+                for (var i = 0; i < Buffs.Count; i++) {
+                    var buff = Buffs[i];
                     buff.Update(gt);
                     if (!buff.Applied) {
                         Buffs.Remove(buff);
@@ -245,7 +245,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public void Draw(GameTime gt, Vector2 cam, KeyValuePair<string, OtherClient>? other) {
             if (!other.HasValue) {
                 var atlas = Atlases.Instance;
-                Vector2 position = Position - cam;
+                var position = Position - cam;
                 var origin = new Vector2(Tex.Width/2f, Tex.Height);
                 sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
                          SpriteEffects.None, 1);
@@ -266,7 +266,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 }
             }
             else {
-                Vector2 position = new Vector2(other.Value.Value.x, other.Value.Value.y) - cam;
+                var position = new Vector2(other.Value.Value.x, other.Value.Value.y) - cam;
                 var origin = new Vector2(Tex.Width / 2f, Tex.Height);
                 sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
                          SpriteEffects.None, 1);
@@ -281,7 +281,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 if (secShoot_.TotalMilliseconds > ItemGun.Data.FireRate) {
                     if ((ItemGun.Data.Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemGun.Data.Ammo) ||
                         ItemGun.Data.Ammo == null) {
-                        int dam = ItemGun != null ? ItemGun.Data.Damage : 0;
+                        var dam = ItemGun != null ? ItemGun.Data.Damage : 0;
                         bs.AddBullet(this, 50,
                                      playerSeeAngle +
                                      MathHelper.ToRadians((((float) Settings.rnd.NextDouble()*2f - 1)*
@@ -346,8 +346,8 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
                 Perks.Owner = this;
                 Weared = (Collection<Item>) binaryFormatter.Deserialize(gZipStream);
-                foreach (Item item in Weared) {
-                    foreach (IBuff buff in item.Buffs) {
+                foreach (var item in Weared) {
+                    foreach (var buff in item.Buffs) {
                         buff.Target = this;
                     }
                     item.OnLoad();
@@ -355,7 +355,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 var t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
                     ItemAmmo = (Item) binaryFormatter.Deserialize(gZipStream);
-                    foreach (IBuff buff in ItemAmmo.Buffs) {
+                    foreach (var buff in ItemAmmo.Buffs) {
                         buff.Target = this;
                     }
                     ItemAmmo.OnLoad();
@@ -364,7 +364,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
                     ItemGun = (Item) binaryFormatter.Deserialize(gZipStream);
-                    foreach (IBuff buff in ItemGun.Buffs) {
+                    foreach (var buff in ItemGun.Buffs) {
                         buff.Target = this;
                     }
                     ItemGun.OnLoad();
@@ -373,7 +373,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 t = (bool) binaryFormatter.Deserialize(gZipStream);
                 if (t) {
                     ItemMeele = (Item) binaryFormatter.Deserialize(gZipStream);
-                    foreach (IBuff buff in ItemMeele.Buffs) {
+                    foreach (var buff in ItemMeele.Buffs) {
                         buff.Target = this;
                     }
                     ItemMeele.OnLoad();
@@ -401,7 +401,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             binaryFormatter.Serialize(gZipStream, Position);
             binaryFormatter.Serialize(gZipStream, Perks);
             binaryFormatter.Serialize(gZipStream, Weared);
-            bool t = ItemAmmo != null;
+            var t = ItemAmmo != null;
             binaryFormatter.Serialize(gZipStream, t);
             if (t) {
                 binaryFormatter.Serialize(gZipStream, ItemAmmo);

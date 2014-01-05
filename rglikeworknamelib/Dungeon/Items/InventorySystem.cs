@@ -191,7 +191,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             var d = CraftRequireCheck(selectedCraft.Input4, selectedCraft.Input4Count);
         }
 
-        private bool CraftRequireCheck(List<string> a, List<string> b) {
+        private bool CraftRequireCheck(IEnumerable<string> a, IList<string> b) {
             if (a == null) return true;
             return a.Select(t1 => items_.FirstOrDefault(x => x.Id == t1)).Where((t, i) => t != null && t.Count > int.Parse(b[i])).Any();
         }

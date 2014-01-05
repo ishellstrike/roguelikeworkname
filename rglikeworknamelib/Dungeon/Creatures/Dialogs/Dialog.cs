@@ -22,7 +22,7 @@ namespace rglikeworknamelib.Dialogs {
         private DialogDataBase() {
             data = new Dictionary<string, DialogData>();
 
-            List<KeyValuePair<string, object>> temp =
+            var temp =
                 ParsersCore.UniversalParseDirectory(Settings.GetDialogDataDirectory(),
                                                     UniversalParser.Parser<DialogData>);
 

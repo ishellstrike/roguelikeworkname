@@ -486,6 +486,7 @@ namespace rglikeworknamelib.Dungeon.Level
         /// </summary>
         /// <param name="cara"></param>
         /// <param name="gt"></param>
+        /// <param name="camera"></param>
         /// <param name="ignore"></param>
         public void KillFarSectors(Creature cara, GameTime gt, Vector2 camera, bool ignore = false)
         {

@@ -86,8 +86,8 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                 spriteBatch_.Draw(bulletAtlas_[bullet.Mtex],
                                   bullet.Pos - cam, null,
                                   Color.White, 0,
-                                  new Vector2(bulletAtlas_[bullet.Mtex].Width/2,
-                                              bulletAtlas_[bullet.Mtex].Height/2), 1, SpriteEffects.None, 0);
+                                  new Vector2(bulletAtlas_[bullet.Mtex].Width/2f,
+                                              bulletAtlas_[bullet.Mtex].Height/2f), 1, SpriteEffects.None, 0);
 
                 lb.AddLine(bullet.Start - cam, bullet.Pos - cam, Color.Yellow, 2);
 

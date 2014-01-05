@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NLog.Targets;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
@@ -121,10 +122,10 @@ namespace rglikeworknamelib.Dungeon.Creatures
             lastOrder_ = order_;
             order_ = new Order(OrderType.Move, value);
         }
+
         /// <summary>
         /// Issure move order
         /// </summary>
-        /// <param name="value"></param>
         public void IssureOrder(float x, float y)
         {
             lastOrder_ = order_;
@@ -178,7 +179,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public bool IsIddleOrWander { get { return order_.Type == OrderType.Iddle || order_.Type == OrderType.Wander; } }
 
-        public virtual void Update(GameTime gt, MapSector ms_, Player hero) {
+        public virtual void Update(GameTime gt, MapSector ms_, Player hero, bool test = false) {
             ms = ms_;
             
             reactionT_ += gt.ElapsedGameTime;
@@ -194,6 +195,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
                 OrdersMaker(ms_, gt);
 
+                if(test) {return;}
                 //Sector changer
                 if (Position.Y >= 32 * MapSector.Ry)
                 {
@@ -284,10 +286,10 @@ namespace rglikeworknamelib.Dungeon.Creatures
                    new Vector2(sectoroffset_.X*MapSector.Rx*32, sectoroffset_.Y*MapSector.Ry*32);
         }
 
-        public virtual void Kill(MapSector ms) {
+        public virtual void Kill(MapSector decalMs) {
             Hp = new Stat(0, 0);
             isDead = true;
-            ms.AddDecal(new Particle(WorldPosition(), 3) {Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0)});
+            decalMs.AddDecal(new Particle(WorldPosition(), 3) {Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0)});
             if (OnDeath != null) {
                 OnDeath(null, null);
             }
@@ -333,38 +335,40 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         private void OrdersMaker(MapSector ms, GameTime gt) {
             double time = gt.ElapsedGameTime.TotalSeconds;
-            if (order_.Type == OrderType.Move) {
-                Vector2 wp = WorldPosition();
-                Vector2 mover = order_.Point - wp;
-                float percenterMax = Data.Speed * Percenter;
+            switch (order_.Type) {
+                case OrderType.Move: {
+                    Vector2 wp = WorldPosition();
+                    Vector2 mover = order_.Point - wp;
+                    float percenterMax = Data.Speed * Percenter;
 
-                if (mover.Length() > time * percenterMax)
-                {
-                    mover.Normalize();
-                    mover *= (float)time * percenterMax;
-                }
+                    if (mover.Length() > time * percenterMax)
+                    {
+                        mover.Normalize();
+                        mover *= (float)time * percenterMax;
+                    }
 
-                Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
-                Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
+                    Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
+                    Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
 
-                Block key = ms.Parent.GetBlock((int)newwposx.X, (int)newwposx.Y);
-                if (key != null && key.Id != null && key.Data.IsWalkable)
-                {
-                    position_.X += mover.X;
-                }
-                key = ms.Parent.GetBlock((int)newwposy.X, (int)newwposy.Y);
-                if (key != null && (key.Id != null && key.Data.IsWalkable))
-                {
-                    position_.Y += mover.Y;
-                }
+                    Block key = ms.Parent.GetBlock((int)newwposx.X, (int)newwposx.Y);
+                    if (key != null && key.Id != null && key.Data.IsWalkable)
+                    {
+                        position_.X += mover.X;
+                    }
+                    key = ms.Parent.GetBlock((int)newwposy.X, (int)newwposy.Y);
+                    if (key != null && (key.Id != null && key.Data.IsWalkable))
+                    {
+                        position_.Y += mover.Y;
+                    }
 
-                wp = WorldPosition();
-                if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
-                {
-                    IssureOrder();
+                    wp = WorldPosition();
+                    if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
+                    {
+                        IssureOrder();
+                    }
                 }
-            } else if (order_.Type == OrderType.Attack)
-                {
+                    break;
+                case OrderType.Attack: {
                     Vector2 wp = WorldPosition();
                     Vector2 mover = order_.Target.Position - wp;
                     float percenterMax = Data.Speed * Percenter;
@@ -395,60 +399,54 @@ namespace rglikeworknamelib.Dungeon.Creatures
                         IssureOrder();
                     }
                 }
-            else if (order_.Type == OrderType.Wander)
-            {
-                Vector2 wp = WorldPosition();
-                if (order_.Point.Y == 0)
-                {
-                    order_.Point = new Vector2(wp.X + Settings.rnd.Next(-100, 100), wp.Y + Settings.rnd.Next(-100, 100));
-                }
+                    break;
+                case OrderType.Wander: {
+                    Vector2 wp = WorldPosition();
+                    if (order_.Point.Y == 0)
+                    {
+                        order_.Point = new Vector2(wp.X + Settings.rnd.Next(-100, 100), wp.Y + Settings.rnd.Next(-100, 100));
+                    }
 
-                Vector2 mover = order_.Point - wp;
-                float percenterMax = Data.Speed * Percenter * 0.25f;
+                    Vector2 mover = order_.Point - wp;
+                    float percenterMax = Data.Speed * Percenter * 0.25f;
 
-                if (mover.Length() > time * percenterMax)
-                {
-                    mover.Normalize();
-                    mover *= (float)time * percenterMax;
-                }
+                    if (mover.Length() > time * percenterMax)
+                    {
+                        mover.Normalize();
+                        mover *= (float)time * percenterMax;
+                    }
 
-                Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
-                Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
+                    Vector2 newwposx = GetWorldPositionInBlocks() + new Vector2(mover.X, 0);
+                    Vector2 newwposy = GetWorldPositionInBlocks() + new Vector2(0, mover.Y);
 
-                Block key = ms.Parent.GetBlock((int)newwposx.X, (int)newwposx.Y);
-                if (key != null && key.Id != null && key.Data.IsWalkable)
-                {
-                    position_.X += mover.X;
-                }
-                key = ms.Parent.GetBlock((int)newwposy.X, (int)newwposy.Y);
-                if (key != null && (key.Id != null && key.Data.IsWalkable))
-                {
-                    position_.Y += mover.Y;
-                }
+                    Block key = ms.Parent.GetBlock((int)newwposx.X, (int)newwposx.Y);
+                    if (key != null && key.Id != null && key.Data.IsWalkable)
+                    {
+                        position_.X += mover.X;
+                    }
+                    key = ms.Parent.GetBlock((int)newwposy.X, (int)newwposy.Y);
+                    if (key != null && (key.Id != null && key.Data.IsWalkable))
+                    {
+                        position_.Y += mover.Y;
+                    }
 
-                wp = WorldPosition();
-                if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
-                {
-                    IssureOrder();
+                    wp = WorldPosition();
+                    if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
+                    {
+                        IssureOrder();
+                    }
                 }
-            }
-            else if (order_.Type == OrderType.Sleep)
-            {
-                if (sleep <= TimeSpan.Zero)
-                {
-                    sleep = new TimeSpan(order_.Value*10000);
-                }
-
-                sleep -= gt.ElapsedGameTime;
-
-                if (sleep <= TimeSpan.Zero)
-                {
-                    IssureOrder();
-                }
+                    break;
+                case OrderType.Sleep:
+                    if (CurrentOrder.Value <= 0) {
+                        IssureOrder();
+                    }
+                    else {
+                        CurrentOrder.Value -= gt.ElapsedGameTime.Milliseconds;
+                    }
+                    break;
             }
         }
-
-        public TimeSpan sleep = TimeSpan.Zero;
 
         public static float GetLength(float x, float y){
             return new Vector2(x, y).Length();
