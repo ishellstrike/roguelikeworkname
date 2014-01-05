@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
+using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Items {
     [Serializable]
@@ -42,6 +43,11 @@ namespace rglikeworknamelib.Dungeon.Items {
             return Doses != 0
                        ? string.Format("{0} ({1})", ItemDataBase.Instance.Data[Id].Name, Doses)
                        : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count);
+        }
+
+        public static void Log(string s)
+        {
+            EventLog.Add(s, Color.Yellow, LogEntityType.NoAmmoWeapon);
         }
     }
 }

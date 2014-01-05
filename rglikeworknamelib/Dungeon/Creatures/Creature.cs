@@ -272,7 +272,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 Vector2 p = WorldPosition() - camera;
                 spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
                 if (Settings.DebugInfo) {
-                    spriteBatch.DrawString(Settings.Font, order_.Type+", "+position_.ToString(), p, Color.White);
+                    spriteBatch.DrawString(Settings.Font, id_ + " -- " + order_.Type+", "+position_.ToString(), p, Color.White);
                     if (order_.Type == OrderType.Move) { lineBatch.AddLine(p, order_.Point - camera, Color.LimeGreen, 1); }
                     if (order_.Type == OrderType.Attack) { lineBatch.AddLine(p, order_.Target.Position - camera, Color.Red, 1); }
                     if (order_.Type == OrderType.Wander) { lineBatch.AddLine(p, order_.Point - camera, Color.LightBlue, 1); }

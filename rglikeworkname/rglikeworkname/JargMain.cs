@@ -431,12 +431,11 @@ namespace jarg {
                 InfoWindow.Visible = false;
             }
 
-            if (InitialFinish) {
-                WindowsUpdate(gameTime);
-                ws_.Update(gameTime, ms_, lms_, ks_, lks_, false);
-            }
+            
+            WindowsUpdate(gameTime);
+            ws_.Update(gameTime, ms_, lms_, ks_, lks_, false);
 
-            if (IsActive) {
+            if (IsActive && InitialFinish) {
                 UpdateKeyboard(gameTime);
                 UpdateMouse(gameTime);
             }
@@ -494,6 +493,7 @@ namespace jarg {
                 client_.SendStruct(new JargPack { action = "position", name = client_.name, x = player_.Position.X, y = player_.Position.Y, angle = PlayerSeeAngle});
             }
             SendTick++;
+
             currentFloor_.KillFarSectors(player_, gameTime, camera_);
             bs_.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);

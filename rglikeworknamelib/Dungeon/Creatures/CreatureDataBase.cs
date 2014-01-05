@@ -22,18 +22,27 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public CreatureDataBase() {
             Data = UniversalParser.JsonDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
 
+            Settings.NeedToShowInfoWindow = true;
+            Settings.NTS1 = "Creature assembly loading";
 
             ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Creature)));
             ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Block)));
             ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Item)));
 
+            Settings.NeedToShowInfoWindow = true;
+            Settings.NTS1 = "Creature base script loading";
 
             bs_nothing = ipy.UseFile(Settings.GetCreatureDataDirectory() + "\\bs_nothing.py");
             var files = Directory.GetFiles(Settings.GetCreatureDataDirectory(), "*.py");
             Scripts = new Dictionary<string,dynamic>();
+            int i = 0;
             foreach (var f in files)
             {
                 var r = new FileInfo(f);
+                Settings.NeedToShowInfoWindow = true;
+                Settings.NTS1 = "BScripts: ";
+                Settings.NTS2 = string.Format("{0}/{1} ({2})", i+1, files.Length, r.Name);
+                i++;
                 string name = r.Name.Replace(r.Extension, string.Empty);
                 dynamic temp = null;
                 try
@@ -51,6 +60,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 }
                 Scripts.Add(name, temp);
             }
+            Settings.NeedToShowInfoWindow = false;
         }
 
         //public static void Bs_zombie(GameTime gt, MapSector ms_, Player hero, Creature target)

@@ -9,6 +9,9 @@ using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
 using rglikeworknamelib.Parser;
+using Microsoft.Scripting.Hosting;
+using IronPython.Hosting;
+using System.IO;
 
 namespace rglikeworknamelib.Dungeon.Items
 {
@@ -16,6 +19,9 @@ namespace rglikeworknamelib.Dungeon.Items
     {
         public Dictionary<string, ItemData> Data;
         public Dictionary<string, ItemAction> ItemScripts;
+        private ScriptRuntime ipy = Python.CreateRuntime();
+        private dynamic is_nothing = null;
+        static Logger logger = LogManager.GetLogger("ItemDataBase");
 
         private static Logger logger_ = LogManager.GetCurrentClassLogger();
 
@@ -39,13 +45,55 @@ namespace rglikeworknamelib.Dungeon.Items
 
             Data = UniversalParser.JsonDataLoader<ItemData>(Settings.GetItemDataDirectory());
 
+            Settings.NeedToShowInfoWindow = true;
+            Settings.NTS1 = "Item assembly loading";
+
+            ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Item)));
+
+            Settings.NeedToShowInfoWindow = true;
+            Settings.NTS1 = "Item base script loading";
+
+            is_nothing = ipy.UseFile(Settings.GetItemDataDirectory() + "\\is_nothing.py");
+
+            var files = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.py");
             ItemScripts = new Dictionary<string, ItemAction>();
-            ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));
-            ItemScripts.Add("disass", new ItemAction(Disass, "Разобрать радио"));
-            ItemScripts.Add("turnradio", new ItemAction(RadioOnOff, "Включить радио"));
-            ItemScripts.Add("openbottle", new ItemAction(OpenBottle, "Открыть бутылку"));
-            ItemScripts.Add("destroycloth", new ItemAction(DestroyCloth, "Разорать на тряпки"));
-            ItemScripts.Add("smoke", new ItemAction(Smoke, "Выкурить сигарету"));
+            int i = 0;
+            foreach (var f in files)
+            {
+                var r = new FileInfo(f);
+                Settings.NeedToShowInfoWindow = true;
+                Settings.NTS1 = "IScripts: ";
+                Settings.NTS2 = string.Format("{0}/{1} ({2})", i + 1, files.Length, r.Name);
+                i++;
+                string name = r.Name.Replace(r.Extension, string.Empty);
+                dynamic temp = null;
+                string disc = string.Empty;
+                try
+                {
+                    temp = ipy.UseFile(f);
+                }
+                catch (Exception ex)
+                {
+                    ItemScripts.Add(name, new ItemAction(is_nothing, "ошибка"));
+                    logger.Error(ex);
+#if DEBUG
+                    throw ex;
+#endif
+                    continue;
+                }
+                var ia = new ItemAction(temp, disc);
+                ItemScripts.Add(name, ia);
+                temp.Name(ia);
+            }
+
+            Settings.NeedToShowInfoWindow = false;
+
+            //ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));
+            //ItemScripts.Add("disass", new ItemAction(Disass, "Разобрать радио"));
+            //ItemScripts.Add("turnradio", new ItemAction(RadioOnOff, "Включить радио"));
+            //ItemScripts.Add("openbottle", new ItemAction(OpenBottle, "Открыть бутылку"));
+            //ItemScripts.Add("destroycloth", new ItemAction(DestroyCloth, "Разорать на тряпки"));
+            //ItemScripts.Add("smoke", new ItemAction(Smoke, "Выкурить сигарету"));
         }
 
         public string GetItemDescription(Item i)
