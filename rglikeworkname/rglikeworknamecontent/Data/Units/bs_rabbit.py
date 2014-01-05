@@ -5,8 +5,12 @@ def BehaviorScript(gt, ms_, hero, target, rnd):
 		ta = target.WorldPosition()
 		b = Creature.GetInDirection(hero.Position.X, hero.Position.Y, ta.X, ta.Y, 256)
 		target.IssureOrder(b.X, b.Y)
+		if target.behaviorTag == True:
+			Creature.Say(target, "Eeeeee!")
+			target.behaviorTag = False
 
 	if target.IsIddle:
+		target.behaviorTag = True;
 		if rnd.Next(3) == 1:
 			target.IssureOrder(Order(OrderType.Wander))
 		else:

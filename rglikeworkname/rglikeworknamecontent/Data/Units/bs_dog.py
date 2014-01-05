@@ -2,10 +2,16 @@ from rglikeworknamelib.Dungeon.Creatures import *
 
 def BehaviorScript(gt, ms_, hero, target, rnd):
     if target.behaviorTag is not None and target.behaviorTag > 0 and target.IsIddle:
-        target.IssureOrder(rnd.Next(-128, 128) + hero.Position.X, rnd.Next(-128, 128) + hero.Position.Y)
+        target.IssureOrder(rnd.Next(-128, 128) + hero.Position.X, rnd.Next(-128, 128) + hero.Position.Y);
+        if target.behaviorTag == 9:
+			if rnd.Next(1) == 0:
+				Creature.Say(target, "Woof")
+			elif
+				Creature.Say(target, "Woof-woof")
         target.behaviorTag = target.behaviorTag - 1
-
+    
     if target.IsIddle:
+        target.behaviorTag = True;
         a = rnd.Next(3) 
         if a == 1:
             target.IssureOrder(Order(OrderType.Wander))

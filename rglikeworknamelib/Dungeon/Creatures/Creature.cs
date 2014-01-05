@@ -461,6 +461,11 @@ namespace rglikeworknamelib.Dungeon.Creatures
             var t = a.Position + a.Direction * distance;
             return new Vector2(t.X, t.Y);
         }
+
+        public static void Say(Creature c, string s)
+        {
+            EventLog.Add(c.Data.Name+" : "+s, Color.LightGray, LogEntityType.Default);
+        }
     }
 
     public delegate void CreatureScript(GameTime gt, MapSector ms_, Player hero, Creature target);

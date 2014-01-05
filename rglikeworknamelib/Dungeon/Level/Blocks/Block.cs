@@ -29,6 +29,11 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
 
         public Rectangle Source { get; private set; }
 
+        public bool IsVisible()
+        {
+            return Lightness == Color.White;
+        }
+
         private string mTex_;
         public string MTex {
             get { return mTex_; }

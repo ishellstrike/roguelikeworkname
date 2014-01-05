@@ -8,6 +8,7 @@ using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
+using NLog;
 
 namespace rglikeworknamelib.Dungeon.Creatures {
     public class CreatureDataBase {
@@ -15,6 +16,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public static Dictionary<string, dynamic> Scripts;
         private static dynamic bs_nothing;
         static ScriptRuntime ipy = Python.CreateRuntime();
+        static Logger logger = LogManager.GetLogger("CreatureDataBase");
 
         public CreatureDataBase() {
             Data = UniversalParser.JsonDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
@@ -33,9 +35,13 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 {
                     temp = ipy.UseFile(f);
                 }
-                catch
+                catch(Exception ex)
                 {
                     Scripts.Add(name, bs_nothing);
+                    logger.Error(ex);
+#if DEBUG
+                    throw ex;
+#endif
                     continue;
                 }
                 Scripts.Add(name, temp);
