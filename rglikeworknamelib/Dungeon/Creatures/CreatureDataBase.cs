@@ -80,7 +80,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         public static void ScriptExecute(GameTime gt, MapSector ms_, Player hero, Creature target)
         {
-            Scripts[target.Data.BehaviorScript].BehaviorScript(gt, ms_, hero, target, Settings.rnd);
+            Scripts[target.Data.BehaviorScript].BehaviorScript(gt, ms_, hero, target, Settings.rnd); 
         }
         
     }
