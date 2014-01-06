@@ -41,7 +41,7 @@ namespace rglikeworknamelib.Dungeon.Items {
         public int NutH2O;
 
         
-        public string[] ItemScript ;
+        public string[] ItemScript;
 
         public ItemType SortType;
         

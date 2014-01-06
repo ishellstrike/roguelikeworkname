@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using IronPython.Hosting;
+using jarg;
 using Microsoft.Scripting.Hosting;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib;
@@ -32,6 +33,8 @@ namespace BScriptArea
         private MapSector ms;
         private GameLevel gl;
         private GameTime gt;
+        private InventorySystem ism;
+        private Item item;
 
         public Form1() {
             ipyScript = ipy.GetEngineByFileExtension("py");
@@ -51,8 +54,13 @@ namespace BScriptArea
 
             infostring = "Loading CreatureDataBase";
             new CreatureDataBase();
+            infostring = "Loading BlockDataBase";
             new BlockDataBase();
+            infostring = "Loading FloorDataBase";
             new FloorDataBase();
+            infostring = "Loading ItemDataBase";
+            ItemDataBase.Instance.GetType();
+            new AchievementDataBase();
 
             infostring = "Initialization";
             pl = new Player(null, null, null);
@@ -63,6 +71,11 @@ namespace BScriptArea
             gl = new GameLevel(null, null, null, null, lw);
             ms = new MapSector(gl, 0, 0);
             gt = new GameTime(new TimeSpan(0, 0, 0, 0, 500),    new TimeSpan(0, 0, 0, 0, 500));
+            ism = new InventorySystem();
+            item = ItemFactory.GetInstance("colacan", 10);
+            item = ItemFactory.GetInstance("knife", 10);
+            ism.AddItem(item);
+            pl.Inventory = ism;
 
             infostring = "Done";
             loadended = true;
@@ -104,29 +117,70 @@ namespace BScriptArea
 
         private dynamic compiled;
 
+        private bool creatureMode = true;
+
+        private void SwitchMode() {
+            creatureMode = !creatureMode;
+            button3.Text = creatureMode ? "now creature" : "now item";
+        }
+
         private void button1_Click(object sender, EventArgs e) {
             compiled = null;
-            compiled = ipy.UseFile(Settings.GetCreatureDataDirectory() + "\\bs_nothing.py");
-            using (var sr = new StreamWriter(Directory.GetCurrentDirectory() + "\\temp.py")) {
-                sr.Write(richTextBox1.Text);
-            }
-            try {
-                compiled = ipy.UseFile(Directory.GetCurrentDirectory() + "\\temp.py");
-            }
-            catch (Exception ex) {
-                richTextBox2.Text = ex.ToString();
-                return;
-            }
-            gt = new GameTime();
-            richTextBox2.Text = "No errors";
+            if (creatureMode) {
+                compiled = ipy.UseFile(Settings.GetCreatureDataDirectory() + "\\bs_nothing.py");
+                using (var sr = new StreamWriter(Directory.GetCurrentDirectory() + "\\tempcreature.py")) {
+                    sr.Write(richTextBox1.Text);
+                }
+                try {
+                    compiled = ipy.UseFile(Directory.GetCurrentDirectory() + "\\tempcreature.py");
+                }
+                catch (Exception ex) {
+                    richTextBox2.Text = ex.ToString();
+                    return;
+                }
+                gt = new GameTime();
+                richTextBox2.Text = "No errors";
 
-            if (timer1.Enabled) {
-                button2_Click(null, null);
+                if (timer1.Enabled) {
+                    button2_Click(null, null);
+                }
+                pl.Position = new Vector2(100, 100);
+                cre.Position = new Vector2(0, 0);
+                cre.IssureOrder();
+
+                timer1_Tick(null, null);
             }
-            pl.Position = new Vector2(100,100);
-            cre.Position = new Vector2(0,0);
-            cre.IssureOrder();
-            timer1_Tick(null,null);
+            else {
+                compiled = ipy.UseFile(Settings.GetItemDataDirectory() + "\\is_nothing.py");
+                using (var sr = new StreamWriter(Directory.GetCurrentDirectory() + "\\tempitem.py"))
+                {
+                    sr.Write(richTextBox1.Text);
+                }
+                try
+                {
+                    compiled = ipy.UseFile(Directory.GetCurrentDirectory() + "\\tempitem.py");
+                }
+                catch (Exception ex)
+                {
+                    richTextBox2.Text = ex.ToString();
+                    return;
+                }
+                gt = new GameTime();
+                richTextBox2.Text = "No errors";
+
+                item = ItemFactory.GetInstance("colacan", 1);
+                ism .AddItem(item);
+
+                try {
+                    compiled.ItemScript(pl, item);
+                    infostring = compiled.Name();
+                }
+                catch (Exception ex) {
+                    richTextBox2.Text = ex.ToString();
+                    return;
+                }
+            }
+            
     }
 
         public class ClosableMessageBox
@@ -158,19 +212,21 @@ namespace BScriptArea
         private float zoom = 3;
         private void timer1_Tick(object sender, EventArgs e) {
             if (compiled != null) {
-                cre.Update(gt, ms, pl);
-                pictureBox1.Location = new System.Drawing.Point((int)((cre.Position.X) / zoom + panel1.Width / 2f),
-                    (int)((cre.Position.Y) / zoom + panel1.Height / 2f));
-                pictureBox2.Location = new System.Drawing.Point((int)(pl.Position.X / zoom + panel1.Width / 2f),
-                    (int)(pl.Position.Y / zoom + panel1.Height / 2f));
-                label2.Location = pictureBox1.Location + new Size(30, 0);
-                label2.Text = cre.Id + ", " + cre.CurrentOrder.Type + ", " + cre.Position;
-                if (cre.CurrentOrder.Target != null) {
-                    label2.Text += Environment.NewLine + "player target";
+                if (creatureMode) {
+                    cre.Update(gt, ms, pl);
+                    pictureBox1.Location = new System.Drawing.Point((int) ((cre.Position.X)/zoom + panel1.Width/2f),
+                        (int) ((cre.Position.Y)/zoom + panel1.Height/2f));
+                    pictureBox2.Location = new System.Drawing.Point((int) (pl.Position.X/zoom + panel1.Width/2f),
+                        (int) (pl.Position.Y/zoom + panel1.Height/2f));
+                    label2.Location = pictureBox1.Location + new Size(30, 0);
+                    label2.Text = cre.Id + ", " + cre.CurrentOrder.Type + ", " + cre.Position;
+                    if (cre.CurrentOrder.Target != null) {
+                        label2.Text += Environment.NewLine + "player target";
+                    }
+                    label2.Text += Environment.NewLine + cre.CurrentOrder.Point;
+                    label2.Text += Environment.NewLine + cre.CurrentOrder.Value;
+                    Run();
                 }
-                label2.Text += Environment.NewLine + cre.CurrentOrder.Point;
-                label2.Text += Environment.NewLine + cre.CurrentOrder.Value;
-                Run();
             }
         }
 
@@ -196,13 +252,18 @@ namespace BScriptArea
             if (loadended)
             {
                 listBox1.Items.Clear();
-                foreach (KeyValuePair<string, dynamic> script in CreatureDataBase.Scripts)
+                foreach (var script in CreatureDataBase.Scripts)
                 {
                     listBox1.Items.Add(script.Key);
                 }
                 loadended = false;
 
-                
+                listBox2.Items.Clear();
+                foreach (var script in ItemDataBase.Instance.ItemScripts)
+                {
+                    listBox2.Items.Add(script.Key);
+                }
+                loadended = false;
             }
             if (EventLog.log.Count > 0)
             {
@@ -231,6 +292,24 @@ namespace BScriptArea
 
         private void panel1_MouseUp(object sender, MouseEventArgs e) {
             down = false;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SwitchMode();
+        }
+
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox2.SelectedIndex == -1)
+            {
+                return;
+            }
+            var name = listBox2.Items[listBox2.SelectedIndex].ToString();
+            using (var sw = new StreamReader(Settings.GetItemDataDirectory() + "\\" + name + ".py"))
+            {
+                richTextBox1.Text = sw.ReadToEnd();
+            }
         }
     }
 }

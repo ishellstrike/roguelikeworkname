@@ -1254,7 +1254,7 @@ namespace jarg {
             foreach (var actionid in i.Data.ItemScript) {
                 
                 var a = new LabelFixed(Vector2.Zero, itemDataBase.ItemScripts[actionid].Name, InventoryDropDownContainer);
-                a.Tag = new Tuple<Item, dynamic>(i, itemDataBase.ItemScripts[actionid]);
+                a.Tag = new Tuple<Item, ItemAction>(i, itemDataBase.ItemScripts[actionid]);
                 a.OnLeftPressed += AOnOnLeftPressed;
             }
 
@@ -1264,8 +1264,8 @@ namespace jarg {
         }
 
         private void AOnOnLeftPressed(object sender, LabelPressEventArgs labelPressEventArgs) {
-            var action = (Tuple<Item, object>)((LabelFixed) sender).Tag;
-            ((ItemAction)action.Item2).Action.ItemScript(player_, action.Item1);
+            var action = (Tuple<Item, ItemAction>)((LabelFixed)sender).Tag;
+            (action.Item2).Action.ItemScript(player_, action.Item1);
             InventoryDropDownWindow.Visible = false;
         }
 

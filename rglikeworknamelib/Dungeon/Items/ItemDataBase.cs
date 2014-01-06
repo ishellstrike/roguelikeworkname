@@ -12,6 +12,7 @@ using NLog;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
+using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Items
@@ -115,6 +116,11 @@ namespace rglikeworknamelib.Dungeon.Items
         public string GetItemDescription(Item i)
         {
             return i.Data.Description;
+        }
+
+        public static void ScriptExecute(GameTime gt, MapSector ms_, Player hero, Creature target)
+        {
+            //ItemScripts[target.Data.BehaviorScript].BehaviorScript(gt, ms_, hero, target, Settings.rnd);
         }
 
         public List<KeyValuePair<string, ItemData>> GetBySpawnGroup(string group)
