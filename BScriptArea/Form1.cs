@@ -74,6 +74,7 @@ namespace BScriptArea
             ism = new InventorySystem();
             item = ItemFactory.GetInstance("colacan", 10);
             item = ItemFactory.GetInstance("knife", 10);
+             item = ItemFactory.GetInstance("otvertka",1);
             ism.AddItem(item);
             pl.Inventory = ism;
 
@@ -172,7 +173,7 @@ namespace BScriptArea
                 ism .AddItem(item);
 
                 try {
-                    compiled.ItemScript(pl, item);
+                    compiled.ItemScript(pl, item, Settings.rnd);
                     infostring = compiled.Name();
                 }
                 catch (Exception ex) {

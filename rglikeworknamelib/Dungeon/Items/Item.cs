@@ -44,9 +44,9 @@ namespace rglikeworknamelib.Dungeon.Items {
                        : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count);
         }
 
-        public static void Log(string s)
+        public static void Log(string s, params object[] p)
         {
-            EventLog.Add(s, Color.Yellow, LogEntityType.NoAmmoWeapon);
+            EventLog.Add(string.Format(s, p), Color.Yellow, LogEntityType.NoAmmoWeapon);
         }
     }
 }

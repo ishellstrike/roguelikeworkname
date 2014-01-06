@@ -1265,7 +1265,7 @@ namespace jarg {
 
         private void AOnOnLeftPressed(object sender, LabelPressEventArgs labelPressEventArgs) {
             var action = (Tuple<Item, ItemAction>)((LabelFixed)sender).Tag;
-            (action.Item2).Action.ItemScript(player_, action.Item1);
+            (action.Item2).Action.ItemScript(player_, action.Item1, Settings.rnd);
             InventoryDropDownWindow.Visible = false;
         }
 

@@ -5,7 +5,7 @@ from rglikeworknamelib.Dungeon.Items import InventorySystem
 from rglikeworknamelib.Dungeon.Items import ItemFactory
 from rglikeworknamelib.Dungeon.Items import ItemDataBase
 
-def ItemScript(p, target):
+def ItemScript(p, target, rnd):
     if p.Inventory.ContainsId("knife") or p.Inventory.ContainsId("otvertka"):
         p.Inventory.TryRemoveItem(target.Id, 1)
         if ItemDataBase.Instance.Data[target.Id].AfteruseId is not None:
