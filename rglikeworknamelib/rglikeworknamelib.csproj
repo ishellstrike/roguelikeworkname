@@ -87,7 +87,6 @@
     <Compile Include="Dungeon\Creatures\PerkData.cs" />
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />
     <Compile Include="Dungeon\Creatures\PerksSystem.cs" />
-    <Compile Include="Dungeon\Creatures\PythonEngine.cs" />
     <Compile Include="Dungeon\Creatures\ShootingCreature.cs" />
     <Compile Include="Dungeon\Creatures\Stat.cs" />
     <Compile Include="Dungeon\Creatures\Dialogs\Dialog.cs" />
@@ -203,6 +202,23 @@
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="IronPython.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Microsoft.Dynamic.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Microsoft.Scripting.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="NLog.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

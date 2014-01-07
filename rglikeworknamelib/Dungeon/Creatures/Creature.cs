@@ -25,7 +25,6 @@ namespace rglikeworknamelib.Dungeon.Creatures
         internal Stat hp_ = new Stat(200);
         private Vector2 lastpos_;
 
-        public CreatureScript behaviorScript;
         /// <summary>
         /// can be used for behavior proposes
         /// </summary>
@@ -188,10 +187,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             if ((!Skipp || !ms_.Ready))
             {
                 sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
-                if (behaviorScript != null)
-                {
-                    behaviorScript(gt, ms_, hero, this);
-                }
+                CreatureDataBase.Scripts[Data.BehaviorScript].BehaviorScript(gt, ms_, hero, this, Settings.rnd);
 
                 OrdersMaker(ms_, gt);
 

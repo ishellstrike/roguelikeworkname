@@ -22,11 +22,6 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 Hp = new Stat(creatureData.Hp, creatureData.Hp)
             };
 
-            if (a.Data.BehaviorScript != null)
-            {
-                a.behaviorScript = CreatureDataBase.ScriptExecute;
-            }
-
             //if (a.Data.BehaviorScript == "bs_zombie")
             //{
             //    a.behaviorScript = CreatureDataBase.Bs_zombie;

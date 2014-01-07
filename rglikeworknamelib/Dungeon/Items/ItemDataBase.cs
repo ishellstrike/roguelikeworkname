@@ -53,12 +53,11 @@ namespace rglikeworknamelib.Dungeon.Items
             int i = 0;
             foreach (string f in files)
             {
-                var r = new FileInfo(f);
+                string name = Path.GetFileNameWithoutExtension(f);
                 Settings.NeedToShowInfoWindow = true;
                 Settings.NTS1 = "IScripts: ";
-                Settings.NTS2 = string.Format("{0}/{1} ({2})", i + 1, files.Length, r.Name);
+                Settings.NTS2 = string.Format("{0}/{1} ({2})", i + 1, files.Length, name);
                 i++;
-                string name = r.Name.Replace(r.Extension, string.Empty);
                 dynamic temp;
                 string disc = string.Empty;
                 try
@@ -67,7 +66,9 @@ namespace rglikeworknamelib.Dungeon.Items
                 }
                 catch (Exception ex)
                 {
-                    ItemScripts.Add(name, new ItemAction(isNothing, "ошибка"));
+                    if (name != null) {
+                        ItemScripts.Add(name, new ItemAction(isNothing, "ошибка"));
+                    }
                     logger.Error(ex);
 #if DEBUG
                     throw;

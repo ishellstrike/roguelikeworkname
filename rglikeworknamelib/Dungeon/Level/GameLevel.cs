@@ -32,7 +32,7 @@ namespace rglikeworknamelib.Dungeon.Level
         private readonly List<VertexPositionColor> points = new List<VertexPositionColor>();
 
         private readonly Dictionary<Point, MapSector> sectors_;
-        private readonly Dictionary<Point, MapSector> Generation_sectors_ = new Dictionary<Point, MapSector>();
+        private Dictionary<Point, MapSector> Generation_sectors_ = new Dictionary<Point, MapSector>();
         private readonly SpriteBatch spriteBatch_;
         LineBatch lineBatch_;
         private readonly List<StreetOld__> streets_ = new List<StreetOld__>();
@@ -1378,7 +1378,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 }
 
                 lw_.onStore_ = Generation_sectors_;
-                Generation_sectors_.Clear();
+                Generation_sectors_ = new Dictionary<Point, MapSector>();
             }
             else
             {
