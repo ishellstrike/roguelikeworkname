@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using NLog;
 
 namespace rglikeworknamelib
 {
@@ -12,6 +13,7 @@ namespace rglikeworknamelib
         private static int total;
         private static Texture2D error;
         private static GraphicsDevice GraphicsDevice;
+        static readonly Logger Logger = LogManager.GetLogger("ContentProvider");
 
         public static void Init(GraphicsDevice GraphicsDevice)
         {
@@ -31,7 +33,11 @@ namespace rglikeworknamelib
             }
             catch (FileNotFoundException ex)
             {
-
+#if DEBUG
+                throw ex;
+#else
+                Logger.Error(ex);
+#endif
             }
             total++;
             return tex;

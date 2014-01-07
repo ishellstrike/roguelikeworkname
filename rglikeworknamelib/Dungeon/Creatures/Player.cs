@@ -338,94 +338,90 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"))) {
                 var binaryFormatter = new BinaryFormatter();
 
-                var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"),
-                                                FileMode.Open);
-                var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                Hp = (Stat) binaryFormatter.Deserialize(gZipStream);
-                Position = (Vector2) binaryFormatter.Deserialize(gZipStream);
-                Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
-                Perks.Owner = this;
-                Weared = (Collection<Item>) binaryFormatter.Deserialize(gZipStream);
-                foreach (var item in Weared) {
-                    foreach (var buff in item.Buffs) {
-                        buff.Target = this;
-                    }
-                    item.OnLoad();
-                }
-                var t = (bool) binaryFormatter.Deserialize(gZipStream);
-                if (t) {
-                    ItemAmmo = (Item) binaryFormatter.Deserialize(gZipStream);
-                    foreach (var buff in ItemAmmo.Buffs) {
-                        buff.Target = this;
-                    }
-                    ItemAmmo.OnLoad();
-                }
+                using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"),
+                                                       FileMode.Open)) {
+                    using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress)) {
+                        Hp = (Stat) binaryFormatter.Deserialize(gZipStream);
+                        Position = (Vector2) binaryFormatter.Deserialize(gZipStream);
+                        Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
+                        Perks.Owner = this;
+                        Weared = (Collection<Item>) binaryFormatter.Deserialize(gZipStream);
+                        foreach (var item in Weared) {
+                            foreach (var buff in item.Buffs) {
+                                buff.Target = this;
+                            }
+                            item.OnLoad();
+                        }
+                        var t = (bool) binaryFormatter.Deserialize(gZipStream);
+                        if (t) {
+                            ItemAmmo = (Item) binaryFormatter.Deserialize(gZipStream);
+                            foreach (var buff in ItemAmmo.Buffs) {
+                                buff.Target = this;
+                            }
+                            ItemAmmo.OnLoad();
+                        }
 
-                t = (bool) binaryFormatter.Deserialize(gZipStream);
-                if (t) {
-                    ItemGun = (Item) binaryFormatter.Deserialize(gZipStream);
-                    foreach (var buff in ItemGun.Buffs) {
-                        buff.Target = this;
-                    }
-                    ItemGun.OnLoad();
-                }
+                        t = (bool) binaryFormatter.Deserialize(gZipStream);
+                        if (t) {
+                            ItemGun = (Item) binaryFormatter.Deserialize(gZipStream);
+                            foreach (var buff in ItemGun.Buffs) {
+                                buff.Target = this;
+                            }
+                            ItemGun.OnLoad();
+                        }
 
-                t = (bool) binaryFormatter.Deserialize(gZipStream);
-                if (t) {
-                    ItemMeele = (Item) binaryFormatter.Deserialize(gZipStream);
-                    foreach (var buff in ItemMeele.Buffs) {
-                        buff.Target = this;
-                    }
-                    ItemMeele.OnLoad();
-                }
+                        t = (bool) binaryFormatter.Deserialize(gZipStream);
+                        if (t) {
+                            ItemMeele = (Item) binaryFormatter.Deserialize(gZipStream);
+                            foreach (var buff in ItemMeele.Buffs) {
+                                buff.Target = this;
+                            }
+                            ItemMeele.OnLoad();
+                        }
 
-                Hunger = (Stat) binaryFormatter.Deserialize(gZipStream);
-                Thirst = (Stat) binaryFormatter.Deserialize(gZipStream);
-                Heat = (Stat) binaryFormatter.Deserialize(gZipStream);
-                Sleep = (Stat) binaryFormatter.Deserialize(gZipStream);
-                Morale = (Stat) binaryFormatter.Deserialize(gZipStream);
-                XpPool = (int) binaryFormatter.Deserialize(gZipStream);
-                gZipStream.Close();
-                gZipStream.Dispose();
-                fileStream.Close();
-                fileStream.Dispose();
+                        Hunger = (Stat) binaryFormatter.Deserialize(gZipStream);
+                        Thirst = (Stat) binaryFormatter.Deserialize(gZipStream);
+                        Heat = (Stat) binaryFormatter.Deserialize(gZipStream);
+                        Sleep = (Stat) binaryFormatter.Deserialize(gZipStream);
+                        Morale = (Stat) binaryFormatter.Deserialize(gZipStream);
+                        XpPool = (int) binaryFormatter.Deserialize(gZipStream);
+                    }
+                }
             }
         }
 
         public void Save() {
             var binaryFormatter = new BinaryFormatter();
-            var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"),
-                                            FileMode.Create);
-            var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
-            binaryFormatter.Serialize(gZipStream, Hp);
-            binaryFormatter.Serialize(gZipStream, Position);
-            binaryFormatter.Serialize(gZipStream, Perks);
-            binaryFormatter.Serialize(gZipStream, Weared);
-            var t = ItemAmmo != null;
-            binaryFormatter.Serialize(gZipStream, t);
-            if (t) {
-                binaryFormatter.Serialize(gZipStream, ItemAmmo);
+            using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("caracter.rlp"),
+                                                   FileMode.Create)) {
+                using (var gZipStream = new GZipStream(fileStream, CompressionMode.Compress)) {
+                    binaryFormatter.Serialize(gZipStream, Hp);
+                    binaryFormatter.Serialize(gZipStream, Position);
+                    binaryFormatter.Serialize(gZipStream, Perks);
+                    binaryFormatter.Serialize(gZipStream, Weared);
+                    var t = ItemAmmo != null;
+                    binaryFormatter.Serialize(gZipStream, t);
+                    if (t) {
+                        binaryFormatter.Serialize(gZipStream, ItemAmmo);
+                    }
+                    t = ItemGun != null;
+                    binaryFormatter.Serialize(gZipStream, t);
+                    if (t) {
+                        binaryFormatter.Serialize(gZipStream, ItemGun);
+                    }
+                    t = ItemMeele != null;
+                    binaryFormatter.Serialize(gZipStream, t);
+                    if (t) {
+                        binaryFormatter.Serialize(gZipStream, ItemMeele);
+                    }
+                    binaryFormatter.Serialize(gZipStream, Hunger);
+                    binaryFormatter.Serialize(gZipStream, Thirst);
+                    binaryFormatter.Serialize(gZipStream, Heat);
+                    binaryFormatter.Serialize(gZipStream, Sleep);
+                    binaryFormatter.Serialize(gZipStream, Morale);
+                    binaryFormatter.Serialize(gZipStream, XpPool);
+                }
             }
-            t = ItemGun != null;
-            binaryFormatter.Serialize(gZipStream, t);
-            if (t) {
-                binaryFormatter.Serialize(gZipStream, ItemGun);
-            }
-            t = ItemMeele != null;
-            binaryFormatter.Serialize(gZipStream, t);
-            if (t) {
-                binaryFormatter.Serialize(gZipStream, ItemMeele);
-            }
-            binaryFormatter.Serialize(gZipStream, Hunger);
-            binaryFormatter.Serialize(gZipStream, Thirst);
-            binaryFormatter.Serialize(gZipStream, Heat);
-            binaryFormatter.Serialize(gZipStream, Sleep);
-            binaryFormatter.Serialize(gZipStream, Morale);
-            binaryFormatter.Serialize(gZipStream, XpPool);
-            gZipStream.Close();
-            gZipStream.Dispose();
-            fileStream.Close();
-            fileStream.Dispose();
         }
     }
 }

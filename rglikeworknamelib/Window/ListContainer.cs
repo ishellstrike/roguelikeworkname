@@ -158,7 +158,8 @@ namespace rglikeworknamelib.Window {
                 int count = 0;
                 int fromNow = FromI;
                 if (fromNow < Components.Count) {
-                    for (;;) {
+                    while (true)
+                    {
                         if (curBottom + Components[fromNow].Height + 10 > location_.Bottom - location_.Top) {
                             break;
                         }

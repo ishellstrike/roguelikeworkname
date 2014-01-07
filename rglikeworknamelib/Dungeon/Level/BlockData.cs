@@ -20,7 +20,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public List<DropGroup> ItemSpawn;
 
-        public int swide = 32;
+        public int swide =32;
 
         public string RandomMtexFromAlters() {
             if (AlterMtex != null && Settings.rnd.Next(1, 5) == 1) {

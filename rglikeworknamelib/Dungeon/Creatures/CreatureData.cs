@@ -1,16 +1,14 @@
-﻿using System;
-
-namespace rglikeworknamelib.Dungeon.Creatures
+﻿namespace rglikeworknamelib.Dungeon.Creatures
 {
     public class CreatureData {
         public int Damage;
         public string MTex;
-        public string Name = "";
+        public string Name;
 
         /// <summary>
         ///     in milliseconds
         /// </summary>
-        public int ReactionTime = 500;
+        public int ReactionTime;
 
         public int Speed;
 

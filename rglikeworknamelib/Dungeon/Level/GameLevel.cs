@@ -808,7 +808,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 po[k] = XyToVector3(po[k]);
             }
-            var car = new Vector3(per.Position.X - camera.X, per.Position.Y - camera.Y, 0);
+            var car = new Vector3(per.Position.X - (int) camera.X, per.Position.Y - (int) camera.Y, 0);
             car = XyToVector3(car);
 
             //лучи ко всем вершинам блока
@@ -895,8 +895,8 @@ namespace rglikeworknamelib.Dungeon.Level
         public void ShadowRender()
         {
             gd_.RasterizerState = new RasterizerState { CullMode = CullMode.CullClockwiseFace, FillMode = FillMode.Solid };
-            (be_ as BasicEffect).DiffuseColor = Color.Black.ToVector3();
-            foreach (EffectPass pass in be_.CurrentTechnique.Passes)
+            ((BasicEffect) be_).DiffuseColor = Color.Black.ToVector3();
+            foreach (var pass in be_.CurrentTechnique.Passes)
             {
                 pass.Apply();
 
@@ -909,8 +909,8 @@ namespace rglikeworknamelib.Dungeon.Level
             if (Settings.DebugWire)
             {
                 gd_.RasterizerState = new RasterizerState { CullMode = CullMode.CullClockwiseFace, FillMode = FillMode.WireFrame };
-                (be_ as BasicEffect).DiffuseColor = Color.White.ToVector3();
-                foreach (EffectPass pass in be_.CurrentTechnique.Passes)
+                ((BasicEffect)be_).DiffuseColor = Color.White.ToVector3();
+                foreach (var pass in be_.CurrentTechnique.Passes)
                 {
                     pass.Apply();
 
@@ -1034,14 +1034,14 @@ namespace rglikeworknamelib.Dungeon.Level
         {
             var binaryFormatter = new BinaryFormatter();
 
-            var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"),
-                                            FileMode.Create);
-            var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
-            binaryFormatter.Serialize(gZipStream, globalMap);
-            gZipStream.Close();
-            gZipStream.Dispose();
-            fileStream.Close();
-            fileStream.Dispose();
+            using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"), FileMode.Create))
+            {
+                using (var gZipStream = new GZipStream(fileStream, CompressionMode.Compress))
+                {
+
+                    binaryFormatter.Serialize(gZipStream, globalMap);
+                }
+            }
         }
 
         private void LoadMap()
@@ -1052,14 +1052,11 @@ namespace rglikeworknamelib.Dungeon.Level
                 {
                     var binaryFormatter = new BinaryFormatter();
 
-                    var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"),
-                                                    FileMode.Open);
-                    var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                    globalMap = (Dictionary<Tuple<int, int>, SectorBiom>)binaryFormatter.Deserialize(gZipStream);
-                    gZipStream.Close();
-                    gZipStream.Dispose();
-                    fileStream.Close();
-                    fileStream.Dispose();
+                    using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"), FileMode.Open)) {
+                        using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress)) {
+                            globalMap = (Dictionary<Tuple<int, int>, SectorBiom>) binaryFormatter.Deserialize(gZipStream);
+                        }
+                    }
                 }
             }
             catch (Exception)
@@ -1178,6 +1175,8 @@ namespace rglikeworknamelib.Dungeon.Level
                 {
                     continue;
                 }
+
+                int a = 0;
                 float posx = 0 - (int)camera.X + rx * ssx * sector.SectorOffsetX;
                 for (int i = 0; i < rx; i++)
                 {
@@ -1185,12 +1184,13 @@ namespace rglikeworknamelib.Dungeon.Level
                     for (int j = 0; j < ry; j++)
                     {
                         {
-                            int a = i * ry + j;
+                            
                             spriteBatch_.Draw(fatlas,
                                               new Vector2(posx, posy),
                                               sector.Floors[a].Source,
                                               Color.White);
                         }
+                        a++;
                         posy += 32;
                     }
                     posx += 32;
@@ -1247,25 +1247,24 @@ namespace rglikeworknamelib.Dungeon.Level
             for (int k = 0; k < sectors_.Count; k++)
             {
                 MapSector sector = sectors_.ElementAt(k).Value;
-                if (sector.Blocks != null && sector.Blocks[0] != null)
-                    if (sector.SectorOffsetX * rx + rx < min.X &&
-                        sector.SectorOffsetY * ry + ry < min.Y)
-                    {
-                        continue;
-                    }
+                if (sector.SectorOffsetX * rx + rx < min.X &&
+                    sector.SectorOffsetY * ry + ry < min.Y)
+                {
+                    continue;
+                }
                 if (sector.SectorOffsetX * rx > max.X && sector.SectorOffsetY * ry > max.Y)
                 {
                     continue;
                 }
 
                 float xpos = 0 - (int)camera.X + rx * ssx * sector.SectorOffsetX;
-
+                int a = 0;
                 for (int i = 0; i < rx; i++)
                 {
                     float ypos = 0 - (int)camera.Y + ry * ssy * sector.SectorOffsetY;
                     for (int j = 0; j < ry; j++)
                     {
-                        int a = i * ry + j;
+                        
                         Block block = sector.GetBlock(a);
 
                         //if (sector.SectorOffsetX*rx + i > min.X &&
@@ -1287,6 +1286,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
                         block.Update(gameTime.ElapsedGameTime, new Vector2(xpos + camera.X, ypos + camera.Y));
                         ypos += 32;
+                        a++;
                     }
                     xpos += 32;
                 }
@@ -1385,7 +1385,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 lw_.LoadAll(this);
             }
 
-            for (; ; )
+            while(true)
             {
                 if (results.All(x => x.IsCompleted))
                 {

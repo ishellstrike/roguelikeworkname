@@ -55,13 +55,14 @@ namespace rglikeworknamelib.Parser {
         public static Collection<Texture2D> LoadTexturesInOrder(string s) {
             var temp = new Collection<Texture2D>();
 
-            var sr = new StreamReader(s, Encoding.Default);
-            for (;;) {
-                string t = sr.ReadLine();
-                if (t == null || t.Length < 3) {
-                    break;
+            using (var sr = new StreamReader(s, Encoding.Default)) {
+                while (true) {
+                    string t = sr.ReadLine();
+                    if (t == null || t.Length < 3) {
+                        break;
+                    }
+                    temp.Add(ContentProvider.LoadTexture(t));
                 }
-                temp.Add(ContentProvider.LoadTexture(t));
             }
 
             return temp;
@@ -71,14 +72,15 @@ namespace rglikeworknamelib.Parser {
         public static Dictionary<string, Texture2D> LoadTexturesTagged(string s) {
             var temp = new Dictionary<string, Texture2D>();
 
-            var sr = new StreamReader(s, Encoding.Default);
-            for (;;) {
-                string t = sr.ReadLine();
-                if (t == null || t.Length < 3) {
-                    break;
+            using (var sr = new StreamReader(s, Encoding.Default)) {
+                while (true) {
+                    string t = sr.ReadLine();
+                    if (t == null || t.Length < 3) {
+                        break;
+                    }
+                    temp.Add(t.Substring(t.IndexOf(' ') + 1, t.Length - (t.IndexOf(' ') + 1)),
+                             ContentProvider.LoadTexture(t.Substring(0, t.IndexOf(' '))));
                 }
-                temp.Add(t.Substring(t.IndexOf(' ') + 1, t.Length - (t.IndexOf(' ') + 1)),
-                         ContentProvider.LoadTexture(t.Substring(0, t.IndexOf(' '))));
             }
 
             return temp;
@@ -88,7 +90,6 @@ namespace rglikeworknamelib.Parser {
         /// Load all textures from directory
         /// </summary>
         /// <param name="s">directory patch</param>
-        /// <param name="content">content manager</param>
         /// <returns>texture dictionary</returns>
         public static Dictionary<string, Texture2D> LoadTexturesDirectory(string s) {
             var dictionary = new Dictionary<string, Texture2D>();
@@ -103,7 +104,7 @@ namespace rglikeworknamelib.Parser {
         /// <summary>
         /// Parse directory with custom parser
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">type of parssing data structure</typeparam>
         /// <param name="patch"></param>
         /// <param name="parser"></param>
         /// <returns></returns>
@@ -124,10 +125,10 @@ namespace rglikeworknamelib.Parser {
 
         public static List<T> ParseFile<T>(string patch, OldBaseParserDelegate<T> parser) {
             try {
-                var sr = new StreamReader(patch, Encoding.Default);
-                string a = sr.ReadToEnd();
-                sr.Close();
-                sr.Dispose();
+                string a;
+                using (var sr = new StreamReader(patch, Encoding.Default)) {
+                    a = sr.ReadToEnd();
+                }
                 return parser(a);
             }
             catch (FileNotFoundException) {
@@ -161,10 +162,10 @@ namespace rglikeworknamelib.Parser {
 
         public static List<T> UnivarsalParseFile<T>(string patch, BaseParserDelegate<T> parser, Type baseType = null) {
             try {
-                var sr = new StreamReader(patch, Encoding.Default);
-                string a = sr.ReadToEnd();
-                sr.Close();
-                sr.Dispose();
+                string a;
+                using (var sr = new StreamReader(patch, Encoding.Default)) {
+                    a = sr.ReadToEnd();
+                }
                 return parser(a, patch, baseType);
             }
             catch (FileNotFoundException) {

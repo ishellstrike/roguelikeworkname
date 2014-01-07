@@ -14,7 +14,6 @@ namespace rglikeworknamelib {
         public static JargPack DeserializeMsg(Byte[] data)
         {
             JargPack a = new JargPack();
-            var ms = new MemoryStream(data);
             try {
                 //a = (JargPack) bf.Deserialize(ms);
                 string geted = Encoding.ASCII.GetString(data);

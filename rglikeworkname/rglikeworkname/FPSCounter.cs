@@ -14,7 +14,7 @@ namespace Mork {
         private static TimeSpan elapsedTime_ = TimeSpan.Zero;
         private static int frameCounter_;
         private static int frameRate_;
-        private static readonly Vector2 position_ = new Vector2(10, 50);
+        private static readonly Vector2 position_ = new Vector2(10, 10);
         private static readonly Vector2 ofs = new Vector2(0, 15);
         private static float memo;
         private static readonly int[] graph = new int[MAX_GR];
@@ -54,13 +54,18 @@ namespace Mork {
             }
         }
 
+        private static float uav = 0;
+        private static float dav = 0;
+
         public static void Draw(GameTime gameTime, SpriteFont fnt, SpriteBatch sb, LineBatch lb, int resx, int resy,
                                 Stopwatch draw, Stopwatch update) {
             frameCounter_++;
 
             string fps = string.Format("{0}x{1} {2} fps", resx, resy, insec.Sum());
-            string mem = string.Format("{0} MiB {1}U+D={2:0.00}ms", memo, Environment.NewLine,
-                                       draw.Elapsed.TotalMilliseconds + update.Elapsed.TotalMilliseconds);
+            uav = uav * 0.99f + (float)update.Elapsed.TotalMilliseconds * 0.01f;
+            dav = dav * 0.99f + (float)draw.Elapsed.TotalMilliseconds * 0.01f;
+            string mem = string.Format("{0} MiB {1}U,D={2:0.00}ms, {3:0.00}ms{1}Uav,Dav={4:0.00}ms, {5:0.00}ms", memo, Environment.NewLine, update.Elapsed.TotalMilliseconds,
+                                       draw.Elapsed.TotalMilliseconds, uav, dav);
 
             sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp,
                      DepthStencilState.Default, RasterizerState.CullCounterClockwise, null);
@@ -111,8 +116,7 @@ namespace Mork {
                            Color.DarkGreen, 1);
             }
 
-            int average = graph.Sum();
-            average /= graph.Length;
+            int average = graph.Sum() / graph.Length;
             sb.DrawString(fnt, string.Concat("average = ", average), new Vector2(10, 115) + offset, Color.Red);
 
             sb.End();

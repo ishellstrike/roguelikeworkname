@@ -486,7 +486,8 @@ namespace rglikeworknamelib.Generation {
 
                 var off = new Point();
                 int maxx = 0;
-                for (;;) {
+                while (true)
+                {
                     Schemes ch = SchemesDataBase.NormalCity[rnd.Next(SchemesDataBase.NormalCity.Count)];
                     if (off.X + ch.x > ostx) {
                         break;
@@ -506,7 +507,8 @@ namespace rglikeworknamelib.Generation {
                 }
 
                 off = new Point(0, maxx);
-                for (;;) {
+                while (true)
+                {
                     Schemes ch = SchemesDataBase.Data[rnd.Next(SchemesDataBase.Data.Count)];
                     if (off.Y + ch.y > osty) {
                         break;

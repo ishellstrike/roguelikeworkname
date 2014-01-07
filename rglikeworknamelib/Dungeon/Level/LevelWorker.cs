@@ -154,9 +154,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
             //int i = 0;
             //
-            var fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Create);
-            var stream = new GZipStream(fs, CompressionMode.Compress);
-            var sw = new StreamWriter(stream);
 
             var procCount = Environment.ProcessorCount;
             var chunkLength = (int)Math.Ceiling(onStore_.Count() / (double)procCount);
@@ -176,23 +173,22 @@ namespace rglikeworknamelib.Dungeon.Level {
             }).ToList();
 
 
-            for (;;) {
+            while (true) {
                 if (results.All(x => x.IsCompleted)) {
                     break;
                 }
                 Thread.Sleep(50);
             }
 
-            foreach (var stringBuilder in sbs) {
-                sw.Write(stringBuilder.ToString());
+            using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Create)) {
+                using (var stream = new GZipStream(fs, CompressionMode.Compress)) {
+                    using (var sw = new StreamWriter(stream)) {
+                        foreach (var stringBuilder in sbs) {
+                            sw.Write(stringBuilder.ToString());
+                        }
+                    }
+                }
             }
-
-            sw.Close();
-            stream.Close();
-            fs.Close();
-            sw.Dispose();
-            stream.Dispose();
-            fs.Dispose();
         }
 
         public void SectorSaver(IEnumerable<MapSector> array, StringBuilder stringBuilder)
@@ -448,16 +444,20 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             onStore_.Clear();
-            var fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Open);
-            var stream = new GZipStream(fs, CompressionMode.Decompress);
-            var sr = new StreamReader(stream);
-            load_started = true;
-            var block = sr.ReadToEnd();
+            string stringBlock;
+            using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Open)) {
+                using (var stream = new GZipStream(fs, CompressionMode.Decompress)) {
+                    using (var sr = new StreamReader(stream)) {
+                        load_started = true;
+                        stringBlock = sr.ReadToEnd();
+                    }
+                }
+            }
             var temp = onStore_;
 
             Settings.NTS1 = "Loading...";
 
-            var parts = block.Split('#');
+            var parts = stringBlock.Split('#');
             var procCount = Environment.ProcessorCount;
             var chunkLength = (int)Math.Ceiling(parts.Count() / (double)procCount);
             var chunks = Enumerable.Range(0, procCount).Select(i => parts.Skip(i * chunkLength).Take(chunkLength));
@@ -468,7 +468,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             var results = chunks.Select(chunk => pl.BeginInvoke(gl, chunk, null, null)).ToList();
 
-            for (;;) {
+            while (true)
+            {
                 if (results.All(x => x.IsCompleted)) {
                     break;
                 }
@@ -491,12 +492,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Settings.NeedToShowInfoWindow = false;
 
-            sr.Close();
-            stream.Close();
-            fs.Close();
-            sr.Dispose();
-            stream.Dispose();
-            fs.Dispose();
             gl.MapJustUpdated = true;
             load_started = false;
         }

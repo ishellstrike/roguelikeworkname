@@ -30,7 +30,7 @@ namespace rglikeworknamelib.Parser
                 if (data.Value.AfteruseId != null) {
                     if (!idb.Data.ContainsKey(data.Value.AfteruseId)) {
                         Logger.Error(string.Format("Object \"{0}\" for ItemDataBase.AfteruseId not found", data.Value.AfteruseId));
-                        data.Value.AfteruseId = "0";
+                        data.Value.AfteruseId = null;
                         errorIDB++;
                     }
                 }

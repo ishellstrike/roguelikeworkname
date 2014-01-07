@@ -322,34 +322,36 @@ namespace jarg {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void SchemesSave_OnPressed(object sender, EventArgs e) {
-            var sw = new StreamWriter(Directory.GetCurrentDirectory()+"\\"+"tempScheme.txt");
-            sw.Write("#version = 1" + Environment.NewLine);
-            sw.Write("~{0},{1},{2}{3}", scheme.rx, scheme.ry, "default", Environment.NewLine);
-            for (int i = 0; i < scheme.rx * scheme.ry - 1; i++) {
-                string id = scheme.block[i / scheme.ry, i % scheme.ry].Id;
-                int count = 1;
-                for (int j = i + 1; j < scheme.rx * scheme.ry - 1; j++) {
-                    if (scheme.block[j / scheme.ry, j % scheme.ry].Id == id) {
-                        count++;
-                    } else {
-                        break;
+            using (var sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\" + "tempScheme.txt")) {
+                sw.Write("#version = 1" + Environment.NewLine);
+                sw.Write("~{0},{1},{2}{3}", scheme.rx, scheme.ry, "default", Environment.NewLine);
+                for (int i = 0; i < scheme.rx*scheme.ry - 1; i++) {
+                    string id = scheme.block[i/scheme.ry, i%scheme.ry].Id;
+                    int count = 1;
+                    for (int j = i + 1; j < scheme.rx*scheme.ry - 1; j++) {
+                        if (scheme.block[j/scheme.ry, j%scheme.ry].Id == id) {
+                            count++;
+                        }
+                        else {
+                            break;
+                        }
                     }
-                }
 
-                if (count > 2 || (count > 1 && id.Length > 1)) {
-                    sw.Write(string.Format("!{0}!{1} ", id, count));
-                } else {
-                    for (int k = 0; k < count; k++) {
-                        sw.Write(id + " ");
+                    if (count > 2 || (count > 1 && id.Length > 1)) {
+                        sw.Write(string.Format("!{0}!{1} ", id, count));
                     }
+                    else {
+                        for (int k = 0; k < count; k++) {
+                            sw.Write(id + " ");
+                        }
+                    }
+                    i += count - 1;
                 }
-                i += count - 1;
+                sw.Write(scheme.block[scheme.rx - 1, scheme.ry - 1].Id.Trim());
+                sw.Write("\n");
             }
-            sw.Write(scheme.block[scheme.rx - 1, scheme.ry - 1].Id.Trim());
 
-            sw.Write("\n");
-            sw.Close();
-            sw.Dispose();
+            
         }
 
         private int schemesSelected = 0;

@@ -154,31 +154,27 @@ namespace rglikeworknamelib.Dungeon.Items {
 
         public void Save() {
             var binaryFormatter = new BinaryFormatter();
-            var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
-                                            FileMode.Create);
-            var gZipStream = new GZipStream(fileStream, CompressionMode.Compress);
-            binaryFormatter.Serialize(gZipStream, items_);
-            gZipStream.Close();
-            gZipStream.Dispose();
-            fileStream.Close();
-            fileStream.Dispose();
+            using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
+                                                   FileMode.Create)) {
+                using (var gZipStream = new GZipStream(fileStream, CompressionMode.Compress)) {
+                    binaryFormatter.Serialize(gZipStream, items_);
+                }
+            }
         }
 
         public void Load() {
             if (File.Exists(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"))) {
                 var binaryFormatter = new BinaryFormatter();
 
-                var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
-                                                FileMode.Open);
-                var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                items_ = (List<Item>) binaryFormatter.Deserialize(gZipStream);
+                using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
+                                                       FileMode.Open)) {
+                    using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress)) {
+                        items_ = (List<Item>) binaryFormatter.Deserialize(gZipStream);
+                    }
+                }
                 foreach (Item item in items_) {
                     item.OnLoad();
                 }
-                gZipStream.Close();
-                gZipStream.Dispose();
-                fileStream.Close();
-                fileStream.Dispose();
             }
         }
 
