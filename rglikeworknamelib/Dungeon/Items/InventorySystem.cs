@@ -93,7 +93,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                 case ItemType.Ammo:
                 case ItemType.Bag:
                 case ItemType.Gun:
-                    player.EquipItem(selectedItem, this);
+                    player.EquipItem(selectedItem);
                     break;
                 case ItemType.Medicine:
                 case ItemType.Food:

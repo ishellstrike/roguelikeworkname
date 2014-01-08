@@ -16,6 +16,8 @@
 
         public int Hp;
 
+        public float Accuracy;
+
         public override string ToString() {
             return string.Format("{0} hp{1} dmg{2}",Name,Hp,Damage);
         }

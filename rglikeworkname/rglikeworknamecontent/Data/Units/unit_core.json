@@ -44,4 +44,22 @@
 		"Hp":70,
 		"BehaviorScript":"bs_spider",
 	},
+
+	"shooter":{
+		"Name":"Стрелок",
+		"MTex":"rabbit",
+		"Speed":100,
+		"Hp":70,
+		"Damage":5,
+		"BehaviorScript":"bs_someshooter",
+	},
+
+	"boss":{
+		"Name":"Босс",
+		"MTex":"rabbit",
+		"Speed":100,
+		"Hp":700,
+		"Damage":5,
+		"BehaviorScript":"bs_somesboss",
+	},
 }

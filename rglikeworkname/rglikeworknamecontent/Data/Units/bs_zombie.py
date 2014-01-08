@@ -2,6 +2,9 @@ from rglikeworknamelib.Dungeon.Creatures import Order
 from rglikeworknamelib.Dungeon.Creatures import OrderType
 from rglikeworknamelib.Dungeon.Creatures import Creature
 
+def BehaviorInit(target, rnd):
+	pass
+
 def BehaviorScript(gt, ms_, hero, target, rnd):
     if target.IsIddle:
         target.IssureOrder(Order(OrderType.Wander));

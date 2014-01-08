@@ -122,7 +122,7 @@ namespace jarg {
                     }
 
                     if ((nothingUndermouse && ms_.LeftButton == ButtonState.Pressed) || rememberShoot_) {
-                        player_.TryShoot(bs_, inventory_, PlayerSeeAngle);
+                        player_.TryShoot(PlayerSeeAngle);
                         rememberShoot_ = true;
                     }
                 }

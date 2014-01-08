@@ -28,6 +28,7 @@ using Label = rglikeworknamelib.Window.Label;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Version = rglikeworknamelib.Version;
 using System.Threading;
+using EventLog = rglikeworknamelib.EventLog;
 
 namespace jarg {
     public partial class JargMain : Game {
@@ -45,7 +46,6 @@ namespace jarg {
         private Texture2D ardown_;
         private Texture2D arup_;
         private Texture2D bag_;
-        private BulletSystem bs_;
         private Vector2 camera_;
         private Texture2D caracter;
         private RenderTarget2D colorMapRenderTarget_;
@@ -259,9 +259,16 @@ namespace jarg {
             map = ContentProvider.LoadTexture(@"Textures\map");
             fltex = ContentProvider.LoadTexture(@"Textures\Effects\fl1");
 
+            ps_ = new ParticleSystem(spriteBatch_,
+                         ParsersCore.LoadTexturesInOrder(
+                             Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"));
+            var bs = new BulletSystem(spriteBatch_,
+                                   ParsersCore.LoadTexturesInOrder(
+                                       Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"),
+                                   currentFloor_, font1_, lineBatch_);
+            inventory_ = new InventorySystem();
 
-
-            player_ = new Player(spriteBatch_, ContentProvider.LoadTexture(@"Textures\Units\car"), font1_);
+            player_ = new Player(spriteBatch_, ContentProvider.LoadTexture(@"Textures\Units\car"), font1_, inventory_);
 
             Logger.Info("ContentProvider loaded {0} textures", ContentProvider.TotalLoaded());
 
@@ -318,15 +325,8 @@ namespace jarg {
             }
 
             currentFloor_.lw_ = levelWorker_;
-            ps_ = new ParticleSystem(spriteBatch_,
-                                     ParsersCore.LoadTexturesInOrder(
-                                         Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"));
-            bs_ = new BulletSystem(spriteBatch_,
-                                   ParsersCore.LoadTexturesInOrder(
-                                       Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"),
-                                   currentFloor_, font1_, lineBatch_);
-            inventory_ = new InventorySystem();
             player_.Inventory = inventory_;
+            BulletSystem.level = currentFloor_;
             inventory_.AddItem(ItemFactory.GetInstance("testhat", 1));
             inventory_.AddItem(ItemFactory.GetInstance("testhat2", 1));
             inventory_.AddItem(ItemFactory.GetInstance("ak47", 1));
@@ -495,7 +495,7 @@ namespace jarg {
             SendTick++;
 
             currentFloor_.KillFarSectors(player_, gameTime, camera_);
-            bs_.Update(gameTime);
+            BulletSystem.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
 
@@ -601,7 +601,7 @@ namespace jarg {
             spriteBatch_.End();
             currentFloor_.DrawEntities(gameTime, camera_);
             spriteBatch_.Begin();
-            bs_.Draw(gameTime, camera_);
+            BulletSystem.Draw(gameTime, camera_);
             ps_.Draw(gameTime, camera_);
             spriteBatch_.End();
 
@@ -743,7 +743,7 @@ namespace jarg {
                 string.Format(
                     "SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
                     PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
-                    currentFloor_.SectorCount(), bs_.GetCount(), currentFloor_.generated,
+                    currentFloor_.SectorCount(), BulletSystem.GetCount(), currentFloor_.generated,
                     currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),
                     GlobalWorldLogic.DayPart, ws_.Mopusehook, ws_.Keyboardhook);
             spriteBatch_.Begin();

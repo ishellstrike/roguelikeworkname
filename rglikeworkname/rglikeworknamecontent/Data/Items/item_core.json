@@ -129,6 +129,7 @@
     "Name":"Аккумулятор",
     "SortType":"Craft",
     "Weight":20,
+	"Description":"Небольшой Li-ion аккумулятор. Похоже еще сохранил немного заряда. Может быть использован в электротехнике или как источник тепла.",
   },
   "tinymonitor":{
     "Name":"маленький ЖК экран",
@@ -154,6 +155,7 @@
     "AfteruseId":"emptycan",
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
+	"Description":"Полная банка популярного газированного напитка.",
   },
   "fishcan1":{
     "Name":"Банка сардин",
@@ -163,6 +165,7 @@
     "Weight":100,
     "NutCal":500,
     "Doses":2,
+	"Description":"Полная банка недорогих рыбных консервов.",
   },
   "lapsha1":{
     "Name":"Пакет лапши",
@@ -172,6 +175,7 @@
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
     "Buff":["foodbad1"],
+	"Description":"Пакет дешевой лапши быстрого приготовления с приправами.",
   },
   "cookie1":{
     "Name":"Коробка галет",
@@ -181,6 +185,7 @@
     "Doses":20,
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
+	"Description":"Коробка практически непортящегося, но безвкусного печенья",
   },
   "meatcan1":{
     "Name":"Открытая банка тушеной говядины",
@@ -227,6 +232,7 @@
     "Doses":10,
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
+	"Description":"Выглядит подозрительно.",
   },
   "emptycan":{
     "Name":"Пустая банка",
@@ -246,6 +252,7 @@
     "NutCal":1000,
     "AfteruseId":13,
     "SortType":"Food",
+	"Description":"Cредство поддержания жизнедеятельности в аварийных условиях. Очень вовремя",
   },
   "watercons":{
     "Name":"Вода консервированая",
@@ -254,14 +261,17 @@
     "Weight":500,
     "AfteruseId":12,
     "SortType":"Food",
+	"Description":"Cредство поддержания жизнедеятельности в аварийных условиях. Очень вовремя",
   },
   "12":{
     "Name":"Пустой пакет",
     "Weight":10,
+	"Description":"Целлофановый пакет.",
   },
   "13":{
     "Name":"Пустая коробка",
     "Weight":20,
+	"Descroption":"Картонная коробка.",
   },
   "14":{
     "Name":"Фляга армейская (пустая)",
@@ -423,6 +433,7 @@
     "SpawnGroup":"spawn_shopfood",
 	"ItemScript":["is_openbottle"],
 	"Weight":500,
+	"Description":"Она самая",
   },
   "vodkabottle":{
     "Name":"Открытая бутылка водки",
@@ -557,6 +568,7 @@
     "Doses":20,
     "SortType":"Medicine",
     "Buffs":["cofeine8"],
+	"Descroption":"Помогает бороться со сном",
   },
   "bag1":{
     "Name":"Рюкзак походный",
@@ -575,11 +587,13 @@
   "phone1":{
     "Name":"Мобильный телефон",
     "Weight":100,
+	"Description":"Небльшой телефон, теперь практически бесполезен, может быть разобран или служить как фонарик.",
   },
   "radio1":{
     "Name":"Небольшое радио",
     "Weight":300,
 	"ItemScript":["is_dissass","is_turnradio"],
+	"Description":"Использует пальчиковые батарейки, похоже еще работает.",
   },
   "paper":{
     "Name":"Лист бумаги",

@@ -15,15 +15,15 @@ namespace rglikeworknamelib
         private static GraphicsDevice GraphicsDevice;
         static readonly Logger Logger = LogManager.GetLogger("ContentProvider");
 
-        public static void Init(GraphicsDevice GraphicsDevice)
+        public static void Init(GraphicsDevice graphicsDevice)
         {
-            ContentProvider.GraphicsDevice = GraphicsDevice;
-            error = LoadTexture(@"Textures\Blocks\error.png");
+            GraphicsDevice = graphicsDevice;
+            error = LoadTexture(@"Textures\Blocks\error");
         }
 
         public static Texture2D LoadTexture(string s)
         {
-            Texture2D tex = null;
+            Texture2D tex;
             try
             {
                 using (var st = File.OpenRead(@"Content/" + s + ".png"))
@@ -31,13 +31,10 @@ namespace rglikeworknamelib
                     tex = Texture2D.FromStream(GraphicsDevice, st);
                 }
             }
-            catch (FileNotFoundException ex)
-            {
-#if DEBUG
-                throw ex;
-#else
-                Logger.Error(ex);
-#endif
+            catch (FileNotFoundException) {
+                Logger.Error("{0} texture is missed", s);
+                total++;
+                return error;
             }
             total++;
             return tex;

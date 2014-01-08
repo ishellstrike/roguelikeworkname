@@ -63,15 +63,15 @@ namespace BScriptArea
             new AchievementDataBase();
 
             infostring = "Initialization";
-            pl = new Player(null, null, null);
-            pl.Position = new Vector2(100, 100);
+            ism = new InventorySystem();
+            pl = new Player(null, null, null, ism) {Position = new Vector2(100, 100)};
             cre = new Creature() { Id = "zombie1" };
             lw = new LevelWorker();
             lw.Start();
             gl = new GameLevel(null, null, null, null, lw);
             ms = new MapSector(gl, 0, 0);
             gt = new GameTime(new TimeSpan(0, 0, 0, 0, 500),    new TimeSpan(0, 0, 0, 0, 500));
-            ism = new InventorySystem();
+            
             item = ItemFactory.GetInstance("colacan", 10);
             item = ItemFactory.GetInstance("knife", 10);
              item = ItemFactory.GetInstance("otvertka",1);
@@ -148,6 +148,14 @@ namespace BScriptArea
                 pl.Position = new Vector2(100, 100);
                 cre.Position = new Vector2(0, 0);
                 cre.IssureOrder();
+
+                try {
+                    compiled.BehaviorInit(cre, Settings.rnd);
+                }
+                catch (Exception ex) {
+                    richTextBox2.Text = ex.ToString();
+                    return;
+                }
 
                 timer1_Tick(null, null);
             }

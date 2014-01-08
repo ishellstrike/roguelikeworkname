@@ -2,6 +2,9 @@ from rglikeworknamelib.Dungeon.Creatures import Order
 from rglikeworknamelib.Dungeon.Creatures import OrderType
 from rglikeworknamelib.Dungeon.Creatures import Creature
 
+def BehaviorInit(target, rnd):
+	pass
+
 def BehaviorScript(gt, ms_, hero, target, rnd):
 	if Creature.GetLength(hero.Position.X - target.WorldPosition().X, hero.Position.Y - target.WorldPosition().Y) < 256:
 		ta = target.WorldPosition()

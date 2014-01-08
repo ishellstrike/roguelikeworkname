@@ -4,8 +4,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NLog.Targets;
 using rglikeworknamelib.Dungeon;
+using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
+using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
@@ -28,7 +30,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
         /// <summary>
         /// can be used for behavior proposes
         /// </summary>
-        public object behaviorTag;
+        public object BehaviorTag;
 
         private Order order_ = new Order(), lastOrder_;
 
@@ -121,7 +123,14 @@ namespace rglikeworknamelib.Dungeon.Creatures
             lastOrder_ = order_;
             order_ = new Order(OrderType.Move, value);
         }
-
+        /// <summary>
+        /// Issure sleep order
+        /// </summary>
+        public void IssureOrder(int x)
+        {
+            lastOrder_ = order_;
+            order_ = new Order(OrderType.Sleep, x);
+        }
         /// <summary>
         /// Issure move order
         /// </summary>
@@ -188,6 +197,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             {
                 sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
                 CreatureDataBase.Scripts[Data.BehaviorScript].BehaviorScript(gt, ms_, hero, this, Settings.rnd);
+
 
                 OrdersMaker(ms_, gt);
 
@@ -264,6 +274,14 @@ namespace rglikeworknamelib.Dungeon.Creatures
             }
         }
 
+        public void Shoot(float attackAngle)
+        {
+            BulletSystem.AddBullet(this, 50,
+                         attackAngle +
+                         MathHelper.ToRadians((((float)Settings.rnd.NextDouble() * 2f - 1) *
+                                               Data.Accuracy / 10f)), Data.Damage);
+        }
+
         public bool Skipp { get; set; }
 
         public virtual void Draw(SpriteBatch spriteBatch, LineBatch lineBatch, Vector2 camera) {
@@ -277,7 +295,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 }
         }
 
-        public Vector2 WorldPosition() {
+        public virtual Vector2 WorldPosition() {
             return Position + new Vector2(-16, -32) +
                    new Vector2(sectoroffset_.X*MapSector.Rx*32, sectoroffset_.Y*MapSector.Ry*32);
         }
@@ -456,9 +474,9 @@ namespace rglikeworknamelib.Dungeon.Creatures
             return new Vector2(t.X, t.Y);
         }
 
-        public static void Say(Creature c, string s)
+        public void Say(string s)
         {
-            EventLog.Add(c.Data.Name+": \""+s+"\"", Color.LightGray, LogEntityType.Default);
+            EventLog.Add(Data.Name+": \""+s+"\"", Color.LightGray, LogEntityType.Default);
         }
     }
 

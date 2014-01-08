@@ -45,13 +45,14 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         private TimeSpan secShoot_ = TimeSpan.Zero;
 
-        public Player(SpriteBatch sb, Texture2D tex, SpriteFont font) {
+        public Player(SpriteBatch sb, Texture2D tex, SpriteFont font, InventorySystem ism) {
             sb_ = sb;
             Font = font;
             Tex = tex;
             Position = new Vector2(1, 1);
             Perks = new PerksSystem(this);
             Weared = new Collection<Item>();
+            Inventory = ism;
         }
 
         public Vector2 CurrentActiveRoom { get; set; }
@@ -65,20 +66,20 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         }
 
 
-        public void EquipItem(Item item, InventorySystem ins) {
+        public void EquipItem(Item item) {
             Settings.InventoryUpdate = true;
             switch (item.Data.SortType) {
                 case ItemType.Wear:
-                    EquipWear(item, ins);
+                    EquipWear(item);
                     break;
                 case ItemType.Gun:
-                    EquipSloted(item, ins, ref ItemGun);
+                    EquipSloted(item, ref ItemGun);
                     break;
                 case ItemType.Meele:
-                    EquipSloted(item, ins, ref ItemMeele);
+                    EquipSloted(item, ref ItemMeele);
                     break;
                 case ItemType.Ammo:
-                    EquipSloted(item, ins, ref ItemAmmo);
+                    EquipSloted(item, ref ItemAmmo);
                     break;
             }
             if (OnUpdatedEquip != null) {
@@ -86,7 +87,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        private void EquipWear(Item i, InventorySystem ins) {
+        private void EquipWear(Item i) {
             if (i != null) {
                 //if (Weared.Contains(i))
                 //{
@@ -99,8 +100,8 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 //    }
                 //}
                 Weared.Add(i);
-                if (ins.ContainsItem(i)) {
-                    ins.RemoveItem(i);
+                if (Inventory.ContainsItem(i)) {
+                    Inventory.RemoveItem(i);
                 }
                 EventLog.Add(string.Format("Вы надели {0}", i.Data.Name), GlobalWorldLogic.CurrentTime, Color.Yellow,
                              LogEntityType.Equip);
@@ -111,10 +112,10 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        private void EquipSloted(Item i, InventorySystem ins, ref Item ite) {
+        private void EquipSloted(Item i, ref Item ite) {
             if (i != null) {
                 if (ite != null) {
-                    ins.AddItem(ite);
+                    Inventory.AddItem(ite);
                     EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ite.Data.Name), GlobalWorldLogic.CurrentTime,
                                  Color.Yellow, LogEntityType.Equip);
                     foreach (var buff in ite.Buffs.Where(buff => Buffs.Contains(buff))) {
@@ -123,8 +124,8 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     }
                 }
                 ite = i;
-                if (ins.ContainsItem(i)) {
-                    ins.RemoveItem(i);
+                if (Inventory.ContainsItem(i)) {
+                    Inventory.RemoveItem(i);
                 }
                 EventLog.Add(string.Format("Вы экипировали {0}", i.Data.Name), GlobalWorldLogic.CurrentTime,
                              Color.Yellow, LogEntityType.Equip);
@@ -135,7 +136,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        public void UnEquipItem(Items.Item i) {
+        public void UnEquipItem(Item i) {
         }
 
         public void Accelerate(Vector2 ac) {
@@ -276,13 +277,13 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public event EventHandler OnUpdatedEquip;
         public event EventHandler OnShoot;
 
-        public void TryShoot(BulletSystem bs, InventorySystem ins, float playerSeeAngle) {
+        public void TryShoot(float playerSeeAngle) {
             if (ItemGun != null) {
                 if (secShoot_.TotalMilliseconds > ItemGun.Data.FireRate) {
                     if ((ItemGun.Data.Ammo != null && ItemAmmo != null && ItemAmmo.Id == ItemGun.Data.Ammo) ||
                         ItemGun.Data.Ammo == null) {
                         var dam = ItemGun != null ? ItemGun.Data.Damage : 0;
-                        bs.AddBullet(this, 50,
+                        BulletSystem.AddBullet(this, 50,
                                      playerSeeAngle +
                                      MathHelper.ToRadians((((float) Settings.rnd.NextDouble()*2f - 1)*
                                                            ItemGun.Data.Accuracy/10f)), dam);
@@ -301,7 +302,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     }
                     else {
                         if (secShoot_.TotalMilliseconds > 1000) {
-                            EquipItem(ins.TryGetId(ItemGun.Data.Ammo), ins);
+                            EquipItem(Inventory.TryGetId(ItemGun.Data.Ammo));
                             EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow,
                                          LogEntityType.NoAmmoWeapon);
                             secShoot_ = TimeSpan.Zero;
@@ -388,6 +389,10 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     }
                 }
             }
+        }
+
+        public override Vector2 WorldPosition() {
+            return Position;
         }
 
         public void Save() {

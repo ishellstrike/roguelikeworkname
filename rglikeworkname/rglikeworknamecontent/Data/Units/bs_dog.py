@@ -1,17 +1,20 @@
 from rglikeworknamelib.Dungeon.Creatures import *
 
+def BehaviorInit(target, rnd):
+	pass
+
 def BehaviorScript(gt, ms_, hero, target, rnd):
-    if target.behaviorTag is not None and target.behaviorTag > 0 and target.IsIddle:
+    if target.BehaviorTag is not None and target.BehaviorTag > 0 and target.IsIddle:
         target.IssureOrder(rnd.Next(-128, 128) + hero.Position.X, rnd.Next(-128, 128) + hero.Position.Y);
-        if target.behaviorTag == 9:
+        if target.BehaviorTag == 9:
             if rnd.Next(1) == 0:
-                Creature.Say(target, "Woof")
+                target.Say("Woof")
             else:
-                Creature.Say(target, "Woof-woof")
-        target.behaviorTag = target.behaviorTag - 1
+                target.Say("Woof-woof")
+        target.BehaviorTag = target.BehaviorTag - 1
     
     if target.IsIddle:
-        target.behaviorTag = True;
+        target.BehaviorTag = True;
         a = rnd.Next(3) 
         if a == 1:
             target.IssureOrder(Order(OrderType.Wander))
@@ -19,4 +22,4 @@ def BehaviorScript(gt, ms_, hero, target, rnd):
             target.IssureOrder(Order(OrderType.Sleep, rnd.Next(1000, 3000)))
         elif Creature.GetLength(hero.Position.X - target.WorldPosition().X, hero.Position.Y - target.WorldPosition().Y) < 256:
             target.IssureOrder(rnd.Next(-128, 128) + hero.Position.X, rnd.Next(-128, 128) + hero.Position.Y)
-            target.behaviorTag = 10
+            target.BehaviorTag = 10

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Parser;
 using Microsoft.Xna.Framework;
 using System;
@@ -27,6 +28,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Creature)));
             Ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Block)));
             Ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(Item)));
+            Ipy.LoadAssembly(System.Reflection.Assembly.GetAssembly(typeof(BulletSystem)));
 
             Settings.NeedToShowInfoWindow = true;
             Settings.NTS1 = "Creature base script loading";

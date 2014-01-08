@@ -9,12 +9,12 @@ using rglikeworknamelib.Dungeon.Level.Blocks;
 
 namespace rglikeworknamelib.Dungeon.Bullets {
     public class BulletSystem {
-        private readonly Collection<Texture2D> bulletAtlas_;
-        private readonly Collection<Bullet> bullet_;
-        private readonly SpriteFont font;
-        private readonly LineBatch lb;
-        private readonly GameLevel level;
-        private readonly SpriteBatch spriteBatch_;
+        private static Collection<Texture2D> bulletAtlas_;
+        private static Collection<Bullet> bullet_;
+        private static SpriteFont font;
+        private static LineBatch lb;
+        public static GameLevel level;
+        private static SpriteBatch spriteBatch_;
 
         public BulletSystem(SpriteBatch spr, Collection<Texture2D> atlas, GameLevel gl, SpriteFont fnt, LineBatch l) {
             bulletAtlas_ = atlas;
@@ -25,15 +25,15 @@ namespace rglikeworknamelib.Dungeon.Bullets {
             lb = l;
         }
 
-        public void AddBullet(Vector2 pos, float vel, float an, int dam) {
+        public static void AddBullet(Vector2 pos, float vel, float an, int dam) {
             bullet_.Add(new Bullet(pos, vel, an, 0, 1, TimeSpan.FromSeconds(1)) {Damage = dam, Owner = null});
         }
 
-        public void AddBullet(Creature who, float vel, float an, int dam) {
-            bullet_.Add(new Bullet(who.Position, vel, an, 0, 1, TimeSpan.FromSeconds(1)) {Damage = dam, Owner = who});
+        public static void AddBullet(Creature who, float vel, float an, int dam) {
+            bullet_.Add(new Bullet(who.WorldPosition(), vel, an, 0, 1, TimeSpan.FromSeconds(1)) {Damage = dam, Owner = who});
         }
 
-        public void Update(GameTime gameTime) {
+        public static void Update(GameTime gameTime) {
             for (int i = 0; i < bullet_.Count; i++) {
                 Bullet bullet = bullet_[i];
                 Bullet a = bullet;
@@ -58,13 +58,13 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                     }
 
                     bool nosector;
-                    Creature sect = level.GetCreatureAtCoord(bullet.Pos, bullet.Start, out nosector);
+                    Creature creature = level.GetCreatureAtCoord(bullet.Pos, bullet.Start, out nosector);
 
                     if (nosector) {
                         bullet.Life = TimeSpan.Zero;
                     } else {
-                        if (sect != null) {
-                            sect.GiveDamage(bullet.Damage, DamageType.Default);
+                        if (creature != null && creature != bullet.Owner) {
+                            creature.GiveDamage(bullet.Damage, DamageType.Default);
                             bullet.Life = TimeSpan.Zero;
                         }
 
@@ -80,7 +80,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         }
 
 
-        public void Draw(GameTime gameTime, Vector2 cam) {
+        public static void Draw(GameTime gameTime, Vector2 cam) {
             bool b = Settings.DebugInfo;
             foreach (Bullet bullet in bullet_) {
                 spriteBatch_.Draw(bulletAtlas_[bullet.Mtex],
@@ -97,7 +97,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
             }
         }
 
-        public int GetCount() {
+        public static int GetCount() {
             return bullet_.Count;
         }
     }

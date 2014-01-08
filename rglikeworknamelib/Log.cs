@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon;
 
-namespace rglikeworknamelib {
-    public enum LogEntityType {
+namespace rglikeworknamelib
+{
+    public enum LogEntityType
+    {
         OpenCloseDor,
         SeeSomething,
         Damage,
@@ -18,34 +20,40 @@ namespace rglikeworknamelib {
         Console
     }
 
-    public struct LogEntity {
+    public struct LogEntity
+    {
         public Color col;
         public string message;
         public LogEntityType type;
         internal const int LogSize = 512;
 
-        public LogEntity(string mes, Color c, LogEntityType t = LogEntityType.Default) {
+        public LogEntity(string mes, Color c, LogEntityType t = LogEntityType.Default)
+        {
             message = mes;
             col = c;
             type = t;
 
         }
 
-        public LogEntity(string mes, LogEntityType entity = LogEntityType.Default) {
+        public LogEntity(string mes, LogEntityType entity = LogEntityType.Default)
+        {
             message = mes;
             col = Color.White;
             type = entity;
         }
     }
 
-    public static class EventLog {
+    public static class EventLog
+    {
         public static List<LogEntity> log = new List<LogEntity>();
 
-        public static void Add(string message, Color color, LogEntityType type) {
+        public static void Add(string message, Color color, LogEntityType type)
+        {
             Add(message, GlobalWorldLogic.CurrentTime, color, type);
         }
 
-        public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type) {
+        public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type)
+        {
             log.Add(new LogEntity(GlobalWorldLogic.GetTimeString(globalDateTime) + " " + message, color, type));
 
             if (log.Count > LogEntity.LogSize)
@@ -55,8 +63,10 @@ namespace rglikeworknamelib {
             UpdateEvent();
         }
 
-        private static void UpdateEvent() {
-            if (OnLogUpdate != null) {
+        private static void UpdateEvent()
+        {
+            if (OnLogUpdate != null)
+            {
                 OnLogUpdate(null, null);
             }
         }
