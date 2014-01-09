@@ -635,32 +635,120 @@ namespace rglikeworknamelib.Generation {
 
             foreach (var rect in rects) {
                 for (int i = rect.Top; i < rect.Bottom; i++) {
-                    PutRoad(gl, rect.Left, i, already, temp);
-                    PutRoad(gl, rect.Right, i, already, temp);
+                    PutRoadVert(gl, rect.Left, i, already, temp);
+                    PutRoadVert(gl, rect.Right, i, already, temp);
+                    if (rnd.Next(3) != 0) {
+                        PutHouse(gl, rect.Left - 1, i, temp, already, rnd);
+                    }
+                    if (rnd.Next(3) != 0) {
+                        PutHouse(gl, rect.Right + 1, i, temp, already, rnd);
+                    }
                 }
                 for (int i = rect.Left; i < rect.Right; i++)
                 {
-                    PutRoad(gl, i, rect.Top, already, temp);
-                    PutRoad(gl, i, rect.Bottom, already, temp);
+                    PutRoadHor(gl, i, rect.Top, already, temp);
+                    PutRoadHor(gl, i, rect.Bottom, already, temp);
+                    if (rnd.Next(3) != 0) {
+                        PutHouse(gl, i, rect.Top - 1, temp, already, rnd);
+                    }
+                    if (rnd.Next(3) != 0) {
+                        PutHouse(gl, i, rect.Bottom + 1, temp, already, rnd);
+                    }
                 }
+                
             }
 
             return temp;
         }
 
-        private static void PutHouse(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp) {
-            
+        private static void PutHouse(GameLevel gl, int i, int j, List<KeyValuePair<Point, MapSector>> temp, List<Point> already, Random rnd) {
+            var sch = SchemesDataBase.NormalCity[rnd.Next(SchemesDataBase.NormalCity.Count)];
+            var a = MapGenerators.AlterCheme(sch, rnd);
+
+            var p = new Point(i, j);
+
+            if(already.Contains(p)){return;}
+
+            already.Add(p);
+            var sector = new MapSector(gl, i, j);
+            sector.Rebuild(gl.MapSeed);
+
+            for (int k = 0; k < 16; k++) {
+                for (int l = 0; l < 16; l++) {
+                    if (k < a.x && l < a.y) {
+                        var tt = a.data[k*a.y + l];
+                        if (tt != "0") {
+                            sector.SetBlock(k, l, tt);
+                        }
+                    }
+                }
+            }
+            switch (a.type) {
+                    case SchemesType.House:
+                    sector.Biom = SectorBiom.House;
+                    break;
+                    case SchemesType.Shop:
+                    sector.Biom = SectorBiom.Shop;
+                    break;
+                    case SchemesType.Hospital:
+                    sector.Biom = SectorBiom.Hospital;
+                    break;
+                    case SchemesType.WearShop:
+                    sector.Biom = SectorBiom.WearStore;
+                    break;
+            }
+
+            temp.Add(new KeyValuePair<Point, MapSector>(p, sector));
         }
 
-        private static void PutRoad(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp) {
+        private static void PutRoadVert(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp) {
             var p = new Point(i, j);
             if (!already.Contains(p)) {
                 already.Add(p);
                 var sector = new MapSector(gl, p.X, p.Y);
                 sector.Rebuild(gl.MapSeed);
                 sector.Biom = SectorBiom.Road;
-                for (int n = 0; n < 16; n++) {
-                    for (int k = 0; k < 16; k++) {
+                for (int k = 0; k < 16; k++) {
+                    for (int n = 3; n < 16 - 3; n++) {
+                        sector.SetFloor(n, k, "asfalt");
+                        sector.SetBlock(n, k, "0");
+                    }
+                    for (int n = 0; n < 3; n++)
+                    {
+                        sector.SetFloor(n, k, "conk_base");
+                        sector.SetBlock(n, k, "0");
+                    }
+                    for (int n = 16 - 3; n < 16; n++)
+                    {
+                        sector.SetFloor(n, k, "conk_base");
+                        sector.SetBlock(n, k, "0");
+                    }
+                }
+                temp.Add(new KeyValuePair<Point, MapSector>(p, sector));
+            }
+        }
+
+        private static void PutRoadHor(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp)
+        {
+            var p = new Point(i, j);
+            if (!already.Contains(p))
+            {
+                already.Add(p);
+                var sector = new MapSector(gl, p.X, p.Y);
+                sector.Rebuild(gl.MapSeed);
+                sector.Biom = SectorBiom.Road;
+                for (int n = 0; n < 16 ; n++)
+                {
+                    for (int k = 3; k < 16 - 3; k++) {
+                        sector.SetFloor(n, k, "asfalt");
+                        sector.SetBlock(n, k, "0");
+                    }
+                    for (int k = 0; k < 3; k++) {
+                        sector.SetFloor(n, k, "conk_base");
+                        sector.SetBlock(n, k, "0");
+                    }
+                    for (int k = 16 - 3; k < 16; k++)
+                    {
                         sector.SetFloor(n, k, "conk_base");
                         sector.SetBlock(n, k, "0");
                     }

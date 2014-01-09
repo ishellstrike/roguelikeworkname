@@ -1023,6 +1023,52 @@ namespace rglikeworknamelib.Dungeon.Level
             logger.Info(string.Format("megamap sector {0} generation in {1}", point, sw.Elapsed));
         }
 
+        public void GenerateMegaSectorAround(int arg1, int arg2)
+        {
+            var results = new List<IAsyncResult>();
+
+           Settings.NTS1 = "Generation : ";
+           Settings.NeedToShowInfoWindow = true;
+           Settings.NTS2 = "in progress";
+
+            if (!File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm")) {
+                List<KeyValuePair<Point, MapSector>> temp = new List<KeyValuePair<Point, MapSector>>();
+                for (int i = -1 + arg1; i <= 1 + arg1; i++)
+                {
+                    for (int j = -1 + arg2; j <= 1 + arg2; j++)
+                    {
+                        var s = (int)(MapGenerators.Noise2D(i, j) * int.MaxValue);
+                        var rand = new Random(s);
+                        //if (i != arg1 || j != arg2)
+                        {
+
+                            temp.AddRange(MapGenerators2.GenerateCityAt(this, rand, i * 25, j * 25));
+                            Settings.NTS2 = temp.Count.ToString();
+                            //results.Add(gen.BeginInvoke(i, j, null, null));
+                        }
+                    }
+                }
+                Settings.NeedToShowInfoWindow = false;
+                lw_.onStore_ = temp.ToDictionary(pair => pair.Key, pair => pair.Value);
+
+                //lw_.onStore_ = Generation_sectors_;
+                //Generation_sectors_ = new Dictionary<Point, MapSector>();
+            }
+            else
+            {
+                lw_.LoadAll(this);
+            }
+
+            while (true)
+            {
+                if (results.All(x => x.IsCompleted))
+                {
+                    break;
+                }
+                Thread.Sleep(100);
+            }
+        }
+
         public void SetBiomAtBlock(int i, int j, SectorBiom biom)
         {
             int divx = i < 0 ? (i + 1) / MapSector.Rx - 1 : i / MapSector.Rx;
@@ -1361,47 +1407,6 @@ namespace rglikeworknamelib.Dungeon.Level
         }
 
         #endregion
-
-        public void GenerateMegaSectorAround(int arg1, int arg2)
-        {
-            var results = new List<IAsyncResult>();
-            if (!File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm"))
-            {
-                for (int i = -1 + arg1; i <= 1 + arg1; i++)
-                {
-                    for (int j = -1 + arg2; j <= 1 + arg2; j++)
-                    {
-                        var s = (int)(MapGenerators.Noise2D(i, j) * int.MaxValue);
-                        var rand = new Random(s);
-                        //if (i != arg1 || j != arg2)
-                        {
-                            //GenerateMegaSector(i, j);
-                            var t = MapGenerators2.GenerateCityAt(this, rand, i*25, j*25);
-                            foreach (var keyValuePair in t) {
-                                lw_.onStore_.Add(keyValuePair.Key, keyValuePair.Value);
-                            }
-                            //results.Add(gen.BeginInvoke(i, j, null, null));
-                        }
-                    }
-                }
-
-                //lw_.onStore_ = Generation_sectors_;
-                //Generation_sectors_ = new Dictionary<Point, MapSector>();
-            }
-            else
-            {
-                lw_.LoadAll(this);
-            }
-
-            while(true)
-            {
-                if (results.All(x => x.IsCompleted))
-                {
-                    break;
-                }
-                Thread.Sleep(100);
-            }
-        }
 
         public Block GetBlockSync(int x, int y)
         {

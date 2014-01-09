@@ -4,7 +4,7 @@ def BehaviorInit(target, rnd):
 	pass
 
 def BehaviorScript(gt, ms_, hero, target, rnd):
-    if target.BehaviorTag is not None and target.BehaviorTag > 0 and target.IsIddle:
+    if target.BehaviorTag is not None and target.BehaviorTag > 0 and target.IsIddle and Creature.GetLength(hero.Position.X - target.WorldPosition().X, hero.Position.Y - target.WorldPosition().Y) < 512:
         target.IssureOrder(rnd.Next(-128, 128) + hero.Position.X, rnd.Next(-128, 128) + hero.Position.Y);
         if target.BehaviorTag == 9:
             if rnd.Next(1) == 0:

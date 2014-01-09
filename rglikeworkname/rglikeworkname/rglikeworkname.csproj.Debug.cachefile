@@ -9,9 +9,9 @@ Content\Effects\Effect111.xnb
 Content\Effects\ShadersLightningShadow.xnb
 Content\Effects\ShadersLightningCombined.xnb
 Content\Effects\ToWhite.xnb
-NLog.config
 IronPython.dll
 Microsoft.Dynamic.dll
 Microsoft.Scripting.dll
 Newtonsoft.Json.dll
 NLog.dll
+NLog.config
