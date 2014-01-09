@@ -626,6 +626,81 @@ namespace rglikeworknamelib.Generation {
         }
     }
 
+    public static class MapGenerators2 {
+        public static List<KeyValuePair<Point, MapSector>> GenerateCityAt(GameLevel gl, Random rnd, int x, int y) {
+            var temp = new List<KeyValuePair<Point, MapSector>>();
+
+            var rects = GenerateRoads(rnd, 20, 20, x, y, 10);
+            var already = new List<Point>();
+
+            foreach (var rect in rects) {
+                for (int i = rect.Top; i < rect.Bottom; i++) {
+                    PutRoad(gl, rect.Left, i, already, temp);
+                    PutRoad(gl, rect.Right, i, already, temp);
+                }
+                for (int i = rect.Left; i < rect.Right; i++)
+                {
+                    PutRoad(gl, i, rect.Top, already, temp);
+                    PutRoad(gl, i, rect.Bottom, already, temp);
+                }
+            }
+
+            return temp;
+        }
+
+        private static void PutHouse(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp) {
+            
+        }
+
+        private static void PutRoad(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp) {
+            var p = new Point(i, j);
+            if (!already.Contains(p)) {
+                already.Add(p);
+                var sector = new MapSector(gl, p.X, p.Y);
+                sector.Rebuild(gl.MapSeed);
+                sector.Biom = SectorBiom.Road;
+                for (int n = 0; n < 16; n++) {
+                    for (int k = 0; k < 16; k++) {
+                        sector.SetFloor(n, k, "conk_base");
+                        sector.SetBlock(n, k, "0");
+                    }
+                }
+                temp.Add(new KeyValuePair<Point, MapSector>(p, sector));
+            }
+        }
+
+        public static List<Rectangle> GenerateRoads(Random rnd, int mainW, int mainH, int posX, int posY, int splitter)
+        {
+            var t = new List<Rectangle>();
+            t.Add(new Rectangle(posX, posY, mainW, mainH));
+
+            for (int i = 0; i < splitter; i++)
+            {
+                List<int> A = t.Select(x => x.Height * x.Width).ToList();
+                int max = A.IndexOf(A.Max());
+                Rectangle a = t[max];
+
+                t.Remove(a);
+                int type = rnd.Next(0, 234234);
+                int middle = 0;
+                if (a.Width > a.Height)
+                {
+                    middle = rnd.Next(a.Width / 3, (a.Width / 3) * 2);
+                    t.Add(new Rectangle(a.X, a.Y, middle, a.Height));
+                    t.Add(new Rectangle(a.X + middle, a.Y, a.Width - middle, a.Height));
+                }
+                else
+                {
+                    middle = rnd.Next(a.Height / 3, (a.Height / 3) * 2);
+                    t.Add(new Rectangle(a.X, a.Y, a.Width, middle));
+                    t.Add(new Rectangle(a.X, a.Y + middle, a.Width, a.Height - middle));
+                }
+            }
+
+            return t;
+        }
+    }
+
     public class MathGenerators {
         private static double fade(double t) {
             return t*t*t*(t*(t*6 - 15) + 10);

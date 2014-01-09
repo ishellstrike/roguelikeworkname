@@ -273,6 +273,18 @@
     "Weight":20,
 	"Descroption":"Картонная коробка.",
   },
+  "matches":{
+    "Name":"Коробок спичек",
+    "Weight":20,
+	"Doses":40,
+	"SpawnGroup":"spawn_common",
+  },
+  "matches_hunt":{
+    "Name":"Коробок охотничьих спичек",
+    "Weight":20,
+	"Doses":15,
+	"SpawnGroup":"spawn_hunter",
+  },
   "14":{
     "Name":"Фляга армейская (пустая)",
     "Weight":100,

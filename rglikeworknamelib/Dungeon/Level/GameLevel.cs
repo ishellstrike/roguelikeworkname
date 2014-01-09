@@ -201,6 +201,7 @@ namespace rglikeworknamelib.Dungeon.Level
             MapSector a;
             if (sectors_.TryGetValue(new Point(sectorOffsetX, sectorOffsetY), out a))
             {
+                GlobalMapAdd(a);
                 return a;
             }
 
@@ -222,9 +223,11 @@ namespace rglikeworknamelib.Dungeon.Level
         private void GlobalMapAdd(MapSector temp)
         {
             var a = new Tuple<int, int>(temp.SectorOffsetX, temp.SectorOffsetY);
-            if (!globalMap.ContainsKey(a))
-            {
+            if (!globalMap.ContainsKey(a)) {
                 globalMap.Add(a, temp.Biom);
+            }
+            else {
+                globalMap[a] = temp.Biom;
             }
         }
 
@@ -602,7 +605,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 case SectorBiom.WearStore:
                     a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Orange);
                     break;
-                case SectorBiom.RoadCross:
+                case SectorBiom.Road:
                 case SectorBiom.RoadHevt:
                 case SectorBiom.RoadHor:
                     a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["cross1"], Color.Gray);
@@ -1362,23 +1365,28 @@ namespace rglikeworknamelib.Dungeon.Level
         public void GenerateMegaSectorAround(int arg1, int arg2)
         {
             var results = new List<IAsyncResult>();
-            Action<int, int> gen = GenerateMegaSector;
             if (!File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm"))
             {
                 for (int i = -1 + arg1; i <= 1 + arg1; i++)
                 {
                     for (int j = -1 + arg2; j <= 1 + arg2; j++)
                     {
+                        var s = (int)(MapGenerators.Noise2D(i, j) * int.MaxValue);
+                        var rand = new Random(s);
                         //if (i != arg1 || j != arg2)
                         {
-                            GenerateMegaSector(i, j);
+                            //GenerateMegaSector(i, j);
+                            var t = MapGenerators2.GenerateCityAt(this, rand, i*25, j*25);
+                            foreach (var keyValuePair in t) {
+                                lw_.onStore_.Add(keyValuePair.Key, keyValuePair.Value);
+                            }
                             //results.Add(gen.BeginInvoke(i, j, null, null));
                         }
                     }
                 }
 
-                lw_.onStore_ = Generation_sectors_;
-                Generation_sectors_ = new Dictionary<Point, MapSector>();
+                //lw_.onStore_ = Generation_sectors_;
+                //Generation_sectors_ = new Dictionary<Point, MapSector>();
             }
             else
             {
