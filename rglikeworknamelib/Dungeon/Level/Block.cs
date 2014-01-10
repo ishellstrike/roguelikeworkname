@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Items;
 
-namespace rglikeworknamelib.Dungeon.Level.Blocks {
+namespace rglikeworknamelib.Dungeon.Level {
     [Serializable]
     public class Block {
         private string id_;
 
         public List<Item> StoredItems = new List<Item>();
-
-        public virtual bool IsActive
-        {
-            get { return false; }
-        }
 
         public string Id {
             get { return id_; }
@@ -44,8 +39,6 @@ namespace rglikeworknamelib.Dungeon.Level.Blocks {
                 mTex_ = value;
             }
         }
-
-        public bool Inner { get; set; }
 
         public virtual void Update(TimeSpan ts, Vector2 vector2)
         {

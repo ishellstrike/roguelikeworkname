@@ -20,7 +20,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         static readonly Logger Logger = LogManager.GetLogger("CreatureDataBase");
 
         public CreatureDataBase() {
-            Data = UniversalParser.JsonDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
+            Data = UniversalParser.JsonDictionaryDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
 
             Settings.NeedToShowInfoWindow = true;
             Settings.NTS1 = "Creature assembly loading";

@@ -24,12 +24,13 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         internal SectorBiom Biom;
 
-        internal List<Block> Blocks;
+        
         internal List<Creature> Creatures;
         internal List<Particle> Decals;
+        internal Block[] Blocks;
         internal Floor[] Floors;
-
         internal List<Light> Lights;
+
         public GameLevel Parent;
         public bool Ready;
         public int SectorOffsetX, SectorOffsetY;
@@ -39,7 +40,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetX = sectorOffsetX;
             SectorOffsetY = sectorOffsetY;
 
-            Blocks = new List<Block>(Rx*Ry);
+            Blocks = new Block[Rx*Ry];
             Floors = new Floor[Rx*Ry];
             Creatures = new List<Creature>();
 
@@ -55,7 +56,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetY = sectorOffsetY;
             Parent = parent;
 
-            Blocks = new List<Block>(Rx*Ry);
+            Blocks = new Block[Rx*Ry];
             Floors = new Floor[Rx*Ry];
             Creatures = new List<Creature>();
             Decals = new List<Particle>();
@@ -64,7 +65,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             int i = Rx*Ry;
             while (i-- != 0) {
                 Floors[i] = new Floor();
-                Blocks.Add(new Block());
+                Blocks[i] = new Block();
             }
             Lights = new List<Light>();
         }
@@ -86,8 +87,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             SectorOffsetY = (int) sectorOffsetY;
             Parent = parent;
 
-            Blocks = blocksArray as List<Block>;
-            Floors = floorsArray as Floor[];
+            Blocks = (Block[]) blocksArray;
+            Floors = (Floor[]) floorsArray;
             Biom = (SectorBiom) obiom;
             Creatures = (List<Creature>) creat;
             Decals = (List<Particle>) decal;
@@ -106,7 +107,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void ResetLightingSources() {
             Lights.Clear();
             //int i = 0;
-            //for (int index = 0; index < Blocks.Count; index++) {
+            //for (int index = 0; index < Blocks.Length; index++) {
             //    IBlock block = Blocks[index];
             //    if (block is ILightSource) {
             //        Lights.Add(GetLights(block, i/Ry*32 + SectorOffsetX*Rx*32, i%Ry*32 + SectorOffsetY*Ry*32));

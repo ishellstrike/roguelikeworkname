@@ -313,11 +313,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
         private void BlockPart(MapSector ms, List<string> blockMtexVocab, List<string> blockIdVocab, StringBuilder stringBuilder) {
-            for (var i = 0; i < ms.Blocks.Count; i++) {
+            for (var i = 0; i < ms.Blocks.Length; i++) {
                 var id = blockIdVocab.IndexOf(ms.Blocks[i].Id);
                 var count = 1;
-                if (i != ms.Blocks.Count - 1) {
-                    for (var j = i + 1; j < ms.Blocks.Count; j++) {
+                if (i != ms.Blocks.Length - 1) {
+                    for (var j = i + 1; j < ms.Blocks.Length; j++) {
                         if (blockIdVocab.IndexOf(ms.Blocks[j].Id) == id) {
                             count++;
                         }
@@ -345,11 +345,11 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             stringBuilder.AppendLine();
             stringBuilder.Append("~");
-            for (var i = 0; i < ms.Blocks.Count; i++) {
+            for (var i = 0; i < ms.Blocks.Length; i++) {
                 var mtex = blockMtexVocab.IndexOf(ms.Blocks[i].MTex);
                 var count = 1;
-                if (i != ms.Blocks.Count - 1) {
-                    for (var j = i + 1; j < ms.Blocks.Count; j++) {
+                if (i != ms.Blocks.Length - 1) {
+                    for (var j = i + 1; j < ms.Blocks.Length; j++) {
                         if (blockMtexVocab.IndexOf(ms.Blocks[j].MTex) == mtex) {
                             count++;
                         }

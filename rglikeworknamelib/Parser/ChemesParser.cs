@@ -24,58 +24,56 @@ namespace rglikeworknamelib.Parser {
                     string[] lines = Regex.Split(block, "\n");
                     string[] header = lines[0].Split(',');
 
-                    var cur = new Schemes();
-                    cur.x = Convert.ToInt32(header[0]);
-                    cur.y = Convert.ToInt32(header[1]);
+                    var cur = new Schemes {x = Convert.ToInt32(header[0]), y = Convert.ToInt32(header[1])};
                     cur.data = new string[cur.x*cur.y];
                     switch (header[2].Replace("\r", string.Empty)) {
                         case "house":
-                            cur.type = SchemesType.House;
+                            cur.type = SectorBiom.House;
                             break;
                         case "hospital":
-                            cur.type = SchemesType.Hospital;
+                            cur.type = SectorBiom.Hospital;
                             break;
                         case "store":
-                            cur.type = SchemesType.Shop;
+                            cur.type = SectorBiom.Shop;
                             break;
                         case "wearstore":
-                            cur.type = SchemesType.WearShop;
+                            cur.type = SectorBiom.WearShop;
                             break;
                         case "b_part_udlr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_ud":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_lr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_udl":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_udr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_ulr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_dlr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_ul":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_ur":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_dl":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                         case "b_part_dr":
-                            cur.type = SchemesType.BunkerParts;
+                            cur.type = SectorBiom.BunkerParts;
                             break;
                     }
-                    cur.filename = string.Format("{0}{1}", cur.type, Settings.rnd.Next());
+                    cur.filename = string.Format("{0}{1}", cur.type, temp.Count);
                     //switch (header[0])
                     //{
                     //    default:
@@ -115,6 +113,11 @@ namespace rglikeworknamelib.Parser {
                                             cur.data[counter] = a.Trim('\r');
                                             counter++;
                                         }
+                                    }
+                                    cur.floor = new string[cur.x * cur.y];
+                                    for (int j = 0; j < cur.x * cur.y; j++)
+                                    {
+                                        cur.floor[j] = "0";
                                     }
                                     temp.Add(cur);
                                 }

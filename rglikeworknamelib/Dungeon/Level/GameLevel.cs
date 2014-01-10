@@ -514,6 +514,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     if ((a.Key.X + 1) * 32 * rx - camera.X < -32 || (a.Key.Y + 1) * 32 * ry - camera.Y < -32 || a.Key.X * 32 * rx - camera.X > resolution.X || a.Key.Y * 32 * ry - camera.Y > resolution.Y)
                     {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
+                        i--;
                     }
                 }
             }
@@ -1427,7 +1428,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
             foreach (var mapSector in sectors_)
             {
-                for (int i = 0; i < mapSector.Value.Blocks.Count; i++)
+                for (int i = 0; i < mapSector.Value.Blocks.Length; i++)
                 {
                     var block = mapSector.Value.Blocks[i];
 
@@ -1469,7 +1470,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     float posy = 0 - (int)camera.Y + ry * ssy * sector.SectorOffsetY;
                     for (int j = 0; j < ry; j++)
                     {
-                        if (!sector.Blocks[i * MapSector.Ry + j].Inner)
+                        //if (!sector.Blocks[i * MapSector.Ry + j].Inner)
                         {
                             int a = i * ry + j;
                             spriteBatch_.Draw(whitepixel,

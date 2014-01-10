@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +9,9 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using NLog.LayoutRenderers.Wrappers;
 using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon;
@@ -146,8 +150,8 @@ namespace jarg {
         private Button CraftThisButton;
 
         private Window SchemesEditorWindow;
-        private Image[,] SchemesImages;
-        private ListContainer SchemesContainer;
+        private Image[,] SchemesImages, SchemesImagesFloor;
+        private ListContainer SchemesBlocks, SchemesFloors;
         private Button SchemesLoadButton, SchemesSaveButton, SchemesClearButton;
         private Label SchemesInfoLabel;
         private Button SchemesSave;
@@ -296,124 +300,193 @@ namespace jarg {
            UpdateInventoryContainer();
         }
 
-        SchemesMap scheme = new SchemesMap(16, 16);
+        SchemesMap SchemEditorTempMap;
         Vector2 schemesOffset = new Vector2(0, 0);
         private void InitSchemes(WindowSystem ws) {
             SchemesEditorWindow = new Window(new Rectangle(0,0, (int)Settings.Resolution.X,(int)Settings.Resolution.Y), "Schemes editor", true, ws) {Visible = false};
             SchemesImages = new Image[20,20];
+            SchemesImagesFloor = new Image[20, 20];
+
+            SchemEditorTempMap = new SchemesMap(16, 16);
             for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                 for (int j = 0; j < SchemesImages.GetLength(1); j++) {
+                        SchemesImagesFloor[i, j] = new Image(new Vector2(20 + 32 * i, 20 + 32 * j), whitepixel_,
+                                                            Color.White, SchemesEditorWindow);
                         SchemesImages[i, j] = new Image(new Vector2(20 + 32*i, 20 + 32*j), whitepixel_,
                                                         Color.White, SchemesEditorWindow);
+                        
                         SchemesImages[i, j].Tag = new Point(i, j);
-                        SchemesImages[i, j].OnMouseDown += JargMain_OnMouseDown;
+                        SchemesImages[i, j].OnMouseDown += OnSchemesPictureBoxSelect;
                 }
             }
-            SchemesContainer = new ListContainer(new Rectangle((int)Settings.Resolution.X/3*2, 40, (int)Settings.Resolution.X/4, (int)Settings.Resolution.Y/5*3), SchemesEditorWindow);
-            SchemesSave = new Button(SchemesContainer.GetPosition()+new Vector2(-40,0), "Save", SchemesEditorWindow);
+            SchemesBlocks = new ListContainer(new Rectangle((int)Settings.Resolution.X/3*2, 40, (int)Settings.Resolution.X/4, (int)Settings.Resolution.Y/10*3), SchemesEditorWindow);
+            SchemesSave = new Button(SchemesBlocks.GetPosition()+new Vector2(-40,0), "Save", SchemesEditorWindow);
             SchemesSave.OnPressed += SchemesSave_OnPressed;
 
-            SchemesExist = new ListContainer(new Rectangle((int)SchemesContainer.GetPosition().X, (int)(SchemesContainer.GetPosition().Y + SchemesContainer.Height), (int)Settings.Resolution.X / 4, (int)Settings.Resolution.Y / 5), SchemesEditorWindow);
+            SchemesFloors = new ListContainer(new Rectangle((int)SchemesBlocks.GetPosition().X, (int)(SchemesBlocks.GetPosition().Y + SchemesBlocks.Height), (int)Settings.Resolution.X / 4, (int)Settings.Resolution.Y / 10 * 3), SchemesEditorWindow);
+            SchemesExist = new ListContainer(new Rectangle((int)SchemesFloors.GetPosition().X, (int)(SchemesFloors.GetPosition().Y + SchemesFloors.Height), (int)Settings.Resolution.X / 4, (int)Settings.Resolution.Y / 5), SchemesEditorWindow);
         }
 
         /// <summary>
-        /// #version = 1 (rle) scheme saver
+        /// #version = 1 (rle) SchemEditorTempMap saver
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         void SchemesSave_OnPressed(object sender, EventArgs e) {
-            using (var sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\" + "tempScheme.txt")) {
-                sw.Write("#version = 1" + Environment.NewLine);
-                sw.Write("~{0},{1},{2}{3}", scheme.rx, scheme.ry, "default", Environment.NewLine);
-                for (int i = 0; i < scheme.rx*scheme.ry - 1; i++) {
-                    string id = scheme.block[i/scheme.ry, i%scheme.ry].Id;
-                    int count = 1;
-                    for (int j = i + 1; j < scheme.rx*scheme.ry - 1; j++) {
-                        if (scheme.block[j/scheme.ry, j%scheme.ry].Id == id) {
-                            count++;
-                        }
-                        else {
-                            break;
-                        }
-                    }
+            //using (var sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\" + "tempScheme.txt")) {
+            //    sw.Write("#version = 1" + Environment.NewLine);
+            //    sw.Write("~{0},{1},{2}{3}", SchemEditorTempMap.rx, SchemEditorTempMap.ry, "default", Environment.NewLine);
+            //    for (int i = 0; i < SchemEditorTempMap.rx*SchemEditorTempMap.ry - 1; i++) {
+            //        string id = SchemEditorTempMap.block[i/SchemEditorTempMap.ry, i%SchemEditorTempMap.ry].Id;
+            //        int count = 1;
+            //        for (int j = i + 1; j < SchemEditorTempMap.rx*SchemEditorTempMap.ry - 1; j++) {
+            //            if (SchemEditorTempMap.block[j/SchemEditorTempMap.ry, j%SchemEditorTempMap.ry].Id == id) {
+            //                count++;
+            //            }
+            //            else {
+            //                break;
+            //            }
+            //        }
 
-                    if (count > 2 || (count > 1 && id.Length > 1)) {
-                        sw.Write(string.Format("!{0}!{1} ", id, count));
-                    }
-                    else {
-                        for (int k = 0; k < count; k++) {
-                            sw.Write(id + " ");
-                        }
-                    }
-                    i += count - 1;
+            //        if (count > 2 || (count > 1 && id.Length > 1)) {
+            //            sw.Write(string.Format("!{0}!{1} ", id, count));
+            //        }
+            //        else {
+            //            for (int k = 0; k < count; k++) {
+            //                sw.Write(id + " ");
+            //            }
+            //        }
+            //        i += count - 1;
+            //    }
+            //    sw.Write(SchemEditorTempMap.block[SchemEditorTempMap.rx - 1, SchemEditorTempMap.ry - 1].Id.Trim());
+            //    sw.Write("\n");
+            //}
+
+            var serializer = new JsonSerializer { Formatting = Formatting.None };
+            serializer.Converters.Add(new StringEnumConverter());
+
+            var temp = new Schemes {x = SchemEditorTempMap.rx, y = SchemEditorTempMap.ry};
+            temp.data = new string[SchemEditorTempMap.rx * SchemEditorTempMap.ry];
+            temp.floor = new string[SchemEditorTempMap.rx * SchemEditorTempMap.ry];
+
+
+
+            for (int i = 0; i < SchemEditorTempMap.block.GetLength(0); i++) {
+                for (int j = 0; j < SchemEditorTempMap.block.GetLength(1); j++) {
+                    temp.floor[i * temp.y + j] = SchemEditorTempMap.floor[i, j].Id;
+                    temp.data[i * temp.y + j] = SchemEditorTempMap.block[i, j].Id;
                 }
-                sw.Write(scheme.block[scheme.rx - 1, scheme.ry - 1].Id.Trim());
-                sw.Write("\n");
             }
 
-            
+            temp.type = SectorBiom.House;
+
+            using (var sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\" + Path.GetFileNameWithoutExtension(temp.filename) + ".json") )
+            {
+                serializer.Serialize(sw, new [] {temp});
+            }
         }
 
         private int schemesSelected = 0;
-        void LOnLeftPressed(object sender, EventArgs e) {
+        private int schemesType = 0;
+        void OnSchemesEditorBlockListSelect(object sender, EventArgs e) {
             int i = (int) ((Label) sender).Tag;
 
+            schemesType = 0;
             schemesSelected = i;
         }
 
         private bool schemesReady;
         private void SchemeEditorInit() {
-            for (int i = 0; i < scheme.block.GetLength(0); i++) {
-                for (int j = 0; j < scheme.block.GetLength(1); j++) {
-                    scheme.block[i, j] = new Block() {
+            for (int i = 0; i < SchemEditorTempMap.block.GetLength(0); i++) {
+                for (int j = 0; j < SchemEditorTempMap.block.GetLength(1); j++) {
+                    SchemEditorTempMap.block[i, j] = new Block() {
+                        Id = "0",
+                        MTex = "none"
+                    };
+                    SchemEditorTempMap.floor[i, j] = new Floor()
+                    {
                         Id = "0",
                         MTex = "none"
                     };
                 }
             }
 
-            SchemesContainer.Clear();
+            SchemesBlocks.Clear();
             for (int i = 0; i < BlockDataBase.Data.Count; i++) {
                 var l = new Label(Vector2.Zero,
                           BlockDataBase.Data.ElementAt(i).Key + " " + BlockDataBase.Data.ElementAt(i).Value.Name,
-                          Color.White, SchemesContainer);
+                          Color.White, SchemesBlocks);
                 l.Tag = i;
-                l.OnLeftPressed += LOnLeftPressed;
+                l.OnLeftPressed += OnSchemesEditorBlockListSelect;
+            }
+
+            SchemesFloors.Clear();
+            for (int i = 0; i < FloorDataBase.Data.Count; i++)
+            {
+                var l = new Label(Vector2.Zero,
+                          FloorDataBase.Data.ElementAt(i).Key + " " + FloorDataBase.Data.ElementAt(i).Value.Name,
+                          Color.White, SchemesFloors);
+                l.Tag = i;
+                l.OnLeftPressed += OnSchemesEditorFloorListSelect;
             }
 
             SchemesExist.Clear();
             foreach (var sch in SchemesDataBase.Data) {
                 var l = new Label(Vector2.Zero, sch.filename, SchemesExist);
                 l.Tag = sch;
-                l.OnLeftPressed += l_OnLeftPressed;
+                l.OnLeftPressed += OnSchemesEditorSchemesListSelect;
             }
 
             schemesReady = true;
         }
 
-        void l_OnLeftPressed(object sender, LabelPressEventArgs e) {
+        void OnSchemesEditorFloorListSelect(object sender, LabelPressEventArgs e)
+        {
+            int i = (int)((Label)sender).Tag;
+
+            schemesType = 1;
+            schemesSelected = i;
+        }
+
+        void OnSchemesEditorSchemesListSelect(object sender, LabelPressEventArgs e) {
             Schemes s = (Schemes) ((Label) sender).Tag;
-            scheme = new SchemesMap(s.x, s.y);
-            for (int i = 0; i < scheme.rx; i++)
+            SchemEditorTempMap = new SchemesMap(s.x, s.y);
+            for (int i = 0; i < SchemEditorTempMap.rx; i++)
             {
-                for (int j = 0; j < scheme.ry; j++)
+                for (int j = 0; j < SchemEditorTempMap.ry; j++)
                 {
-                    scheme.block[i, j] = new Block()
+                    SchemEditorTempMap.block[i, j] = new Block()
                     {
                         Id = s.data[i * s.y + j],
                         MTex = BlockDataBase.Data[s.data[i * s.y + j]].MTex
+                    };
+
+                    SchemEditorTempMap.floor[i, j] = new Floor()
+                    {
+                        Id = s.floor[i * s.y + j],
+                        MTex = FloorDataBase.Data[s.floor[i * s.y + j]].MTex
                     };
                 }
             }
         }
 
-        void JargMain_OnMouseDown(object sender, Image.MouseStateEventArgs e) {
+        void OnSchemesPictureBoxSelect(object sender, Image.MouseStateEventArgs e) {
             Point p = (Point) ((Image) sender).Tag;
-
-            if(scheme.rx > schemesOffset.X + p.X && scheme.ry > schemesOffset.Y + p.Y && schemesOffset.X + p.X > 0 && schemesOffset.Y + p.Y > 0 && e.Ms.LeftButton == ButtonState.Pressed) {
-                string i = BlockDataBase.Data.ElementAt(schemesSelected).Key;
-                scheme.block[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].Id = i;
-                scheme.block[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].MTex = BlockDataBase.Data[i].MTex;
+            
+            if(SchemEditorTempMap.rx > schemesOffset.X + p.X && SchemEditorTempMap.ry > schemesOffset.Y + p.Y && schemesOffset.X + p.X > 0 && schemesOffset.Y + p.Y > 0 && e.Ms.LeftButton == ButtonState.Pressed) {
+                if (schemesType == 0) {
+                    string i = BlockDataBase.Data.ElementAt(schemesSelected).Key;
+                    SchemEditorTempMap.block[(int) schemesOffset.X + p.X, (int) schemesOffset.Y + p.Y].Id = i;
+                    SchemEditorTempMap.block[(int) schemesOffset.X + p.X, (int) schemesOffset.Y + p.Y].MTex =
+                        BlockDataBase.Data[i].MTex;
+                }
+                if (schemesType == 1)
+                {
+                    string i = FloorDataBase.Data.ElementAt(schemesSelected).Key;
+                    SchemEditorTempMap.floor[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].Id = i;
+                    SchemEditorTempMap.floor[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].MTex =
+                        FloorDataBase.Data[i].MTex;
+                }
             }
 
             if (e.Ms.RightButton == ButtonState.Pressed) {
@@ -1394,12 +1467,29 @@ namespace jarg {
             if(SchemesEditorWindow.Visible && schemesReady) {
                 for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                     for (int j = 0; j < SchemesImages.GetLength(1); j++) {
-                        if (scheme.rx > (int)schemesOffset.X + i && scheme.ry > (int)schemesOffset.Y + j && (int)schemesOffset.X + i >= 0 && (int)schemesOffset.Y + j >= 0)
+                        if (SchemEditorTempMap.rx > (int)schemesOffset.X + i && SchemEditorTempMap.ry > (int)schemesOffset.Y + j && (int)schemesOffset.X + i >= 0 && (int)schemesOffset.Y + j >= 0)
                         {
-                            SchemesImages[i, j].image = Atlases.Instance.BlockArray[scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex];
-                            if (scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].Id == "0")
+                            SchemesImages[i, j].image = Atlases.Instance.BlockArray[SchemEditorTempMap.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex];
+                            var tt =
+                                SchemEditorTempMap.floor[i + (int) schemesOffset.X, j + (int) schemesOffset.Y].MTex;
+                            switch (tt) {
+                                case "none":
+                                    SchemesImagesFloor[i, j].image = Atlases.Instance.BlockArray["none"];
+                                    break;
+                                case "error":
+                                    SchemesImagesFloor[i, j].image = Atlases.Instance.BlockArray["error"];
+                                    break;
+                                case "0":
+                                    SchemesImagesFloor[i, j].image = Atlases.Instance.BlockArray["none"];
+                                    break;
+                                default:
+                                    SchemesImagesFloor[i, j].image = Atlases.Instance.FloorArray[tt];
+                                    break;
+                            }
+                            
+                            if(SchemEditorTempMap.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].Id == "0")
                             {
-                                scheme.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex = "notex";
+                                SchemEditorTempMap.block[i + (int)schemesOffset.X, j + (int)schemesOffset.Y].MTex = "notex";
                                 SchemesImages[i, j].col_ = Color.Red;
                             } else {
                                 SchemesImages[i, j].col_ = Color.White;
@@ -1529,25 +1619,20 @@ namespace jarg {
     {
         public Block[,] block;
         public int rx, ry;
+        public Floor[,] floor;
 
         public SchemesMap(int x, int y)
         {
             rx = x;
             ry = y;
             block = new Block[x, y];
-
-            //for (int i = 0; i < x; i++) {
-            //    for (int j = 0; j < y; j++) {
-            //        block[i, j] = new Block();
-            //    }
-            //}
+            floor = new Floor[x, y];
         }
 
         public void CreateAllMapFromArray(string[] ints)
         {
             for (int i = 0; i < ints.Length; i++) {
                 block[i / ry, i % ry].Id = ints[i];
-                block[i / ry, i % ry].MTex = BlockDataBase.Data[ints[i]].MTex;
             }
         }
     }

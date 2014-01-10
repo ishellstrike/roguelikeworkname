@@ -77,16 +77,16 @@ namespace rglikeworknamelib.Generation {
             var l = new List<Block>();
             SectorBiom sb = SectorBiom.House;
                         switch (scheme.type) {
-                            case SchemesType.Shop:
+                            case SectorBiom.Shop:
                                 sb = SectorBiom.Shop;
                                 break;
-                            case SchemesType.Hospital:
+                            case SectorBiom.Hospital:
                                 sb = SectorBiom.Hospital;
                                 break;
-                            case SchemesType.Storage:
+                            case SectorBiom.Storage:
                                 sb = SectorBiom.Storage;
                                 break;
-                            case SchemesType.WearShop:
+                            case SectorBiom.WearShop:
                                 sb = SectorBiom.WearStore;
                                 break;
                         }
@@ -162,11 +162,11 @@ namespace rglikeworknamelib.Generation {
         /// <param name="posY">offser y</param>
         /// <param name="rnd">seeded random</param>
         /// <returns>Size of placed scheme</returns>
-        internal static Point PlaceRandomSchemeByType(GameLevel gl, SchemesType schemeType, int posX, int posY,
+        internal static Point PlaceRandomSchemeByType(GameLevel gl, SectorBiom schemeType, int posX, int posY,
                                                       Random rnd) {
             List<Schemes> a;
             switch (schemeType) {
-                case SchemesType.House:
+                case SectorBiom.House:
                     a = SchemesDataBase.Houses;
                     break;
 
@@ -676,27 +676,43 @@ namespace rglikeworknamelib.Generation {
             for (int k = 0; k < 16; k++) {
                 for (int l = 0; l < 16; l++) {
                     if (k < a.x && l < a.y) {
-                        var tt = a.data[k*a.y + l];
-                        if (tt != "0") {
+                        var tt = a.floor[k * a.y + l];
+                        bool hasFloor = false;
+                        if (tt != "0")
+                        {
+                            sector.SetFloor(k, l, tt);
+                            hasFloor = true;
+                        }
+                        tt = a.data[k*a.y + l];
+                        if (tt != "0" || hasFloor) {
                             sector.SetBlock(k, l, tt);
+                            var block = sector.GetBlock(k, l);
+
+                            if (block.Data.ItemSpawn != null)
+                            {
+                                foreach (var drop in block.Data.ItemSpawn)
+                                {
+                                    var thr = rnd.Next(100) + 1;
+                                    if (drop.Prob >= thr)
+                                    {
+                                        for (int n = 0; n < drop.Repeat; n++)
+                                        {
+                                            var item = ItemFactory.GetInstance(drop.Ids[rnd.Next(drop.Ids.Count)],
+                                                                            rnd.Next(drop.Max - drop.Min) +
+                                                                            drop.Min);
+                                            if (item != null)
+                                            {
+                                                block.StoredItems.Add(item);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-            switch (a.type) {
-                    case SchemesType.House:
-                    sector.Biom = SectorBiom.House;
-                    break;
-                    case SchemesType.Shop:
-                    sector.Biom = SectorBiom.Shop;
-                    break;
-                    case SchemesType.Hospital:
-                    sector.Biom = SectorBiom.Hospital;
-                    break;
-                    case SchemesType.WearShop:
-                    sector.Biom = SectorBiom.WearStore;
-                    break;
-            }
+            sector.Biom = a.type;
 
             temp.Add(new KeyValuePair<Point, MapSector>(p, sector));
         }

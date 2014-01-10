@@ -65,7 +65,6 @@ namespace rglikeworknamelib {
             MajorAtlas = GenerateMajorAtlas(gd, out MajorIndexes, BlockArray, FloorArray, VehicleArray, CreatureArray);
 
             CreatureArray.Clear();
-            FloorArray.Clear();
             VehicleArray.Clear();
         }
 

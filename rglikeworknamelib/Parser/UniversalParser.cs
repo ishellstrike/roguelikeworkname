@@ -179,7 +179,7 @@ namespace rglikeworknamelib.Parser {
             return temp;
         }
 
-        public static Dictionary<string, T> JsonDataLoader<T>(string directory)
+        public static Dictionary<string, T> JsonDictionaryDataLoader<T>(string directory)
         {
             var serializer = new JsonSerializer { Formatting = Formatting.Indented };
             serializer.Converters.Add(new StringEnumConverter());
@@ -199,6 +199,23 @@ namespace rglikeworknamelib.Parser {
                             logger.Error("Key Duplicate in {2} with id={0} from {1}", itemData.Key, patch, typeof(T).Name);
                         }
                     }
+                }
+            }
+            return data;
+        }
+
+        public static List<T> JsonListDataLoader<T>(string directory)
+        {
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+            serializer.Converters.Add(new StringEnumConverter());
+            var data = new List<T>();
+
+            var dir = Directory.GetFiles(directory, "*.json");
+            foreach (var patch in dir)
+            {
+                using (var sr = new StreamReader(patch, Encoding.Default)) {
+                    var t = serializer.Deserialize<List<T>>(new JsonTextReader(sr));
+                    data.AddRange(t);
                 }
             }
             return data;

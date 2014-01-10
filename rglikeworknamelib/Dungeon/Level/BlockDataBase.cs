@@ -20,7 +20,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public BlockDataBase() {
             Storages = new Dictionary<string, BlockData>();
 
-            Data = UniversalParser.JsonDataLoader<BlockData>(Settings.GetObjectDataDirectory());
+            Data = UniversalParser.JsonDictionaryDataLoader<BlockData>(Settings.GetObjectDataDirectory());
 
             foreach (var pair in Data.Where(pair => pair.Value.SmartAction == SmartAction.ActionOpenContainer)) {
                 Storages.Add(pair.Key, pair.Value);

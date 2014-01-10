@@ -36,7 +36,7 @@ namespace rglikeworknamelib.Dungeon.Items
             //texatlas = texatlas_;
             Data = new Dictionary<string, ItemData>();
 
-            Data = UniversalParser.JsonDataLoader<ItemData>(Settings.GetItemDataDirectory());
+            Data = UniversalParser.JsonDictionaryDataLoader<ItemData>(Settings.GetItemDataDirectory());
 
             Settings.NeedToShowInfoWindow = true;
             Settings.NTS1 = "Item assembly loading";
