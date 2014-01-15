@@ -104,15 +104,15 @@ namespace Mork {
 
             TimeSpan overal = draw.Elapsed + update.Elapsed;
 
-            var sdraw = (int) (draw.Elapsed.TotalMilliseconds/overal.TotalMilliseconds*60.0);
-            int supd = (60 - sdraw);
+            var supd = (int) (update.Elapsed.TotalMilliseconds/overal.TotalMilliseconds*60.0);
+            int sudraw = (60 - supd);
 
-            for (int i = 0; i < sdraw; i++) {
+            for (int i = 0; i < supd; i++) {
                 lb.AddLine(new Vector2(10 + i, 130) + offset, new Vector2(10 + i, 100) + offset, Color.DarkBlue, 1);
             }
 
-            for (int i = 0; i < supd; i++) {
-                lb.AddLine(new Vector2(10 + i + sdraw, 130) + offset, new Vector2(10 + i + sdraw, 100) + offset,
+            for (int i = 0; i < sudraw; i++) {
+                lb.AddLine(new Vector2(10 + i + supd, 130) + offset, new Vector2(10 + i + supd, 100) + offset,
                            Color.DarkGreen, 1);
             }
 

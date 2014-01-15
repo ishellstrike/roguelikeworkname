@@ -497,7 +497,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 sec += gt.ElapsedGameTime;
             }
-            if (ignore || sec.TotalSeconds >= 3)
+            if (ignore || sec.TotalSeconds >= 10)
             {
                 sec = TimeSpan.Zero;
                 int rx = MapSector.Rx;
@@ -511,7 +511,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     // Math.Abs((a.Value.SectorOffsetY + 0.5)*MapSector.Ry - cara.GetPositionInBlocks().Y) > 128) {
                     // sectors_.Remove(sectors_.ElementAt(i).Key);
                     //}
-                    if ((a.Key.X + 1) * 32 * rx - camera.X < -32 || (a.Key.Y + 1) * 32 * ry - camera.Y < -32 || a.Key.X * 32 * rx - camera.X > resolution.X || a.Key.Y * 32 * ry - camera.Y > resolution.Y)
+                    //if ((a.Key.X + 1) * 32 * rx - camera.X < -32 || (a.Key.Y + 1) * 32 * ry - camera.Y < -32 || a.Key.X * 32 * rx - camera.X > resolution.X || a.Key.Y * 32 * ry - camera.Y > resolution.Y)
                     {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
                         i--;
@@ -1235,10 +1235,10 @@ namespace rglikeworknamelib.Dungeon.Level
                     {
                         {
                             
-                            spriteBatch_.Draw(fatlas,
-                                              new Vector2(posx, posy),
-                                              sector.Floors[a].Source,
-                                              Color.White);
+                            //spriteBatch_.Draw(fatlas,
+                            //                  new Vector2(posx, posy),
+                            //                  sector.Floors[a].Source,
+                            //                  Color.White);
                         }
                         a++;
                         posy += 32;
@@ -1325,7 +1325,7 @@ namespace rglikeworknamelib.Dungeon.Level
                             if (block.Id != "0")
                             {
                                 if (block.Lightness != Color.Black || block.Data.Wallmaker) {
-                                    spriteBatch_.Draw(batlas, new Vector2(xpos, ypos), block.Source, block.Lightness);
+                                   // spriteBatch_.Draw(batlas, new Vector2(xpos, ypos), block.Source, block.Lightness);
                                     if ((shad || MapJustUpdated) && !block.Data.IsTransparent)
                                     {
                                         AddShadowpointForBlock(camera, per, xpos, ypos, block.Data.swide);
@@ -1480,6 +1480,46 @@ namespace rglikeworknamelib.Dungeon.Level
                         posy += 32;
                     }
                     posx += 32;
+                }
+            }
+        }
+
+        public void RenderMap(GraphicsDevice graphicsDevice, Camera cam, Effect solidEffect)
+        {
+            solidEffect.Parameters["worldMatrix"].SetValue(Matrix.Identity);
+            solidEffect.Parameters["viewMatrix"].SetValue(cam.View);
+            solidEffect.Parameters["projectionMatrix"].SetValue(cam.Projection);
+            solidEffect.Parameters["shaderTexture"].SetValue(Atlases.Instance.MajorAtlas);
+            solidEffect.Parameters["diffuseColor"].SetValue(Color.White.ToVector4());
+            solidEffect.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
+            solidEffect.Parameters["lightDirection"].SetValue(Vector3.Normalize(new Vector3(-0.2f,-0.2f,-1)));
+            if (!Settings.DebugWire)
+            {
+                graphicsDevice.RasterizerState = new RasterizerState
+                {
+                    CullMode = CullMode.None,
+                    FillMode = FillMode.Solid
+                };
+            }
+            else
+            {
+                graphicsDevice.RasterizerState = new RasterizerState
+                {
+                    CullMode = CullMode.None,
+                    FillMode = FillMode.WireFrame
+                };
+            }
+            foreach (var pass in solidEffect.CurrentTechnique.Passes)
+            {
+                foreach (var sector in sectors_) {
+                    if (!sector.Value.GeomReady) {
+                        sector.Value.RebuildGeometry();
+                    }
+                    else {
+                        solidEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateTranslation(-sector.Value.SectorOffsetX * 16, -sector.Value.SectorOffsetY * 16, 0));
+                        pass.Apply();
+                        graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces, 0, sector.Value.verteces.Length / 3);
+                    }
                 }
             }
         }

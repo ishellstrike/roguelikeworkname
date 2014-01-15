@@ -83,6 +83,7 @@ namespace jarg {
                     }
                 }
 
+
                 if (ks_[Keys.L] == KeyState.Down && lks_[Keys.L] == KeyState.Up) {
                     EventLogWindow.Visible = !EventLogWindow.Visible;
                     if (EventLogWindow.Visible) {

@@ -13,6 +13,7 @@ namespace jarg {
         private bool firstclick_;
         private bool rememberShoot_;
         //private TimeSpan sec20glitch;
+        private int rotater;
 
         private void UpdateMouse(GameTime gameTime) {
             lms_ = ms_;
@@ -43,6 +44,20 @@ namespace jarg {
 
             if (ms_.LeftButton == ButtonState.Released) {
                 rememberShoot_ = false;
+            }
+
+            if (ms_.MiddleButton == ButtonState.Pressed) {
+                var a = lms_.X - ms_.X;
+
+                cam.RotationF += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds * 100;
+                if (cam.RotationF > 360)
+                {
+                    cam.RotationF -= 360;
+                }
+                if (cam.RotationF < 0)
+                {
+                    cam.RotationF += 360;
+                }
             }
 
             if (!ws_.Mopusehook) {

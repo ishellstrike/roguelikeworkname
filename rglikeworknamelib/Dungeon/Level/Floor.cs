@@ -32,8 +32,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             get { return data_; }
         }
         [NonSerialized]
-        private Rectangle source_;
-        public Rectangle Source {
+        private Vector2 source_;
+        public Vector2 Source {
             get { return source_; }
         }
     }

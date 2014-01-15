@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
@@ -103,6 +104,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             //    floor.Source = FloorData.GetSource(floor.MTex);
             //}
         }
+
+        public bool GeomReady;
 
         public void ResetLightingSources() {
             Lights.Clear();
@@ -323,6 +326,110 @@ namespace rglikeworknamelib.Dungeon.Level {
                 Decals.RemoveAt(0);
                 Decals.RemoveAt(0);
             }
+        }
+
+        internal VertexPositionNormalTexture[] verteces;
+        public void RebuildGeometry() {
+            var a = new List<VertexPositionNormalTexture>();
+
+            for (int i = 0; i < Rx; i++) {
+                for (int j = 0; j < Ry; j++)
+                {
+                    Vector2 textureCoordinate = Floors[i * Rx + j].Source;
+                    a.Add(new VertexPositionNormalTexture(
+                              new Vector3(i, j, 0), Vector3.One,
+                              textureCoordinate));
+                    a.Add(
+                        new VertexPositionNormalTexture(
+                            new Vector3(i + 1, j, 0), Vector3.One,
+                            textureCoordinate + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+                    a.Add(
+                        new VertexPositionNormalTexture(
+                            new Vector3(i, j + 1, 0), Vector3.One,
+                            textureCoordinate + new Vector2(0, Atlases.Instance.SpriteHeight)));
+
+                    a.Add(
+                        new VertexPositionNormalTexture(
+                            new Vector3(i + 1, j, 0), Vector3.One,
+                            textureCoordinate + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+                    a.Add(
+                        new VertexPositionNormalTexture(
+                            new Vector3(i + 1, j + 1, 0), Vector3.One,
+                            textureCoordinate +
+                            new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+                    a.Add(
+                        new VertexPositionNormalTexture(
+                            new Vector3(i, j + 1, 0), Vector3.One,
+                            textureCoordinate + new Vector2(0, Atlases.Instance.SpriteHeight)));
+
+
+                }
+            }
+
+            for (int i = 0; i < Rx; i++)
+            {
+                for (int j = 0; j < Ry; j++)
+                {
+                    Block block = Blocks[i * Rx + j];
+                    if (block.Id != "0")
+                    {
+                        a.Add(new VertexPositionNormalTexture(
+                                  new Vector3(i, j + 0.5f, 1), Vector3.One,
+                                  block.Source));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 1, j + 0.5f, 1), Vector3.One,
+                                block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i, j + 0.5f, 0), Vector3.One,
+                                block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 1, j + 0.5f, 1), Vector3.One,
+                                block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 1, j + 0.5f, 0), Vector3.One,
+                                block.Source +
+                                new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i, j + 0.5f, 0), Vector3.One,
+                                block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+
+
+
+                        a.Add(new VertexPositionNormalTexture(
+                                  new Vector3(i + 0.5f, j, 1), Vector3.One,
+                                  block.Source));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 0.5f, j + 1, 1), Vector3.One,
+                                block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 0.5f, j, 0), Vector3.One,
+                                block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 0.5f, j + 1, 1), Vector3.One,
+                                block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 0.5f, j + 1, 0), Vector3.One,
+                                block.Source +
+                                new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+                        a.Add(
+                            new VertexPositionNormalTexture(
+                                new Vector3(i + 0.5f, j, 0), Vector3.One,
+                                block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+                    }
+                }
+            }
+
+            verteces = a.ToArray();
+            GeomReady = true;
         }
     }
 }

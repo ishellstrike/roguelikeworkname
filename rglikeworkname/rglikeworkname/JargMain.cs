@@ -77,6 +77,9 @@ namespace jarg {
         private Texture2D lightMapTexture_;
         private SpriteBatch spriteBatch_;
         private VertexPositionTexture[] vertices_;
+        private Camera cam;
+
+        private Effect solidEffect;
 
         private Texture2D whitepixel_;
         private WindowSystem ws_;
@@ -150,6 +153,9 @@ namespace jarg {
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             InactiveSleepTime = TimeSpan.FromMilliseconds(200);
 
+            cam = new Camera(new Vector3(1, 1, 1), GraphicsDevice);
+            cam.Target = new Vector3(0, 0, 0);
+
             IsFixedTimeStep = false;
             graphics_.SynchronizeWithVerticalRetrace = true;
             IsMouseVisible = true;
@@ -222,6 +228,8 @@ namespace jarg {
             effectOmnilight_.Parameters["screenHeight"].SetValue(height);
             lineBatch_.UpdateProjection(GraphicsDevice);
             Atlases.Instance.RebuildAtlases(GraphicsDevice);
+
+            cam.GeneratePerspectiveProjectionMatrix(MathHelper.ToRadians(45));
         }
 
         protected override void OnActivated(object sender, EventArgs args) {
@@ -250,6 +258,7 @@ namespace jarg {
 
             lig1 = Content.Load<Effect>(@"Effects\Lighting1");
             effectOmnilight_ = Content.Load<Effect>(@"Effects\Effect1");
+            solidEffect = Content.Load<Effect>(@"Effects\solid");
 
             arup_ = ContentProvider.LoadTexture(@"Textures\arrow_up");
             ardown_ = ContentProvider.LoadTexture(@"Textures\arrow_down");
@@ -505,13 +514,10 @@ namespace jarg {
 
             PlayerSeeAngle =
                 (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
-            if (car != null) {
-                float f = -car.Roration - 3.14f/4f;
-                pivotpoint_ += new Vector2((float) (Math.Cos(f)*car.Vel + Math.Sin(f)*car.Vel)*50,
-                                           (float) (-Math.Sin(f)*car.Vel + Math.Cos(f)*car.Vel)*50/
-                                           GraphicsDevice.DisplayMode.AspectRatio);
-            }
-            camera_ = Vector2.Lerp(camera_, pivotpoint_, (float) gameTime.ElapsedGameTime.TotalSeconds*4);
+
+            cam.Target.X = -player_.Position.X/32f;
+            cam.Target.Y = -player_.Position.Y/32f;
+            cam.Update(Vector3.Zero);
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
@@ -578,59 +584,72 @@ namespace jarg {
             //EffectOmnilight.Parameters["cpos"].SetValue(new[]
             //{player_.Position.X - camera_.X, player_.Position.Y - camera_.Y});
 
-            GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            GraphicsDevice.Clear(Color.Black);
-            //color maps
-            spriteBatch_.Begin();
-            currentFloor_.DrawFloors(gameTime, camera_);
-            currentFloor_.DrawDecals(gameTime, camera_);
-            spriteBatch_.End();
-            GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
-            GraphicsDevice.Clear(Color.Transparent);
-            currentFloor_.ShadowRender();
-            GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            spriteBatch_.Begin();
-            spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.75f));
-            currentFloor_.DrawBlocks(gameTime, camera_, player_);
-            player_.Draw(gameTime, camera_, null);
-            if (client_ != null) {
-                foreach (var otherclient in client_.otherclients) {
-                    player_.Draw(gameTime, camera_, otherclient);
-                }
-            }
-            spriteBatch_.End();
-            currentFloor_.DrawEntities(gameTime, camera_);
-            spriteBatch_.Begin();
-            BulletSystem.Draw(gameTime, camera_);
-            ps_.Draw(gameTime, camera_);
-            spriteBatch_.End();
+            //GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
+            //GraphicsDevice.Clear(Color.Black);
+            ////color maps
+            //spriteBatch_.Begin();
+            //currentFloor_.DrawFloors(gameTime, camera_);
+            //currentFloor_.DrawDecals(gameTime, camera_);
+            //spriteBatch_.End();
+            //GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+            //GraphicsDevice.Clear(Color.Transparent);
+            //currentFloor_.ShadowRender();
+            //GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
+            //spriteBatch_.Begin();
+            //spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.75f));
+            //currentFloor_.DrawBlocks(gameTime, camera_, player_);
+            //player_.Draw(gameTime, camera_, null);
+            //if (client_ != null) {
+            //    foreach (var otherclient in client_.otherclients) {
+            //        player_.Draw(gameTime, camera_, otherclient);
+            //    }
+            //}
+            //spriteBatch_.End();
+            //currentFloor_.DrawEntities(gameTime, camera_);
+            //spriteBatch_.Begin();
+            //BulletSystem.Draw(gameTime, camera_);
+            //ps_.Draw(gameTime, camera_);
+            //spriteBatch_.End();
 
 
-            if (Settings.Lighting) {
-                lightMapTexture_ = GenerateShadowMap();
+            //if (Settings.Lighting) {
+            //    lightMapTexture_ = GenerateShadowMap();
 
-                GraphicsDevice.SetRenderTarget(null);
-                DrawCombinedMaps();
-            }
-            else {
-                GraphicsDevice.SetRenderTarget(null);
-                spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, ScaleAll2);
-                spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
-                spriteBatch_.End();
-            }
+            //    GraphicsDevice.SetRenderTarget(null);
+            //    DrawCombinedMaps();
+            //}
+            //else {
+            //    GraphicsDevice.SetRenderTarget(null);
+            //    spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, ScaleAll2);
+            //    spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
+            //    spriteBatch_.End();
+            //}
 
             
-            if (Settings.DebugInfo) {
-                spriteBatch_.Begin();
-                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(11, 101), Color.Black);
-                spriteBatch_.DrawString(font1_, "req:"+levelWorker_.LoadCount.ToString(), new Vector2(10, 100), Color.White);
-                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(11, 121), Color.Black);
-                spriteBatch_.DrawString(font1_, "store:"+levelWorker_.StoreCount.ToString(), new Vector2(10, 120), Color.White);
-                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(11, 141), Color.Black);
-                spriteBatch_.DrawString(font1_, "ready:"+levelWorker_.ReadyCount.ToString(), new Vector2(10, 140), Color.White);
-                spriteBatch_.End();
+            //if (Settings.DebugInfo) {
+            //    spriteBatch_.Begin();
+            //    spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(11, 101), Color.Black);
+            //    spriteBatch_.DrawString(font1_, "req:"+levelWorker_.LoadCount.ToString(), new Vector2(10, 100), Color.White);
+            //    spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(11, 121), Color.Black);
+            //    spriteBatch_.DrawString(font1_, "store:"+levelWorker_.StoreCount.ToString(), new Vector2(10, 120), Color.White);
+            //    spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(11, 141), Color.Black);
+            //    spriteBatch_.DrawString(font1_, "ready:"+levelWorker_.ReadyCount.ToString(), new Vector2(10, 140), Color.White);
+            //    spriteBatch_.End();
+            //}
+
+            currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect);
+            foreach (var pass in solidEffect.CurrentTechnique.Passes) {
+                pass.Apply();
+                var asd = new[] {
+                    new VertexPositionNormalTexture(new Vector3(-player_.Position.X/32f + 0, -player_.Position.Y/32f + 0, 0), Vector3.Up, new Vector2(0,0)),
+                    new VertexPositionNormalTexture(new Vector3(-player_.Position.X/32f + 1, -player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(1,1)),
+                    new VertexPositionNormalTexture(new Vector3(-player_.Position.X/32f + 0, -player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(0,1))
+                };
+
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, asd, 0, asd.Length / 3);
             }
             
+            //base.Draw(gameTime);
         }
 
         private Texture2D GetRenderedFlashlight() {

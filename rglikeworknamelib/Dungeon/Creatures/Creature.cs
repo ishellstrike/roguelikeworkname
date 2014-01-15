@@ -100,7 +100,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             }
             set
             {
-                Source = BlockData.GetSource(value);
+                //Source = BlockData.GetSource(value);
                 mTex_ = value;
             }
         }

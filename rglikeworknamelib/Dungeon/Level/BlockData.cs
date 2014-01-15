@@ -29,14 +29,14 @@ namespace rglikeworknamelib.Dungeon.Level {
             return MTex;
         }
 
-        public static Rectangle GetSource(string s) {
+        public static Vector2 GetSource(string s) {
             //server notex
             if (Atlases.Instance == null)
             {
-                return new Rectangle(0, 0, 0, 0);
+                return new Vector2(0, 0);
             }
             int index = Atlases.Instance.MajorIndexes[s];
-            return new Rectangle(index%32*32, index/32*32, 32, 32);
+            return new Vector2((index%32*32f)/Atlases.Instance.MajorAtlas.Width, (index/32*32f)/Atlases.Instance.MajorAtlas.Height);
         }
     }
 }

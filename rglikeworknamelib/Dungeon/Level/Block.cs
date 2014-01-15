@@ -22,7 +22,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public Color Lightness { get; set; }
 
-        public Rectangle Source { get; private set; }
+        public Vector2 Source { get; private set; }
 
         public bool IsVisible()
         {

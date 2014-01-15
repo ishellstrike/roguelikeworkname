@@ -63,10 +63,15 @@ namespace rglikeworknamelib {
             VehicleArray = ParsersCore.LoadTexturesTagged(Settings.GetVehicleTextureDirectory() + @"\textureloadorder.ord");
 
             MajorAtlas = GenerateMajorAtlas(gd, out MajorIndexes, BlockArray, FloorArray, VehicleArray, CreatureArray);
+            SpriteWidth = 32f / MajorAtlas.Width;
+            SpriteHeight = 32f / MajorAtlas.Height;
 
             CreatureArray.Clear();
             VehicleArray.Clear();
         }
+
+        public float SpriteWidth { get; private set; }
+        public float SpriteHeight { get; private set; }
 
         private Texture2D GenerateMajorAtlas(GraphicsDevice gd, out Dictionary<string, int> indexes, params Dictionary<string, Texture2D>[] texes) {
             indexes = new Dictionary<string, int>();
