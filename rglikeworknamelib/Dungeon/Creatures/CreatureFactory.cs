@@ -7,7 +7,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
 {
     public class CreatureFactory {
         private static readonly Logger logger = LogManager.GetLogger("ItemFactory");
-        public static Creature GetInstance(string id, Vector2 pos = default(Vector2))
+        public static Creature GetInstance(string id, Vector3 pos = default(Vector3))
         {
             if (!CreatureDataBase.Data.ContainsKey(id))
             {

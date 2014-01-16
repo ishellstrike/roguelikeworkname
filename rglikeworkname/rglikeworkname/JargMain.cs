@@ -451,7 +451,7 @@ namespace jarg {
 
             if (player_ != null)
             {
-                pivotpoint_ = Vector2.Subtract(player_.Position, Vector2.Divide(Settings.Resolution, 2));
+                pivotpoint_ = Vector2.Subtract(new Vector2(player_.Position.X, player_.Position.Y), Vector2.Divide(Settings.Resolution, 2));
             }
 
             if (!Settings.GamePause) {
@@ -724,7 +724,7 @@ namespace jarg {
             GraphicsDevice.SetRenderTarget(lightMapRenderTarget_);
             GraphicsDevice.Clear(Color.Black);
             spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-            spriteBatch_.Draw(fltex, (player_.Position - camera_)/LightQ, null, Color.White, PlayerSeeAngle + MathHelper.PiOver2, new Vector2((fltex.Width / 2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
+            spriteBatch_.Draw(fltex, (new Vector2(player_.Position.X,player_.Position.Y)  - camera_)/LightQ, null, Color.White, PlayerSeeAngle + MathHelper.PiOver2, new Vector2((fltex.Width / 2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
             if (client_ != null) {
                 foreach (var otherclient in client_.otherclients) {
                     spriteBatch_.Draw(fltex, (new Vector2(otherclient.Value.x, otherclient.Value.y) - camera_)/LightQ,
@@ -763,11 +763,11 @@ namespace jarg {
         private void DebugInfoDraw() {
             string ss =
                 string.Format(
-                    "SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}",
+                    "SAng {0} \nPCount {1}   BCount {5}\nDT {3} WorldT {2} \nSectors {4} Generated {6} \nSTri {7} slen {8} {9}\nMH={10} KH={11}\n{12}",
                     PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
                     currentFloor_.SectorCount(), BulletSystem.GetCount(), currentFloor_.generated,
                     currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),
-                    GlobalWorldLogic.DayPart, ws_.Mopusehook, ws_.Keyboardhook);
+                    GlobalWorldLogic.DayPart, ws_.Mopusehook, ws_.Keyboardhook,cam.rot);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 

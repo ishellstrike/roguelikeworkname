@@ -63,9 +63,9 @@ namespace rglikeworknamelib.Dungeon.Vehicles {
         public void Update(GameTime gt, Player driver) {
             double time = gt.ElapsedGameTime.TotalSeconds;
 
-            driver.Position = WorldPosition();
+            //driver.Position = WorldPosition();
 
-            Acceleration = driver.Velocity;
+            Acceleration = new Vector2(driver.Velocity.X, driver.Velocity.Y);
 
             if (!Skipp || !ms_.Ready) {
                 Roration += Acceleration.X/500f*(-Vel/10);

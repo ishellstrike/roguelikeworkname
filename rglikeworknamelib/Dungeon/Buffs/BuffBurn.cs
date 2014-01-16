@@ -10,7 +10,8 @@ namespace rglikeworknamelib.Dungeon.Buffs {
         public override void Update(GameTime gt) {
             ts += gt.ElapsedGameTime;
             if (ts.TotalMilliseconds > 200) {
-                var part = new Particle(Target.WorldPosition() + new Vector2(16, 16), 2) {
+                var part = new Particle(new Vector2(Target.WorldPosition().X, Target.WorldPosition().Y) + new Vector2(16, 16), 2)
+                {
                     Scale = 1.5f,
                     ScaleDelta = -0.8f,
                     Life = TimeSpan.FromMilliseconds(1500),

@@ -21,11 +21,11 @@ namespace rglikeworknamelib.Dungeon.Creatures
         internal Color Col;
 
         internal float Percenter = (float) Settings.rnd.NextDouble()/5f + 0.8f;
-        public Vector2 Velocity;
+        public Vector3 Velocity;
         private Abilities abilities_ = new Abilities();
         private List<IBuff> buffs_ = new List<IBuff>();
         internal Stat hp_ = new Stat(200);
-        private Vector2 lastpos_;
+        private Vector3 lastpos_;
 
         /// <summary>
         /// can be used for behavior proposes
@@ -37,7 +37,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
         public Order CurrentOrder { get { return order_; } }
         public Order LastOrder { get { return lastOrder_; } }
 
-        internal Vector2 position_;
+        internal Vector3 position_;
         public TimeSpan reactionT_ = TimeSpan.Zero;
         public TimeSpan sec_ = TimeSpan.Zero;
         public Vector2 sectoroffset_;
@@ -47,7 +47,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
         [NonSerialized]
         private CreatureData data_;
 
-        public Vector2 LastPos {
+        public Vector3 LastPos {
             get { return lastpos_; }
             set { lastpos_ = value; }
         }
@@ -55,7 +55,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
         public Vector2 ShootPoint { get; set; }
         //public string Id { get; internal set; }
 
-        public Vector2 Position {
+        public Vector3 Position {
             get { return position_; }
             set {
                 lastpos_ = position_;
@@ -159,7 +159,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
         /// </summary>
         /// <returns></returns>
         public Vector2 GetWorldPositionInBlocks() {
-            Vector2 po = WorldPosition();
+            Vector2 po = new Vector2(WorldPosition().X, WorldPosition().Y);
             po.X = po.X < 0 ? po.X/32 - 1 : po.X/32;
             po.Y = po.Y < 0 ? po.Y/32 - 1 : po.Y/32;
             return po;
@@ -285,25 +285,25 @@ namespace rglikeworknamelib.Dungeon.Creatures
         public bool Skipp { get; set; }
 
         public virtual void Draw(SpriteBatch spriteBatch, LineBatch lineBatch, Vector2 camera) {
-                Vector2 p = WorldPosition() - camera;
-                spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
-                if (Settings.DebugInfo) {
-                    spriteBatch.DrawString(Settings.Font, id_ + " -- " + order_.Type+", "+position_.ToString(), p, Color.White);
-                    if (order_.Type == OrderType.Move) { lineBatch.AddLine(p, order_.Point - camera, Color.LimeGreen, 1); }
-                    if (order_.Type == OrderType.Attack) { lineBatch.AddLine(p, order_.Target.Position - camera, Color.Red, 1); }
-                    if (order_.Type == OrderType.Wander) { lineBatch.AddLine(p, order_.Point - camera, Color.LightBlue, 1); }
-                }
+                //Vector2 p = WorldPosition() - camera;
+                //spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
+                //if (Settings.DebugInfo) {
+                //    spriteBatch.DrawString(Settings.Font, id_ + " -- " + order_.Type+", "+position_.ToString(), p, Color.White);
+                //    if (order_.Type == OrderType.Move) { lineBatch.AddLine(p, order_.Point - camera, Color.LimeGreen, 1); }
+                //    //if (order_.Type == OrderType.Attack) { lineBatch.AddLine(p, order_.Target.Position. - camera, Color.Red, 1); }
+                //    if (order_.Type == OrderType.Wander) { lineBatch.AddLine(p, order_.Point - camera, Color.LightBlue, 1); }
+                //}
         }
 
-        public virtual Vector2 WorldPosition() {
-            return Position + new Vector2(-16, -32) +
-                   new Vector2(sectoroffset_.X*MapSector.Rx*32, sectoroffset_.Y*MapSector.Ry*32);
+        public virtual Vector3 WorldPosition() {
+            return Position + new Vector3(-16, -32, 0) +
+                   new Vector3(sectoroffset_.X*MapSector.Rx*32, sectoroffset_.Y*MapSector.Ry*32, 0);
         }
 
         public virtual void Kill(MapSector decalMs) {
             Hp = new Stat(0, 0);
             isDead = true;
-            decalMs.AddDecal(new Particle(WorldPosition(), 3) {Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0)});
+            decalMs.AddDecal(new Particle(new Vector2(WorldPosition().X, WorldPosition().Y), 3) {Rotation = -3.14f/2, Life = new TimeSpan(0, 0, 1, 0)});
             if (OnDeath != null) {
                 OnDeath(null, null);
             }
@@ -320,7 +320,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             }
             var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
 
-            ms.AddDecal(new Particle(WorldPosition() + adder, 3)
+            ms.AddDecal(new Particle(new Vector2(WorldPosition().X, WorldPosition().Y) +adder, 3)
             {Rotation = Settings.rnd.Next()%360, Life = new TimeSpan(0, 0, 1, 0)});
 
             if (OnDamageRecieve != null) {
@@ -329,7 +329,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
         }
 
         public void SetPositionInBlocks(int x, int y) {
-            position_ = new Vector2((x + 0.5f)*32, (y + 0.5f)*32);
+            position_ = new Vector3((x + 0.5f)*32, (y + 0.5f)*32 , 0);
         }
 
         /// <summary>
@@ -337,7 +337,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
         /// </summary>
         /// <returns></returns>
         public Vector2 GetPositionInBlocks() {
-            Vector2 po = Position;
+            Vector2 po = new Vector2(Position.X, Position.Y);
             po.X = po.X < 0 ? po.X/32 - 1 : po.X/32;
             po.Y = po.Y < 0 ? po.Y/32 - 1 : po.Y/32;
             return po;
@@ -351,7 +351,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             double time = gt.ElapsedGameTime.TotalSeconds;
             switch (order_.Type) {
                 case OrderType.Move: {
-                    Vector2 wp = WorldPosition();
+                    Vector2 wp = new Vector2(WorldPosition().X, WorldPosition().Y);
                     Vector2 mover = order_.Point - wp;
                     float percenterMax = Data.Speed * Percenter;
 
@@ -375,7 +375,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
                         position_.Y += mover.Y;
                     }
 
-                    wp = WorldPosition();
+                    wp = new Vector2(WorldPosition().X, WorldPosition().Y);
                     if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
                     {
                         IssureOrder();
@@ -383,8 +383,8 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 }
                     break;
                 case OrderType.Attack: {
-                    Vector2 wp = WorldPosition();
-                    Vector2 mover = order_.Target.Position - wp;
+                    Vector2 wp = new Vector2(WorldPosition().X, WorldPosition().Y);
+                    Vector2 mover = new Vector2(order_.Target.Position.X, order_.Target.Position.Y) -wp;
                     float percenterMax = Data.Speed * Percenter;
 
                     if (mover.Length() > time * percenterMax)
@@ -407,15 +407,15 @@ namespace rglikeworknamelib.Dungeon.Creatures
                         position_.Y += mover.Y;
                     }
 
-                    wp = WorldPosition();
-                    if (Math.Abs(wp.X - order_.Target.Position.X) < 10 && Math.Abs(wp.Y - order_.Target.Position.Y) < 10 || (wp - order_.Target.Position).Length() > 640)
+                    wp = new Vector2(WorldPosition().X, WorldPosition().Y);
+                    if (Math.Abs(wp.X - order_.Target.Position.X) < 10 && Math.Abs(wp.Y - order_.Target.Position.Y) < 10 || (wp - new Vector2(order_.Target.Position.X, order_.Target.Position.Y)).Length() > 640)
                     {
                         IssureOrder();
                     }
                 }
                     break;
                 case OrderType.Wander: {
-                    Vector2 wp = WorldPosition();
+                    Vector2 wp = new Vector2(WorldPosition().X, WorldPosition().Y);
                     if (order_.Point.Y == 0)
                     {
                         order_.Point = new Vector2(wp.X + Settings.rnd.Next(-100, 100), wp.Y + Settings.rnd.Next(-100, 100));
@@ -444,7 +444,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
                         position_.Y += mover.Y;
                     }
 
-                    wp = WorldPosition();
+                    wp = new Vector2(WorldPosition().X, WorldPosition().Y);
                     if (Math.Abs(wp.X - order_.Point.X) < 10 && Math.Abs(wp.Y - order_.Point.Y) < 10)
                     {
                         IssureOrder();

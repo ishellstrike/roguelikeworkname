@@ -513,8 +513,8 @@ namespace rglikeworknamelib.Dungeon.Level
                     //}
                     //if ((a.Key.X + 1) * 32 * rx - camera.X < -32 || (a.Key.Y + 1) * 32 * ry - camera.Y < -32 || a.Key.X * 32 * rx - camera.X > resolution.X || a.Key.Y * 32 * ry - camera.Y > resolution.Y)
                     {
-                        sectors_.Remove(sectors_.ElementAt(i).Key);
-                        i--;
+                       // sectors_.Remove(sectors_.ElementAt(i).Key);
+                       // i--;
                     }
                 }
             }
@@ -668,7 +668,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 MapSector sector = sectors_.ElementAt(i).Value;
                 foreach (Creature crea in sector.Creatures)
                 {
-                    if (Vector2.Distance(who.Position, crea.WorldPosition()) < 1000 && PathClear(a,
+                    if (Vector2.Distance(new Vector2(who.Position.X, who.Position.Y), new Vector2(crea.WorldPosition().X, crea.WorldPosition().Y)) < 1000 && PathClear(a,
                                                                                                  new Vector2(
                                                                                                      crea
                                                                                                          .GetWorldPositionInBlocks
@@ -941,7 +941,7 @@ namespace rglikeworknamelib.Dungeon.Level
         public bool IsCreatureMeele(int nx, int ny, Player player)
         {
             return (Settings.GetMeeleActionRange() >=
-                    Vector2.Distance(new Vector2((nx + 0.5f) * 32, (ny + 0.5f) * 32), player.Position));
+                    Vector2.Distance(new Vector2((nx + 0.5f) * 32, (ny + 0.5f) * 32), new Vector2(player.Position.X, player.Position.Y)));
         }
 
         public Texture2D GetMinimap()
@@ -1147,7 +1147,7 @@ namespace rglikeworknamelib.Dungeon.Level
         public bool IsCreatureMeele(Creature hero, Creature ny)
         {
             return (Settings.GetMeeleActionRange() >=
-                    Vector2.Distance(ny.WorldPosition(), hero.Position));
+                    Vector2.Distance(new Vector2(ny.WorldPosition().X, ny.WorldPosition().Y), new Vector2(hero.Position.X, hero.Position.Y)));
         }
 
         public IEnumerable<Light> GetLights()
@@ -1179,7 +1179,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         private Vector2 max;
         private Vector2 min;
-        private Vector2 perPrew_;
+        private Vector3 perPrew_;
 
         public void DrawFloors(GameTime gameTime, Vector2 camera)
         {
@@ -1287,9 +1287,9 @@ namespace rglikeworknamelib.Dungeon.Level
             float ssx = Settings.FloorSpriteSize.X;
             float ssy = Settings.FloorSpriteSize.Y;
 
-            bool shad = Vector2.Distance(camera, perPrew_) > 0;
+           // bool shad = Vector2.Distance(camera, perPrew_) > 0;
 
-            if (shad || MapJustUpdated)
+            if (MapJustUpdated)
             {
                 points.Clear();
             }
@@ -1326,7 +1326,7 @@ namespace rglikeworknamelib.Dungeon.Level
                             {
                                 if (block.Lightness != Color.Black || block.Data.Wallmaker) {
                                    // spriteBatch_.Draw(batlas, new Vector2(xpos, ypos), block.Source, block.Lightness);
-                                    if ((shad || MapJustUpdated) && !block.Data.IsTransparent)
+                                    if ((MapJustUpdated) && !block.Data.IsTransparent)
                                     {
                                         AddShadowpointForBlock(camera, per, xpos, ypos, block.Data.swide);
                                     }

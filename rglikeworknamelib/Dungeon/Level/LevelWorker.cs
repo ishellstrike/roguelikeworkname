@@ -614,7 +614,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     if (s != " ") {
                         var monparts = s.Split(',');
                         var id = monIddic[int.Parse(monparts[0])];
-                        var mpos = new Vector2(int.Parse(monparts[1]), int.Parse(monparts[2]));
+                        var mpos = new Vector3(int.Parse(monparts[1]), int.Parse(monparts[2]), 0);
                         var mon = CreatureFactory.GetInstance(id, mpos);
                         sector.Creatures.Add(mon);
                     }

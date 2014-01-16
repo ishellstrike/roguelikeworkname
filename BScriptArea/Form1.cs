@@ -64,7 +64,7 @@ namespace BScriptArea
 
             infostring = "Initialization";
             ism = new InventorySystem();
-            pl = new Player(null, null, null, ism) {Position = new Vector2(100, 100)};
+            pl = new Player(null, null, null, ism) {Position = new Vector3(100, 100,0)};
             cre = new Creature() { Id = "zombie1" };
             lw = new LevelWorker();
             lw.Start();
@@ -145,8 +145,8 @@ namespace BScriptArea
                 if (timer1.Enabled) {
                     button2_Click(null, null);
                 }
-                pl.Position = new Vector2(100, 100);
-                cre.Position = new Vector2(0, 0);
+                pl.Position = new Vector3(100, 100,0);
+                cre.Position = new Vector3(0, 0,0);
                 cre.IssureOrder();
 
                 try {
@@ -294,7 +294,7 @@ namespace BScriptArea
             if (down) {
                 if (pl != null)
                 {
-                    pl.Position = new Vector2((e.X - panel1.Width / 2) * zoom, (e.Y - panel1.Height / 2) * zoom);
+                    pl.Position = new Vector3((e.X - panel1.Width / 2) * zoom, (e.Y - panel1.Height / 2) * zoom,0);
                 }
             }
         }

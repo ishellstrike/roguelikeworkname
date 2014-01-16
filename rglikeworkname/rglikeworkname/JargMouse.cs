@@ -54,35 +54,27 @@ namespace jarg {
             }
 
             if (ms_.MiddleButton == ButtonState.Pressed) {
-                cam.Yaw = 0;
-                cam.Pitch = 0;
-                cam.Roll = 0;
+                cam.rot = Quaternion.Identity;
+            }
+
+            if (ks_.IsKeyDown(Keys.LeftAlt)) {
+                var b = lms_.Y - ms_.Y;
+
+                cam.rot.X += b / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (cam.rot.X > 0.365) {
+                    cam.rot.X = 0.365f;
+                }
+
+                if (cam.rot.X < 0) {
+                    cam.rot.X = 0;
+                }
             }
 
             if (ks_.IsKeyDown(Keys.LeftControl)) {
                 var a = lms_.X - ms_.X;
 
-                cam.Yaw += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds * 100;
-                if (cam.Yaw > 360)
-                {
-                    cam.Yaw -= 360;
-                }
-                if (cam.Yaw < 0)
-                {
-                    cam.Yaw += 360;
-                }
-
-                var b = lms_.Y - ms_.Y;
-
-                cam.Pitch += b / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds * 100;
-                if (cam.Pitch > 360)
-                {
-                    cam.Pitch -= 360;
-                }
-                if (cam.Pitch < 0)
-                {
-                    cam.Pitch += 360;
-                }
+                cam.rot.Z += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds ;
             }
 
             if (!ws_.Mopusehook) {

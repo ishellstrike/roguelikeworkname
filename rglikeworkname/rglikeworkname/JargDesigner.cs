@@ -1104,11 +1104,11 @@ namespace jarg {
                 int x, y;
                 if (parts.Length == 2) {
                     if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y)) {
-                        player_.Position = new Vector2(x*MapSector.Rx*32, y*MapSector.Ry*32);
+                        player_.Position = new Vector3(x*MapSector.Rx*32, y*MapSector.Ry*32,0);
                         mousemapoffset = Vector2.Zero;
                         EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y),
                                      GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
-                        camera_ = player_.Position - Settings.Resolution/2;
+                        camera_ = new Vector2(player_.Position.X, player_.Position.Y) -Settings.Resolution / 2;
                     }
                     else {
                         EventLog.Add(string.Format("Wrong number to tp <x> <y>"),
@@ -1527,7 +1527,7 @@ namespace jarg {
                 }
             }
             if (LookWindow.Visible && looklPos != null) {
-                lineBatch_.AddLine(player_.Position - camera_, new Vector2(looklPos.Value.X*32, looklPos.Value.Y*32) - camera_, Color.LimeGreen, 5);
+                lineBatch_.AddLine(new Vector2(player_.Position.X, player_.Position.Y) -camera_, new Vector2(looklPos.Value.X * 32, looklPos.Value.Y * 32) - camera_, Color.LimeGreen, 5);
             }
         }
 

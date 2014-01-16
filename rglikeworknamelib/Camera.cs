@@ -12,30 +12,31 @@ namespace rglikeworknamelib
         public Matrix View;
 
         public Vector3 Position;
-        public float Yaw;
         public Vector3 Target;
         public float Cameradistance = 30;
         public Vector3 Translation;
-
-        public float Pitch;
-        public float Roll;
+        public Quaternion rot = Quaternion.Identity;
+        public Vector3 Front;
+        public Vector3 Back;
+        public Vector3 Left;
+        public Vector3 Right;
+        public Vector3 Up;
 
         public void Update(Vector3 moving, GameTime gt) {
-            var an = MathHelper.ToRadians(Yaw);
-            Position.X = Target.X;
-            Position.Y = Target.Y;
-            Position.Z = Cameradistance;
 
-            Target += moving;
-            Vector3 newPosition = Position - Target;
+            Position = Vector3.Transform(new Vector3(0, 0, Cameradistance), rot);
+            Position += Target;
 
-            // Вычисляем новое местоположение камеры,
-            // вращая ее вокруг осей
+            Position = Vector3.Transform(Position - Target, rot) + Target;
 
-            Rotation = Matrix.CreateFromYawPitchRoll(0, MathHelper.ToRadians(Pitch), 0);
+            Up = Vector3.Transform(Vector3.Up, rot);
+            View = Matrix.CreateLookAt(Position, Target, Up);
 
-            newPosition = Vector3.Transform(newPosition, Rotation);
-            View = Matrix.CreateLookAt(newPosition + Target, Target, Vector3.Up);
+            Front = Vector3.Transform(Vector3.Forward, rot);
+            Back = Vector3.Transform(Vector3.Backward, rot);
+            Left = Vector3.Transform(Vector3.Left, rot);
+            Right = Vector3.Transform(Vector3.Right, rot);
+
            // generateFrustum();
             Matrix invv = Matrix.Invert(View);
             Position.X = invv.M41;
@@ -43,38 +44,6 @@ namespace rglikeworknamelib
             Position.Z = invv.M43;
         }
 
-        /// <summary>
-        /// Вращение камеры вокруг объекта
-        /// </summary>
-        /// <param name="cameraTarget">Координаты объекта</param>
-        /// <param name="cameraRotationX">Вращение вокруг X</param>
-        /// <param name="cameraRotationY">Вращение вокруг Y</param>
-        /// <param name="cameraTargetDistance">Расстояние от камеры до объекта</param>
-        /// <returns></returns>
-        public static Matrix BuildViewMatrix(Vector3 cameraTarget, float cameraRotationX, float cameraRotationY,
-                                             float cameraRotationZ, float cameraTargetDistance)
-        {
-            //матрица вращений
-            Matrix cameraRot = Matrix.CreateRotationX(cameraRotationX)
-                               * Matrix.CreateRotationY(cameraRotationY) * Matrix.CreateRotationZ(cameraRotationZ);
-
-            //вычисляем куда смотреть
-            var cameraOriginalTarget = new Vector3(0, 0, -1);
-            var cameraOriginalUpVector = new Vector3(0, 1, 0);
-
-            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, cameraRot);
-            Vector3 cameraFinalTarget = cameraTarget + cameraRotatedTarget;
-            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRot);
-            //Vector3 cameraFinalUpVector = cameraTarget + cameraRotatedUpVector;
-
-            //смотрим на объект
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraTarget, cameraFinalTarget, cameraRotatedUpVector);
-
-            //отдаляем камеру на нужное расстояние от объекта
-            viewMatrix.Translation += new Vector3(0, 0, -cameraTargetDistance);
-
-            return viewMatrix;
-        }
 
         public Camera(Vector3 position, GraphicsDevice graphicsDevice)
         {
@@ -86,8 +55,6 @@ namespace rglikeworknamelib
         }
 
         protected GraphicsDevice GraphicsDevice;
-        private float maxChaseDistance = 30;
-        private float minChaseDistance = 20;
         public Matrix Rotation;
 
         public void GeneratePerspectiveProjectionMatrix(float FieldOfView)

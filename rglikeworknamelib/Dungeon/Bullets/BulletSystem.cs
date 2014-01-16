@@ -30,7 +30,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         }
 
         public static void AddBullet(Creature who, float vel, float an, int dam) {
-            bullet_.Add(new Bullet(who.WorldPosition(), vel, an, 0, 1, TimeSpan.FromSeconds(1)) {Damage = dam, Owner = who});
+            bullet_.Add(new Bullet(new Vector2(who.WorldPosition().X, who.WorldPosition().Y), vel, an, 0, 1, TimeSpan.FromSeconds(1)) { Damage = dam, Owner = who });
         }
 
         public static void Update(GameTime gameTime) {

@@ -255,7 +255,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public void Spawn(string creatureId, int x, int y) {
-            Creatures.Add(CreatureFactory.GetInstance(creatureId, new Vector2(x * 32, y * 32)));
+            Creatures.Add(CreatureFactory.GetInstance(creatureId, new Vector3(x * 32, y * 32, 0)));
         }
 
         public Block GetBlock(int x, int y) {

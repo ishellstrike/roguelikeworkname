@@ -49,7 +49,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             sb_ = sb;
             Font = font;
             Tex = tex;
-            Position = new Vector2(1, 1);
+            Position = new Vector3(1, 1, 0);
             Perks = new PerksSystem(this);
             Weared = new Collection<Item>();
             Inventory = ism;
@@ -139,7 +139,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public void UnEquipItem(Item i) {
         }
 
-        public void Accelerate(Vector2 ac) {
+        public void Accelerate(Vector3 ac) {
             Velocity += ac;
         }
 
@@ -153,7 +153,8 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                              LogEntityType.Dies);
             }
             var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
-            ms.AddDecal(new Particle(WorldPosition() + adder, 3) {
+            ms.AddDecal(new Particle(new Vector2(WorldPosition().X, WorldPosition().Y) + adder, 3)
+            {
                 Rotation = Settings.rnd.Next()%360,
                 Life = new TimeSpan(0, 0, 1, 0)
             });
@@ -244,34 +245,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         }
 
         public void Draw(GameTime gt, Vector2 cam, KeyValuePair<string, OtherClient>? other) {
-            if (!other.HasValue) {
-                var atlas = Atlases.Instance;
-                var position = Position - cam;
-                var origin = new Vector2(Tex.Width/2f, Tex.Height);
-                sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
-                         SpriteEffects.None, 1);
-                foreach (var dress in Weared) {
-                    if (!string.IsNullOrEmpty(dress.Data.Dress)) {
-                        sb_.Draw(atlas.DressAtlas[dress.Data.Dress], position, null, Color.White, 0, origin,
-                                 1,
-                                 SpriteEffects.None, 1);
-                    }
-                }
 
-                if (Settings.DebugInfo) {
-                    sb_.DrawString(Font,
-                                   string.Format("Po:{0}{5}Hu:{1} Th:{2}{5}Sl:{3} He:{4}", Position, Hunger, Thirst,
-                                                 Sleep,
-                                                 Heat, Environment.NewLine),
-                                   new Vector2(32 + Position.X - cam.X, -32 + Position.Y - cam.Y), Color.White);
-                }
-            }
-            else {
-                var position = new Vector2(other.Value.Value.x, other.Value.Value.y) - cam;
-                var origin = new Vector2(Tex.Width / 2f, Tex.Height);
-                sb_.Draw(Tex, position, null, Color.White, 0, origin, 1,
-                         SpriteEffects.None, 1);
-            }
         }
 
         public event EventHandler OnUpdatedEquip;
@@ -343,7 +317,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                                                        FileMode.Open)) {
                     using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress)) {
                         Hp = (Stat) binaryFormatter.Deserialize(gZipStream);
-                        Position = (Vector2) binaryFormatter.Deserialize(gZipStream);
+                        Position = (Vector3) binaryFormatter.Deserialize(gZipStream);
                         Perks = (PerksSystem) binaryFormatter.Deserialize(gZipStream);
                         Perks.Owner = this;
                         Weared = (Collection<Item>) binaryFormatter.Deserialize(gZipStream);
@@ -391,7 +365,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
         }
 
-        public override Vector2 WorldPosition() {
+        public override Vector3 WorldPosition() {
             return Position;
         }
 
