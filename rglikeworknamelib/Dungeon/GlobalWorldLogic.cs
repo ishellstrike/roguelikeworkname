@@ -28,6 +28,15 @@ namespace rglikeworknamelib.Dungeon {
             return -((time - 12) / 12) * ((time - 12) / 12) + 1;
         }
 
+
+        public static Vector3 LightVector
+        {
+            get {
+                double d = MathHelper.TwoPi*(CurrentTime.TimeOfDay.TotalHours/24) + Math.PI;
+                return Vector3.Transform(Vector3.Down, Matrix.CreateFromYawPitchRoll((float)d, (float)d, 0));
+          }
+        }
+
         public static void Update(GameTime gt) {
             Elapse = TimeSpan.FromMinutes(gt.ElapsedGameTime.TotalSeconds);
             CurrentTime += Elapse;

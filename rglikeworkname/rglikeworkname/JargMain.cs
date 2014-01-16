@@ -260,6 +260,7 @@ namespace jarg {
             lig1 = Content.Load<Effect>(@"Effects\Lighting1");
             effectOmnilight_ = Content.Load<Effect>(@"Effects\Effect1");
             solidEffect = Content.Load<Effect>(@"Effects\solid");
+            solidShadowEffect = Content.Load<Effect>(@"Effects\solidShadow");
 
             arup_ = ContentProvider.LoadTexture(@"Textures\arrow_up");
             ardown_ = ContentProvider.LoadTexture(@"Textures\arrow_down");
@@ -553,7 +554,7 @@ namespace jarg {
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             GraphicsDevice.Clear(Color.SkyBlue);
-            currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect);
+            currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect, player_);
             solidEffect.Parameters["worldMatrix"].SetValue(Matrix.Identity);
             foreach (var pass in solidEffect.CurrentTechnique.Passes) {
                 pass.Apply();
@@ -566,10 +567,17 @@ namespace jarg {
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, asd, 0, asd.Length / 3);
             }
 
+            GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+            GraphicsDevice.Clear(Color.Transparent);
+            currentFloor_.RenderShadowMap(GraphicsDevice, cam, solidShadowEffect);
+
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch_.Begin();
             spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
+            spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.5f));
             spriteBatch_.End();
+
+            currentFloor_.RenderBlockMap(GraphicsDevice, cam, solidEffect);
 
             if (Settings.DebugInfo)
             {
@@ -616,7 +624,7 @@ namespace jarg {
 
 
             spriteBatch_.Draw(
-                lightMapRenderTarget_,
+                shadowMapRenderTarget_,
                 new Rectangle(size.Width, 0,
                               size.Width,
                               size.Height),
@@ -644,6 +652,8 @@ namespace jarg {
         }
 
         private Matrix ScaleAll2 = Matrix.CreateScale(1);
+        private Effect solidShadowEffect;
+
         private void DrawCombinedMaps() {
             lightEffect2_.Parameters["ambient"].SetValue(GlobalWorldLogic.GetCurrentSlen());
             lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());

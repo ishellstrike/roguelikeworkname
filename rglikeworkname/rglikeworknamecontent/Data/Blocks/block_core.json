@@ -227,21 +227,18 @@
     "Name":"Дерево",
     "swide":16,
     "MTex":"tree1",
-    "Wallmaker":true,
     "Flame":true,
   },
   "18":{
     "Name":"Небольшое дерево",
     "swide":16,
     "MTex":"tree2",
-    "Wallmaker":true,
     "Flame":true,
   },
   "17":{
     "Name":"Куст",
     "swide":16,
     "MTex":"bush1",
-    "Wallmaker":true,
     "Flame":true,
   },
   "19":{
@@ -268,18 +265,24 @@
     "IsTransparent":true,
     "MTex":"table_hor_mid",
     "Flame":true,
+	"Height":0.3,
+	"Wallmaker":true,
   },
   "22":{
     "Name":"Прилавок",
     "IsTransparent":true,
     "MTex":"table_hor_mid",
     "Flame":true,
+	"Height":0.3,
+	"Wallmaker":true,
   },
   "23":{
     "Name":"Прилавок",
     "IsTransparent":true,
     "MTex":"table_hor_mid",
     "Flame":true,
+	"Height":0.3,
+	"Wallmaker":true,
   },
   "kustsmall":{
     "Name":"Молодой кустарник",
@@ -288,7 +291,6 @@
     "IsTransparent":true,
     "MTex":"mbush1",
     "AlterMtex":["mbush2", "mbush3"],
-    "Wallmaker":true,
     "Flame":true,
   },
   "kustbig":{
@@ -296,7 +298,6 @@
     "IsWalkable":true,
     "IsTransparent":true,
     "MTex":"bush1",
-    "Wallmaker":true,
     "Flame":true,
   },
   "bbochka":{

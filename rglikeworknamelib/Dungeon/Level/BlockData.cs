@@ -16,6 +16,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public Color MMCol;
         public string MTex;
         public string Name;
+        public float Height = 1;
         public SmartAction SmartAction;
 
         public List<DropGroup> ItemSpawn;

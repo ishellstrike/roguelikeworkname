@@ -10,6 +10,7 @@ Content\Effects\ShadersLightningShadow.xnb
 Content\Effects\ShadersLightningCombined.xnb
 Content\Effects\ToWhite.xnb
 Content\Effects\solid.xnb
+Content\Effects\solidshadow.xnb
 NLog.config
 IronPython.dll
 Microsoft.Dynamic.dll
