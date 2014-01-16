@@ -1516,7 +1516,7 @@ namespace rglikeworknamelib.Dungeon.Level
                         sector.Value.RebuildGeometry();
                     }
                     else {
-                        solidEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateTranslation(-sector.Value.SectorOffsetX * 16, -sector.Value.SectorOffsetY * 16, 0));
+                        solidEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateTranslation(sector.Value.SectorOffsetX * 16, sector.Value.SectorOffsetY * 16, 0));
                         pass.Apply();
                         graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces, 0, sector.Value.verteces.Length / 3);
                     }

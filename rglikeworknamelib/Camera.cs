@@ -12,47 +12,29 @@ namespace rglikeworknamelib
         public Matrix View;
 
         public Vector3 Position;
-        public float RotationF;
+        public float Yaw;
         public Vector3 Target;
         public float Cameradistance = 30;
         public Vector3 Translation;
 
-        public float Yaw;
         public float Pitch;
         public float Roll;
 
-        public void Update(Vector3 moving)
-        {
-            //// Calculate the rotation matrix
-            //Matrix rotation = Matrix.CreateFromYawPitchRoll(Yaw, Pitch, Roll);
+        public void Update(Vector3 moving, GameTime gt) {
+            var an = MathHelper.ToRadians(Yaw);
+            Position.X = Target.X;
+            Position.Y = Target.Y;
+            Position.Z = Cameradistance;
 
-            //// Offset the position and reset the translation
-            //translation = Vector3.Transform(translation, rotation);
-            //Position += translation;
-            //translation = Vector3.Zero;
-
-            //// Calculate the new target
-            //Vector3 forward = Vector3.Transform(Vector3.Forward, rotation);
-            //Target = Position + forward;
-
-            //// Calculate the up vector
-            //Vector3 up = Vector3.Transform(Vector3.Up, rotation);
-
-            //// Calculate the view matrix
-            //View = Matrix.CreateLookAt(Position, Target, up);
-
-            //this.Up = up;
-            //this.Right = Vector3.Cross(forward, up);
             Target += moving;
-           // View = BuildViewMatrix(Target, (float)Math.PI / 5, 0, MathHelper.ToRadians(RotationF), Cameradistance);
             Vector3 newPosition = Position - Target;
 
             // Вычисляем новое местоположение камеры,
             // вращая ее вокруг осей
-            newPosition = Vector3.Transform(newPosition,
-                              Matrix.CreateRotationY(MathHelper.ToRadians(RotationF))
-                              );
-            RotationF = 0;
+
+            Rotation = Matrix.CreateFromYawPitchRoll(0, MathHelper.ToRadians(Pitch), 0);
+
+            newPosition = Vector3.Transform(newPosition, Rotation);
             View = Matrix.CreateLookAt(newPosition + Target, Target, Vector3.Up);
            // generateFrustum();
             Matrix invv = Matrix.Invert(View);
@@ -104,6 +86,9 @@ namespace rglikeworknamelib
         }
 
         protected GraphicsDevice GraphicsDevice;
+        private float maxChaseDistance = 30;
+        private float minChaseDistance = 20;
+        public Matrix Rotation;
 
         public void GeneratePerspectiveProjectionMatrix(float FieldOfView)
         {

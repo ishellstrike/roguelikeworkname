@@ -46,17 +46,42 @@ namespace jarg {
                 rememberShoot_ = false;
             }
 
+            if (ms_.ScrollWheelValue != lms_.ScrollWheelValue) {
+                cam.Cameradistance += (ms_.ScrollWheelValue - lms_.ScrollWheelValue)/(float)gameTime.ElapsedGameTime.TotalMilliseconds/10;
+                if (cam.Cameradistance < 4) {
+                    cam.Cameradistance = 4;
+                }
+            }
+
             if (ms_.MiddleButton == ButtonState.Pressed) {
+                cam.Yaw = 0;
+                cam.Pitch = 0;
+                cam.Roll = 0;
+            }
+
+            if (ks_.IsKeyDown(Keys.LeftControl)) {
                 var a = lms_.X - ms_.X;
 
-                cam.RotationF += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds * 100;
-                if (cam.RotationF > 360)
+                cam.Yaw += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds * 100;
+                if (cam.Yaw > 360)
                 {
-                    cam.RotationF -= 360;
+                    cam.Yaw -= 360;
                 }
-                if (cam.RotationF < 0)
+                if (cam.Yaw < 0)
                 {
-                    cam.RotationF += 360;
+                    cam.Yaw += 360;
+                }
+
+                var b = lms_.Y - ms_.Y;
+
+                cam.Pitch += b / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds * 100;
+                if (cam.Pitch > 360)
+                {
+                    cam.Pitch -= 360;
+                }
+                if (cam.Pitch < 0)
+                {
+                    cam.Pitch += 360;
                 }
             }
 

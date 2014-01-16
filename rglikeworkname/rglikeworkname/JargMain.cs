@@ -153,7 +153,7 @@ namespace jarg {
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             InactiveSleepTime = TimeSpan.FromMilliseconds(200);
 
-            cam = new Camera(new Vector3(1, 1, 1), GraphicsDevice);
+            cam = new Camera(new Vector3(100, 100, 100), GraphicsDevice);
             cam.Target = new Vector3(0, 0, 0);
 
             IsFixedTimeStep = false;
@@ -515,9 +515,9 @@ namespace jarg {
             PlayerSeeAngle =
                 (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
 
-            cam.Target.X = -player_.Position.X/32f;
-            cam.Target.Y = -player_.Position.Y/32f;
-            cam.Update(Vector3.Zero);
+            cam.Target.X = player_.Position.X/32f;
+            cam.Target.Y = player_.Position.Y/32f;
+            cam.Update(Vector3.Zero, gameTime);
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
@@ -637,13 +637,16 @@ namespace jarg {
             //    spriteBatch_.End();
             //}
 
+
+           
             currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect);
+            solidEffect.Parameters["worldMatrix"].SetValue(Matrix.Identity);
             foreach (var pass in solidEffect.CurrentTechnique.Passes) {
                 pass.Apply();
                 var asd = new[] {
-                    new VertexPositionNormalTexture(new Vector3(-player_.Position.X/32f + 0, -player_.Position.Y/32f + 0, 0), Vector3.Up, new Vector2(0,0)),
-                    new VertexPositionNormalTexture(new Vector3(-player_.Position.X/32f + 1, -player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(1,1)),
-                    new VertexPositionNormalTexture(new Vector3(-player_.Position.X/32f + 0, -player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(0,1))
+                    new VertexPositionNormalTexture(new Vector3(player_.Position.X/32f + 0, player_.Position.Y/32f + 0, 0), Vector3.Up, new Vector2(0,0)),
+                    new VertexPositionNormalTexture(new Vector3(player_.Position.X/32f + 1, player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(1,1)),
+                    new VertexPositionNormalTexture(new Vector3(player_.Position.X/32f + 0, player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(0,1))
                 };
 
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, asd, 0, asd.Length / 3);
