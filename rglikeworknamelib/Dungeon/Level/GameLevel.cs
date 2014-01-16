@@ -1497,7 +1497,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 graphicsDevice.RasterizerState = new RasterizerState
                 {
-                    CullMode = CullMode.None,
+                    CullMode = CullMode.CullClockwiseFace,
                     FillMode = FillMode.Solid
                 };
             }
@@ -1505,10 +1505,11 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 graphicsDevice.RasterizerState = new RasterizerState
                 {
-                    CullMode = CullMode.None,
-                    FillMode = FillMode.WireFrame
+                    CullMode = CullMode.CullClockwiseFace,
+                    FillMode = FillMode.WireFrame,
                 };
             }
+            graphicsDevice.DepthStencilState = DepthStencilState.Default;
             foreach (var pass in solidEffect.CurrentTechnique.Passes)
             {
                 foreach (var sector in sectors_) {

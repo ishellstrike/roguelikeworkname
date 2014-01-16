@@ -218,8 +218,9 @@ namespace jarg {
             UpdateInventoryContainer();
             UpdateCaracterWindowItems(null, null);
             EventLog_onLogUpdate(null, null);
-            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
-                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+            colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height);
+                //new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
+                //                                       DepthFormat.Depth24Stencil8, 1, RenderTargetUsage.PlatformContents);
             lightMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
@@ -296,7 +297,7 @@ namespace jarg {
             int height = pp.BackBufferHeight;
 
             colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
-                                                       DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+                                                       DepthFormat.Depth24Stencil8, 1, RenderTargetUsage.PreserveContents);
             lightMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
@@ -549,96 +550,9 @@ namespace jarg {
         }
 
         private void GameDraw(GameTime gameTime) {
-            //lightCollection_.Clear();
-            //lightCollection_.AddRange(currentFloor_.GetLights());
-            //if (Flashlight) {
-            //    var hpos = new Vector3(player_.Position.X, player_.Position.Y, 0.5f);
-                //var ray = new Ray(hpos, Vector3.Normalize(new Vector3(ms_.X + camera_.X, ms_.Y + camera_.Y, 1) - hpos));
-                //lightCollection_.Add(new Light {
-                //    Color = Color.White,
-                //    LightRadius = 30*3,
-                //    Position = ray.Position + ray.Direction*40,
-                //    Power = 10
-                //});
-                //lightCollection_.Add(new Light {
-                //    Color = Color.White,
-                //    LightRadius = 50*3,
-                //    Position = ray.Position + ray.Direction*90,
-                //    Power = 50
-                //});
-                //lightCollection_.Add(new Light {
-                //    Color = Color.White,
-                //    LightRadius = 80*3,
-                //    Position = ray.Position + ray.Direction*160,
-                //    Power = 50
-                //});
-                //lightCollection_.Add(new Light {
-                //    Color = Color.White,
-                //    LightRadius = 90*3,
-                //    Position = ray.Position + ray.Direction*280,
-                //    Power = 150
-                //});
-            //}
 
-
-            //EffectOmnilight.Parameters["cpos"].SetValue(new[]
-            //{player_.Position.X - camera_.X, player_.Position.Y - camera_.Y});
-
-            //GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            //GraphicsDevice.Clear(Color.Black);
-            ////color maps
-            //spriteBatch_.Begin();
-            //currentFloor_.DrawFloors(gameTime, camera_);
-            //currentFloor_.DrawDecals(gameTime, camera_);
-            //spriteBatch_.End();
-            //GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
-            //GraphicsDevice.Clear(Color.Transparent);
-            //currentFloor_.ShadowRender();
-            //GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            //spriteBatch_.Begin();
-            //spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.75f));
-            //currentFloor_.DrawBlocks(gameTime, camera_, player_);
-            //player_.Draw(gameTime, camera_, null);
-            //if (client_ != null) {
-            //    foreach (var otherclient in client_.otherclients) {
-            //        player_.Draw(gameTime, camera_, otherclient);
-            //    }
-            //}
-            //spriteBatch_.End();
-            //currentFloor_.DrawEntities(gameTime, camera_);
-            //spriteBatch_.Begin();
-            //BulletSystem.Draw(gameTime, camera_);
-            //ps_.Draw(gameTime, camera_);
-            //spriteBatch_.End();
-
-
-            //if (Settings.Lighting) {
-            //    lightMapTexture_ = GenerateShadowMap();
-
-            //    GraphicsDevice.SetRenderTarget(null);
-            //    DrawCombinedMaps();
-            //}
-            //else {
-            //    GraphicsDevice.SetRenderTarget(null);
-            //    spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, ScaleAll2);
-            //    spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
-            //    spriteBatch_.End();
-            //}
-
-            
-            //if (Settings.DebugInfo) {
-            //    spriteBatch_.Begin();
-            //    spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(11, 101), Color.Black);
-            //    spriteBatch_.DrawString(font1_, "req:"+levelWorker_.LoadCount.ToString(), new Vector2(10, 100), Color.White);
-            //    spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(11, 121), Color.Black);
-            //    spriteBatch_.DrawString(font1_, "store:"+levelWorker_.StoreCount.ToString(), new Vector2(10, 120), Color.White);
-            //    spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(11, 141), Color.Black);
-            //    spriteBatch_.DrawString(font1_, "ready:"+levelWorker_.ReadyCount.ToString(), new Vector2(10, 140), Color.White);
-            //    spriteBatch_.End();
-            //}
-
-
-           
+            GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
+            GraphicsDevice.Clear(Color.SkyBlue);
             currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect);
             solidEffect.Parameters["worldMatrix"].SetValue(Matrix.Identity);
             foreach (var pass in solidEffect.CurrentTechnique.Passes) {
@@ -650,6 +564,23 @@ namespace jarg {
                 };
 
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, asd, 0, asd.Length / 3);
+            }
+
+            GraphicsDevice.SetRenderTarget(null);
+            spriteBatch_.Begin();
+            spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
+            spriteBatch_.End();
+
+            if (Settings.DebugInfo)
+            {
+                spriteBatch_.Begin();
+                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(11, 101), Color.Black);
+                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(10, 100), Color.White);
+                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(11, 121), Color.Black);
+                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(10, 120), Color.White);
+                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(11, 141), Color.Black);
+                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(10, 140), Color.White);
+                spriteBatch_.End();
             }
             
             //base.Draw(gameTime);
@@ -673,9 +604,20 @@ namespace jarg {
                               size.Height),
                 Color.White);
 
+            DepthStencilState depthStencilState = new DepthStencilState();
+            depthStencilState.DepthBufferFunction = CompareFunction.LessEqual;
+            GraphicsDevice.DepthStencilState = depthStencilState;
+            spriteBatch_.Draw(
+                colorMapRenderTarget_,
+                new Rectangle(0, size.Height,
+                              size.Width,
+                              size.Height),
+                Color.White);
+
+
             spriteBatch_.Draw(
                 lightMapRenderTarget_,
-                new Rectangle(0, size.Height,
+                new Rectangle(size.Width, 0,
                               size.Width,
                               size.Height),
                 Color.White);

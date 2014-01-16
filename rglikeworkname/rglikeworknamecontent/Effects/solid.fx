@@ -11,8 +11,8 @@ float3 lightDirection;
 SamplerState SampleType
 {
     Filter = MIN_MAG_MIP_POINT;
-    AddressU = Wrap;
-    AddressV = Wrap;
+    AddressU = Clamp;
+    AddressV = Clamp;
 };
 
 struct VertexInputType
