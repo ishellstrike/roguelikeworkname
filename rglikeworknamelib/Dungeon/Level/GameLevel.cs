@@ -497,12 +497,9 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 sec += gt.ElapsedGameTime;
             }
-            if (ignore || sec.TotalSeconds >= 3)
+            if (ignore || sec.TotalSeconds >= 2)
             {
                 sec = TimeSpan.Zero;
-                int rx = MapSector.Rx;
-                int ry = MapSector.Ry;
-                Vector2 resolution = Settings.Resolution;
                 for (int i = 0; i < sectors_.Count; i++)
                 {
                     KeyValuePair<Point, MapSector> a = sectors_.ElementAt(i);
@@ -511,7 +508,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     // Math.Abs((a.Value.SectorOffsetY + 0.5)*MapSector.Ry - cara.GetPositionInBlocks().Y) > 128) {
                     // sectors_.Remove(sectors_.ElementAt(i).Key);
                     //}
-                    if (Vector3.Distance(new Vector3((a.Value.SectorOffsetX+0.5f)*16, (a.Value.SectorOffsetY+0.5f)*16,0), new Vector3(cara.Position.X/32f, cara.Position.Y/32f, 0)) > 160)
+                    if (Vector3.Distance(new Vector3((a.Value.SectorOffsetX+0.5f)*16, (a.Value.SectorOffsetY+0.5f)*16,0), new Vector3(cara.Position.X/32f, cara.Position.Y/32f, 0)) > 64 + 16)
                     {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
                         i--;

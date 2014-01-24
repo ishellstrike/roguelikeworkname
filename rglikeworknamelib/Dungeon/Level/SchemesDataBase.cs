@@ -16,6 +16,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         public SchemesDataBase() {
             Data = new List<Schemes>();
             Data = UniversalParser.JsonListDataLoader<Schemes>(Directory.GetCurrentDirectory() + @"\Content\Data\Schemes\");
+            foreach (var schemese in Data) {
+                schemese.filename = "1";
+            }
 
             Houses = Data.Where(x => x.type == SectorBiom.House).ToList();
             Storages = Data.Where(x => x.type == SectorBiom.Storage).ToList();
