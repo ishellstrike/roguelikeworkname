@@ -11,6 +11,7 @@ Content\Effects\ShadersLightningCombined.xnb
 Content\Effects\ToWhite.xnb
 Content\Effects\solid.xnb
 Content\Effects\solidshadow.xnb
+Content\Effects\billboard.xnb
 IronPython.dll
 Microsoft.Dynamic.dll
 Microsoft.Scripting.dll

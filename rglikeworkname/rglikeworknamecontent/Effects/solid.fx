@@ -7,12 +7,15 @@ float4 diffuseColor;
 float4 ambientColor;
 float3 lightDirection;
 
+float AlphaThreshold = 0.05f;
 
 SamplerState SampleType
 {
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = Clamp;
-    AddressV = Clamp;
+    MinFilter = Point;
+    MagFilter = Point;
+    MipFilter = Linear;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
 struct VertexInputType
@@ -75,6 +78,7 @@ float4 LightPixelShader(PixelInputType input) : SV_Target
 	color.a = textureColor.a;
 
 	//return float4(1,1,1,1);
+	clip(color.a < AlphaThreshold ? -1 : 1); 
     return color;
 }
 

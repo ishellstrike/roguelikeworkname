@@ -23,19 +23,19 @@ namespace jarg {
             }
             if (!ws_.Keyboardhook) {
                 if (ks_[Keys.W] == KeyState.Down) {
-                    player_.Accelerate(Vector3.Transform(Vector3.Up*20, cam.rot));
+                    player_.Accelerate(cam.Forward);
                     LookWindow.Visible = false;
                 }
                 if (ks_[Keys.S] == KeyState.Down) {
-                    player_.Accelerate(Vector3.Transform(Vector3.Down*20, cam.rot));
+                    player_.Accelerate(cam.Backward);
                     LookWindow.Visible = false;
                 }
                 if (ks_[Keys.A] == KeyState.Down) {
-                    player_.Accelerate(Vector3.Transform(Vector3.Left*20, cam.rot));
+                    player_.Accelerate(cam.Left);
                     LookWindow.Visible = false;
                 }
                 if (ks_[Keys.D] == KeyState.Down) {
-                    player_.Accelerate(Vector3.Transform(Vector3.Right*20, cam.rot));
+                    player_.Accelerate(cam.Right);
                     LookWindow.Visible = false;
                 }
 

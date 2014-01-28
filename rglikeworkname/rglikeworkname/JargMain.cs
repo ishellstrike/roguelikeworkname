@@ -79,7 +79,7 @@ namespace jarg {
         private VertexPositionTexture[] vertices_;
         private Camera cam;
 
-        private Effect solidEffect;
+        private Effect solidEffect, billboardEffect;
 
         private Texture2D whitepixel_;
         private WindowSystem ws_;
@@ -153,8 +153,7 @@ namespace jarg {
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             InactiveSleepTime = TimeSpan.FromMilliseconds(200);
 
-            cam = new Camera(new Vector3(100, 100, 100), GraphicsDevice);
-            cam.Target = new Vector3(0, 0, 0);
+            cam = new Camera(Settings.Resolution.X/Settings.Resolution.Y, Vector3.Zero);
 
             IsFixedTimeStep = false;
             graphics_.SynchronizeWithVerticalRetrace = true;
@@ -219,8 +218,7 @@ namespace jarg {
             UpdateCaracterWindowItems(null, null);
             EventLog_onLogUpdate(null, null);
             colorMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height);
-                //new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
-                //                                       DepthFormat.Depth24Stencil8, 1, RenderTargetUsage.PlatformContents);
+
             lightMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
@@ -230,7 +228,7 @@ namespace jarg {
             lineBatch_.UpdateProjection(GraphicsDevice);
             Atlases.Instance.RebuildAtlases(GraphicsDevice);
 
-            cam.GeneratePerspectiveProjectionMatrix(MathHelper.ToRadians(45));
+            cam = new Camera(Settings.Resolution.X / Settings.Resolution.Y, Vector3.Zero);
         }
 
         protected override void OnActivated(object sender, EventArgs args) {
@@ -260,6 +258,7 @@ namespace jarg {
             lig1 = Content.Load<Effect>(@"Effects\Lighting1");
             effectOmnilight_ = Content.Load<Effect>(@"Effects\Effect1");
             solidEffect = Content.Load<Effect>(@"Effects\solid");
+            billboardEffect = Content.Load<Effect>(@"Effects\billboard");
             solidShadowEffect = Content.Load<Effect>(@"Effects\solidShadow");
 
             arup_ = ContentProvider.LoadTexture(@"Textures\arrow_up");
@@ -517,9 +516,7 @@ namespace jarg {
             PlayerSeeAngle =
                 (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
 
-            cam.Target.X = player_.Position.X/32f;
-            cam.Target.Y = player_.Position.Y/32f;
-            cam.Update(Vector3.Zero, gameTime);
+            cam.LookAt = new Vector3(player_.Position.X/32f, player_.Position.Y/32f, 0);
 
             //LightCollection[0].Position = new Vector3(ms_.X+camera_.X,ms_.Y+camera_.Y,10);
         }
@@ -554,7 +551,9 @@ namespace jarg {
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             GraphicsDevice.Clear(Color.SkyBlue);
-            currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect, player_);
+            currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect, billboardEffect, player_);
+            currentFloor_.RenderCreatures(GraphicsDevice, cam, solidEffect);
+
             solidEffect.Parameters["worldMatrix"].SetValue(Matrix.Identity);
             foreach (var pass in solidEffect.CurrentTechnique.Passes) {
                 pass.Apply();
@@ -719,7 +718,7 @@ namespace jarg {
                     PlayerSeeAngle, ps_.Count(), GlobalWorldLogic.Temperature, GlobalWorldLogic.CurrentTime,
                     currentFloor_.SectorCount(), BulletSystem.GetCount(), currentFloor_.generated,
                     currentFloor_.GetShadowrenderCount()/3, GlobalWorldLogic.GetCurrentSlen(),
-                    GlobalWorldLogic.DayPart, ws_.Mopusehook, ws_.Keyboardhook,cam.rot);
+                    GlobalWorldLogic.DayPart, ws_.Mopusehook, ws_.Keyboardhook,cam);
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 

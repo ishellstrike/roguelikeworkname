@@ -47,34 +47,27 @@ namespace jarg {
             }
 
             if (ms_.ScrollWheelValue != lms_.ScrollWheelValue) {
-                cam.Cameradistance += (ms_.ScrollWheelValue - lms_.ScrollWheelValue)/(float)gameTime.ElapsedGameTime.TotalMilliseconds/10;
-                if (cam.Cameradistance < 4) {
-                    cam.Cameradistance = 4;
-                }
+                cam.Zoom += (ms_.ScrollWheelValue - lms_.ScrollWheelValue)/(float)gameTime.ElapsedGameTime.TotalMilliseconds/10;
             }
 
             if (ms_.MiddleButton == ButtonState.Pressed) {
-                cam.rot = Quaternion.Identity;
+                cam.Yaw = 0;
+                cam.Pitch = 0;
+                cam.Zoom = 30;
             }
 
-            if (ks_.IsKeyDown(Keys.LeftAlt)) {
+            if (ks_.IsKeyDown(Keys.LeftAlt))
+            {
                 var b = lms_.Y - ms_.Y;
 
-                cam.rot.X += b / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                if (cam.rot.X > 0.365) {
-                    cam.rot.X = 0.365f;
-                }
-
-                if (cam.rot.X < 0) {
-                    cam.rot.X = 0;
-                }
+                cam.Pitch += b / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            if (ks_.IsKeyDown(Keys.LeftControl)) {
+            if (ms_.RightButton == ButtonState.Pressed || ks_.IsKeyDown(Keys.LeftAlt))
+            {
                 var a = lms_.X - ms_.X;
 
-                cam.rot.Z += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds ;
+                cam.Yaw += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds ;
             }
 
             if (!ws_.Mopusehook) {

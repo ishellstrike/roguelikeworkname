@@ -269,6 +269,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void SetFloor(int x, int y, string floorId) {
             Floors[x*Ry + y].Id = floorId;
             Floors[x * Ry + y].MTex = Floors[x * Ry + y].Data.RandomMtexFromAlters();
+            GeomReady = false;
         }
 
         public Floor GetFloor(int x, int y)
@@ -294,6 +295,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             Block block = Blocks[oneDimCoord];
             block.Id = id;
             block.MTex = block.Data.RandomMtexFromAlters();
+            GeomReady = false;
         }
 
         /// <summary>
@@ -310,6 +312,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             if (Blocks[x*Rx + y].Data.SmartAction == SmartAction.ActionOpenClose) {
                 SetBlock(x, y, Blocks[x*Ry + y].Data.AfterDeathId);
             }
+            GeomReady = false;
         }
 
         public void CreateAllMapFromArray(string[] arr) {
@@ -318,6 +321,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     SetBlock(i, j, arr[i]);
                 }
             }
+            GeomReady = false;
         }
 
         public void AddDecal(Particle particle) {
@@ -328,10 +332,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        internal VertexPositionNormalTexture[] verteces, verteces_block;
+        internal VertexPositionNormalTexture[] verteces, verteces_block, verteces_facer;
         public void RebuildGeometry() {
             var a = new List<VertexPositionNormalTexture>();
             var b = new List<VertexPositionNormalTexture>();
+            var d = new List<VertexPositionNormalTexture>();
 
             for (int i = 0; i < Rx; i++) {
                 for (int j = 0; j < Ry; j++)
@@ -379,7 +384,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                             
                         }
                         else {
-                             AddObjGeom(b, i, j, block);
+                             AddObjGeom(d, i, j, block);
                         }
                     }
                 }
@@ -387,6 +392,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             verteces = a.ToArray();
             verteces_block = b.ToArray();
+            verteces_facer = d.ToArray();
             GeomReady = true;
         }
 

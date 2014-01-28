@@ -77,6 +77,13 @@ namespace rglikeworknamelib {
             indexes = new Dictionary<string, int>();
             var totalcount = texes.Sum(dictionary => dictionary.Count);
             var atl = new RenderTarget2D(gd, 1024, (totalcount / 32 + 1) * 32);
+            Texture2D wp = new Texture2D(gd, 32, 32);
+            Color[] c = new Color[32*32];
+            for (int j = 0; j < 32*32; j++) {
+                c[j] = Color.Black;
+            }
+            wp.SetData(c);
+
             gd.SetRenderTarget(atl);
             gd.Clear(Color.Transparent);
             sb_.Begin();
@@ -88,6 +95,11 @@ namespace rglikeworknamelib {
                     i++;
                 }
                 
+            }
+            for (int j = 0; j < 32; j++) {
+                sb_.Draw(wp, new Vector2(i % 32 * 32, i / 32 * 32), Color.White);
+                indexes.Add("addition_"+j, i);
+                i++;
             }
             sb_.End();
             gd.SetRenderTarget(null);

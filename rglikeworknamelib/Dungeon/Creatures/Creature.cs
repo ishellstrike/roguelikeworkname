@@ -27,6 +27,9 @@ namespace rglikeworknamelib.Dungeon.Creatures
         internal Stat hp_ = new Stat(200);
         private Vector3 lastpos_;
 
+        internal Matrix creatureWorld = Matrix.Identity;
+        internal VertexPositionNormalTexture[] vert;
+
         /// <summary>
         /// can be used for behavior proposes
         /// </summary>
@@ -84,7 +87,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             internal set { data_ = value; }
         }
 
-        public Rectangle Source
+        public Vector2 Source
         {
             get;
             private set;
@@ -100,9 +103,22 @@ namespace rglikeworknamelib.Dungeon.Creatures
             }
             set
             {
-                //Source = BlockData.GetSource(value);
+                Source = BlockData.GetSource(value);
+                BuildGeom();
                 mTex_ = value;
             }
+        }
+
+        private void BuildGeom() {
+            var a = new List<VertexPositionNormalTexture>();
+            a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 0), Vector3.Up, Source + new Vector2(0,Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 1), Vector3.Up, Source));
+            a.Add(new VertexPositionNormalTexture(new Vector3(1, 0, 1), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(1, 0, 1), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(1, 0, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 0), Vector3.Up, Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+
+            vert = a.ToArray();
         }
 
         /// <summary>
@@ -264,6 +280,8 @@ namespace rglikeworknamelib.Dungeon.Creatures
                     }
                 }
             }
+
+            creatureWorld.Translation = new Vector3(position_.X/32f + ms.SectorOffsetX * 16, position_.Y/32f + ms.SectorOffsetY * 16, 0);
 
             for (int i = 0; i < Buffs.Count; i++) {
                 IBuff buff = Buffs[i];
