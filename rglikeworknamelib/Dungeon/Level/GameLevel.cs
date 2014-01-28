@@ -1485,27 +1485,15 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public void RenderShadowMap(GraphicsDevice graphicsDevice, Camera cam, Effect solidEffect)
         {
-            if (!Settings.DebugWire)
-            {
-                graphicsDevice.RasterizerState = new RasterizerState
-                {
-                    CullMode = CullMode.CullClockwiseFace,
-                    FillMode = FillMode.Solid
-                };
-            }
-            else
-            {
-                graphicsDevice.RasterizerState = new RasterizerState
-                {
-                    CullMode = CullMode.CullClockwiseFace,
-                    FillMode = FillMode.WireFrame,
-                };
-            }
+            solidEffect.Parameters["viewMatrix"].SetValue(cam.ViewMatrix);
+            solidEffect.Parameters["projectionMatrix"].SetValue(cam.ProjectionMatrix);
+            solidEffect.Parameters["shaderTexture"].SetValue(Atlases.Instance.MajorAtlas);
             // graphicsDevice.DepthStencilState = DepthStencilState.Default;
             foreach (var pass in solidEffect.CurrentTechnique.Passes)
             {
                 foreach (var sector in sectors_)
                 {
+                    if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
                     solidEffect.Parameters["worldMatrix"].SetValue(
                         Matrix.CreateTranslation(sector.Value.SectorOffsetX * 16, sector.Value.SectorOffsetY * 16, 0) * Matrix.CreateShadow(Vector3.Transform(GlobalWorldLogic.LightVector, Matrix.CreateRotationX((float) +Math.PI/2)), new Plane(Vector3.Forward, 0))
                         );
@@ -1514,6 +1502,22 @@ namespace rglikeworknamelib.Dungeon.Level
                     {
                         graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces_block, 0,
                                                             sector.Value.verteces_block.Length / 3);
+                    }
+
+                    if (sector.Value.verteces_facer.Length > 0)
+                    {
+                        int i = 0;
+                        foreach (var oW in sector.Value.objWorld)
+                        {
+                            var billboardWorld = Matrix.CreateBillboard(oW, cam.Position, cam.Backward, null);
+                            billboardWorld.Translation = oW;
+                            solidEffect.Parameters["worldMatrix"].SetValue(billboardWorld * Matrix.CreateShadow(Vector3.Transform(GlobalWorldLogic.LightVector, Matrix.CreateRotationX((float)+Math.PI / 2)), new Plane(Vector3.Forward, 0)));
+                            pass.Apply();
+
+                            graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
+                                sector.Value.verteces_facer, i * 6, 2);
+                            i++;
+                        }
                     }
                 }
             }
@@ -1554,6 +1558,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     if (!sector.Value.GeomReady) {
                         sector.Value.RebuildGeometry();
                     }
+                    if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
                     solidEffect.Parameters["worldMatrix"].SetValue(
                         Matrix.CreateTranslation(sector.Value.SectorOffsetX*16, sector.Value.SectorOffsetY*16, 0));
                     pass.Apply();
@@ -1569,9 +1574,9 @@ namespace rglikeworknamelib.Dungeon.Level
             foreach (var pass in bilbEffect.CurrentTechnique.Passes)
             {
                 foreach (var sector in sectors_) {
+                    if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
                     foreach (var creature in sector.Value.Creatures) {
-                        var billboardWorld = Matrix.CreateBillboard(creature.creatureWorld.Translation, cam.Position,
-                            Vector3.Backward, null);
+                        var billboardWorld = Matrix.CreateBillboard(creature.creatureWorld.Translation, cam.Position, cam.Backward, null);
                         billboardWorld.Translation = creature.creatureWorld.Translation;
 
                         bilbEffect.Parameters["worldMatrix"].SetValue(billboardWorld);
@@ -1607,24 +1612,29 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 foreach (var sector in sectors_)
                 {
-                    if (sector.Value.verteces_block.Length > 0 || sector.Value.verteces_facer.Length > 0)
+
+                    if(cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint){continue;}
+
+                    if (sector.Value.verteces_block.Length > 0)
                     {
                         solidEffect.Parameters["worldMatrix"].SetValue(
                             Matrix.CreateTranslation(sector.Value.SectorOffsetX * 16, sector.Value.SectorOffsetY * 16, 0));
                         pass.Apply();
-
-                    }
-
-                    if (sector.Value.verteces_block.Length > 0)
-                    {
                         graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces_block, 0,
                                                           sector.Value.verteces_block.Length / 3);
                     }
-                    if (sector.Value.verteces_facer.Length > 0)
-                    {
-                        graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
-                            sector.Value.verteces_facer, 0,
-                            sector.Value.verteces_facer.Length / 3);
+                    if (sector.Value.verteces_facer.Length > 0) {
+                        int i = 0;
+                        foreach (var oW in sector.Value.objWorld) {
+                            var billboardWorld = Matrix.CreateBillboard(oW, cam.Position, cam.Backward, null);
+                            billboardWorld.Translation = oW;
+                            solidEffect.Parameters["worldMatrix"].SetValue(billboardWorld);
+                            pass.Apply();
+
+                            graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
+                                sector.Value.verteces_facer, i*6, 2);
+                            i++;
+                        }
                     }
                 }
             }

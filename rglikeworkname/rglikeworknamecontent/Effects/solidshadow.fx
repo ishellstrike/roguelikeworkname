@@ -55,15 +55,7 @@ PixelInputType LightVertexShader(VertexInputType input)
 float4 LightPixelShader(PixelInputType input) : SV_Target
 {
     float4 textureColor;
-    float3 lightDir;
-    float lightIntensity;
-    float4 color;
-
     textureColor = shaderTexture.Sample(SampleType, input.tex);
-
-	//color = float4(color,0);
-
-	//return float4(1,1,1,1);
     return float4(0,0,0,textureColor.a);
 }
 

@@ -39,6 +39,7 @@ namespace jarg {
         private readonly Stopwatch swDraw_ = new Stopwatch();
         private readonly Stopwatch swUpdate_ = new Stopwatch();
         private Effect effectOmnilight_;
+        private BasicEffect basicE;
         private bool flashlight_ = true;
         public float PlayerSeeAngle;
         private Action<GameTime> updateAction_ = x => { };
@@ -141,6 +142,7 @@ namespace jarg {
         protected Vector2 ContainerOn { get; set; }
 
         protected override void Initialize() {
+            CreateQube();
             var gameWindowForm = (Form) Control.FromHandle(Window.Handle);
             gameWindowForm.MinimumSize = new Size(800, 600);
             gameWindowForm.FormClosing += gameWindowForm_FormClosing;
@@ -152,8 +154,6 @@ namespace jarg {
             graphics_.PreferredBackBufferHeight = (int) Settings.Resolution.Y;
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
             InactiveSleepTime = TimeSpan.FromMilliseconds(200);
-
-            cam = new Camera(Settings.Resolution.X/Settings.Resolution.Y, Vector3.Zero);
 
             IsFixedTimeStep = false;
             graphics_.SynchronizeWithVerticalRetrace = true;
@@ -221,14 +221,17 @@ namespace jarg {
 
             lightMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             effectOmnilight_.Parameters["screenWidth"].SetValue(width);
             effectOmnilight_.Parameters["screenHeight"].SetValue(height);
             lineBatch_.UpdateProjection(GraphicsDevice);
             Atlases.Instance.RebuildAtlases(GraphicsDevice);
 
-            cam = new Camera(Settings.Resolution.X / Settings.Resolution.Y, Vector3.Zero);
+            var a = cam.Yaw;
+            var b = cam.Pitch;
+            var c = cam.Zoom;
+            cam = new Camera(Settings.Resolution.X / Settings.Resolution.Y, Vector3.Zero){Yaw = a, Pitch = b, Zoom = c};
         }
 
         protected override void OnActivated(object sender, EventArgs args) {
@@ -252,6 +255,9 @@ namespace jarg {
             whitepixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
             whitepixel_.SetData(new[] {Color.White});
 
+            yellowpixel_ = new Texture2D(graphics_.GraphicsDevice, 1, 1);
+            yellowpixel_.SetData(new[] { new Color(255,255,255,64) });
+
             font1_ = Content.Load<SpriteFont>(@"Fonts\Font1");
             Settings.Font = font1_;
 
@@ -267,6 +273,7 @@ namespace jarg {
             caracter = ContentProvider.LoadTexture(@"Textures\caracter");
             map = ContentProvider.LoadTexture(@"Textures\map");
             fltex = ContentProvider.LoadTexture(@"Textures\Effects\fl1");
+            basicE = new BasicEffect(GraphicsDevice);
 
             ps_ = new ParticleSystem(spriteBatch_,
                          ParsersCore.LoadTexturesInOrder(
@@ -289,6 +296,8 @@ namespace jarg {
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
 
+            cam = new Camera(Settings.Resolution.X / Settings.Resolution.Y, Vector3.Zero);
+
             new AchievementDataBase();
 
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
@@ -299,7 +308,7 @@ namespace jarg {
                                                        DepthFormat.Depth24Stencil8, 1, RenderTargetUsage.PreserveContents);
             lightMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
-            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width, height, false, SurfaceFormat.Color,
+            shadowMapRenderTarget_ = new RenderTarget2D(GraphicsDevice, width / LightQ, height / LightQ, false, SurfaceFormat.Color,
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
 
             lightEffect1_ = Content.Load<Effect>(@"Effects/ShadersLightningShadow");
@@ -315,6 +324,8 @@ namespace jarg {
             lightCollection_.Add(new Light
             {Color = Color.Brown, LightRadius = 2000f, Position = Vector3.Zero, Power = 100});
         }
+
+        public Texture2D yellowpixel_ { get; set; }
 
         private bool InitialFinish;
         //invoke after DataBasesLoadAndThenInitialGeneration
@@ -486,11 +497,11 @@ namespace jarg {
                 }
             }
 
-            currentFloor_.CalcWision(player_,
-                                     (float)
-                                     Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y,
-                                                ms_.X - player_.Position.X + camera_.X),
-                                     seeAngleDeg);
+            //currentFloor_.CalcWision(player_,
+            //                         (float)
+            //                         Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y,
+            //                                    ms_.X - player_.Position.X + camera_.X),
+            //                         seeAngleDeg);
 
             
             //if (car != null) {
@@ -553,16 +564,10 @@ namespace jarg {
             currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect, billboardEffect, player_);
             currentFloor_.RenderCreatures(GraphicsDevice, cam, solidEffect);
 
-            solidEffect.Parameters["worldMatrix"].SetValue(Matrix.Identity);
+            solidEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateBillboard(player_.creatureWorld.Translation, cam.Position, cam.Backward, null));
             foreach (var pass in solidEffect.CurrentTechnique.Passes) {
                 pass.Apply();
-                var asd = new[] {
-                    new VertexPositionNormalTexture(new Vector3(player_.Position.X/32f + 0, player_.Position.Y/32f + 0, 0), Vector3.Up, new Vector2(0,0)),
-                    new VertexPositionNormalTexture(new Vector3(player_.Position.X/32f + 1, player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(1,1)),
-                    new VertexPositionNormalTexture(new Vector3(player_.Position.X/32f + 0, player_.Position.Y/32f + 1, 0), Vector3.Up, new Vector2(0,1))
-                };
-
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, asd, 0, asd.Length / 3);
+                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, player_.vert, 0, player_.vert.Length / 3);
             }
 
             GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
@@ -572,10 +577,17 @@ namespace jarg {
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch_.Begin();
             spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
-            spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, new Color(1,1,1,0.5f));
+            spriteBatch_.Draw(shadowMapRenderTarget_, Vector2.Zero, null, new Color(1, 1, 1, 0.5f), 0, Vector2.Zero, LightQ, SpriteEffects.None, 0);
             spriteBatch_.End();
 
             currentFloor_.RenderBlockMap(GraphicsDevice, cam, solidEffect);
+
+            //solidShadowEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateTranslation(nx, ny, 0));
+            //foreach (var pass in solidShadowEffect.CurrentTechnique.Passes)
+            //{
+            //    pass.Apply();
+            //    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, qube, 0, qube.Length / 3);
+            //}
 
             if (Settings.DebugInfo)
             {
@@ -706,6 +718,137 @@ namespace jarg {
             return lightMapRenderTarget_;
         }
 
+        private VertexPositionNormalTexture[] qube;
+        private void CreateQube() {
+            var b = new List<VertexPositionNormalTexture>();
+            int i = 0;
+            int j = 0;
+            var h = 1.05f;
+                b.Add(new VertexPositionNormalTexture(
+                          new Vector3(0 -0.05f, 1.05f, h), Vector3.Backward, Vector2.Zero));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(1.05f, 1.05f, h), Vector3.Backward, new Vector2(1, 0)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(0 - 0.05f, 1.05f, 0), Vector3.Backward, new Vector2(0, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(1.05f, 1.05f, h), Vector3.Backward, new Vector2(1, 0)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(1.05f, 1.05f, 0), Vector3.Backward, new Vector2(1, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(0 - 0.05f, 1.05f, 0), Vector3.Backward, new Vector2(0, 1)));
+
+                b.Add(new VertexPositionNormalTexture(
+                          new Vector3(i - 0.05f, j - 0.05f, h), Vector3.Right, Vector2.Zero));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i - 0.05f, j - 0.05f, 0), Vector3.Right,
+                        new Vector2(0, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j - 0.05f, h), Vector3.Right,
+                        new Vector2(1, 0)));
+
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j - 0.05f, h), Vector3.Right,
+                        new Vector2(1, 0)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i - 0.05f, j - 0.05f, 0), Vector3.Right,
+                       new Vector2(0, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j - 0.05f, 0), Vector3.Right,
+
+                        new Vector2(1, 1)));
+
+                b.Add(new VertexPositionNormalTexture(
+                          new Vector3(i - 0.05f, j - 0.05f, h), Vector3.Forward,
+                          Vector2.Zero));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i - 0.05f, j + 1.05f, h), Vector3.Forward,
+                         new Vector2(1, 0)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i - 0.05f, j - 0.05f, 0), Vector3.Forward,
+                        new Vector2(0, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i - 0.05f, j + 1.05f, h), Vector3.Forward,
+                         new Vector2(1, 0)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i - 0.05f, j + 1.05f, 0), Vector3.Forward,
+                        
+                        new Vector2(1, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i - 0.05f, j - 0.05f, 0), Vector3.Forward,
+                        new Vector2(0, 1.05f)));
+
+                b.Add(new VertexPositionNormalTexture(
+                          new Vector3(i + 1.05f, j - 0.05f, h), Vector3.Left,
+                          Vector2.Zero));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j - 0.05f, 0), Vector3.Left,
+                        new Vector2(0, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j + 1.05f, h), Vector3.Left,
+                        new Vector2(1, 0)));
+
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j + 1.05f, h), Vector3.Left,
+                        new Vector2(1, 0)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j - 0.05f, 0), Vector3.Left,
+                        new Vector2(0, 1)));
+                b.Add(
+                    new VertexPositionNormalTexture(
+                        new Vector3(i + 1.05f, j + 1.05f, 0), Vector3.Left,
+                        
+                        new Vector2(1, 1)));
+
+
+            b.Add(new VertexPositionNormalTexture(
+                      new Vector3(i - 0.05f, j - 0.05f, h), Vector3.Up,
+                       Vector2.Zero));
+            b.Add(
+                new VertexPositionNormalTexture(
+                    new Vector3(i + 1.05f, j - 0.05f, h), Vector3.Up,
+                   new Vector2(1, 0)));
+            b.Add(
+                new VertexPositionNormalTexture(
+                    new Vector3(i, j + 1.05f, h), Vector3.Up,
+                    new Vector2(0, 1)));
+
+            b.Add(
+                new VertexPositionNormalTexture(
+                    new Vector3(i + 1.05f, j - 0.05f, h), Vector3.Up,
+                    new Vector2(1, 0)));
+            b.Add(
+                new VertexPositionNormalTexture(
+                    new Vector3(i + 1.05f, j + 1.05f, h), Vector3.Up,
+                   
+                    new Vector2(1, 1)));
+            b.Add(
+                new VertexPositionNormalTexture(
+                    new Vector3(i - 0.05f, j + 1.05f, h), Vector3.Up,
+                     new Vector2(0, 1)));
+
+            qube = b.ToArray();
+        }
+
+        private int nx, ny;
         private void DebugInfoDraw() {
             string ss =
                 string.Format(
@@ -717,15 +860,6 @@ namespace jarg {
             spriteBatch_.Begin();
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 
-            var nx = (int) ((ms_.X + camera_.X)/32.0);
-            var ny = (int) ((ms_.Y + camera_.Y)/32.0);
-
-            if (ms_.X + camera_.X < 0) {
-                nx--;
-            }
-            if (ms_.Y + camera_.Y < 0) {
-                ny--;
-            }
 
             spriteBatch_.DrawString(font1_, string.Format("       {0} {1}", nx, ny), new Vector2(ms_.X, ms_.Y),
                                     Color.White);

@@ -73,14 +73,21 @@ namespace jarg {
             }
 
             if (!ws_.Mopusehook) {
-                int nx = (ms_.X + (int) camera_.X)/32;
-                int ny = (ms_.Y + (int) camera_.Y)/32;
+                Vector3 nP = new Vector3(ms_.X, ms_.Y, 0);
+                Vector3 fP = new Vector3(ms_.X, ms_.Y, 0.1f);
+                Vector3 n3dP = GraphicsDevice.Viewport.Unproject(nP, cam.ProjectionMatrix, cam.ViewMatrix, Matrix.Identity);
+                Vector3 f3dP = GraphicsDevice.Viewport.Unproject(fP, cam.ProjectionMatrix, cam.ViewMatrix, Matrix.Identity);
+                Vector3 dir = f3dP - n3dP; dir.Normalize();
+                Ray carRay = new Ray(n3dP, dir); 
+                float? f = carRay.Intersects(new Plane(Vector3.Forward, 0));
 
-                if (ms_.X + camera_.X < 0) {
-                    nx--;
-                }
-                if (ms_.Y + camera_.Y < 0) {
-                    ny--;
+                if (f.HasValue) {
+                    Vector3 p = carRay.Position + carRay.Direction*f.Value;
+                    nx = (int) (p.X);
+                    ny = (int) (p.Y);
+
+                    nx = p.X < 0 ? nx - 1 : nx;
+                    ny = p.Y < 0 ? ny - 1 : ny;
                 }
 
                 WindowIngameHint.Visible = false;
@@ -93,7 +100,7 @@ namespace jarg {
                 if (currentFloor_ != null) {
                     Block nxny = currentFloor_.GetBlock(nx, ny);
                     bool nothingUndermouse = true;
-                    if (nxny != null && nxny.Lightness == Color.White && !rememberShoot_)
+                    if (nxny != null && !rememberShoot_)
                         // currentFloor_.IsExplored(aa))
                     {
                         Block a = currentFloor_.GetBlock(nx, ny);
@@ -135,7 +142,8 @@ namespace jarg {
                                 s += " (далеко)";
                             }
 
-                            if (WindowIngameHint.Visible = a.Id != "0") {
+                            WindowIngameHint.Visible = a.Id != "0";
+                            if (WindowIngameHint.Visible) {
                                 LabelIngameHint.Text = s;
                                 WindowIngameHint.Locate.Width = (int) LabelIngameHint.Width + 20;
                                 WindowIngameHint.SetPosition(new Vector2(ms_.X + 10, ms_.Y + 10));

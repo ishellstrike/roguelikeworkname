@@ -53,6 +53,16 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Perks = new PerksSystem(this);
             Weared = new Collection<Item>();
             Inventory = ism;
+
+
+            var a = new List<VertexPositionNormalTexture>();
+            a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
+            a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, -0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
+            vert = a.ToArray();
         }
 
         public Vector2 CurrentActiveRoom { get; set; }
@@ -234,6 +244,8 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Sleep.Current -= (float) elapsetGwl.TotalDays/1.5f*100;
 
                 secShoot_ += gt.ElapsedGameTime;
+
+                creatureWorld.Translation = new Vector3(position_.X / 32f, position_.Y / 32f, 0) + new Vector3(0.5f, 0.5f, 0.5f);
 
                 for (var i = 0; i < Buffs.Count; i++) {
                     var buff = Buffs[i];

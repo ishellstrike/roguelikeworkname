@@ -27,8 +27,8 @@ namespace rglikeworknamelib.Dungeon.Creatures
         internal Stat hp_ = new Stat(200);
         private Vector3 lastpos_;
 
-        internal Matrix creatureWorld = Matrix.Identity;
-        internal VertexPositionNormalTexture[] vert;
+        public Matrix creatureWorld = Matrix.Identity;
+        public VertexPositionNormalTexture[] vert;
 
         /// <summary>
         /// can be used for behavior proposes
@@ -111,12 +111,12 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         private void BuildGeom() {
             var a = new List<VertexPositionNormalTexture>();
-            a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 0), Vector3.Up, Source + new Vector2(0,Atlases.Instance.SpriteHeight)));
-            a.Add(new VertexPositionNormalTexture(new Vector3(0, 1, 0), Vector3.Up, Source));
-            a.Add(new VertexPositionNormalTexture(new Vector3(1, 1, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            a.Add(new VertexPositionNormalTexture(new Vector3(1, 1, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            a.Add(new VertexPositionNormalTexture(new Vector3(1, 0, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
-            a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 0), Vector3.Up, Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
+            a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, -0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
 
             vert = a.ToArray();
         }
@@ -281,7 +281,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 }
             }
 
-            creatureWorld.Translation = new Vector3(position_.X/32f + ms.SectorOffsetX * 16, position_.Y/32f + ms.SectorOffsetY * 16, 0);
+            creatureWorld.Translation = new Vector3(position_.X / 32f + ms.SectorOffsetX * 16, position_.Y / 32f + ms.SectorOffsetY * 16, 0) + new Vector3(0.5f, 0.5f, 0.5f);
 
             for (int i = 0; i < Buffs.Count; i++) {
                 IBuff buff = Buffs[i];

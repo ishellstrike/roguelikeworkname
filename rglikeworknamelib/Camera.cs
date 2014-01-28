@@ -21,6 +21,7 @@ namespace rglikeworknamelib
         }
 
         internal Vector3 Up;
+        public BoundingFrustum Bounding;
 
         /// <summary>
         /// Recreates our view matrix, then signals that the view matrix
@@ -43,6 +44,8 @@ namespace rglikeworknamelib
             //Calculate a new viewmatrix
             viewMatrix = Matrix.CreateLookAt(position, lookAt, Vector3.Backward);
             viewMatrixDirty = false;
+
+            Bounding = new BoundingFrustum(ViewMatrix*ProjectionMatrix);
         }
 
         public override string ToString() {
