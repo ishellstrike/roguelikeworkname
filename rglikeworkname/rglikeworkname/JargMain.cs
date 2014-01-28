@@ -258,7 +258,6 @@ namespace jarg {
             lig1 = Content.Load<Effect>(@"Effects\Lighting1");
             effectOmnilight_ = Content.Load<Effect>(@"Effects\Effect1");
             solidEffect = Content.Load<Effect>(@"Effects\solid");
-            billboardEffect = Content.Load<Effect>(@"Effects\billboard");
             solidShadowEffect = Content.Load<Effect>(@"Effects\solidShadow");
 
             arup_ = ContentProvider.LoadTexture(@"Textures\arrow_up");
@@ -550,7 +549,7 @@ namespace jarg {
         private void GameDraw(GameTime gameTime) {
 
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
-            GraphicsDevice.Clear(Color.SkyBlue);
+            GraphicsDevice.Clear(Color.Black);
             currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect, billboardEffect, player_);
             currentFloor_.RenderCreatures(GraphicsDevice, cam, solidEffect);
 
@@ -581,20 +580,16 @@ namespace jarg {
             if (Settings.DebugInfo)
             {
                 spriteBatch_.Begin();
-                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(11, 101), Color.Black);
-                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount.ToString(), new Vector2(10, 100), Color.White);
-                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(11, 121), Color.Black);
-                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount.ToString(), new Vector2(10, 120), Color.White);
-                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(11, 141), Color.Black);
-                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount.ToString(), new Vector2(10, 140), Color.White);
+                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount, new Vector2(11, 101), Color.Black);
+                spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount, new Vector2(10, 100), Color.White);
+                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount, new Vector2(11, 121), Color.Black);
+                spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount, new Vector2(10, 120), Color.White);
+                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount, new Vector2(11, 141), Color.Black);
+                spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount, new Vector2(10, 140), Color.White);
                 spriteBatch_.End();
             }
-            
-            //base.Draw(gameTime);
-        }
 
-        private Texture2D GetRenderedFlashlight() {
-            return null;
+            //base.Draw(gameTime);
         }
 
         public void DrawDebugRenderTargets(GameTime time) {

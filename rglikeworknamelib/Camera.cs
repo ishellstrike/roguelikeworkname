@@ -19,7 +19,9 @@ namespace rglikeworknamelib
             this.nearPlane = nearPlane;
             this.farPlane = farPlane;
         }
- 
+
+        internal Vector3 Up;
+
         /// <summary>
         /// Recreates our view matrix, then signals that the view matrix
         /// is clean.
@@ -30,14 +32,11 @@ namespace rglikeworknamelib
             Backward = Vector3.Transform(Vector3.Down, rot);
             Left = Vector3.Transform(Vector3.Left, rot);
             Right = Vector3.Transform(Vector3.Right, rot);
+            Up = Vector3.Transform(Vector3.Backward, rot);
 
-            //Calculate the relative position of the camera      
-            var up = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(0, pitch, 0));
 
             position = Vector3.Transform(Vector3.Backward, rot);
-            //position = Vector3.Transform(position, Matrix.CreateRotationZ(yaw));
 
-            //Convert the relative position to the absolute position
             position *= zoom;
             position += lookAt;
  

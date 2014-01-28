@@ -58,6 +58,8 @@ namespace jarg {
 
             if (ks_.IsKeyDown(Keys.LeftAlt))
             {
+                Mouse.SetPosition((int)(Settings.Resolution.X / 2), (int)(Settings.Resolution.Y / 2));
+                lms_ = Mouse.GetState();
                 var b = lms_.Y - ms_.Y;
 
                 cam.Pitch += b / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;

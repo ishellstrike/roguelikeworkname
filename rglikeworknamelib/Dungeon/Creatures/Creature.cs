@@ -112,9 +112,9 @@ namespace rglikeworknamelib.Dungeon.Creatures
         private void BuildGeom() {
             var a = new List<VertexPositionNormalTexture>();
             a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 0), Vector3.Up, Source + new Vector2(0,Atlases.Instance.SpriteHeight)));
-            a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 1), Vector3.Up, Source));
-            a.Add(new VertexPositionNormalTexture(new Vector3(1, 0, 1), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            a.Add(new VertexPositionNormalTexture(new Vector3(1, 0, 1), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(0, 1, 0), Vector3.Up, Source));
+            a.Add(new VertexPositionNormalTexture(new Vector3(1, 1, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+            a.Add(new VertexPositionNormalTexture(new Vector3(1, 1, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
             a.Add(new VertexPositionNormalTexture(new Vector3(1, 0, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
             a.Add(new VertexPositionNormalTexture(new Vector3(0, 0, 0), Vector3.Up, Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
 

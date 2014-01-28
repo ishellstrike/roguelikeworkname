@@ -1570,12 +1570,11 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 foreach (var sector in sectors_) {
                     foreach (var creature in sector.Value.Creatures) {
-                        Matrix billboardWorld = Matrix.Identity;
-                        billboardWorld.Forward = Vector3.Normalize(cam.Position - cam.LookAt);
-                        billboardWorld.Right = Vector3.Normalize(Vector3.Cross(billboardWorld.Forward, Vector3.Up));
-                        billboardWorld.Translation = cam.Position + (billboardWorld.Backward * cam.Zoom);
+                        var billboardWorld = Matrix.CreateBillboard(creature.creatureWorld.Translation, cam.Position,
+                            Vector3.Backward, null);
+                        billboardWorld.Translation = creature.creatureWorld.Translation;
 
-                        bilbEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateBillboard(creature.creatureWorld.Translation, cam.Position, Vector3.Up, cam.Forward));
+                        bilbEffect.Parameters["worldMatrix"].SetValue(billboardWorld);
                         pass.Apply();
 
                         graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, creature.vert, 0,
