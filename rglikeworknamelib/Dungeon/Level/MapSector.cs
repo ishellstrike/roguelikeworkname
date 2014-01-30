@@ -16,12 +16,12 @@ namespace rglikeworknamelib.Dungeon.Level {
         /// <summary>
         ///     Sector ox size
         /// </summary>
-        public const int Rx = 16;
+        public const int Rx = 25;
 
         /// <summary>
         ///     Sectro oy size
         /// </summary>
-        public const int Ry = 16;
+        public const int Ry = 25;
 
         internal SectorBiom Biom;
 
@@ -341,7 +341,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             var d = new List<VertexPositionNormalTexture>();
             var e = new List<Vector3>();
 
-            bBox = new BoundingBox(new Vector3(SectorOffsetX * 16, SectorOffsetY * 16, 0), new Vector3(SectorOffsetX * 16 + 16, SectorOffsetY * 16 + 16, 1));
+            bBox = new BoundingBox(new Vector3(SectorOffsetX * Rx, SectorOffsetY * Ry, 0), new Vector3(SectorOffsetX * Rx + Rx, SectorOffsetY * Ry + Ry, 1));
 
             for (int i = 0; i < Rx; i++) {
                 for (int j = 0; j < Ry; j++)
@@ -390,7 +390,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         }
                         else {
                              AddObjGeom(d, block);
-                             e.Add(new Vector3(i + SectorOffsetX * 16, j + SectorOffsetY * 16, 0) + new Vector3(0.5f, 0.5f, 0.5f));
+                             e.Add(new Vector3(i + SectorOffsetX * Rx, j + SectorOffsetY * Ry, 0) + new Vector3(0.5f, 0.5f, 0.5f));
                         }
                     }
                 }

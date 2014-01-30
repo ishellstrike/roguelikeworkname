@@ -57,25 +57,11 @@
 	"ItemSpawn":[
 		{
 			"Ids":["spawn_shopfood","cigarets"],
-			"Min":10,
-			"Max":20, 
-			"Prob":25, 
-			"Repeat":1
-		},
-		{
-			"Ids":["spawn_shopfood","cigarets"],
-			"Min":5,
-			"Max":10, 
-			"Prob":25, 
-			"Repeat":1
-		},
-		{
-			"Ids":["spawn_shopfood","cigarets"],
 			"Min":1,
-			"Max":2, 
-			"Prob":80, 
-			"Repeat":1
-		}
+			"Max":3, 
+			"Prob":25, 
+			"Repeat":20
+		},
 	]
   },
   "stelaj_weapon":{
@@ -123,13 +109,6 @@
     "SmartAction":"ActionOpenContainer",
     "Flame":true,
 	"IsTransparent":true,
-  },
-  "tumba_house":{
-    "Name":"Тумба",
-    "IsTransparent":true,
-    "MTex":"notex",
-    "SmartAction":"ActionOpenContainer",
-    "Flame":true,
   },
   "3":{
     "Name":"Деревянная дверь (закрыта)",
@@ -286,7 +265,6 @@
   },
   "kustsmall":{
     "Name":"Молодой кустарник",
-    "IsTransparent":false,
     "IsWalkable":true,
     "IsTransparent":true,
     "MTex":"mbush1",
@@ -316,16 +294,164 @@
     "Name":"Небольшой сейф",
     "IsTransparent":true,
     "MTex":"safe1",
+	"ItemSpawn": [
+		{
+			"Ids":["spawn_money"],
+			"Max":1,
+			"Min":1,
+			"Prob":90,
+			"Repeat":4
+		},
+		{
+			"Ids":["spawn_core_lightweapon"],
+			"Max":1,
+			"Min":1,
+			"Prob":20,
+			"Repeat":1
+		}
+	],
   },
   "bigsafe":{
     "Name":"Большой сейф",
     "IsTransparent":true,
     "MTex":"safe2",
+	"ItemSpawn": [
+		{
+			"Ids":["spawn_money"],
+			"Max":1,
+			"Min":1,
+			"Prob":90,
+			"Repeat":10
+		},
+		{
+			"Ids":["spawn_core_lightweapon"],
+			"Max":1,
+			"Min":1,
+			"Prob":40,
+			"Repeat":1
+		}
+	],
   },
   "stul":{
     "Name":"Стул",
     "IsTransparent":true,
-    "MTex":"notex",
+    "MTex":"chair1",
+    "Flame":true,
+  },
+  "fence_wood":{
+    "Name":"Деревянная изгородь",
+    "IsTransparent":true,
+    "MTex":"fence_w",
+	"AlterMtex":["fence_w1","fence_w2"],
+    "Flame":true,
+	"Height":0.5,
+	"Wallmaker":true,
+  },
+  "fence_steel":{
+    "Name":"Стальная изгородь",
+    "IsTransparent":true,
+    "MTex":"fence_s",
+	"AlterMtex":["fence_s1","fence_s2"],
+	"Height":0.5,
+	"Wallmaker":true,
+  },
+  "washer":{
+    "Name":"Стиральная машина",
+    "IsTransparent":true,
+    "MTex":"washer",
+    "Flame":true,
+  },
+  "fridge":{
+    "Name":"Холодильник",
+    "IsTransparent":true,
+    "MTex":"fridge1",
+    "Flame":true,
+	"ItemSpawn": [
+		{
+			"Ids":["spawn_cookedfood"],
+			"Max":1,
+			"Min":1,
+			"Prob":50,
+			"Repeat":6
+		},
+		{
+			"Ids":["spawn_shopfood"],
+			"Max":1,
+			"Min":1,
+			"Prob":50,
+			"Repeat":4
+		}
+	],
+  },
+  "small_fridge":{
+    "Name":"Небольшой холодильник",
+    "IsTransparent":true,
+    "MTex":"fridge2",
+    "Flame":true,
+	"ItemSpawn": [
+		{
+			"Ids":["spawn_cookedfood"],
+			"Max":1,
+			"Min":1,
+			"Prob":50,
+			"Repeat":3
+		},
+		{
+			"Ids":["spawn_shopfood"],
+			"Max":1,
+			"Min":1,
+			"Prob":50,
+			"Repeat":2
+		}
+	],
+  },
+  "water_heater":{
+    "Name":"Водонагреватель",
+    "IsTransparent":true,
+    "MTex":"glass_hor",
+    "Flame":true,
+  },
+  "posude_shkaf":{
+    "Name":"Стойка с посудой",
+    "IsTransparent":true,
+    "MTex":"glass_hor",
+    "Flame":true,
+	"ItemSpawn": [
+		{
+			"Ids":["spawn_posuda"],
+			"Max":5,
+			"Min":1,
+			"Prob":80,
+			"Repeat":3
+		},
+	]
+  },
+  "trash_can":{
+    "Name":"Мусорное ведро",
+    "IsTransparent":true,
+    "MTex":"trashcan",
+	"AlterMtex":["trashcan1"],
+    "Flame":true,
+	"ItemSpawn": [
+		{
+			"Ids":["spawn_trash"],
+			"Max":1,
+			"Min":1,
+			"Prob":50,
+			"Repeat":4
+		}
+	],
+  },
+  "table":{
+    "Name":"Стол",
+    "IsTransparent":true,
+    "MTex":"table1",
+    "Flame":true,
+  },
+  "tumba_televisor":{
+    "Name":"Тумбочка с телевизором",
+    "IsTransparent":true,
+    "MTex":"glass_hor",
     "Flame":true,
   },
   "tumba":{
@@ -334,6 +460,15 @@
 	"AlterMtex":["tumba2"],
     "MTex":"tumba1",
     "Flame":true,
+	"ItemSpawn": [
+		{
+			"Ids":["paper"],
+			"Max":5,
+			"Min":1,
+			"Prob":30,
+			"Repeat":1
+		}
+	],
   },
   "rakovina":{
     "Name":"Раковина",

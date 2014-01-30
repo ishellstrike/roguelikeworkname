@@ -19,7 +19,6 @@ using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
-using Point = Microsoft.Xna.Framework.Point;
 
 namespace BScriptArea
 {

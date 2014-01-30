@@ -35,6 +35,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                     AchievementDataBase.Stat["foodtotal"].Count += it.Count;
                     break;
             }
+            ItemDataBase.StackSimilar(ref items_);
             Settings.InventoryUpdate = true;
         }
 
@@ -51,26 +52,6 @@ namespace rglikeworknamelib.Dungeon.Items {
             return it == ItemType.Nothing ? items_ : items_.Where(item => item.Data.SortType == it).ToList();
         }
 
-        public void StackSimilar() {
-            var a = new List<Item>();
-
-            foreach (Item item in items_) {
-                Item it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses == 0);
-                if (it != null) {
-                    it.Count += item.Count;
-                }
-                else {
-                    a.Add(item);
-                }
-            }
-
-            //foreach (var item in items_) {
-            //    FindById(a, item.Id).Count += item.Count;
-            //}
-
-            items_ = a;
-            Settings.InventoryUpdate = true;
-        }
 
         public bool TryRemoveItem(string id, int count) {
             var a = TryGetId(id);
@@ -141,6 +122,8 @@ namespace rglikeworknamelib.Dungeon.Items {
                 AddItem(item);
             }
             Changed = true;
+            ItemDataBase.StackSimilar(ref items_);
+            Settings.InventoryUpdate = true;
         }
 
         public Item TryGetId(string itemData) {

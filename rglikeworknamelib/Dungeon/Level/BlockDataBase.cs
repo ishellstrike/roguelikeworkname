@@ -22,7 +22,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Data = UniversalParser.JsonDictionaryDataLoader<BlockData>(Settings.GetObjectDataDirectory());
 
-            foreach (var pair in Data.Where(pair => pair.Value.SmartAction == SmartAction.ActionOpenContainer)) {
+            foreach (var pair in Data.Where(pair => pair.Value.ItemSpawn != null)) {
                 Storages.Add(pair.Key, pair.Value);
             }
 
@@ -35,6 +35,31 @@ namespace rglikeworknamelib.Dungeon.Level {
                         if (id.StartsWith("spawn_")) {
                             dropGroup.Ids.Remove(id);
                             dropGroup.Ids.AddRange(idb.GetBySpawnGroup(id).Select(itemData => itemData.Key));
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void TrySpawnItems(Random rnd, Block block)
+        {
+            if (block.Data.ItemSpawn != null)
+            {
+                foreach (var drop in block.Data.ItemSpawn)
+                {
+
+                    for (int n = 0; n < drop.Repeat; n++)
+                    {
+                        var thr = rnd.Next(100) + 1;
+                        if (drop.Prob >= thr)
+                        {
+                            var item = ItemFactory.GetInstance(drop.Ids[rnd.Next(drop.Ids.Count)],
+                                rnd.Next(drop.Max - drop.Min) +
+                                drop.Min);
+                            if (item != null)
+                            {
+                                block.StoredItems.Add(item);
+                            }
                         }
                     }
                 }

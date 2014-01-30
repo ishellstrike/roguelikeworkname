@@ -495,6 +495,9 @@ namespace rglikeworknamelib.Dungeon.Level
         /// <param name="ignore"></param>
         public void KillFarSectors(Creature cara, GameTime gt, Vector2 camera, bool ignore = false)
         {
+            var hposs = cara.GetWorldPositionInBlocks();
+            hposs.X /= MapSector.Rx;
+            hposs.Y /= MapSector.Ry;
             if (!ignore)
             {
                 sec += gt.ElapsedGameTime;
@@ -510,7 +513,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     // Math.Abs((a.Value.SectorOffsetY + 0.5)*MapSector.Ry - cara.GetPositionInBlocks().Y) > 128) {
                     // sectors_.Remove(sectors_.ElementAt(i).Key);
                     //}
-                    if (Vector3.Distance(new Vector3((a.Value.SectorOffsetX+0.5f)*16, (a.Value.SectorOffsetY+0.5f)*16,0), new Vector3(cara.Position.X/32f, cara.Position.Y/32f, 0)) > 64 + 16)
+                    if (Math.Abs(a.Key.X - hposs.X) > 3 || Math.Abs(a.Key.Y - hposs.Y) > 3)
                     {
                         sectors_.Remove(sectors_.ElementAt(i).Key);
                         i--;
@@ -1033,16 +1036,17 @@ namespace rglikeworknamelib.Dungeon.Level
 
             if (!File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm")) {
                 List<KeyValuePair<Point, MapSector>> temp = new List<KeyValuePair<Point, MapSector>>();
-                for (int i = -1 + arg1; i <= 1 + arg1; i++)
+                //TODO: inf generation
+                for (int i =   arg1; i <=  arg1; i++)
                 {
-                    for (int j = -1 + arg2; j <= 1 + arg2; j++)
+                    for (int j =   arg2; j <=  arg2; j++)
                     {
                         var s = (int)(MapGenerators.Noise2D(i, j) * int.MaxValue);
                         var rand = new Random(s);
                         //if (i != arg1 || j != arg2)
                         {
 
-                            temp.AddRange(MapGenerators2.GenerateCityAt(this, rand, i * 25, j * 25));
+                            temp.AddRange(MapGenerators2.GenerateCityAt(this, rand, i * 15, j * 15));
                             Settings.NTS2 = temp.Count.ToString();
                             //results.Add(gen.BeginInvoke(i, j, null, null));
                         }
@@ -1495,7 +1499,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 {
                     if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
                     solidEffect.Parameters["worldMatrix"].SetValue(
-                        Matrix.CreateTranslation(sector.Value.SectorOffsetX * 16, sector.Value.SectorOffsetY * 16, 0) * Matrix.CreateShadow(Vector3.Transform(GlobalWorldLogic.LightVector, Matrix.CreateRotationX((float) +Math.PI/2)), new Plane(Vector3.Forward, 0))
+                        Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0) * Matrix.CreateShadow(Vector3.Transform(GlobalWorldLogic.LightVector, Matrix.CreateRotationX((float) +Math.PI/2)), new Plane(Vector3.Forward, 0))
                         );
                     pass.Apply();
                     if (sector.Value.verteces_block.Length > 2)
@@ -1525,10 +1529,10 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public void RenderMap(GraphicsDevice graphicsDevice, Camera cam, Effect solidEffect, Effect billeff, Player p) {
             var hposs = p.GetWorldPositionInBlocks();
-            hposs.X /= 16;
-            hposs.Y /= 16;
-            for (int i = -3; i < 4; i++) {
-                for (int j = -3; j < 4; j++) {
+            hposs.X /= MapSector.Rx;
+            hposs.Y /= MapSector.Ry;
+            for (int i = -2; i < 3; i++) {
+                for (int j = -2; j < 3; j++) {
                     GetSector((int) hposs.X + i, (int) hposs.Y + j);
                 }
             }
@@ -1560,7 +1564,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     }
                     if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
                     solidEffect.Parameters["worldMatrix"].SetValue(
-                        Matrix.CreateTranslation(sector.Value.SectorOffsetX*16, sector.Value.SectorOffsetY*16, 0));
+                        Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0));
                     pass.Apply();
                     graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces, 0,
                         sector.Value.verteces.Length/3);
@@ -1618,7 +1622,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     if (sector.Value.verteces_block.Length > 0)
                     {
                         solidEffect.Parameters["worldMatrix"].SetValue(
-                            Matrix.CreateTranslation(sector.Value.SectorOffsetX * 16, sector.Value.SectorOffsetY * 16, 0));
+                            Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0));
                         pass.Apply();
                         graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces_block, 0,
                                                           sector.Value.verteces_block.Length / 3);

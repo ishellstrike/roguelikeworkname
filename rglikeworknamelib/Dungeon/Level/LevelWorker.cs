@@ -195,30 +195,30 @@ namespace rglikeworknamelib.Dungeon.Level {
         {
             foreach (var ms in array) {
                 var blockIdVocab = new List<string>();
-                var blockMtexVocab = new List<string>();
+                //var blockMtexVocab = new List<string>();
                 foreach (var block in ms.Blocks)
                 {
                     if (!blockIdVocab.Contains(block.Id))
                     {
                         blockIdVocab.Add(block.Id);
                     }
-                    if (!blockMtexVocab.Contains(block.MTex))
-                    {
-                        blockMtexVocab.Add(block.MTex);
-                    }
+                    //if (!blockMtexVocab.Contains(block.MTex))
+                    //{
+                    //    blockMtexVocab.Add(block.MTex);
+                    //}
                 }
                 var floorIdVocab = new List<string>();
-                var floorMtexVocab = new List<string>();
+                //var floorMtexVocab = new List<string>();
                 foreach (var floor in ms.Floors)
                 {
                     if (!floorIdVocab.Contains(floor.Id))
                     {
                         floorIdVocab.Add(floor.Id);
                     }
-                    if (!floorMtexVocab.Contains(floor.MTex))
-                    {
-                        floorMtexVocab.Add(floor.MTex);
-                    }
+                    //if (!floorMtexVocab.Contains(floor.MTex))
+                    //{
+                    //    floorMtexVocab.Add(floor.MTex);
+                    //}
                 }
                 var monsterIdVocab = new List<string>();
                 foreach (var creature in ms.Creatures)
@@ -251,11 +251,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                     stringBuilder.AppendLine();
 
                     stringBuilder.Append("~");
-                    BlockPart(ms, blockMtexVocab, blockIdVocab, stringBuilder);
+                    BlockPart(ms, blockIdVocab, stringBuilder);
                     stringBuilder.AppendLine();
 
                     stringBuilder.Append("~");
-                    FloorPart(ms, floorMtexVocab, floorIdVocab, stringBuilder);
+                    FloorPart(ms, floorIdVocab, stringBuilder);
                     stringBuilder.AppendLine();
 
                     stringBuilder.Append("~");
@@ -312,7 +312,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
         }
-        private void BlockPart(MapSector ms, List<string> blockMtexVocab, List<string> blockIdVocab, StringBuilder stringBuilder) {
+        private void BlockPart(MapSector ms, List<string> blockIdVocab, StringBuilder stringBuilder) {
             for (var i = 0; i < ms.Blocks.Length; i++) {
                 var id = blockIdVocab.IndexOf(ms.Blocks[i].Id);
                 var count = 1;
@@ -342,40 +342,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                 stringBuilder.Append(v);
                 stringBuilder.Append(" ");
             }
-
-            stringBuilder.AppendLine();
-            stringBuilder.Append("~");
-            for (var i = 0; i < ms.Blocks.Length; i++) {
-                var mtex = blockMtexVocab.IndexOf(ms.Blocks[i].MTex);
-                var count = 1;
-                if (i != ms.Blocks.Length - 1) {
-                    for (var j = i + 1; j < ms.Blocks.Length; j++) {
-                        if (blockMtexVocab.IndexOf(ms.Blocks[j].MTex) == mtex) {
-                            count++;
-                        }
-                        else {
-                            break;
-                        }
-                    }
-                }
-                if (count > 2) {
-                    stringBuilder.Append(string.Format("!{0}!{1} ", mtex, count));
-                }
-                else {
-                    for (var k = 0; k < count; k++) {
-                        stringBuilder.Append(mtex + " ");
-                    }
-                }
-                i += count - 1;
-            }
-            stringBuilder.AppendLine();
-            stringBuilder.Append("~");
-            foreach (var v in blockMtexVocab) {
-                stringBuilder.Append(v);
-                stringBuilder.Append(" ");
-            }
         }
-        private void FloorPart(MapSector ms, List<string> floorMtexVocab, List<string> floorIdVocab, StringBuilder stringBuilder)
+        private void FloorPart(MapSector ms, List<string> floorIdVocab, StringBuilder stringBuilder)
         {
             for (var i = 0; i < ms.Floors.Length; i++) {
                 var id = floorIdVocab.IndexOf(ms.Floors[i].Id);
@@ -401,36 +369,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             stringBuilder.AppendLine();
             stringBuilder.Append("~");
             foreach (var v in floorIdVocab) {
-                stringBuilder.Append(v);
-                stringBuilder.Append(" ");
-            }
-
-            stringBuilder.AppendLine();
-            stringBuilder.Append("~");
-            for (var i = 0; i < ms.Floors.Length; i++) {
-                var mtex = floorMtexVocab.IndexOf(ms.Floors[i].MTex);
-                var count = 1;
-                if (i != ms.Floors.Length - 1) {
-                    for (var j = i + 1; j < ms.Floors.Length; j++) {
-                        if (floorMtexVocab.IndexOf(ms.Floors[j].MTex) == mtex) {
-                            count++;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                if (count > 2) {
-                    stringBuilder.Append(string.Format("!{0}!{1} ", mtex, count));
-                } else {
-                    for (var k = 0; k < count; k++) {
-                        stringBuilder.Append(mtex + " ");
-                    }
-                }
-                i += count - 1;
-            }
-            stringBuilder.AppendLine();
-            stringBuilder.Append("~");
-            foreach (var v in floorMtexVocab) {
                 stringBuilder.Append(v);
                 stringBuilder.Append(" ");
             }
@@ -510,25 +448,17 @@ namespace rglikeworknamelib.Dungeon.Level {
                 BlockIdList.Remove(BlockIdList.Last());
                 var blIddic = par[2].Split(' ').ToList();
                 blIddic.Remove(blIddic.Last());
-                var BlockTexList = par[3].Split(' ').ToList();
-                BlockTexList.Remove(BlockTexList.Last());
-                var blTexdic = par[4].Split(' ').ToList();
-                blTexdic.Remove(blTexdic.Last());
-                var FloorIdList = par[5].Split(' ').ToList();
+                var FloorIdList = par[3].Split(' ').ToList();
                 FloorIdList.Remove(FloorIdList.Last());
-                var flIddic = par[6].Split(' ').ToList();
+                var flIddic = par[4].Split(' ').ToList();
                 flIddic.Remove(flIddic.Last());
-                var FloorTexList = par[7].Split(' ').ToList();
-                FloorTexList.Remove(FloorTexList.Last());
-                var flTexdic = par[8].Split(' ').ToList();
-                flTexdic.Remove(flTexdic.Last());
-                var MonsterDataList = par[9].Split(' ').ToList();
+                var MonsterDataList = par[5].Split(' ').ToList();
                 MonsterDataList.Remove(MonsterDataList.Last());
-                var monIddic = par[10].Split(' ').ToList();
+                var monIddic = par[6].Split(' ').ToList();
                 monIddic.Remove(monIddic.Last());
-                var ItemDataList = par[11].Split(' ').ToList();
+                var ItemDataList = par[7].Split(' ').ToList();
                 ItemDataList.Remove(ItemDataList.Last());
-                var itemIddic = par[12].Split(' ').ToList();
+                var itemIddic = par[8].Split(' ').ToList();
                 itemIddic.Remove(itemIddic.Last());
 
                 var position = new Point(int.Parse(pos[0].Trim('#')), int.Parse(pos[1].Trim('\r').Trim('\n')));
@@ -543,31 +473,14 @@ namespace rglikeworknamelib.Dungeon.Level {
                             var cou = int.Parse(p2[2]);
                             for (var i = 0; i < cou; i++) {
                                 sector.Blocks[off] = BlockFactory.GetInstance(id);
+                                sector.Blocks[off].MTex = sector.Blocks[off].Data.RandomMtexFromAlters();
                                 off++;
                             }
                         }
                         else {
                             var id = blIddic[int.Parse(s)];
                             sector.Blocks[off] = BlockFactory.GetInstance(id);
-                            off++;
-                        }
-                    }
-                }
-                off = 0;
-                foreach (var s in BlockTexList) {
-                    if (s != " ") {
-                        if (s.StartsWith("!")) {
-                            var p2 = s.Split('!');
-                            var mTex = blTexdic[int.Parse(p2[1])];
-                            var cou = int.Parse(p2[2]);
-                            for (var i = 0; i < cou; i++) {
-                                sector.Blocks[off].MTex = mTex;
-                                off++;
-                            }
-                        }
-                        else {
-                            var mTex = blTexdic[int.Parse(s)];
-                            sector.Blocks[off].MTex = mTex;
+                            sector.Blocks[off].MTex = sector.Blocks[off].Data.RandomMtexFromAlters();
                             off++;
                         }
                     }
@@ -581,31 +494,14 @@ namespace rglikeworknamelib.Dungeon.Level {
                             var cou = int.Parse(p2[2]);
                             for (var i = 0; i < cou; i++) {
                                 sector.Floors[off].Id = id;
+                                sector.Floors[off].MTex = sector.Floors[off].Data.RandomMtexFromAlters();
                                 off++;
                             }
                         }
                         else {
                             var id = flIddic[int.Parse(s)];
                             sector.Floors[off].Id = id;
-                            off++;
-                        }
-                    }
-                }
-                off = 0;
-                foreach (var s in FloorTexList) {
-                    if (s != " ") {
-                        if (s.StartsWith("!")) {
-                            var p2 = s.Split('!');
-                            var mTex = flTexdic[int.Parse(p2[1])];
-                            var cou = int.Parse(p2[2]);
-                            for (var i = 0; i < cou; i++) {
-                                sector.Floors[off].MTex = mTex;
-                                off++;
-                            }
-                        }
-                        else {
-                            var mTex = flTexdic[int.Parse(s)];
-                            sector.Floors[off].MTex = mTex;
+                            sector.Floors[off].MTex = sector.Floors[off].Data.RandomMtexFromAlters();
                             off++;
                         }
                     }

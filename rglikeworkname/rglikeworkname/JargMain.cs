@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork;
@@ -27,15 +28,12 @@ using Color = Microsoft.Xna.Framework.Color;
 using Label = rglikeworknamelib.Window.Label;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Version = rglikeworknamelib.Version;
-using System.Threading;
-using EventLog = rglikeworknamelib.EventLog;
 
 namespace jarg {
     public partial class JargMain : Game {
         private static readonly Logger Logger = LogManager.GetLogger("JargMain");
         public static bool ErrorExit;
         private readonly GraphicsDeviceManager graphics_;
-        private readonly Color lwstatusColor_ = new Color(1, 1, 1, 0.2f);
         private readonly Stopwatch swDraw_ = new Stopwatch();
         private readonly Stopwatch swUpdate_ = new Stopwatch();
         private Effect effectOmnilight_;
@@ -117,12 +115,14 @@ namespace jarg {
 #endif
 
             graphics_ = new GraphicsDeviceManager(this);
+            
             Content.RootDirectory = "Content";
 
             if (!Directory.Exists(Settings.GetWorldsDirectory())) {
                 Directory.CreateDirectory(Settings.GetWorldsDirectory());
             }
         }
+
 
         void CopyDir(string FromDir, string ToDir)
         {
@@ -200,7 +200,7 @@ namespace jarg {
             needChangeSesolution_ = true;
         }
 
-        private int LightQ = 4;
+        private int LightQ = 1;
         private void ResolutionChanging() {
             var height = (int) Settings.Resolution.Y;
             var width = (int) Settings.Resolution.X;
@@ -278,7 +278,7 @@ namespace jarg {
             ps_ = new ParticleSystem(spriteBatch_,
                          ParsersCore.LoadTexturesInOrder(
                              Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"));
-            var bs = new BulletSystem(spriteBatch_,
+            new BulletSystem(spriteBatch_,
                                    ParsersCore.LoadTexturesInOrder(
                                        Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"),
                                    currentFloor_, font1_, lineBatch_);

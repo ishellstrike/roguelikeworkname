@@ -11,8 +11,10 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using rglikeworknamelib;
+using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
+using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Parser;
 
 namespace DropListEditor
@@ -29,6 +31,8 @@ namespace DropListEditor
             listBox1.Items.Clear();
             listBox1.Items.Clear();
 
+            new BuffDataBase();
+
 
             foreach (var itemData in ItemDataBase.Instance.Data) {
                 listBox1.Items.Add(string.Format("id {0} -- {1}", itemData.Key, itemData.Value.Name));
@@ -43,24 +47,33 @@ namespace DropListEditor
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //StringBuilder sb = new StringBuilder();
-            //if(ItemDataBase.SpawnLists.ContainsKey(BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key)) {
-            //    foreach (var list in ItemDataBase.SpawnLists[BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key]) {
-            //        sb.Append("x");
-            //        sb.Append(list.Repeat);
-            //        sb.Append(" :: ");
-            //        sb.Append(string.Join(", ", list.Ids));
-            //        sb.Append("\n       ");
-            //        sb.Append(list.Min);
-            //        sb.Append("-");
-            //        sb.Append(list.Max;
-            //        sb.Append(" : ");
-            //        sb.Append(list.Prob);
-            //        sb.Append("%");
-            //        sb.AppendLine();
-            //    }
-            //}
-            //label1.Text = sb.ToString();
+            StringBuilder sb = new StringBuilder();
+                foreach (var list in BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Value.ItemSpawn) {
+                    sb.Append("x");
+                    sb.Append(list.Repeat);
+                    sb.Append(" :: ");
+                    sb.Append(string.Join(", ", list.Ids));
+                    sb.Append("\n       ");
+                    sb.Append(list.Min);
+                    sb.Append("-");
+                    sb.Append(list.Max);
+                    sb.Append(" : ");
+                    sb.Append(list.Prob);
+                    sb.Append("%");
+                    sb.AppendLine();
+                }
+            sb.AppendLine();
+
+            Block a = BlockFactory.GetInstance(BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key);
+            BlockDataBase.TrySpawnItems(Settings.rnd, a);
+            ItemDataBase.StackSimilar(ref a.StoredItems);
+
+            foreach (var it in a.StoredItems) {
+                sb.AppendFormat("{1} x{2}{0}", Environment.NewLine, it.Id, it.Count);
+            }
+
+            sb.AppendFormat("");
+            label1.Text = sb.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -33,6 +33,8 @@ namespace JargServer
 
         public static void Main() {
 
+            Settings.Server = true;
+
             Process[] p;
             p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 
@@ -92,13 +94,15 @@ namespace JargServer
         }
 
         public static bool IsMonitor;
+        private static int cou;
         public static void Monitor() {
             while (IsMonitor) {
                 Console.Clear();
                 Console.WriteLine("Clients: {0}", udps.GetClients.Count);
-                Console.WriteLine("Traffic:{0}      In: {1} ({2}){0}      Out: {3} ({4})", Environment.NewLine, TrafSimp(udps.GetInnerTraffic), TrafSpeedSimp(udps.GetInnerSpeed), TrafSimp(udps.GetOuterTraffic), TrafSpeedSimp(udps.GetOuterSpeed));
+                ;Console.WriteLine("Traffic:{0}      In: {1} ({2}){0}      [{5}]{0}      Out: {3} ({4}){0}      [{6}]", Environment.NewLine, TrafSimp(udps.GetInnerTraffic), TrafSpeedSimp(udps.GetInnerSpeed), TrafSimp(udps.GetOuterTraffic), TrafSpeedSimp(udps.GetOuterSpeed), TrafSpeedSimp(udps.GetInnerTraffic / (cou / 3f)),TrafSpeedSimp(udps.GetOuterTraffic / (cou / 3f)));
                 Console.WriteLine("Map Generator:{0}      Total: {1}{0}      Session: {2}{0}", Environment.NewLine, levelWorker_.StoreCount, levelWorker_.Generated);
                 Thread.Sleep(300);
+                cou++;
             }
         }
 

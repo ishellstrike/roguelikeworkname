@@ -104,7 +104,9 @@ namespace rglikeworknamelib.Dungeon.Creatures
             set
             {
                 Source = BlockData.GetSource(value);
-                BuildGeom();
+                if (!Settings.Server) {
+                    BuildGeom();
+                }
                 mTex_ = value;
             }
         }

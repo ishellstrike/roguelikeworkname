@@ -462,18 +462,21 @@
     "UpType":"Rifle",
     "some":"some some",
     "some2":"some some2",
+	"SpawnGroup":"spawn_core_militaryweapon",
   },
   "12001":{
     "Name":"HK417",
     "Description":"Made in Germany",
     "SortType":"Gun",
     "UpType":"AssaultRifle",
+	"SpawnGroup":"spawn_core_militaryweapon",
   },
   "12002":{
     "Name":"TAR-21",
     "Description":"Made in Israel",
     "SortType":"Gun",
     "UpType":"AssaultRifle",
+	"SpawnGroup":"spawn_core_militaryweapon",
   },
   "12003":{
     "Name":"СВД",
@@ -481,6 +484,7 @@
     "SortType":"Gun",
     "UpType":"SniperRifle",
     "Weight":5000,
+	"SpawnGroup":"spawn_core_militaryweapon",
   },
   "12004":{
     "Name":"Винтовка M14",
@@ -488,6 +492,7 @@
     "SortType":"Gun",
     "UpType":"Rifle",
     "Weight":4000,
+	"SpawnGroup":"spawn_core_militaryweapon",
   },
   "12005":{
     "Name":"Снайперская винтовка М25",
@@ -500,6 +505,7 @@
     "Damage":80,
     "FireRate":1000,
     "Accuracy":10,
+	"SpawnGroup":"spawn_core_militaryweapon",
   },
   "12006":{
     "Name":"FAMAS",
@@ -511,6 +517,7 @@
     "Accuracy":29,
     "FireRate":60,
     "Ammo":"a223",
+	"SpawnGroup":"spawn_core_militaryweapon",
   },
   "12007":{
     "Name":"Barrett M82",
@@ -522,6 +529,14 @@
     "FireRate":2000,
     "Accuracy":5,
     "Ammo":"a50",
+	"SpawnGroup":"spawn_core_superweapon",
+  },
+  "coilgun1":{
+    "Name":"Необычное оружие с проводами",
+	"Description":"Похлже какой-то тестовый образец оружие. Опутано проводами и индикаторами. Вы понятия не имеете как этим пользоваться.",
+    "SortType":"Gun",
+    "Weight":10000,
+	"SpawnGroup":"spawn_core_superweapon",
   },
   "12008":{
     "Name":"AK-12",
@@ -534,6 +549,7 @@
     "FireRate":50,
     "Description":"Made in Russia",
     "Ammo":"a762",
+	"SpawnGroup":"spawn_core_heavyweapon",
   },
   "ak47":{
     "Name":"AK-47",
@@ -546,6 +562,7 @@
     "Accuracy":50,
     "Damage":20,
     "Description":"Made in Russia",
+	"SpawnGroup":"spawn_core_heavyweapon",
   },
   "12009":{
     "Name":"AK-12 барабанный магазин",
@@ -556,6 +573,29 @@
     "Damage":20,
     "Description":"Made in Russia",
     "Ammo":"a762",
+	"SpawnGroup":"spawn_core_militaryweapon",
+  },
+  "samopal":{
+    "Name":"Пистолет самопал",
+    "SortType":"Gun",
+    "UpType":"Pistol",
+    "Weight":800,
+    "Magazine":1,
+    "Damage":10,
+    "Description":"Самодельный однозарядный пистолет",
+    "Ammo":"a762",
+	"SpawnGroup":"spawn_core_lightweapon",
+  },
+  "samopal2":{
+    "Name":"Ружье самопал",
+    "SortType":"Gun",
+    "UpType":"Rifle",
+    "Weight":1500,
+    "Magazine":1,
+    "Damage":15,
+    "Description":"Самодельное однозарядное ружье",
+    "Ammo":"a762",
+	"SpawnGroup":"spawn_core_lightweapon",
   },
   "bint1":{
     "Name":"Бинт",
@@ -606,15 +646,6 @@
     "Weight":300,
 	"ItemScript":["is_dissass","is_turnradio"],
 	"Description":"Использует пальчиковые батарейки, похоже еще работает.",
-  },
-  "paper":{
-    "Name":"Лист бумаги",
-    "Weight":5,
-  },
-  "newspaper":{
-    "Name":"Газета",
-    "Weight":100,
-	"SpawnGroup":"spawn_trash",
   },
   "nocigarets":{
     "Name":"Пачка из-под сигарет",
@@ -797,10 +828,40 @@
 
   "glasscup":{
 	"Name":"Стеклянный стакан",
-	"Weight":200,
+	"Weight":200
   },
   "papercup":{
 	"Name":"Бумажный стакан",
-	"Weight":20,
+	"Weight":20
+  },
+  "dollar20":{
+	"Name":"20 доллоровая банкнота",
+	"Weight":1,
+	"SpawnGroup":"spawn_money"
+  },
+  "dollar5":{
+	"Name":"5 доллоровая банкнота",
+	"Weight":1,
+	"SpawnGroup":"spawn_money"
+  },
+  "dollar1":{
+	"Name":"1 доллоровая банкнота",
+	"Weight":1,
+	"SpawnGroup":"spawn_money"
+  },
+  "dollar100":{
+	"Name":"100 доллоровая банкнота",
+	"Weight":1,
+	"SpawnGroup":"spawn_money"
+  },
+  "plate":{
+	"Name":"Тарелка",
+	"Weight":200,
+	"SpawnGroup":"spawn_posuda"
+  },
+  "cup":{
+	"Name":"Чашка",
+	"Weight":200,
+	"SpawnGroup":"spawn_posuda"
   },
 }

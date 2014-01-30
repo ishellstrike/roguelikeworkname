@@ -129,6 +129,26 @@ namespace rglikeworknamelib.Dungeon.Items
             return Data.Where(x => x.Value.SpawnGroup == group).ToList();
         }
 
+        public static void StackSimilar(ref List<Item> items)
+        {
+            var a = new List<Item>();
+
+            foreach (Item item in items)
+            {
+                Item it = a.FirstOrDefault(x => x.Id == item.Id && item.Doses == 0);
+                if (it != null)
+                {
+                    it.Count += item.Count;
+                }
+                else
+                {
+                    a.Add(item);
+                }
+            }
+
+            items = a;
+        }
+
         public string GetItemFullDescription(Item i)
         {
             ItemData item = Data[i.Id];

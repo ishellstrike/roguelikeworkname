@@ -630,7 +630,7 @@ namespace rglikeworknamelib.Generation {
         public static List<KeyValuePair<Point, MapSector>> GenerateCityAt(GameLevel gl, Random rnd, int x, int y) {
             var temp = new List<KeyValuePair<Point, MapSector>>();
 
-            var rects = GenerateRoads(rnd, 20, 20, x, y, 10);
+            var rects = GenerateRoads(rnd, 10, 10, x, y, 8);
             var already = new List<Point>();
 
             foreach (var rect in rects) {
@@ -673,8 +673,8 @@ namespace rglikeworknamelib.Generation {
             var sector = new MapSector(gl, i, j);
             sector.Rebuild(gl.MapSeed);
 
-            for (int k = 0; k < 16; k++) {
-                for (int l = 0; l < 16; l++) {
+            for (int k = 0; k < MapSector.Rx; k++) {
+                for (int l = 0; l < MapSector.Ry; l++) {
                     if (k < a.x && l < a.y) {
                         var tt = a.floor[k * a.y + l];
                         bool hasFloor = false;
@@ -688,26 +688,8 @@ namespace rglikeworknamelib.Generation {
                             sector.SetBlock(k, l, tt);
                             var block = sector.GetBlock(k, l);
 
-                            if (block.Data.ItemSpawn != null)
-                            {
-                                foreach (var drop in block.Data.ItemSpawn)
-                                {
-                                    var thr = rnd.Next(100) + 1;
-                                    if (drop.Prob >= thr)
-                                    {
-                                        for (int n = 0; n < drop.Repeat; n++)
-                                        {
-                                            var item = ItemFactory.GetInstance(drop.Ids[rnd.Next(drop.Ids.Count)],
-                                                                            rnd.Next(drop.Max - drop.Min) +
-                                                                            drop.Min);
-                                            if (item != null)
-                                            {
-                                                block.StoredItems.Add(item);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            BlockDataBase.TrySpawnItems(rnd, block);
+                            ItemDataBase.StackSimilar(ref block.StoredItems);
                         }
                     }
                 }
@@ -724,17 +706,18 @@ namespace rglikeworknamelib.Generation {
                 var sector = new MapSector(gl, p.X, p.Y);
                 sector.Rebuild(gl.MapSeed);
                 sector.Biom = SectorBiom.Road;
-                for (int k = 0; k < 16; k++) {
-                    for (int n = 3; n < 16 - 3; n++) {
+                for (int k = 0; k < MapSector.Ry; k++) {
+                    for (int n = MapSector.Rx / 2 - 5; n < MapSector.Rx / 2 + 5; n++)
+                    {
                         sector.SetFloor(n, k, "asfalt");
                         sector.SetBlock(n, k, "0");
                     }
-                    for (int n = 0; n < 3; n++)
+                    for (int n = MapSector.Rx / 2 - 5 - 3; n < MapSector.Rx / 2 - 5; n++)
                     {
                         sector.SetFloor(n, k, "conk_base");
                         sector.SetBlock(n, k, "0");
                     }
-                    for (int n = 16 - 3; n < 16; n++)
+                    for (int n = MapSector.Rx / 2 + 5; n < MapSector.Rx / 2 + 5 + 3; n++)
                     {
                         sector.SetFloor(n, k, "conk_base");
                         sector.SetBlock(n, k, "0");
@@ -753,17 +736,19 @@ namespace rglikeworknamelib.Generation {
                 var sector = new MapSector(gl, p.X, p.Y);
                 sector.Rebuild(gl.MapSeed);
                 sector.Biom = SectorBiom.Road;
-                for (int n = 0; n < 16 ; n++)
+                for (int n = 0; n < MapSector.Rx; n++)
                 {
-                    for (int k = 3; k < 16 - 3; k++) {
+                    for (int k = MapSector.Rx / 2 - 5; k < MapSector.Rx / 2 + 5; k++)
+                    {
                         sector.SetFloor(n, k, "asfalt");
                         sector.SetBlock(n, k, "0");
                     }
-                    for (int k = 0; k < 3; k++) {
+                    for (int k = MapSector.Rx / 2 - 5 - 3; k < MapSector.Rx / 2 - 5; k++)
+                    {
                         sector.SetFloor(n, k, "conk_base");
                         sector.SetBlock(n, k, "0");
                     }
-                    for (int k = 16 - 3; k < 16; k++)
+                    for (int k = MapSector.Rx / 2 + 5; k < MapSector.Rx / 2 + 5 + 3; k++)
                     {
                         sector.SetFloor(n, k, "conk_base");
                         sector.SetBlock(n, k, "0");

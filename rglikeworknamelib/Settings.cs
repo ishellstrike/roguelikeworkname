@@ -44,6 +44,8 @@ namespace rglikeworknamelib {
             set { hcol_ = value; }
         }
 
+        public static bool Server;
+
         public static int GetFloorAtlasWidth() {
             return 10;
         }

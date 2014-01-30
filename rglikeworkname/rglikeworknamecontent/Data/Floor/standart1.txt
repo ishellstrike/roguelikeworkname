@@ -3,6 +3,11 @@ Name="???"
 mmcol="black"
 MTex=0
 
+~Floor,indoor
+Name="Ïמכ"
+mmcol="black"
+MTex=floor1
+
 ~Floor,asfalt
 Name="Àספאכüע"
 MTex=asfalt

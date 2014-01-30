@@ -294,7 +294,6 @@ namespace jarg {
         {
            var a = ItemFactory.GetInstance((string)((Label)sender).Tag, 1);
            inventory_.AddItem(a);
-           inventory_.StackSimilar();
            EventLog.Add(
                string.Format("Item {0} spawn in inventory", a.Id), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
            UpdateInventoryContainer();
@@ -307,7 +306,7 @@ namespace jarg {
             SchemesImages = new Image[20,20];
             SchemesImagesFloor = new Image[20, 20];
 
-            SchemEditorTempMap = new SchemesMap(16, 16);
+            SchemEditorTempMap = new SchemesMap(MapSector.Rx, MapSector.Ry);
             for (int i = 0; i < SchemesImages.GetLength(0); i++) {
                 for (int j = 0; j < SchemesImages.GetLength(1); j++) {
                         SchemesImagesFloor[i, j] = new Image(new Vector2(20 + 32 * i, 20 + 32 * j), whitepixel_,
@@ -1087,7 +1086,6 @@ namespace jarg {
                 {
                     var a = ItemFactory.GetInstance(ss, 1);
                     inventory_.AddItem(a);
-                    inventory_.StackSimilar();
                     EventLog.Add(
                         string.Format("Item {0} spawn in inventory", a.Id), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
                     UpdateInventoryContainer();
@@ -1174,7 +1172,6 @@ namespace jarg {
         private void ButtonContainerTakeAll_onPressed(object sender, EventArgs e) {
             inventory_.AddItemRange(inContainer_);
             inContainer_.Clear();
-            inventory_.StackSimilar();
             UpdateContainerContainer(inContainer_);
             UpdateInventoryContainer();
         }
@@ -1382,7 +1379,6 @@ namespace jarg {
                     if (inContainer_.Contains(ContainerSelected)) {
                         inventory_.AddItem(ContainerSelected);
                         inContainer_.Remove(ContainerSelected);
-                        inventory_.StackSimilar();
                         UpdateInventoryContainer();
                         UpdateContainerContainer(inContainer_);
                     }
@@ -1509,7 +1505,6 @@ namespace jarg {
             }
 
             if (Settings.InventoryUpdate) {
-                inventory_.StackSimilar();
                 UpdateInventoryContainer();
                 Settings.InventoryUpdate = false;
             }
