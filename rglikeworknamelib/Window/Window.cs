@@ -119,7 +119,7 @@ namespace rglikeworknamelib.Window {
                     string compose = Name;
 
                     if (Settings.DebugInfo) {
-                        compose = Locate.ToString() + Environment.NewLine + compose;
+                        compose = Locate + Environment.NewLine + compose;
                     }
 
                     sb.DrawString(font1_, compose, textpos, Settings.HudСolor);
@@ -142,10 +142,17 @@ namespace rglikeworknamelib.Window {
             }
         }
 
+        private bool hooked;
         private bool lastaim;
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
             lastaim = aimed;
             aimed = false;
+
+            if (ms.LeftButton == ButtonState.Released)
+            {
+                hooked = false;
+            }
+
             if (Visible && !mh) {
                 if (hasTextbox_) {
                     parent_.Keyboardhook = true;
@@ -160,7 +167,12 @@ namespace rglikeworknamelib.Window {
                         parent_.ToTop(this);
                     }
 
-                    if (Moveable && lms.LeftButton == ButtonState.Pressed && lms.Y <= Locate.Top + 20) {
+                    if (ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released)
+                    {
+                        hooked = true;
+                    }
+
+                    if (Moveable && hooked && lms.Y <= Locate.Top + 20) {
                         Locate.X += (ms.X - lms.X);
                         Locate.Y += (ms.Y - lms.Y);
 

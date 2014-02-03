@@ -155,6 +155,9 @@ namespace jarg {
         private Button SchemesLoadButton, SchemesSaveButton, SchemesClearButton;
         private Label SchemesInfoLabel;
         private Button SchemesSave;
+
+        private Window testWindow_;
+        private InteractiveListBox testListBox_;
         
 
         #endregion

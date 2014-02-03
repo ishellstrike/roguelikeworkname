@@ -162,6 +162,7 @@
     <Compile Include="Window\IGameContainer.cs" />
     <Compile Include="Window\Image.cs" />
     <Compile Include="Window\ImageButton.cs" />
+    <Compile Include="Window\InteractiveListBox.cs" />
     <Compile Include="Window\Label.cs" />
     <Compile Include="Window\LabelFixed.cs" />
     <Compile Include="Window\ListContainer.cs" />
