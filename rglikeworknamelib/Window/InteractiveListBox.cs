@@ -13,6 +13,24 @@ namespace rglikeworknamelib.Window
         public string Text;
         public object Tag;
         public event EventHandler<ListBoxItemPressEventArgs> OnMousePressed;
+        public Color Color = Color.White;
+
+        public ListBoxItem(string message, Color col) {
+            Text = message;
+            Color = col;
+        }
+
+        public ListBoxItem(string message, Color col, object t)
+        {
+            Text = message;
+            Color = col;
+            Tag = t;
+        }
+
+        public ListBoxItem(string message)
+        {
+            Text = message;
+        }
 
         public void OnPress(MouseState ms, MouseState lms)
         {
@@ -23,7 +41,7 @@ namespace rglikeworknamelib.Window
 
         public static implicit operator ListBoxItem(string s)
         {
-         return new ListBoxItem{Text = s};   
+         return new ListBoxItem(s);   
         }
     }
 
@@ -113,10 +131,10 @@ namespace rglikeworknamelib.Window
                     var txt = Items[item].Text;
                     var c = new Rectangle((int)tp.X - 1, (int)tp.Y - 1, txt.Length*textW + 2, textH + 2);
                     DrawBox(sb, c, 1);
-                    sb.DrawString(font1_, txt, tp, Color.White);
+                    sb.DrawString(font1_, txt, tp, Items[item].Color);
                 }
                 else {
-                    sb.DrawString(font1_, Items[item].Text, p + new Vector2(10, bottom), Color.White);
+                    sb.DrawString(font1_, Items[item].Text, p + new Vector2(10, bottom), Items[item].Color);
                 }
                 
                 item++;
@@ -150,7 +168,6 @@ namespace rglikeworknamelib.Window
                 aimed = (int) ((ms.Y - p.Y)/(textH + 2)) + topIndex;
                 if (aimed >= Items.Count) {
                     aimed = -1;
-                   
                 } else if (!(ms.X > p.X + 10) || !(ms.X < p.X + 10 + Items[aimed].Text.Length*textW)) {
                     aimed = -1;
                 }
@@ -201,6 +218,10 @@ namespace rglikeworknamelib.Window
 
         public void SetPosition(Vector2 pos) {
             location_ = new Rectangle((int) pos.X, (int) pos.Y, location_.Width, location_.Height);
+        }
+
+        public void ScrollBottom() {
+            topIndex = 0;
         }
     }
 }

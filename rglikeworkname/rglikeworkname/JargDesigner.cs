@@ -78,11 +78,11 @@ namespace jarg {
         private Button CloseAllTestButton;
         private TextBox ConsoleTB;
         private Window ConsoleWindow;
-        private ListContainer ContainerContainer;
-        private ListContainer ContainerEventLog;
-        private ListContainer ContainerInventoryItems;
-        private ListContainer ContainerWearList;
-        private ListContainer EffectsContainer;
+        private InteractiveListBox ContainerContainer;
+        private InteractiveListBox ContainerEventLog;
+        private InteractiveListBox ContainerInventoryItems;
+        private InteractiveListBox ContainerWearList;
+        private InteractiveListBox EffectsContainer;
         private ImageButton IBBag;
         private ImageButton IBCaracter;
         private ImageButton IBInv;
@@ -522,7 +522,7 @@ namespace jarg {
             LabelWearCaption = new Label(new Vector2(10, 10 + 15*ii), "Wear", CaracterWindow);
             ii += 2;
             ContainerWearList =
-                new ListContainer(
+                new InteractiveListBox(
                     new Rectangle(0, 10 + 15*ii, (int) CaracterWindow.Width/2,
                                   (int) CaracterWindow.Height/2 - (10 + 15*ii)), CaracterWindow);
             ii = 0;
@@ -534,7 +534,7 @@ namespace jarg {
                 LabelsAbilities.Add(temp);
             }
             EffectsContainer =
-                new ListContainer(
+                new InteractiveListBox(
                     new Rectangle((int)CaracterWindow.Width / 2, (int)(CaracterWindow.Height / 2),
                                   (int)(CaracterWindow.Width / 2), (int)(CaracterWindow.Height / 2) - 19),
                     CaracterWindow);
@@ -548,10 +548,9 @@ namespace jarg {
                                   (int)Settings.Resolution.Y / 4), "Log",
                     true, ws) { Visible = false, Closable = false, NoBorder = true, Moveable = false };
             ContainerEventLog =
-                new ListContainer(
+                new InteractiveListBox(
                     new Rectangle(0, 0, (int)Settings.Resolution.X / 3, (int)Settings.Resolution.Y / 4 - 20),
                     EventLogWindow);
-            ContainerEventLog.Clear();
             EventLog.OnLogUpdate += EventLog_onLogUpdate;
             ShowBigLogWindow = new Button(new Vector2(0, -20), "big", EventLogWindow);
             ShowBigLogWindow.OnPressed += ShowBigLogWindow_OnPressed;
@@ -575,7 +574,7 @@ namespace jarg {
                            "Container", true, ws) {Visible = false};
             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
             ContainerContainer =
-                new ListContainer(
+                new InteractiveListBox(
                     new Rectangle(10, 10, (int)WindowContainer.Width / 2, (int)WindowContainer.Height - 40),
                     WindowContainer);
             LabelContainer = new LabelFixed(new Vector2(WindowContainer.Width - 200, 40), "",
@@ -591,7 +590,7 @@ namespace jarg {
                 new Window(new Vector2(Settings.Resolution.X/2, Settings.Resolution.Y - Settings.Resolution.Y/10),
                            "Inventory", true, ws) {Visible = false};
             ContainerInventoryItems =
-                new ListContainer(
+                new InteractiveListBox(
                     new Rectangle(10, 10, InventoryWindow.Locate.Width/2, InventoryWindow.Locate.Height - 40),
                     InventoryWindow);
 
@@ -1188,13 +1187,11 @@ namespace jarg {
         }
 
         private void EventLog_onLogUpdate(object sender, EventArgs e) {
-            ContainerEventLog.Clear();
-            int i = 0;
+            ContainerEventLog.Items.Clear();
             for (int j = 0; j < EventLog.log.Count; j++)
             {
                 LogEntity ss = EventLog.log[j];
-                new LabelFixed(Vector2.Zero, ss.message, ss.col, ContainerEventLog);
-                i++;
+                ContainerEventLog.Items.Add(new ListBoxItem(ss.message, ss.col));
             }
             ContainerEventLog.ScrollBottom();
         }
@@ -1221,7 +1218,7 @@ namespace jarg {
             List<Item> a = inventory_.FilterByType(nowSort_);
             inInv_ = a;
 
-            ContainerInventoryItems.Clear();
+            ContainerInventoryItems.Items.Clear();
 
             var weap = new List<Item>();
             var ammo = new List<Item>();
@@ -1254,7 +1251,7 @@ namespace jarg {
 
 
             if (weap.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Weapons", Color.Cyan, ContainerInventoryItems);
+                ContainerInventoryItems.Items.Add(new ListBoxItem("Weapons", Color.Cyan));
                 foreach (Item item in weap) {
                     AddInventoryItemString(item);
                 }
@@ -1262,7 +1259,7 @@ namespace jarg {
 
 
             if (ammo.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Ammo", Color.Cyan, ContainerInventoryItems);
+                ContainerInventoryItems.Items.Add(new ListBoxItem("Ammo", Color.Cyan));
                 foreach (Item item in ammo) {
                     AddInventoryItemString(item);
                 }
@@ -1270,7 +1267,7 @@ namespace jarg {
 
 
             if (wear.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Wear", Color.Cyan, ContainerInventoryItems);
+                ContainerInventoryItems.Items.Add(new ListBoxItem("Wear", Color.Cyan));
                 foreach (Item item in wear) {
                     AddInventoryItemString(item);
                 }
@@ -1278,7 +1275,7 @@ namespace jarg {
 
 
             if (med.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Medicine", Color.Cyan, ContainerInventoryItems);
+                ContainerInventoryItems.Items.Add(new ListBoxItem("Medicine", Color.Cyan));
                 foreach (Item item in med) {
                     AddInventoryItemString(item);
                 }
@@ -1286,7 +1283,7 @@ namespace jarg {
 
 
             if (food.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Food", Color.Cyan, ContainerInventoryItems);
+                ContainerInventoryItems.Items.Add(new ListBoxItem("Food", Color.Cyan));
                 foreach (Item item in food) {
                     AddInventoryItemString(item);
                 }
@@ -1294,7 +1291,7 @@ namespace jarg {
 
 
             if (other.Count > 0) {
-                new LabelFixed(Vector2.Zero, "Other", Color.Cyan, ContainerInventoryItems);
+                ContainerInventoryItems.Items.Add(new ListBoxItem("Other", Color.Cyan));
                 foreach (Item item in other) {
                     AddInventoryItemString(item);
                 }
@@ -1313,9 +1310,9 @@ namespace jarg {
 
         private void AddInventoryItemString(Item item) {
             Color col = item.Data.ItemScript != null ? Color.LightGoldenrodYellow : Color.LightGray;
-            var i = new LabelFixed(Vector2.Zero, item.ToString(), col, ContainerInventoryItems) {Tag = item};
-            i.OnLeftPressed += PressInInventory;
-            i.OnRightPressed += RightPressInInventory;
+            var i = new ListBoxItem(item.ToString(), col, item);
+            ContainerInventoryItems.Items.Add(i);
+            i.OnMousePressed += PressInInventory;
         }
 
         private void RightPressInInventory(object sender, LabelPressEventArgs labelPressEventArgs)
@@ -1347,20 +1344,20 @@ namespace jarg {
         private void UpdateContainerContainer(List<Item> a) {
             inContainer_ = a;
 
-            ContainerContainer.Clear();
+            ContainerContainer.Items.Clear();
 
             int cou = 0;
             foreach (Item item in a) {
-                var i = new LabelFixed(Vector2.Zero, item.ToString(), ContainerContainer);
-                i.Tag = cou;
-                i.OnLeftPressed += PressInContainer;
+                var i = new ListBoxItem(item.ToString(), Color.White, cou);
+                ContainerContainer.Items.Add(i);
+                i.OnMousePressed += PressInContainer;
                 cou++;
             }
         }
 
-        private void PressInInventory(object sender, EventArgs e) {
-            var label = sender as Label;
-            if (label != null) {
+        private void PressInInventory(object sender, ListBoxItemPressEventArgs e) {
+            var label = sender as ListBoxItem;
+            if (label != null && e.Ms.RightButton == ButtonState.Released) {
                 var a = (Item) label.Tag;
                 selectedItem = a;
 
@@ -1550,24 +1547,22 @@ namespace jarg {
                                            ? itemDataBase.Data[player_.ItemMeele.Id].Name
                                            : string.Empty;
 
-            EffectsContainer.Clear();
+            EffectsContainer.Items.Clear();
             for (int i = 0; i < player_.Buffs.Count; i++) {
                 LabelFixed label;
                 if (player_.Buffs[i].Expiring) {
-                    label = new LabelFixed(Vector2.Zero,
-                                           string.Format("{0} {1}", BuffDataBase.Data[player_.Buffs[i].Id].Name,
-                                                         player_.Buffs[i].Expire), EffectsContainer);
+                    EffectsContainer.Items.Add(string.Format("{0} {1}", BuffDataBase.Data[player_.Buffs[i].Id].Name,
+                                                         player_.Buffs[i].Expire));
                 }
                 else {
-                    label = new LabelFixed(Vector2.Zero,
-                                           string.Format("{0}", BuffDataBase.Data[player_.Buffs[i].Id].Name),
-                                           EffectsContainer);
+
+                    EffectsContainer.Items.Add(string.Format("{0}", BuffDataBase.Data[player_.Buffs[i].Id].Name));
                 }
             }
 
-            ContainerWearList.Clear();
+            ContainerWearList.Items.Clear();
             foreach (Item item in player_.Weared) {
-                var label = new LabelFixed(Vector2.Zero, string.Format("{0}", item.Data.Name), ContainerWearList);
+                EffectsContainer.Items.Add(string.Format("{0}", item.Data.Name));
             }
         }
 
