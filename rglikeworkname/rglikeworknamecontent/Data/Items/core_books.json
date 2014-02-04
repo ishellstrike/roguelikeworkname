@@ -3,7 +3,7 @@
 		"SortType":"Book",
 		"Name":"Журнал о компьютерах",
 		"Require":"It",
-		"Level":"2",
+		"Level":2,
 	},
 	"paper":{
 		"Name":"Лист бумаги",
@@ -11,8 +11,8 @@
 		"SpawnGroup":"spawn_book",
 	},
 	"newspaper":{
-		Name":"Газета",
-		"SortType":"Book"
+		"Name":"Газета",
+		"SortType":"Book",
 		"Weight":100,
 		"SpawnGroup":"spawn_trash",
 	},
@@ -20,7 +20,7 @@
 		"SortType":"Book",
 		"Name":"Повареная книга",
 		"Require":"Cook",
-		"Level":"2",
+		"Level":2,
 		"SpawnGroup":"spawn_book",
 	},
 }

@@ -16,6 +16,8 @@ namespace rglikeworknamelib.Window {
         public String Text;
         private Rectangle locate_;
 
+        public event EventHandler OnMove;
+
         public VerticalSlider(Rectangle locate, IGameContainer container)
         {
             locate_ = locate;
@@ -74,6 +76,10 @@ namespace rglikeworknamelib.Window {
                     if (Start + Size > Max)
                     {
                         Start = Max - Size;
+                    }
+
+                    if (OnMove != null) {
+                        OnMove(this, EventArgs.Empty);
                     }
 
                     if (Parent is ListContainer)

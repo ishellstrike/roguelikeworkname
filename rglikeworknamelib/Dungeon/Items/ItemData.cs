@@ -17,6 +17,9 @@ namespace rglikeworknamelib.Dungeon.Items {
         
         public bool Hidden;
 
+        public string Require;
+        public int Level;
+
         /// <summary>
         ///     In 0.1 degree offset
         /// </summary>

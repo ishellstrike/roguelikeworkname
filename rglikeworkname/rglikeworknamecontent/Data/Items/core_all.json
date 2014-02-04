@@ -828,40 +828,53 @@
 
   "glasscup":{
 	"Name":"Стеклянный стакан",
-	"Weight":200
+	"Weight":200,
   },
   "papercup":{
 	"Name":"Бумажный стакан",
-	"Weight":20
+	"Weight":20,
   },
   "dollar20":{
 	"Name":"20 доллоровая банкнота",
 	"Weight":1,
-	"SpawnGroup":"spawn_money"
+	"SpawnGroup":"spawn_money",
   },
   "dollar5":{
 	"Name":"5 доллоровая банкнота",
 	"Weight":1,
-	"SpawnGroup":"spawn_money"
+	"SpawnGroup":"spawn_money",
   },
   "dollar1":{
 	"Name":"1 доллоровая банкнота",
 	"Weight":1,
-	"SpawnGroup":"spawn_money"
+	"SpawnGroup":"spawn_money",
   },
   "dollar100":{
 	"Name":"100 доллоровая банкнота",
 	"Weight":1,
-	"SpawnGroup":"spawn_money"
+	"SpawnGroup":"spawn_money",
   },
   "plate":{
 	"Name":"Тарелка",
 	"Weight":200,
-	"SpawnGroup":"spawn_posuda"
+	"SpawnGroup":"spawn_posuda",
   },
   "cup":{
 	"Name":"Чашка",
 	"Weight":200,
-	"SpawnGroup":"spawn_posuda"
+	"SpawnGroup":"spawn_posuda",
+  },
+  "canifol":{
+	"Name":"",
+  },
+  "wax":{
+	"Name":"",
+  },
+  "oilbottle":{
+	"Name":"",
+  },
+  "kastrul":{
+	"Name":"",
+	"SpawnGroup":"spawn_posuda",
   },
 }

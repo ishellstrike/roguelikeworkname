@@ -66,6 +66,7 @@ namespace rglikeworknamelib.Window
         private int SelectedIndex;
         private int textH, textW;
         private int aimed;
+        
 
         public InteractiveListBox(Rectangle loc, IGameContainer parent) {
             location_ = loc;
@@ -74,19 +75,16 @@ namespace rglikeworknamelib.Window
             Parent = parent;
             Parent.AddComponent(this);
 
-            textH = (int) font1_.MeasureString("O").Y;
+            textH = (int)font1_.MeasureString("O").Y;
             textW = (int)font1_.MeasureString("O").X;
 
-            var ptop = new Vector2(loc.X + 1, loc.Y + 19);
-            var p = new Vector2(loc.Width + 1, loc.Height + 19);
-
             buttonUp_ = new Button(Vector2.Zero, "^", Parent);
-            var bup = new Vector2(p.X, ptop.Y - buttonUp_.Width);
+            var bup = new Vector2(loc.X + loc.Width - buttonUp_.Width, loc.Y);
             buttonUp_.SetPosition(bup);
             buttonUp_.OnPressed += buttonUp__onPressed;
 
             buttonDown_ = new Button(Vector2.Zero, "v", Parent);
-            var bdow = new Vector2(p.X, p.Y - buttonUp_.Width);
+            var bdow = new Vector2(bup.X, loc.Y + loc.Height - buttonDown_.Height);
             buttonDown_.SetPosition(bdow);
             buttonDown_.OnPressed += buttonDown__onPressed;
 
@@ -94,8 +92,13 @@ namespace rglikeworknamelib.Window
                 new VerticalSlider(
                     new Rectangle((int)(bup.X), (int)(bup.Y + buttonUp_.Height), (int)buttonUp_.Width,
                                   (int)(bdow.Y - bup.Y)), parent);
+            progress_.OnMove += progress__OnMove;
 
             Visible = true;
+        }
+
+        void progress__OnMove(object sender, EventArgs e) {
+            topIndex = progress_.Start;
         }
 
         private void buttonDown__onPressed(object sender, EventArgs e) {
@@ -161,10 +164,21 @@ namespace rglikeworknamelib.Window
         }
 
         bool hooked;
+        private int lastW;
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
             var p = GetPosition();
             var ps = p + new Vector2(location_.Width, location_.Height);
             if (ms.X > p.X && ms.Y > p.Y && ms.X < ps.X && ms.Y < ps.Y) {
+
+                if (ms.ScrollWheelValue - lastW < 0) {
+                    buttonDown__onPressed(null, null);
+                }
+
+                if (ms.ScrollWheelValue - lastW > 0)
+                {
+                    buttonUp__onPressed(null, null);
+                }
+
                 aimed = (int) ((ms.Y - p.Y)/(textH + 2)) + topIndex;
                 if (aimed >= Items.Count) {
                     aimed = -1;
@@ -175,40 +189,11 @@ namespace rglikeworknamelib.Window
                 if (aimed != -1 && (ms.RightButton == ButtonState.Pressed || ms.LeftButton == ButtonState.Pressed)) {
                     Items[aimed].OnPress(ms, lms);
                 }
+
+                lastW = ms.ScrollWheelValue;
             }
             else {
                 aimed = -1;
-            }
-
-            var pos = progress_.GetPosition();
-            
-            if (ms.X >= pos.X && ms.Y >= pos.Y && ms.Y <= pos.X + progress_.Width && ms.Y <= pos.Y + progress_.Height)
-            {
-                if (ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released)
-                {
-                    hooked = true;
-                }
-            }
-            if (ms.LeftButton == ButtonState.Released)
-            {
-                hooked = false;
-            }
-
-            if (hooked)
-            {
-                var cent = progress_.Max * (ms.Y - pos.Y) / progress_.Height;
-                progress_.Start = (int)(cent) - progress_.Size / 2;
-                if (progress_.Start < 0)
-                {
-                    progress_.Start = 0;
-                }
-
-                if (progress_.Start + progress_.Size > progress_.Max)
-                {
-                    progress_.Start = progress_.Max - progress_.Size;
-                }
-
-                topIndex = progress_.Start;
             }
         }
 
@@ -224,4 +209,4 @@ namespace rglikeworknamelib.Window
             topIndex = 0;
         }
     }
-}
+} 

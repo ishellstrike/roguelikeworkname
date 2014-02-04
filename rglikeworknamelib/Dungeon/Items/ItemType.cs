@@ -14,7 +14,8 @@ namespace rglikeworknamelib.Dungeon.Items {
         Craft,
 
         Currency,
-        Wear
+        Wear,
+        Book
     }
 
     public enum UpgradeType {

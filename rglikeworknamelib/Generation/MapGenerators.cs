@@ -628,7 +628,7 @@ namespace rglikeworknamelib.Generation {
 
     public static class MapGenerators2 {
         public static List<KeyValuePair<Point, MapSector>> GenerateCityAt(GameLevel gl, Random rnd, int x, int y) {
-            var temp = new List<KeyValuePair<Point, MapSector>>();
+            var temp = new Dictionary<Point, MapSector>();
 
             var rects = GenerateRoads(rnd, 10, 10, x, y, 8);
             var already = new List<Point>();
@@ -658,10 +658,11 @@ namespace rglikeworknamelib.Generation {
                 
             }
 
-            return temp;
+            return temp.ToList();
         }
 
-        private static void PutHouse(GameLevel gl, int i, int j, List<KeyValuePair<Point, MapSector>> temp, List<Point> already, Random rnd) {
+        private static void PutHouse(GameLevel gl, int i, int j, Dictionary<Point, MapSector> temp, List<Point> already, Random rnd)
+        {
             var sch = SchemesDataBase.NormalCity[rnd.Next(SchemesDataBase.NormalCity.Count)];
             var a = MapGenerators.AlterCheme(sch, rnd);
 
@@ -696,17 +697,18 @@ namespace rglikeworknamelib.Generation {
             }
             sector.Biom = a.type;
 
-            temp.Add(new KeyValuePair<Point, MapSector>(p, sector));
+            temp.Add(p, sector);
         }
 
-        private static void PutRoadVert(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp) {
+        private static void PutRoadVert(GameLevel gl, int i, int j, List<Point> already, Dictionary<Point, MapSector> temp) {
             var p = new Point(i, j);
             if (!already.Contains(p)) {
                 already.Add(p);
                 var sector = new MapSector(gl, p.X, p.Y);
                 sector.Rebuild(gl.MapSeed);
                 sector.Biom = SectorBiom.Road;
-                for (int k = 0; k < MapSector.Ry; k++) {
+                for (int k = 0; k < MapSector.Rx; k++)
+                {
                     for (int n = MapSector.Rx / 2 - 5; n < MapSector.Rx / 2 + 5; n++)
                     {
                         sector.SetFloor(n, k, "asfalt");
@@ -723,11 +725,65 @@ namespace rglikeworknamelib.Generation {
                         sector.SetBlock(n, k, "0");
                     }
                 }
-                temp.Add(new KeyValuePair<Point, MapSector>(p, sector));
+                temp.Add(p, sector);
+
+                var nearp = new Point(i, j + 1);
+                if (temp.ContainsKey(nearp)) {
+                    var near = temp[nearp];
+
+                    if (near.Biom == SectorBiom.Road) {
+                        for (int k = 0; k < MapSector.Rx / 2 - 5; k++)
+                        {
+                            for (int n = MapSector.Rx / 2 - 5; n < MapSector.Rx / 2 + 5; n++)
+                            {
+                                near.SetFloor(n, k, "asfalt");
+                                near.SetBlock(n, k, "0");
+                            }
+                            for (int n = MapSector.Rx / 2 - 5 - 3; n < MapSector.Rx / 2 - 5; n++)
+                            {
+                                near.SetFloor(n, k, "conk_base");
+                                near.SetBlock(n, k, "0");
+                            }
+                            for (int n = MapSector.Rx / 2 + 5; n < MapSector.Rx / 2 + 5 + 3; n++)
+                            {
+                                near.SetFloor(n, k, "conk_base");
+                                near.SetBlock(n, k, "0");
+                            }
+                        }
+                    }
+                }
+
+                nearp = new Point(i, j - 1);
+                if (temp.ContainsKey(nearp))
+                {
+                    var near = temp[nearp];
+
+                    if (near.Biom == SectorBiom.Road)
+                    {
+                        for (int k = MapSector.Rx / 2 + 5; k < MapSector.Ry; k++)
+                        {
+                            for (int n = MapSector.Rx / 2 - 5; n < MapSector.Rx / 2 + 5; n++)
+                            {
+                                near.SetFloor(n, k, "asfalt");
+                                near.SetBlock(n, k, "0");
+                            }
+                            for (int n = MapSector.Rx / 2 - 5 - 3; n < MapSector.Rx / 2 - 5; n++)
+                            {
+                                near.SetFloor(n, k, "conk_base");
+                                near.SetBlock(n, k, "0");
+                            }
+                            for (int n = MapSector.Rx / 2 + 5; n < MapSector.Rx / 2 + 5 + 3; n++)
+                            {
+                                near.SetFloor(n, k, "conk_base");
+                                near.SetBlock(n, k, "0");
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        private static void PutRoadHor(GameLevel gl, int i, int j, List<Point> already, List<KeyValuePair<Point, MapSector>> temp)
+        private static void PutRoadHor(GameLevel gl, int i, int j, List<Point> already, Dictionary<Point, MapSector> temp)
         {
             var p = new Point(i, j);
             if (!already.Contains(p))
@@ -754,7 +810,63 @@ namespace rglikeworknamelib.Generation {
                         sector.SetBlock(n, k, "0");
                     }
                 }
-                temp.Add(new KeyValuePair<Point, MapSector>(p, sector));
+                temp.Add(p, sector);
+            }
+
+            var nearp = new Point(i + 1, j);
+            if (temp.ContainsKey(nearp))
+            {
+                var near = temp[nearp];
+
+                if (near.Biom == SectorBiom.Road)
+                {
+                    for (int n = 0; n < MapSector.Rx / 2 - 5; n++)
+                    {
+                        for (int k = MapSector.Rx / 2 - 5; k < MapSector.Rx / 2 + 5; k++)
+                        {
+                            near.SetFloor(n, k, "asfalt");
+                            near.SetBlock(n, k, "0");
+                        }
+                        for (int k = MapSector.Rx / 2 - 5 - 3; k < MapSector.Rx / 2 - 5; k++)
+                        {
+                            near.SetFloor(n, k, "conk_base");
+                            near.SetBlock(n, k, "0");
+                        }
+                        for (int k = MapSector.Rx / 2 + 5; k < MapSector.Rx / 2 + 5 + 3; k++)
+                        {
+                            near.SetFloor(n, k, "conk_base");
+                            near.SetBlock(n, k, "0");
+                        }
+                    }
+                }
+            }
+
+            nearp = new Point(i - 1, j);
+            if (temp.ContainsKey(nearp))
+            {
+                var near = temp[nearp];
+
+                if (near.Biom == SectorBiom.Road)
+                {
+                    for (int n = MapSector.Rx / 2 + 5; n < MapSector.Rx; n++)
+                    {
+                        for (int k = MapSector.Rx / 2 - 5; k < MapSector.Rx / 2 + 5; k++)
+                        {
+                            near.SetFloor(n, k, "asfalt");
+                            near.SetBlock(n, k, "0");
+                        }
+                        for (int k = MapSector.Rx / 2 - 5 - 3; k < MapSector.Rx / 2 - 5; k++)
+                        {
+                            near.SetFloor(n, k, "conk_base");
+                            near.SetBlock(n, k, "0");
+                        }
+                        for (int k = MapSector.Rx / 2 + 5; k < MapSector.Rx / 2 + 5 + 3; k++)
+                        {
+                            near.SetFloor(n, k, "conk_base");
+                            near.SetBlock(n, k, "0");
+                        }
+                    }
+                }
             }
         }
 

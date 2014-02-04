@@ -95,7 +95,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
 
                 if (!Generating() && !Loading()) {
-                    Thread.Sleep(300);
+                    Thread.Sleep(100);
                     lock (Buffer)
                     {
                         var t = Buffer.Select(x=>x).ToList();

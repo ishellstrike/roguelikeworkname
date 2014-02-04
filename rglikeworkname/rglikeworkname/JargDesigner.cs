@@ -381,8 +381,12 @@ namespace jarg {
             }
 
             temp.type = SectorBiom.House;
+            int coui = 1;
+            while (File.Exists(Directory.GetCurrentDirectory() + "\\" + coui + ".json")) {
+                coui++;
+            }
 
-            using (var sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\" + Path.GetFileNameWithoutExtension(temp.filename) + ".json") )
+            using (var sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\" + coui + ".json") )
             {
                 serializer.Serialize(sw, new [] {temp});
             }
@@ -1315,26 +1319,6 @@ namespace jarg {
             i.OnMousePressed += PressInInventory;
         }
 
-        private void RightPressInInventory(object sender, LabelPressEventArgs labelPressEventArgs)
-        {
-            Item i = (Item)((LabelFixed)sender).Tag;
-            if (i.Data.ItemScript == null) {
-                return;
-            }
-            InventoryDropDownContainer.Clear();
-            var itemDataBase = ItemDataBase.Instance;
-            foreach (var actionid in i.Data.ItemScript) {
-                
-                var a = new LabelFixed(Vector2.Zero, itemDataBase.ItemScripts[actionid].Name, InventoryDropDownContainer);
-                a.Tag = new Tuple<Item, ItemAction>(i, itemDataBase.ItemScripts[actionid]);
-                a.OnLeftPressed += AOnOnLeftPressed;
-            }
-
-            InventoryDropDownWindow.Visible = true;
-            InventoryDropDownWindow.SetPosition(new Vector2(labelPressEventArgs.Ms.X - 10, labelPressEventArgs.Ms.Y - 10));
-            InventoryDropDownWindow.OnTop();
-        }
-
         private void AOnOnLeftPressed(object sender, LabelPressEventArgs labelPressEventArgs) {
             var action = (Tuple<Item, ItemAction>)((LabelFixed)sender).Tag;
             (action.Item2).Action.ItemScript(player_, action.Item1, Settings.rnd);
@@ -1357,16 +1341,46 @@ namespace jarg {
 
         private void PressInInventory(object sender, ListBoxItemPressEventArgs e) {
             var label = sender as ListBoxItem;
-            if (label != null && e.Ms.RightButton == ButtonState.Released) {
-                var a = (Item) label.Tag;
-                selectedItem = a;
+
+            if (label == null) {
+                return;
+            }
+
+            var i = (Item) label.Tag;
+
+
+            if (label != null && e.Ms.LeftButton == ButtonState.Pressed) {
+                selectedItem = i;
 
                 if (!doubleclick_) {
-                    InventoryMoreInfo.Text = ItemDataBase.Instance.GetItemFullDescription(a);
+                    InventoryMoreInfo.Text = ItemDataBase.Instance.GetItemFullDescription(i);
                 }
                 else {
                     IntentoryEquip_onPressed(null, null);
                 }
+            }
+
+
+            if (i.Data.ItemScript == null)
+            {
+                return;
+            }
+
+            if (e.Ms.RightButton == ButtonState.Pressed)
+            {
+                InventoryDropDownContainer.Clear();
+                var itemDataBase = ItemDataBase.Instance;
+                foreach (var actionid in i.Data.ItemScript) {
+
+                    var a = new LabelFixed(Vector2.Zero, itemDataBase.ItemScripts[actionid].Name,
+                        InventoryDropDownContainer);
+                    a.Tag = new Tuple<Item, ItemAction>(i, itemDataBase.ItemScripts[actionid]);
+                    a.OnLeftPressed += AOnOnLeftPressed;
+                }
+
+                InventoryDropDownWindow.Visible = true;
+                InventoryDropDownWindow.SetPosition(new Vector2(e.Ms.X - 10, e.Ms.Y - 10));
+                InventoryDropDownWindow.OnTop();
             }
         }
 
