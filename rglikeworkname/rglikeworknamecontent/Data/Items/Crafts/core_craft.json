@@ -1,0 +1,36 @@
+[
+	{
+		"Name":"Растереть канифоль",
+		"Input":[
+		
+			{
+				"Alters":[
+					{"Id":"canifol", "Count":1},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"hammer1", "Count":1,	"IsTool":true},
+					{"Id":"stone", "Count":1, "IsTool":true},
+				]
+			},
+		],
+		"Output":[
+			{
+				"Alters":[
+					{"Id":"canifolpowder", "Count":1},
+				]
+			},
+		],
+		"Require":[
+			{
+				"Ability":"Chem",
+				"Level":2
+			},
+			{
+				"Ability":"Survive",
+				"Level":2
+			}
+		]
+	}
+]

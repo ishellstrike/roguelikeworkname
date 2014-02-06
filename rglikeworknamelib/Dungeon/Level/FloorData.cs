@@ -33,7 +33,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 return new Vector2(0, 0);
             }
             int index = Atlases.Instance.MajorIndexes[s];
+// ReSharper disable PossibleLossOfFraction
             return new Vector2((index % 32 * 32f) / Atlases.Instance.MajorAtlas.Width, (index / 32 * 32f) / Atlases.Instance.MajorAtlas.Height);
+// ReSharper restore PossibleLossOfFraction
         }
     }
 }

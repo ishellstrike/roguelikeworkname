@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using IronPython.Modules;
 using Microsoft.Xna.Framework;
 using jarg;
 using rglikeworknamelib.Dungeon.Creatures;
@@ -163,16 +164,76 @@ namespace rglikeworknamelib.Dungeon.Items {
 
        // public void ExtractItem(string s,)
 
-        public void Craft(CraftData selectedCraft) {
-            var a = CraftRequireCheck(selectedCraft.Input1, selectedCraft.Input1Count);
-            var b = CraftRequireCheck(selectedCraft.Input2, selectedCraft.Input2Count);
-            var c = CraftRequireCheck(selectedCraft.Input3, selectedCraft.Input3Count);
-            var d = CraftRequireCheck(selectedCraft.Input4, selectedCraft.Input4Count);
+        public void Craft(ItemCraftData selectedCraft, Player crafter) {
+            var able = CraftRequireCheck(selectedCraft);
+
+            foreach (var req in selectedCraft.Require)
+            {
+                if (crafter.Abilities.List[req.Ability].XpLevel < req.Level) {
+                    EventLog.Add("Недостаточный навык", Color.Yellow, LogEntityType.Consume);
+                    return;
+                }
+            }
+
+            if (able) {
+                foreach (var inp in selectedCraft.Input) {
+                    foreach (var alt in inp.Alters) {
+                        var t = items_.FirstOrDefault(x => x.Id == alt.Id);
+                        if (t != null) {
+                            if (!alt.IsTool) {
+                                if (t.Count > alt.Count) {
+                                    t.Count -= alt.Count;
+                                }
+                                else if (t.Count == alt.Count) {
+                                    items_.Remove(t);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                foreach (var inp in selectedCraft.Output) {
+                    int te = Settings.rnd.Next(0, inp.Alters.Count);
+                    items_.Add(ItemFactory.GetInstance(inp.Alters[te].Id, inp.Alters[te].Count));
+                    EventLog.Add(string.Format("Вы создали {0}{1}", ItemDataBase.Instance.Data[inp.Alters[te].Id].Name, inp.Alters[te].Count > 1 ? " x" + inp.Alters[te].Count : string.Empty), Color.Yellow, LogEntityType.Consume);
+                }
+
+                ItemDataBase.StackSimilar(ref items_);
+                Settings.InventoryUpdate = true;
+            }
+            else {
+                EventLog.Add("Недостаточно компонентов", Color.Yellow, LogEntityType.Consume);
+            }
         }
 
-        private bool CraftRequireCheck(IEnumerable<string> a, IList<string> b) {
-            if (a == null) return true;
-            return a.Select(t1 => items_.FirstOrDefault(x => x.Id == t1)).Where((t, i) => t != null && t.Count > int.Parse(b[i])).Any();
+        private bool CraftRequireCheck(ItemCraftData a) {
+            var tempInv = new List<Item>();
+            tempInv.AddRange(items_);
+
+            foreach (var inp in a.Input) {
+                bool part = false;
+                foreach (var alt in inp.Alters) {
+                    var t = items_.FirstOrDefault(x => x.Id == alt.Id);
+                    if (t != null) {
+                        part = true;
+                        if (!alt.IsTool) {
+                            if (t.Count > alt.Count) {
+                                t.Count -= alt.Count;
+                            }
+                            else if (t.Count == alt.Count) {
+                                tempInv.Remove(t);
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (!part) return false;
+            }
+            return true;
         }
     }
 }

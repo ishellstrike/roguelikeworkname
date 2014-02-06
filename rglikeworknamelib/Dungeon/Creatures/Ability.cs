@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace rglikeworknamelib.Dungeon.Creatures
 {
@@ -28,10 +29,9 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public event EventHandler OnLevelUp;
 
-
-        public override string ToString() {
-            //if (nameStyle == AbilityNameStyle.physical) {
-            switch (XpLevel) {
+        public static string GetLevelName(int level) {
+            switch (level)
+            {
                 case 0:
                     return "ужасно";
                 case 1:
@@ -54,10 +54,13 @@ namespace rglikeworknamelib.Dungeon.Creatures
                     return "великий мастер";
                 case 10:
                     return "легенда";
-                    // }
             }
+            return level.ToString(CultureInfo.InvariantCulture);
+        }
 
-            return XpCurrent.ToString();
+
+        public override string ToString() {
+            return GetLevelName(XpLevel);
         }
     }
 }

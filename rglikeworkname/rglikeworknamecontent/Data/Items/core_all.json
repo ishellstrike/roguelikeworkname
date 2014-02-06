@@ -865,7 +865,10 @@
 	"SpawnGroup":"spawn_posuda",
   },
   "canifol":{
-	"Name":"",
+	"Name":"Канифоль",
+  },
+  "canifolpowder":{
+	"Name":"Измельченная канифоль",
   },
   "wax":{
 	"Name":"",
@@ -877,4 +880,10 @@
 	"Name":"",
 	"SpawnGroup":"spawn_posuda",
   },
+  "hammer1":{
+	"Name":"Молоток",
+  },
+  "stone":{
+	"Name":"Камень",
+  }
 }

@@ -215,7 +215,6 @@ namespace JargServer
             new SchemesDataBase();
             new BuffDataBase();
             new NameDataBase();
-            new CraftDataBase();
             sw.Stop();
             Console.WriteLine(
                 "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\n     loaded in {0}",
@@ -228,7 +227,7 @@ namespace JargServer
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,
                 NameDataBase.data.Count,
-                CraftDataBase.Data.Count);
+                ItemDataBase.Craft.Count);
 
             sw.Start();
             BasesCheker.CheckAndResolve();

@@ -363,8 +363,9 @@ namespace rglikeworknamelib.Dungeon.Creatures
             return po;
         }
 
-        public Ability GetAbility(string s) {
-            return abilities_.list[s];
+        public Ability GetAbility(AbilityType s)
+        {
+            return abilities_.List[s];
         }
 
         private void OrdersMaker(MapSector ms, GameTime gt) {

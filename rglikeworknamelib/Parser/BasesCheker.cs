@@ -93,74 +93,41 @@ namespace rglikeworknamelib.Parser
             }
 
             int errorCrDB = 0;
-            for (int i = 0; i < CraftDataBase.Data.Count; i++) {
-                var craftData = CraftDataBase.Data[i];
-                if (craftData.Input1 != null) {
-                    for (int index = 0; index < craftData.Input1.Count; index++) {
-                        var s = craftData.Input1[index];
-                        if (!idb.Data.ContainsKey(s)) {
-                            var pos = craftData.Input1.IndexOf(s);
-                            craftData.Input1.RemoveAt(pos);
-                            craftData.Input1Count.RemoveAt(pos);
-                            errorCrDB++;
-                        }
-                    }
-                }
-                if (craftData.Input2 != null) {
-                    for (int index = 0; index < craftData.Input2.Count; index++) {
-                        var s = craftData.Input2[index];
-                        if (!idb.Data.ContainsKey(s)) {
-                            var pos = craftData.Input2.IndexOf(s);
-                            craftData.Input2.RemoveAt(pos);
-                            craftData.Input2Count.RemoveAt(pos);
+            for (int i = 0; i < ItemDataBase.Craft.Count; i++) {
+                var craftData = ItemDataBase.Craft[i];
+                foreach (var s in craftData.Input)
+                {
+                    for (int j = 0; j < s.Alters.Count; j++)
+                    {
+                        var alt = s.Alters[j];
+                        if (!idb.Data.ContainsKey(alt.Id))
+                        {
+                            s.Alters.Remove(alt);
                             errorCrDB++;
                         }
                     }
                 }
 
-                if (craftData.Input3 != null) {
-                    for (int index = 0; index < craftData.Input3.Count; index++) {
-                        var s = craftData.Input3[index];
-                        if (!idb.Data.ContainsKey(s)) {
-                            var pos = craftData.Input3.IndexOf(s);
-                            craftData.Input3.RemoveAt(pos);
-                            craftData.Input3Count.RemoveAt(pos);
+                foreach (var s in craftData.Output)
+                {
+                    for (int j = 0; j < s.Alters.Count; j++)
+                    {
+                        var alt = s.Alters[j];
+                        if (!idb.Data.ContainsKey(alt.Id))
+                        {
+                            s.Alters.Remove(alt);
                             errorCrDB++;
                         }
                     }
                 }
 
-                if (craftData.Input4 != null) {
-                    for (int index = 0; index < craftData.Input4.Count; index++) {
-                        var s = craftData.Input4[index];
-                        if (!idb.Data.ContainsKey(s)) {
-                            var pos = craftData.Input4.IndexOf(s);
-                            craftData.Input4.RemoveAt(pos);
-                            craftData.Input4Count.RemoveAt(pos);
-                            errorCrDB++;
-                        }
-                    }
-                }
-
-                for (int index = 0; index < craftData.Output.Count; index++) {
-                    var s = craftData.Output[index];
-                    if (!idb.Data.ContainsKey(s)) {
-                        var pos = craftData.Output.IndexOf(s);
-                        craftData.Output.RemoveAt(pos);
-                        craftData.OutputCount.RemoveAt(pos);
-                        errorCrDB++;
-                    }
-                }
-
-                if ((craftData.Input1 != null && craftData.Input1.Count == 0) ||
-                    (craftData.Input2 != null && craftData.Input2.Count == 0) ||
-                    (craftData.Input3 != null && craftData.Input3.Count == 0) ||
-                    (craftData.Input4 != null && craftData.Input4.Count == 0) || craftData.Output.Count == 0) {
-                    CraftDataBase.Data.Remove(craftData);
+                if (craftData.Input.Any(x => x.Alters.Count == 0) || craftData.Output.Any(x => x.Alters.Count == 0))
+                {
+                    ItemDataBase.Craft.Remove(craftData);
                 }
             }
 
-            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in CraftDataBase\n     {1} in ItemDataBase     {6} in Creature behavior scripts\n\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB, errorCScript));
+            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in ItemCraftDataBase\n     {1} in ItemDataBase     {6} in Creature behavior scripts\n\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB, errorCScript));
         }
 
         public static int ErrorBdb()

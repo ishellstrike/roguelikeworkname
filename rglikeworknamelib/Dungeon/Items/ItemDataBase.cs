@@ -28,15 +28,17 @@ namespace rglikeworknamelib.Dungeon.Items
         public Dictionary<string, ItemData> Data;
         public Dictionary<string, ItemAction> ItemScripts;
 
+        public static List<ItemCraftData> Craft;
+
         /// <summary>
         ///     WARNING! Also loading all data from standart patch
         /// </summary>
         private ItemDataBase()
         {
             //texatlas = texatlas_;
-            Data = new Dictionary<string, ItemData>();
-
             Data = UniversalParser.JsonDictionaryDataLoader<ItemData>(Settings.GetItemDataDirectory());
+
+            Craft = UniversalParser.JsonListDataLoader<ItemCraftData>(Settings.GetCraftsDirectory());
 
             Settings.NeedToShowInfoWindow = true;
             Settings.NTS1 = "Item assembly loading";

@@ -232,7 +232,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 Position += perem; /////////
                 var meters = (perem/32).Length();
                 AchievementDataBase.Stat["walk"].Count += meters;
-                Abilities.list["atlet"].XpCurrent += meters/300.0;
+                Abilities.List[AbilityType.Atlet].XpCurrent += meters / 300.0;
 
                 if (time != 0) {
                     Velocity /= Settings.H()/time;
@@ -282,7 +282,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                             }
                         }
                         AchievementDataBase.Stat["ammouse"].Count++;
-                        Abilities.list["shoot"].XpCurrent += 0.2;
+                        Abilities.List[AbilityType.Shoot].XpCurrent += 0.2;
                         if (OnShoot != null) {
                             OnShoot(null, null);
                         }

@@ -5,79 +5,96 @@ using System.Linq;
 namespace rglikeworknamelib.Dungeon.Creatures
 {
     [Serializable]
+    public enum AbilityType {
+        Survive,
+        Atlet,
+        Shoot,
+        Martial,
+        Cook,
+        Chem,
+        Phys,
+        It,
+        Tailor,
+        Read,
+        Pickpocket,
+        Lockpick,
+        Talk,
+        Bio
+    }
+    [Serializable]
     public class Abilities {
         public List<Ability> ToShow;
-        public Dictionary<string, Ability> list;
+        public Dictionary<AbilityType, Ability> List;
 
         public Abilities() {
-            list = new Dictionary<string, Ability> {
+            List = new Dictionary<AbilityType, Ability> {
                 {
-                    "survive", new Ability {
+                    AbilityType.Survive, new Ability {
                         Name = "Выживание",
                         NameStyle = AbilityNameStyle.physical
                     }
                 }, {
-                    "atlet", new Ability {
+                    AbilityType.Atlet, new Ability {
                         Name = "Атлетика",
                         NameStyle = AbilityNameStyle.physical
                     }
                 }, {
-                    "shoot", new Ability {
+                    AbilityType.Shoot, new Ability {
                         Name = "Стрельба",
                         NameStyle = AbilityNameStyle.physical
                     }
                 }, {
-                    "martial", new Ability {
+                    AbilityType.Martial, new Ability {
                         Name = "Ближний бой",
                         NameStyle = AbilityNameStyle.physical
                     }
                 }, {
-                    "coock", new Ability {
+                    AbilityType.Cook, new Ability {
                         Name = "Готовка",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "chem", new Ability {
+                    AbilityType.Chem, new Ability {
                         Name = "Химия",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "phys", new Ability {
+                    AbilityType.Phys, new Ability {
                         Name = "Физика",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "bio", new Ability {
+                    AbilityType.Bio, new Ability {
                         Name = "Биология",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "it", new Ability {
+                    AbilityType.It, new Ability {
                         Name = "IT",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "tailor", new Ability {
+                    AbilityType.Tailor, new Ability {
                         Name = "Шитье",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "read", new Ability {
+                    AbilityType.Read, new Ability {
                         Name = "Чтение",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "lockpick", new Ability {
+                    AbilityType.Lockpick, new Ability {
                         Name = "Взлом",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "pickpocket", new Ability {
+                    AbilityType.Pickpocket, new Ability {
                         Name = "Карманная кража",
                         NameStyle = AbilityNameStyle.mental
                     }
                 }, {
-                    "talk", new Ability {
+                    AbilityType.Talk, new Ability {
                         Name = "Убеждение",
                         NameStyle = AbilityNameStyle.mental
                     }
@@ -85,8 +102,8 @@ namespace rglikeworknamelib.Dungeon.Creatures
             };
 
             ToShow = new List<Ability>();
-            ToShow.AddRange(list.Select(x => x.Value));
-            ToShow.Sort((x, y) => x.Name.CompareTo(y.Name));
+            ToShow.AddRange(List.Select(x => x.Value));
+            ToShow.Sort((x, y) => String.Compare(x.Name, y.Name, StringComparison.Ordinal));
         }
     }
 }

@@ -24,7 +24,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int swide =32;
 
         public string RandomMtexFromAlters() {
-            if (AlterMtex != null && Settings.rnd.Next(1, 5) == 1) {
+            if (AlterMtex != null && Settings.rnd.Next(-1, AlterMtex.Length) != -1)
+            {
                 return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
             }
             return MTex;
@@ -37,7 +38,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 return new Vector2(0, 0);
             }
             int index = Atlases.Instance.MajorIndexes[s];
+// ReSharper disable PossibleLossOfFraction
             return new Vector2((index%32*32f)/Atlases.Instance.MajorAtlas.Width, (index/32*32f)/Atlases.Instance.MajorAtlas.Height);
+// ReSharper restore PossibleLossOfFraction
         }
     }
 }

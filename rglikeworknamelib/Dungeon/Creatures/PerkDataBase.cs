@@ -29,34 +29,34 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         private static void AddRemoveAtlat(bool arg1, Creature arg2) {
             var ar = arg1 ? 1 : -1;
-            arg2.Abilities.list["atlet"].XpLevel += ar*2;
-            arg2.Abilities.list["martial"].XpLevel += ar*2;
+            arg2.Abilities.List[AbilityType.Atlet].XpLevel += ar*2;
+            arg2.Abilities.List[AbilityType.Martial].XpLevel += ar * 2;
         }
 
         private static void AddRemoveColldb(bool arg1, Creature arg2) {
             var ar = arg1 ? 1 : -1;
-            arg2.Abilities.list["survive"].XpLevel -= ar*2;
+            arg2.Abilities.List[AbilityType.Survive].XpLevel -= ar * 2;
         }
 
         private static void AddRemoveClever(bool x, Creature owner) {
             var ar = x ? 1 : -1;
-            owner.Abilities.list["phys"].XpLevel += ar;
-            owner.Abilities.list["bio"].XpLevel += ar;
-            owner.Abilities.list["chem"].XpLevel += ar;
+            owner.Abilities.List[AbilityType.Phys].XpLevel += ar;
+            owner.Abilities.List[AbilityType.Bio].XpLevel += ar;
+            owner.Abilities.List[AbilityType.Chem].XpLevel += ar;
         }
 
         private static void AddRemoveEvil(bool x, Creature owner) {
             var ar = x ? 1 : -1;
-            owner.Abilities.list["survive"].XpLevel += ar*2;
+            owner.Abilities.List[AbilityType.Survive].XpLevel += ar * 2;
         }
 
         private static void AddRemoveBandit(bool x, Creature owner) {
             var ar = x ? 1 : -1;
-            owner.Abilities.list["pickpocket"].XpLevel += ar*2;
-            owner.Abilities.list["lockpick"].XpLevel += ar*2;
-            owner.Abilities.list["phys"].XpLevel -= ar*2;
-            owner.Abilities.list["bio"].XpLevel -= ar*2;
-            owner.Abilities.list["chem"].XpLevel -= ar*2;
+            owner.Abilities.List[AbilityType.Pickpocket].XpLevel += ar * 2;
+            owner.Abilities.List[AbilityType.Lockpick].XpLevel += ar * 2;
+            owner.Abilities.List[AbilityType.Phys].XpLevel -= ar * 2;
+            owner.Abilities.List[AbilityType.Bio].XpLevel -= ar * 2;
+            owner.Abilities.List[AbilityType.Chem].XpLevel -= ar * 2;
         }
 
         private static void AddRemoveHuge(bool x, Creature owner) {

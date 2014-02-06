@@ -236,7 +236,8 @@
   },
   "flower":{
     "Name":"Комнатный цветок",
-    "MTex":"notex",
+    "MTex":"cvet",
+	"AlterMtex":["cvet1","cvet2","cvet3"],
     "Fame":true,
   },
   "21":{
@@ -408,7 +409,7 @@
   "water_heater":{
     "Name":"Водонагреватель",
     "IsTransparent":true,
-    "MTex":"glass_hor",
+    "MTex":"heater",
     "Flame":true,
   },
   "posude_shkaf":{

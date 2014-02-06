@@ -848,7 +848,7 @@ namespace jarg {
         void CraftThisButton_OnPressed(object sender, EventArgs e)
         {
             if (selectedCraft != null) {
-                inventory_.Craft(selectedCraft);
+                inventory_.Craft(selectedCraft, player_);
             }
         }
 
@@ -872,22 +872,21 @@ namespace jarg {
             mousemappress_ = true;
         }
 
-        private CraftData selectedCraft;
+        private ItemCraftData selectedCraft;
         void Update_Craft_Items() {
             CraftItems.Clear();
             selectedCraft = null;
             CraftMoreInfo.Text = string.Empty;
 
-            ItemDataBase itemDataBase = ItemDataBase.Instance;
-            foreach (var craftData in CraftDataBase.Data) {
-                var a = new LabelFixed(Vector2.Zero,  craftData.OutputCount[0] + " " + itemDataBase.Data[craftData.Output[0]].Name,
+            foreach (var craftData in ItemDataBase.Craft) {
+                var a = new LabelFixed(Vector2.Zero,  craftData.Name,
                                        CraftItems) { Tag = craftData };
                 a.OnLeftPressed += CraftItemsLabelOnLeftPressed;
             }
         }
 
         void CraftItemsLabelOnLeftPressed(object sender, EventArgs e) {
-            selectedCraft = (CraftData)((IGameComponent) sender).Tag;
+            selectedCraft = (ItemCraftData)((IGameComponent) sender).Tag;
             CraftMoreInfo.Text = selectedCraft.ToString();
         }
 

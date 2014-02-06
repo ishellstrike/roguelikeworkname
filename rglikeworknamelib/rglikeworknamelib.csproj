@@ -75,7 +75,6 @@
     <Compile Include="Dungeon\Buffs\BuffBurn.cs" />
     <Compile Include="Dungeon\Buffs\HealOnce.cs" />
     <Compile Include="Dungeon\Buffs\MoraleModifer.cs" />
-    <Compile Include="Dungeon\Creatures\AbilitiesBasic.cs" />
     <Compile Include="Dungeon\Creatures\Abilities.cs" />
     <Compile Include="Dungeon\Creatures\Ability.cs" />
     <Compile Include="Dungeon\Creatures\AbilityNameStyle.cs" />
@@ -101,11 +100,14 @@
     <Compile Include="Dungeon\Buffs\BuffDataBase.cs" />
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
-    <Compile Include="Dungeon\Items\Craft.cs" />
+    <Compile Include="Dungeon\Items\ItemCraftType.cs" />
     <Compile Include="Dungeon\Items\DropGroup.cs" />
     <Compile Include="Dungeon\Items\InventorySystem.cs" />
     <Compile Include="Dungeon\Items\Item.cs" />
     <Compile Include="Dungeon\Items\ItemAction.cs" />
+    <Compile Include="Dungeon\Items\ItemCraftData.cs" />
+    <Compile Include="Dungeon\Items\ItemCraftPart.cs" />
+    <Compile Include="Dungeon\Items\ItemCraftWithAlters.cs" />
     <Compile Include="Dungeon\Items\ItemData.cs" />
     <Compile Include="Dungeon\Items\ItemDataBase.cs" />
     <Compile Include="Dungeon\Items\ItemFactory.cs" />
