@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using rglikeworknamelib;
 
 namespace jarg {
     public class LineBatch : IDisposable {
@@ -10,6 +11,7 @@ namespace jarg {
         private readonly BasicEffect m_basicEffect;
         private readonly GraphicsDevice m_device;
         private readonly List<VertexPositionColor> m_vertices = new List<VertexPositionColor>();
+        private readonly List<VertexPositionColor> threed_vertices = new List<VertexPositionColor>();
         private bool m_isDisposed;
 
         #endregion
@@ -30,12 +32,12 @@ namespace jarg {
             m_basicEffect = new BasicEffect(graphicsDevice);
             m_basicEffect.VertexColorEnabled = true;
 
-            UpdateProjection(graphicsDevice);
+            UpdateProjection();
         }
 
-        public void UpdateProjection(GraphicsDevice graphicsDevice) {
+        public void UpdateProjection() {
             m_basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
-                0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height, 0, 0, 1);
+                0, Settings.Resolution.X, Settings.Resolution.Y, 0, 0, 1);
         }
 
         #endregion
@@ -54,12 +56,6 @@ namespace jarg {
 
                 GC.SuppressFinalize(this);
             }
-        }
-
-        /// <summary>
-        /// </summary>
-        public void Clear() {
-            m_vertices.Clear();
         }
 
         /// <summary>
@@ -108,9 +104,20 @@ namespace jarg {
             m_vertices.Add(new VertexPositionColor(v4, color2));
         }
 
+        public void AddLine3d(Vector3 v, Vector3 v2, Color col) {
+            threed_vertices.Add(new VertexPositionColor(v,col));
+            threed_vertices.Add(new VertexPositionColor(v2,col));
+        }
+
+        public void AddLine3d(Vector3 v, Vector3 v2, Color col, Color col2)
+        {
+            threed_vertices.Add(new VertexPositionColor(v, col));
+            threed_vertices.Add(new VertexPositionColor(v2, col2));
+        }
+
         /// <summary>
         /// </summary>
-        public void Draw() {
+        public void Draw(Camera cam) {
             //m_device.VertexDeclaration = m_vertexDeclaration;
 
 
@@ -118,7 +125,9 @@ namespace jarg {
             //m_basicEffect.CurrentTechnique.Passes[0].Begin();
 
             int primitiveCount = m_vertices.Count/3;
+            int prim = threed_vertices.Count/3;
 
+            UpdateProjection();
             foreach (EffectPass pass in m_basicEffect.CurrentTechnique.Passes) {
                 pass.Apply();
 
@@ -127,6 +136,23 @@ namespace jarg {
                                                 m_vertices.ToArray(), 0, primitiveCount);
                 }
             }
+
+            m_basicEffect.Projection = cam.ProjectionMatrix;
+            m_basicEffect.View = cam.ViewMatrix;
+            foreach (EffectPass pass in m_basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+
+                if (m_vertices.Count > 0)
+                {
+                    m_device.DrawUserPrimitives(PrimitiveType.LineList,
+                                                threed_vertices.ToArray(), 0, prim);
+                }
+            }
+
+
+            m_vertices.Clear();
+            threed_vertices.Clear();
         }
 
         #endregion

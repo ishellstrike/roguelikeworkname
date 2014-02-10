@@ -53,7 +53,7 @@ namespace JargServer
             ServerHello();
 
             DataBasesLoadAndThenInitialGeneration();
-            currentFloor_.GenerateMegaSectorAround(0, 0);
+            currentFloor_.MapPreload();
 
             WriteColoredLine("Initial ready!", ConsoleColor.Cyan);
 
@@ -190,7 +190,7 @@ namespace JargServer
             levelWorker_.Start();
             currentFloor_.lw_ = levelWorker_;
 
-            currentFloor_.GenerateMegaSectorAround(0, 0);
+            currentFloor_.MapPreload();
 
             sw.Stop();
             Console.WriteLine("Initial generation in {0}", sw.Elapsed);

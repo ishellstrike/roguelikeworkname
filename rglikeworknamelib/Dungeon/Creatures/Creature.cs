@@ -304,17 +304,6 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public bool Skipp { get; set; }
 
-        public virtual void Draw(SpriteBatch spriteBatch, LineBatch lineBatch, Vector2 camera) {
-                //Vector2 p = WorldPosition() - camera;
-                //spriteBatch.Draw(Atlases.Instance.MajorAtlas, p + new Vector2(-16, 0), Source, Col);
-                //if (Settings.DebugInfo) {
-                //    spriteBatch.DrawString(Settings.Font, id_ + " -- " + order_.Type+", "+position_.ToString(), p, Color.White);
-                //    if (order_.Type == OrderType.Move) { lineBatch.AddLine(p, order_.Point - camera, Color.LimeGreen, 1); }
-                //    //if (order_.Type == OrderType.Attack) { lineBatch.AddLine(p, order_.Target.Position. - camera, Color.Red, 1); }
-                //    if (order_.Type == OrderType.Wander) { lineBatch.AddLine(p, order_.Point - camera, Color.LightBlue, 1); }
-                //}
-        }
-
         public virtual Vector3 WorldPosition() {
             return Position + new Vector3(-16, -32, 0) +
                    new Vector3(sectoroffset_.X*MapSector.Rx*32, sectoroffset_.Y*MapSector.Ry*32, 0);

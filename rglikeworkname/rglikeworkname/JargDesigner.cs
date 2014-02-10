@@ -1415,8 +1415,8 @@ namespace jarg {
             WindowMainMenu.Visible = false;
             WindowCaracterCration.Visible = true;
             if (client_ == null) {
-                var inv = new Action<int, int>(currentFloor_.GenerateMegaSectorAround);
-                inv.BeginInvoke(0, 0, null, null);
+                var inv = new Action(currentFloor_.MapPreload);
+                inv.BeginInvoke(null, null);
             }
         }
 

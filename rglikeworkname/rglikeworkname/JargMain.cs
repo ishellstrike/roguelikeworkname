@@ -5,14 +5,12 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mork;
 using NLog;
 using WMPLib;
 using rglikeworknamelib;
-using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dialogs;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
@@ -42,8 +40,6 @@ namespace jarg {
         public float PlayerSeeAngle;
         private Action<GameTime> updateAction_ = x => { };
         private WindowsMediaPlayer wmPs_;
-        private Texture2D ardown_;
-        private Texture2D arup_;
         private Texture2D bag_;
         private Vector2 camera_;
         private Texture2D caracter;
@@ -225,7 +221,6 @@ namespace jarg {
                                                        DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
             effectOmnilight_.Parameters["screenWidth"].SetValue(width);
             effectOmnilight_.Parameters["screenHeight"].SetValue(height);
-            lineBatch_.UpdateProjection(GraphicsDevice);
             Atlases.Instance.RebuildAtlases(GraphicsDevice);
 
             var a = cam.Yaw;
@@ -266,8 +261,6 @@ namespace jarg {
             solidEffect = Content.Load<Effect>(@"Effects\solid");
             solidShadowEffect = Content.Load<Effect>(@"Effects\solidShadow");
 
-            arup_ = ContentProvider.LoadTexture(@"Textures\arrow_up");
-            ardown_ = ContentProvider.LoadTexture(@"Textures\arrow_down");
             gear = ContentProvider.LoadTexture(@"Textures\gear");
             bag_ = ContentProvider.LoadTexture(@"Textures\bag");
             caracter = ContentProvider.LoadTexture(@"Textures\caracter");
@@ -519,6 +512,7 @@ namespace jarg {
             GlobalWorldLogic.Update(gameTime);
 
             currentFloor_.UpdateCreatures(gameTime, player_, GraphicsDevice);
+            currentFloor_.GenCheck(player_);
 
             ps_.Update(gameTime);
 
@@ -545,8 +539,7 @@ namespace jarg {
 
             ws_.Draw(spriteBatch_, lig1, gameTime);
 
-            lineBatch_.Draw();
-            lineBatch_.Clear();
+            lineBatch_.Draw(cam);
 
             if (Settings.DebugInfo) {
                 swDraw_.Stop();
@@ -555,6 +548,7 @@ namespace jarg {
                                       (int) Settings.Resolution.Y, swDraw_, swUpdate_);
             }
         }
+
 
         private void GameDraw(GameTime gameTime) {
 
@@ -569,9 +563,29 @@ namespace jarg {
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, player_.vert, 0, player_.vert.Length / 3);
             }
 
-            GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
-            GraphicsDevice.Clear(Color.Transparent);
-            currentFloor_.RenderShadowMap(GraphicsDevice, cam, solidShadowEffect);
+            //GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+            //float currentSlen = GlobalWorldLogic.GetCurrentSlen();
+            //GraphicsDevice.Clear(new Color(0,0,0,currentSlen));
+            //currentFloor_.RenderShadowMap(GraphicsDevice, cam, solidShadowEffect);
+            //solidEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateRotationZ(PlayerSeeAngle)*Matrix.CreateScale(5)*Matrix.CreateTranslation(player_.Position/32));
+            //solidEffect.Parameters["shaderTexture"].SetValue(fltex);
+            //solidEffect.Parameters["lightDirection"].SetValue(Vector3.Forward);
+            //foreach (var pass in solidEffect.CurrentTechnique.Passes)
+            //{
+            //    pass.Apply();
+            //    VertexPositionNormalTexture[] v;
+            //    List<VertexPositionNormalTexture> vv = new List<VertexPositionNormalTexture>();
+
+            //    vv.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, 0, 0.1f), Vector3.Zero, new Vector2(0, 1)));
+            //    vv.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, 2, 0.1f), Vector3.Zero, new Vector2(0, 0)));
+            //    vv.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 2, 0.1f), Vector3.Zero, new Vector2(1, 0)));
+            //    vv.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 2, 0.1f), Vector3.Zero, new Vector2(1, 0)));
+            //    vv.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0, 0.1f), Vector3.Zero, new Vector2(1, 1)));
+            //    vv.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, 0, 0.1f),Vector3.Zero, new Vector2(0, 1)));
+
+            //    v = vv.ToArray();
+            //    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, v, 0, v.Length / 3);
+            //}
 
             GraphicsDevice.SetRenderTarget(null);
             spriteBatch_.Begin();
@@ -580,6 +594,8 @@ namespace jarg {
             spriteBatch_.End();
 
             currentFloor_.RenderBlockMap(GraphicsDevice, cam, solidEffect);
+
+            lineBatch_.Draw(cam);
 
             //solidShadowEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateTranslation(nx, ny, 0));
             //foreach (var pass in solidShadowEffect.CurrentTechnique.Passes)

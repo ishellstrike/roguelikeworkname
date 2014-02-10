@@ -13,6 +13,7 @@ using NLog;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
+using rglikeworknamelib.Generation;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class LevelWorker {
@@ -66,6 +67,43 @@ namespace rglikeworknamelib.Dungeon.Level {
         public void Start()
         {
             new Thread(Run).Start();
+        }
+
+        private IAsyncResult gencheck;
+        List<KeyValuePair<Point, MapSector>> genmap;
+        public void GenCheck(Player p)
+        {
+            if (gencheck == null || gencheck.IsCompleted)
+            {
+                Action<Player> a = Generator;
+                gencheck = a.BeginInvoke(p, null, null);
+            }
+        }
+
+        private HashSet<Point> megaMap = new HashSet<Point>(); 
+        private void Generator(Player p)
+        {
+            var pos = p.GetWorldPositionInBlocks() / MapSector.Rx;
+            int a = (int)pos.X;
+            int b = (int)pos.Y;
+            for (int i = -1 + a; i < 1 + a; i++)
+            {
+                for (int j = -1 + b; j < 1 + b; j++)
+                {
+                    if (megaMap.Contains(new Point(i, j)))
+                    {
+
+                    }
+                    else
+                    {
+                        megaMap.Add(new Point(i, j));
+                        var s = (int)(MapGenerators.Noise2D(a, j) * int.MaxValue);
+                        var rand = new Random(s);
+                        var temp = new List<KeyValuePair<Point, MapSector>>();
+                        temp.AddRange(MapGenerators2.GenerateCityAt(this, rand, i * 15, j * 15));
+                    }
+                }
+            }
         }
 
         private void Run() {
