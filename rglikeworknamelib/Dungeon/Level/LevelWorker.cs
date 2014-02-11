@@ -21,6 +21,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         private Dictionary<Point, GameLevel> onLoadOrGenerate_;
         private Dictionary<Point, string> onStore_;
         private Dictionary<Point, MapSector> Buffer;
+        private Dictionary<Point, MegaMapData> megaMap = new Dictionary<Point, MegaMapData>(); 
         public bool ServerGame;
         public JargClient client;
         private bool exit;
@@ -88,26 +89,23 @@ namespace rglikeworknamelib.Dungeon.Level {
             return true;
         }
 
-        private HashSet<Point> megaMap = new HashSet<Point>(); 
+        
         private List<KeyValuePair<Point,MapSector>> Generator(int x, int y) {
-            var a = x/15;
-            var b = y/15;
+            var a = x / Settings.MegaSectorSize;
+            var b = y / Settings.MegaSectorSize;
             var temp = new List<KeyValuePair<Point, MapSector>>();
             for (int i = -1 + a; i < 1 + a; i++)
             {
                 for (int j = -1 + b; j < 1 + b; j++)
                 {
-                    if (megaMap.Contains(new Point(i, j)))
-                    {
-
-                    }
-                    else
-                    {
-                        megaMap.Add(new Point(i, j));
-                        var s = (int)(MapGenerators.Noise2D(a, j) * int.MaxValue);
+                    if (!megaMap.ContainsKey(new Point(i, j))) {
+                        var mm = new MegaMapData();
+                        megaMap.Add(new Point(i, j), mm);
+                        var s = (int) (MapGenerators.Noise2D(a, j)*int.MaxValue);
                         var rand = new Random(s);
-                        
-                        temp.AddRange(MapGenerators2.GenerateCityAt(gl, rand, i * 15, j * 15));
+
+                        temp.AddRange(MapGenerators2.GenerateCityAt(gl, rand, i*Settings.MegaSectorSize,
+                                                                    j*Settings.MegaSectorSize, 10, ref mm));
                     }
                 }
             }
@@ -197,6 +195,22 @@ namespace rglikeworknamelib.Dungeon.Level {
             return null;
         }
 
+        public string TryGetPacked(Point point, GameLevel gameLevel)
+        {
+            lock (onStore_)
+            {
+                if (onStore_.ContainsKey(point))
+                {
+                    return onStore_[point];
+                }
+            }
+            if (!onLoadOrGenerate_.ContainsKey(point))
+            {
+                onLoadOrGenerate_.Add(point, gl);
+            }
+            return null;
+        }
+
         public void Stop() {
             exit = true;
         }
@@ -229,11 +243,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
             }
 
+            BinaryFormatter bf = new BinaryFormatter();
             using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mega.rlm", FileMode.Create)) {
                 using (var sw = new StreamWriter(fs)) {
-                    foreach (var point in megaMap) {
-                        sw.Write(point.X + " " + point.Y+",");
-                    }
+                    bf.Serialize(fs, megaMap);
                 }
             }
         }
@@ -352,6 +365,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                         stringBuilder.Append(" ");
                     }
                     stringBuilder.AppendLine();
+
+                    stringBuilder.Append("~");
+                    stringBuilder.AppendLine(ms.Biom.ToString());
                 }
                 catch (Exception e)
                 {
@@ -429,7 +445,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             onStore_.Clear();
-            string stringBlock, megablock;
+            string stringBlock;
             using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Open)) {
                 using (var stream = new GZipStream(fs, CompressionMode.Decompress)) {
                     using (var sr = new StreamReader(stream)) {
@@ -440,23 +456,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
             var temp = onStore_;
 
+            BinaryFormatter bf = new BinaryFormatter();
             using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mega.rlm", FileMode.Open))
             {
-                using (var sr = new StreamReader(fs))
-                {
-                    load_started = true;
-                    megablock = sr.ReadToEnd();
-                }
-            }
-            var v = megablock.Split(',');
-            megaMap = new HashSet<Point>();
-            foreach (var s in v) {
-                if (s == string.Empty) {
-                    continue;
-                }
-                var vv = s.Split(' ');
-                
-                megaMap.Add(new Point(Convert.ToInt32(vv[0]), Convert.ToInt32(vv[1])));
+                    megaMap = (Dictionary<Point, MegaMapData>) bf.Deserialize(fs);
             }
 
             Settings.NTS1 = "Loading...";
@@ -511,6 +514,8 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 var position = new Point(int.Parse(pos[0].Trim('#')), int.Parse(pos[1].Trim('\r').Trim('\n')));
                 var sector = new MapSector(gl, position.X, position.Y);
+
+                sector.Biom = (SectorBiom) Enum.Parse(typeof (SectorBiom), par[9]);
 
                 var off = 0;
                 foreach (var s in BlockIdList) {
@@ -575,6 +580,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         sector.Blocks[onedim].StoredItems.Add(item);
                     }
                 }
+                
                 temp.Add(position, sector);
             }
             return temp;
@@ -592,5 +598,12 @@ namespace rglikeworknamelib.Dungeon.Level {
                 onStore_.Add(p, mapsector);
             }
         }
+
+        
+    }
+
+    [Serializable]
+    public class MegaMapData {
+        public Point up, down, left, right;
     }
 }

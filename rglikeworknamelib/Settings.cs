@@ -14,6 +14,7 @@ namespace rglikeworknamelib {
         public static string NTS1, NTS2;
 
         public static Random rnd = new Random();
+        public static int MegaSectorSize = 15;
 
         public static Rectangle KillArea;
 

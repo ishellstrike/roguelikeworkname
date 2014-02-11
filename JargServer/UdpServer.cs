@@ -173,6 +173,9 @@ namespace JargServer
                                 connected[ds.name].angle = ds.angle;
                             }
                             break;
+                        case "biom":
+                            GiveBiom(ds.name, ds.x, ds.y);
+                            break;
                         default:
                             Console.WriteLine("Unknown message (" + ds.action + ")");
                             break;
@@ -182,12 +185,18 @@ namespace JargServer
             Console.Write("Listening thread stops.");
         }
 
+        private void GiveBiom(string name, float f, float f1) {
+            StringBuilder n = new StringBuilder();
+            var pack = lw_.TryGetPacked(new Point((int)f, (int)f1), gl_);
+            if (pack == null) { return; }
+            SendStruct(new JargPack { action = "mapsector", name = "name", mapsector = pack, x = (int)f, y = (int)f1 }, name);
+        }
+
         private void GiveSector(string name, float f, float f1) {
             StringBuilder n = new StringBuilder();
-            var pack = new[] {lw_.TryGet(new Point((int)f, (int)f1), gl_)};
-            if(pack[0] == null){ return; }
-            lw_.SectorSaver(pack, n);
-            SendStruct(new JargPack{action = "mapsector", name = "name", mapsector = n.ToString(), x = (int)f, y = (int) f1}, name);
+            var pack = lw_.TryGetPacked(new Point((int)f, (int)f1), gl_);
+            if(pack == null){ return; }
+            SendStruct(new JargPack{action = "mapsector", name = "name", mapsector = pack, x = (int)f, y = (int) f1}, name);
         }
 
         public void SendStruct(JargPack msg, string name)

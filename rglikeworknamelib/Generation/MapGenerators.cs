@@ -627,10 +627,10 @@ namespace rglikeworknamelib.Generation {
     }
 
     public static class MapGenerators2 {
-        public static List<KeyValuePair<Point, MapSector>> GenerateCityAt(GameLevel gl, Random rnd, int x, int y) {
+        public static List<KeyValuePair<Point, MapSector>> GenerateCityAt(GameLevel gl, Random rnd, int x, int y, int size, ref MegaMapData mm) {
             var temp = new Dictionary<Point, MapSector>();
 
-            var rects = GenerateRoads(rnd, 10, 10, x, y, 8);
+            var rects = GenerateRoads(rnd, size, size, x, y, 8);
             var already = new List<Point>();
 
             foreach (var rect in rects) {
@@ -657,6 +657,8 @@ namespace rglikeworknamelib.Generation {
                 }
                 
             }
+
+
 
             return temp.ToList();
         }

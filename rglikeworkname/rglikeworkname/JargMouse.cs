@@ -72,6 +72,11 @@ namespace jarg {
                 cam.Yaw += a / 10f * (float)gameTime.ElapsedGameTime.TotalSeconds ;
             }
 
+            if (player_ != null && currentFloor_ != null && !currentFloor_.IsCreatureMeele((int)ContainerOn.X, (int)ContainerOn.Y, player_))
+            {
+                WindowContainer.Visible = false;
+            }
+
             if (!ws_.Mopusehook) {
                 Vector3 nP = new Vector3(ms_.X, ms_.Y, 0);
                 Vector3 fP = new Vector3(ms_.X, ms_.Y, 0.1f);
@@ -91,11 +96,6 @@ namespace jarg {
                 }
 
                 WindowIngameHint.Visible = false;
-
-                if (player_ != null && currentFloor_ != null &&
-                    !currentFloor_.IsCreatureMeele((int) ContainerOn.X, (int) ContainerOn.Y, player_)) {
-                    WindowContainer.Visible = false;
-                }
 
                 if (currentFloor_ != null) {
                     Block nxny = currentFloor_.GetBlock(nx, ny);
