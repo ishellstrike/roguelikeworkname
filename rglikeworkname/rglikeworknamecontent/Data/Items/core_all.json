@@ -397,6 +397,22 @@
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
   },
+  "raw_meat":{
+    "Name":"Сырое мясо",
+    "SortType":"Food",
+    "SpawnGroup":"spawn_cookedfood",
+	"Doses":5,
+  },
+  "salted_raw_meat":{
+    "Name":"Соленое сырое мясо",
+    "SortType":"Food",
+  },
+  "salt":{
+    "Name":"Соль",
+	"Doses":100,
+    "SortType":"Food",
+	"SpawnGroup":"spawn_shopfood",
+  },
   "beancan1":{
     "Name":"Открытая банка бобов",
     "Nameret":"Банка с едой",
