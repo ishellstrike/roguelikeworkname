@@ -151,7 +151,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         public void Accelerate(Vector3 ac) {
             Velocity += ac*10;
-            Velocity = Vector3.Normalize(new Vector3(Velocity.X, Velocity.Y, 0))*10*(Settings.Fastwalk ? 1 : 4);
+            Velocity = Vector3.Normalize(new Vector3(Velocity.X, Velocity.Y, 0))*10*(Settings.Normalwalk ? 1 : 4);
         }
 
         public void GiveDamage(float value, DamageType type, MapSector ms) {

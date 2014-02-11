@@ -187,7 +187,7 @@ namespace JargServer
             var pack = new[] {lw_.TryGet(new Point((int)f, (int)f1), gl_)};
             if(pack[0] == null){ return; }
             lw_.SectorSaver(pack, n);
-            SendStruct(new JargPack{action = "mapsector", name = "name", mapsector = n.ToString()}, name);
+            SendStruct(new JargPack{action = "mapsector", name = "name", mapsector = n.ToString(), x = (int)f, y = (int) f1}, name);
         }
 
         public void SendStruct(JargPack msg, string name)

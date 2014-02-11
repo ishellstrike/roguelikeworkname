@@ -157,23 +157,26 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                 if (!Generating() && !Loading()) {
                     Thread.Sleep(100);
-                    lock (Buffer)
-                    {
-                        var t = Buffer.Select(x=>x).ToList();
+                    if (client == null) {
+                        var t = Buffer.Select(x => x).ToList();
                         foreach (var pair in t) {
                             Buffer.Remove(pair.Key);
-                            try
-                            {
+                            try {
                                 StoreSector(pair.Value);
                             }
-                            catch (Exception)
-                            {
+                            catch (Exception) {
                                 onStore_.Remove(pair.Key);
                                 StoreSector(pair.Value);
                             }
                         }
                     }
-                }
+                    else {
+                        if (LoadCount == 0) {
+                            onStore_.Clear();
+                            Buffer.Clear();
+                        }
+                    }
+                }                
             }
             stopped = true;
         }
@@ -581,7 +584,13 @@ namespace rglikeworknamelib.Dungeon.Level {
         public int Generated { get { return generated; } }
 
         public void StoreString(Point p, string mapsector) {
-            onStore_.Add(p, mapsector);
+            try {
+                onStore_.Add(p, mapsector);
+            }
+            catch {
+                onStore_.Remove(p);
+                onStore_.Add(p, mapsector);
+            }
         }
     }
 }

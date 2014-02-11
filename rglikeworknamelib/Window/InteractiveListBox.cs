@@ -66,6 +66,8 @@ namespace rglikeworknamelib.Window
         private int SelectedIndex;
         private int textH, textW;
         private int aimed;
+        public bool Draggable;
+        public int Dragged;
         
 
         public InteractiveListBox(Rectangle loc, IGameContainer parent) {
@@ -129,19 +131,31 @@ namespace rglikeworknamelib.Window
                 if (item >= Items.Count) {
                     break;
                 }
-                if (aimed == item) {
-                    var tp = p + new Vector2(10, bottom);
-                    var txt = Items[item].Text;
-                    var c = new Rectangle((int)tp.X - 1, (int)tp.Y - 1, txt.Length*textW + 2, textH + 2);
-                    DrawBox(sb, c, 1);
-                    sb.DrawString(font1_, txt, tp, Items[item].Color);
+                if (item != Dragged || !Draggable) {
+                    if (aimed == item) {
+                        var tp = p + new Vector2(10, bottom);
+                        var txt = Items[item].Text;
+                        var c = new Rectangle((int) tp.X - 1, (int) tp.Y - 1, txt.Length*textW + 2, textH + 2);
+                        DrawBox(sb, c, 1);
+                        sb.DrawString(font1_, txt, tp, Items[item].Color);
+                    }
+                    else {
+                        sb.DrawString(font1_, Items[item].Text, p + new Vector2(10, bottom), Items[item].Color);
+                    }
                 }
-                else {
-                    sb.DrawString(font1_, Items[item].Text, p + new Vector2(10, bottom), Items[item].Color);
-                }
-                
+
                 item++;
                 bottom += textH + 2;
+            }
+
+            if (Dragged != -1 && Items.Count > 0)
+            {
+                var tp = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+                var txt = Items[Dragged].Text;
+                var c = new Rectangle((int)tp.X - 1, (int)tp.Y - 1, txt.Length * textW + 2, textH + 2);
+                sb.Draw(whitepixel_, c, new Color(0, 0, 0, 0.5f));
+                DrawBox(sb, c, 1);
+                sb.DrawString(font1_, txt, tp, Items[Dragged].Color);
             }
 
             lastDrawed = item - topIndex;
@@ -165,6 +179,7 @@ namespace rglikeworknamelib.Window
 
         bool hooked;
         private int lastW;
+        private bool drag;
         public void Update(GameTime gt, MouseState ms, MouseState lms, KeyboardState ks, KeyboardState lks, bool mh) {
             var p = GetPosition();
             var ps = p + new Vector2(location_.Width, location_.Height);
@@ -184,6 +199,16 @@ namespace rglikeworknamelib.Window
                     aimed = -1;
                 } else if (!(ms.X > p.X + 10) || !(ms.X < p.X + 10 + Items[aimed].Text.Length*textW)) {
                     aimed = -1;
+                }
+
+                if (Draggable && aimed != -1 && ms.LeftButton == ButtonState.Pressed && lms.LeftButton == ButtonState.Released) {
+                    drag = true;
+                    Dragged = aimed;
+                }
+
+                if (ms.LeftButton == ButtonState.Released) {
+                    drag = false;
+                    Dragged = -1;
                 }
 
                 if (aimed != -1 && (ms.RightButton == ButtonState.Pressed || ms.LeftButton == ButtonState.Pressed)) {

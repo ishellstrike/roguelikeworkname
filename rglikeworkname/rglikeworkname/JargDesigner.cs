@@ -596,7 +596,7 @@ namespace jarg {
             ContainerInventoryItems =
                 new InteractiveListBox(
                     new Rectangle(10, 10, InventoryWindow.Locate.Width/2, InventoryWindow.Locate.Height - 40),
-                    InventoryWindow);
+                    InventoryWindow) {Draggable = true};
 
             InventoryMoreInfo = new LabelFixed(new Vector2(ContainerInventoryItems.GetPosition().X + 10, 40), "", 26,
                                                InventoryWindow);
@@ -1071,8 +1071,8 @@ namespace jarg {
                 }
             }
             if (s.Contains("fastwalk")) {
-                Settings.Fastwalk = !Settings.Fastwalk;
-                EventLog.Add(string.Format("walk x{0}", Settings.Fastwalk ? 1 : 4), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                Settings.Normalwalk = !Settings.Normalwalk;
+                EventLog.Add(string.Format("walk x{0}", Settings.Normalwalk ? 1 : 4), GlobalWorldLogic.CurrentTime, Color.Cyan,
                              LogEntityType.Console);
             }
             if (s.Contains("noclip")) {
@@ -1384,7 +1384,7 @@ namespace jarg {
         }
 
         private void PressInContainer(object sender, EventArgs e) {
-            var a = (int) (sender as Label).Tag;
+            var a = (int) ((ListBoxItem) sender).Tag;
             if (inInv_.Count > a) {
                 ContainerSelected = inContainer_[a];
                 LabelContainer.Text = ItemDataBase.Instance.GetItemFullDescription(ContainerSelected);
