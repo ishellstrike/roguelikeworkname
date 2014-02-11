@@ -151,7 +151,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         public void Accelerate(Vector3 ac) {
             Velocity += ac*10;
-            Velocity = Vector3.Normalize(new Vector3(Velocity.X, Velocity.Y, 0)) * 10;
+            Velocity = Vector3.Normalize(new Vector3(Velocity.X, Velocity.Y, 0))*10*(Settings.Fastwalk ? 1 : 4);
         }
 
         public void GiveDamage(float value, DamageType type, MapSector ms) {
@@ -175,13 +175,6 @@ namespace rglikeworknamelib.Dungeon.Creatures {
         public override void Update(GameTime gt, MapSector ms, Player hero, bool test = false) {
             if (ms != null) {
                 var time = (float) gt.ElapsedGameTime.TotalSeconds;
-
-                //if (Velocity.X != 0 && Velocity.Y != 0)
-                //{
-                //    Velocity.Normalize();
-                //    Velocity *= 10;
-                //}
-
                 var tpos = Position;
                 tpos.X += Velocity.X;
                 var tpos2 = Position;

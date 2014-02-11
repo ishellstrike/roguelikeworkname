@@ -1071,8 +1071,8 @@ namespace jarg {
                 }
             }
             if (s.Contains("fastwalk")) {
-                acmodifer = acmodifer == 1 ? 4 : 1;
-                EventLog.Add(string.Format("walk x{0}", acmodifer), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                Settings.Fastwalk = !Settings.Fastwalk;
+                EventLog.Add(string.Format("walk x{0}", Settings.Fastwalk ? 1 : 4), GlobalWorldLogic.CurrentTime, Color.Cyan,
                              LogEntityType.Console);
             }
             if (s.Contains("noclip")) {

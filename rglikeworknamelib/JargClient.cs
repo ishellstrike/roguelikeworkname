@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib
@@ -94,7 +95,7 @@ namespace rglikeworknamelib
                             }
                             break;
                         case "mapsector":
-                            lw_.StoreGenerated(lw_.PartLoader(gl_, new[] {ds.mapsector}).First().Value);
+                            lw_.StoreString(new Point((int) ds.x, (int) ds.y),  ds.mapsector);
                             break;
 
                         default:

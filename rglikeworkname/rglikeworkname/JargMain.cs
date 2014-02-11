@@ -201,6 +201,7 @@ namespace jarg {
             var height = (int) Settings.Resolution.Y;
             var width = (int) Settings.Resolution.X;
 
+            if(height == 0 || width == 0) {return;}
             graphics_.PreferredBackBufferHeight = height;
             graphics_.PreferredBackBufferWidth = width;
             graphics_.ApplyChanges();
@@ -284,7 +285,7 @@ namespace jarg {
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(ws_);
 
-            levelWorker_ = new LevelWorker();
+            levelWorker_ = new LevelWorker(currentFloor_);
             levelWorker_.Start();
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
@@ -333,7 +334,7 @@ namespace jarg {
             currentFloor_ = new GameLevel(spriteBatch_, lineBatch_, font1_, GraphicsDevice, levelWorker_);
             if (levelWorker_ != null) {
                 levelWorker_.Stop();
-                levelWorker_ = new LevelWorker();
+                levelWorker_ = new LevelWorker(currentFloor_);
                 levelWorker_.Start();
             }
 
@@ -512,7 +513,6 @@ namespace jarg {
             GlobalWorldLogic.Update(gameTime);
 
             currentFloor_.UpdateCreatures(gameTime, player_, GraphicsDevice);
-            currentFloor_.GenCheck(player_);
 
             ps_.Update(gameTime);
 

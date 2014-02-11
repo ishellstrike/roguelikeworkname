@@ -19,6 +19,7 @@ using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
+using Point = Microsoft.Xna.Framework.Point;
 
 namespace BScriptArea
 {
@@ -65,10 +66,10 @@ namespace BScriptArea
             ism = new InventorySystem();
             pl = new Player(null, null, null, ism) {Position = new Vector3(100, 100,0)};
             cre = new Creature() { Id = "zombie1" };
-            lw = new LevelWorker();
-            lw.Start();
             gl = new GameLevel(null, null, null, null, lw);
             ms = new MapSector(gl, 0, 0);
+            lw = new LevelWorker(gl);
+            lw.Start();
             gt = new GameTime(new TimeSpan(0, 0, 0, 0, 500),    new TimeSpan(0, 0, 0, 0, 500));
             
             item = ItemFactory.GetInstance("colacan", 10);

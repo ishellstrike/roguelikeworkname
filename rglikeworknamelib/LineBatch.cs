@@ -143,7 +143,7 @@ namespace jarg {
             {
                 pass.Apply();
 
-                if (m_vertices.Count > 0)
+                if (threed_vertices.Count > 0)
                 {
                     m_device.DrawUserPrimitives(PrimitiveType.LineList,
                                                 threed_vertices.ToArray(), 0, prim);

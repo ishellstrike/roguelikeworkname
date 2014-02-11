@@ -19,20 +19,22 @@ namespace rglikeworknamelib.Dungeon.Level {
     public class LevelWorker {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<Point, GameLevel> onLoadOrGenerate_;
-        internal Dictionary<Point, MapSector> onStore_;
-        public Dictionary<Point, MapSector> Buffer;
+        private Dictionary<Point, string> onStore_;
+        private Dictionary<Point, MapSector> Buffer;
         public bool ServerGame;
         public JargClient client;
         private bool exit;
+        private GameLevel gl;
 
         /// <summary>
         /// Using local generation - false, Using server generation - true
         /// </summary>
         /// <param name="server"></param>
-        public LevelWorker() {
+        public LevelWorker(GameLevel gl_) {
             onLoadOrGenerate_ = new Dictionary<Point, GameLevel>();
-            onStore_ = new Dictionary<Point, MapSector>();
+            onStore_ = new Dictionary<Point, string>();
             Buffer = new Dictionary<Point, MapSector>();
+            gl = gl_;
         }
 
         public bool Loading() {
@@ -69,23 +71,28 @@ namespace rglikeworknamelib.Dungeon.Level {
             new Thread(Run).Start();
         }
 
-        private IAsyncResult gencheck;
-        List<KeyValuePair<Point, MapSector>> genmap;
-        public void GenCheck(Player p)
-        {
-            if (gencheck == null || gencheck.IsCompleted)
-            {
-                Action<Player> a = Generator;
-                gencheck = a.BeginInvoke(p, null, null);
+        private void StoreSector(MapSector ms) {
+            StringBuilder sb = new StringBuilder();
+            SectorSaver(new[] {ms}, sb);
+            onStore_.Add(new Point(ms.SectorOffsetX, ms.SectorOffsetY), sb.ToString());
+        }
+
+        private bool UnstoreSector(Point key, out MapSector ret) {
+            string t;
+            onStore_.TryGetValue(key, out t);
+            if (t == null) {
+                ret = null;
+                return false;
             }
+            ret = SectorLoader(gl, new[] { t }).ElementAt(0).Value;
+            return true;
         }
 
         private HashSet<Point> megaMap = new HashSet<Point>(); 
-        private void Generator(Player p)
-        {
-            var pos = p.GetWorldPositionInBlocks() / MapSector.Rx;
-            int a = (int)pos.X;
-            int b = (int)pos.Y;
+        private List<KeyValuePair<Point,MapSector>> Generator(int x, int y) {
+            var a = x/15;
+            var b = y/15;
+            var temp = new List<KeyValuePair<Point, MapSector>>();
             for (int i = -1 + a; i < 1 + a; i++)
             {
                 for (int j = -1 + b; j < 1 + b; j++)
@@ -99,11 +106,13 @@ namespace rglikeworknamelib.Dungeon.Level {
                         megaMap.Add(new Point(i, j));
                         var s = (int)(MapGenerators.Noise2D(a, j) * int.MaxValue);
                         var rand = new Random(s);
-                        var temp = new List<KeyValuePair<Point, MapSector>>();
-                        temp.AddRange(MapGenerators2.GenerateCityAt(this, rand, i * 15, j * 15));
+                        
+                        temp.AddRange(MapGenerators2.GenerateCityAt(gl, rand, i * 15, j * 15));
                     }
                 }
             }
+
+            return temp;
         }
 
         private void Run() {
@@ -113,7 +122,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 if (onLoadOrGenerate_.Count > 0) {
                     var kvp = onLoadOrGenerate_.ElementAt(0);
                     MapSector trget;
-                    if (onStore_.TryGetValue(kvp.Key, out trget)) {
+                    if (UnstoreSector(kvp.Key, out trget)) {
                         Buffer.Add(kvp.Key, trget);
                         onStore_.Remove(kvp.Key);
                     } else {
@@ -130,6 +139,20 @@ namespace rglikeworknamelib.Dungeon.Level {
                         Buffer.Add(kvp.Key, ms);
                     }
                     onLoadOrGenerate_.Remove(kvp.Key);
+
+                    var genret = Generator(kvp.Key.X, kvp.Key.Y);
+                    foreach (var pair in genret)
+                    {
+                        try
+                        {
+                            StoreSector(pair.Value);
+                        }
+                        catch (Exception)
+                        {
+                            onStore_.Remove(pair.Key);
+                            StoreSector(pair.Value);
+                        }
+                    }
                 }
 
                 if (!Generating() && !Loading()) {
@@ -139,7 +162,15 @@ namespace rglikeworknamelib.Dungeon.Level {
                         var t = Buffer.Select(x=>x).ToList();
                         foreach (var pair in t) {
                             Buffer.Remove(pair.Key);
-                            onStore_.Add(pair.Key, pair.Value);
+                            try
+                            {
+                                StoreSector(pair.Value);
+                            }
+                            catch (Exception)
+                            {
+                                onStore_.Remove(pair.Key);
+                                StoreSector(pair.Value);
+                            }
                         }
                     }
                 }
@@ -161,14 +192,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                 onLoadOrGenerate_.Add(p, gl);
             }
             return null;
-        }
-
-        public void StoreGenerated(MapSector ms) {
-            var point = new Point(ms.SectorOffsetX, ms.SectorOffsetY);
-            if(Buffer.ContainsKey(point)) {
-                Buffer.Remove(point);
-            }
-            Buffer.Add(point, ms);
         }
 
         public void Stop() {
@@ -193,37 +216,20 @@ namespace rglikeworknamelib.Dungeon.Level {
             //int i = 0;
             //
 
-            var procCount = Environment.ProcessorCount;
-            var chunkLength = (int)Math.Ceiling(onStore_.Count() / (double)procCount);
-            var chunks = Enumerable.Range(0, procCount).Select(x => onStore_.Values.Skip(x * chunkLength).Take(chunkLength));
-            Action<IEnumerable<MapSector>, StringBuilder> pl = SectorSaver;
-            var sbs = new List<StringBuilder>();
-            for (var j = 0; j < procCount; j++) {
-                sbs .Add(new StringBuilder());
-            }
-
-            save_started = true;
-            var k = 0;
-            var results = chunks.Select(chunk =>
-            {
-                k++;
-                return pl.BeginInvoke(chunk, sbs[k - 1], null, null);
-            }).ToList();
-
-
-            while (true) {
-                if (results.All(x => x.IsCompleted)) {
-                    break;
-                }
-                Thread.Sleep(50);
-            }
-
             using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Create)) {
                 using (var stream = new GZipStream(fs, CompressionMode.Compress)) {
                     using (var sw = new StreamWriter(stream)) {
-                        foreach (var stringBuilder in sbs) {
-                            sw.Write(stringBuilder.ToString());
+                        foreach (var str in onStore_) {
+                            sw.Write(str.Value);
                         }
+                    }
+                }
+            }
+
+            using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mega.rlm", FileMode.Create)) {
+                using (var sw = new StreamWriter(fs)) {
+                    foreach (var point in megaMap) {
+                        sw.Write(point.X + " " + point.Y+",");
                     }
                 }
             }
@@ -420,7 +426,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
 
             onStore_.Clear();
-            string stringBlock;
+            string stringBlock, megablock;
             using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mapdata.rlm", FileMode.Open)) {
                 using (var stream = new GZipStream(fs, CompressionMode.Decompress)) {
                     using (var sr = new StreamReader(stream)) {
@@ -431,39 +437,40 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
             var temp = onStore_;
 
+            using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mega.rlm", FileMode.Open))
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    load_started = true;
+                    megablock = sr.ReadToEnd();
+                }
+            }
+            var v = megablock.Split(',');
+            megaMap = new HashSet<Point>();
+            foreach (var s in v) {
+                if (s == string.Empty) {
+                    continue;
+                }
+                var vv = s.Split(' ');
+                
+                megaMap.Add(new Point(Convert.ToInt32(vv[0]), Convert.ToInt32(vv[1])));
+            }
+
             Settings.NTS1 = "Loading...";
 
             var parts = stringBlock.Split('#');
-            var procCount = Environment.ProcessorCount;
-            var chunkLength = (int)Math.Ceiling(parts.Count() / (double)procCount);
-            var chunks = Enumerable.Range(0, procCount).Select(i => parts.Skip(i * chunkLength).Take(chunkLength));
-            Func<GameLevel, IEnumerable<string>, Dictionary<Point, MapSector>> pl = PartLoader;
-            
-            Settings.NeedToShowInfoWindow = true;
 
-
-            var results = chunks.Select(chunk => pl.BeginInvoke(gl, chunk, null, null)).ToList();
-
-            while (true)
-            {
-                if (results.All(x => x.IsCompleted)) {
-                    break;
-                }
-                Thread.Sleep(50);
-            }
-
-            foreach (var asyncResult in results) {
-                var result = pl.EndInvoke(asyncResult);
-                foreach (var mapSector in result) {
-                    try
-                    {
-                        temp.Add(mapSector.Key, mapSector.Value);
+            foreach (var str in parts) {
+                    try {
+                        var t = str.Substring(0,str.IndexOf(','));
+                        var tt = str.Substring(str.IndexOf(',') + 1, str.IndexOf('~') - str.IndexOf(',')-3);
+                        var position = new Point(int.Parse(t), int.Parse(tt));
+                        temp.Add(position, str);
                     }
                     catch(Exception ex)
                     {
                         logger.Error(ex);
                     }
-                }
             }
 
             Settings.NeedToShowInfoWindow = false;
@@ -472,7 +479,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             load_started = false;
         }
 
-        public Dictionary<Point, MapSector> PartLoader(GameLevel gl, IEnumerable<string> parts)
+        public Dictionary<Point, MapSector> SectorLoader(GameLevel gl, IEnumerable<string> parts)
         {
             var temp = new Dictionary<Point, MapSector>();
             foreach (var part in parts) {
@@ -572,5 +579,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         private int generated;
         public int Generated { get { return generated; } }
+
+        public void StoreString(Point p, string mapsector) {
+            onStore_.Add(p, mapsector);
+        }
     }
 }

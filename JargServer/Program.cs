@@ -186,7 +186,7 @@ namespace JargServer
             {
                 levelWorker_.Stop();
             }
-            levelWorker_ = new LevelWorker();
+            levelWorker_ = new LevelWorker(currentFloor_);
             levelWorker_.Start();
             currentFloor_.lw_ = levelWorker_;
 
