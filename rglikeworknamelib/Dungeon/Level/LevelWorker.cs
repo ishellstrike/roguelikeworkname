@@ -512,6 +512,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 var itemIddic = par[8].Split(' ').ToList();
                 itemIddic.Remove(itemIddic.Last());
 
+
                 var position = new Point(int.Parse(pos[0].Trim('#')), int.Parse(pos[1].Trim('\r').Trim('\n')));
                 var sector = new MapSector(gl, position.X, position.Y);
 

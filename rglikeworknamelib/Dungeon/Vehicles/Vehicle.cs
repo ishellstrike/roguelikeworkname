@@ -8,6 +8,7 @@ using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Dungeon.Vehicles {
+    [Serializable]
     public class Vehicle {
         public Collection<VehiclePart> Parts;
         public bool Prerendered;

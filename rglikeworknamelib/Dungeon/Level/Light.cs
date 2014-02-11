@@ -1,6 +1,8 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Level {
+    [Serializable]
     public class Light {
         public Color Color;
         public float LightRadius;

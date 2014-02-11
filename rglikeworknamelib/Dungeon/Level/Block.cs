@@ -18,7 +18,10 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public BlockData Data { get; private set; }
+        public BlockData Data {
+            get { return data_; }
+            private set { data_ = value; }
+        }
 
         public Color Lightness { get; set; }
 
@@ -30,6 +33,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private string mTex_;
+        [NonSerialized]private BlockData data_;
+
         public string MTex
         {
             get { return mTex_; }

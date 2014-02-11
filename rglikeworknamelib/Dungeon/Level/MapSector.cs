@@ -32,7 +32,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         internal Floor[] Floors;
         internal List<Light> Lights;
 
-        public GameLevel Parent;
+        [NonSerialized]public GameLevel Parent;
         public bool Ready;
         public int SectorOffsetX, SectorOffsetY;
         internal List<Vehicle> Vehicles;
