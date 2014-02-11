@@ -605,8 +605,14 @@ namespace rglikeworknamelib.Dungeon.Level
                 case SectorBiom.Hospital:
                     a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Teal);
                     break;
-                case SectorBiom.WearStore:
+                case SectorBiom.WearShop:
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Blue);
+                    break;
+                case SectorBiom.FoodShop:
                     a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Orange);
+                    break;
+                case SectorBiom.Fastfood:
+                    a = new Tuple<Texture2D, Color>(Atlases.Instance.MinimapAtlas["house1"], Color.Red);
                     break;
                 case SectorBiom.Road:
                 case SectorBiom.RoadHevt:
@@ -986,44 +992,6 @@ namespace rglikeworknamelib.Dungeon.Level
             lw_.SaveAll();
 
             Settings.NeedExit = true;
-        }
-
-        /// <summary>
-        /// Warning! Sync generation
-        /// </summary>
-        public void GenerateMegaSector(int megaOffsetX, int megaOffsettY)
-        {
-            var sw = new Stopwatch();
-            sw.Start();
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            var point = new Point(megaOffsetX, megaOffsettY);
-            if (!megaMap.ContainsKey(point))
-            {
-                var s = (int)(MapGenerators.Noise2D(megaOffsetX, megaOffsettY) * int.MaxValue);
-                var rand = new Random(s);
-
-                //Interest generation
-                const int interestCount = 1;
-                var mm = new MegaMap();
-                for (int i = 0; i < interestCount; i++)
-                {
-                    var a = new InterestPointCity
-                    {
-                        Name = NameDataBase.GetRandom(rand),
-                        SectorPos = new Point(rand.Next(0, 0) + megaOffsetX * 20, rand.Next(0, 0) + megaOffsettY * 20),
-                        Range = 10
-                    };
-                    mm.InterestPoints.Add(a);
-
-                    MapGenerators.GenerateCity(this, rand, 400, 400, a.SectorPos.X * MapSector.Rx - 2,
-                                               a.SectorPos.Y * MapSector.Ry - 2);
-                }
-
-                Settings.NeedToShowInfoWindow = false;
-                megaMap.Add(point, mm);
-            }
-            sw.Stop();
-            logger.Info(string.Format("megamap sector {0} generation in {1}", point, sw.Elapsed));
         }
 
         public void MapPreload()

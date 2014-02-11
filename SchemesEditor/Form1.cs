@@ -94,18 +94,6 @@ namespace SchemesEditor {
             openFileDialog1.ShowDialog();
         }
 
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e) {
-            var sw = new StreamReader(openFileDialog1.FileName);
-            sw.Read();
-            List<Schemes> a = ChemesParser.Parser("#"+sw.ReadToEnd());
-            gl = new SchemesMap(a[0].x, a[0].y);
-            gl.CreateAllMapFromArray(a[0].data);
-            sw.Close();
-
-            numericUpDown1.Value = a[0].x;
-            numericUpDown2.Value = a[0].y;
-        }
-
         private void button2_Click(object sender, EventArgs e) {
             saveFileDialog1.FileName = textBox1.Text + ".txt";
             saveFileDialog1.ShowDialog();

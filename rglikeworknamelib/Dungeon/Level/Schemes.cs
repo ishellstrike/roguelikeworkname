@@ -1,10 +1,12 @@
-﻿namespace rglikeworknamelib.Dungeon.Level {
-    public class Schemes {
+﻿using rglikeworknamelib.Parser;
+
+namespace rglikeworknamelib.Dungeon.Level {
+    public class Schemes : INameable {
         public string[] data;
         public string[] floor;
         public SectorBiom type;
         public int x, y;
-        public string filename;
+        public string FileName { get; set; }
 
         public void Rotate(int rr) {
             var temp = new string[x * y];

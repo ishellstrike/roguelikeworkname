@@ -167,11 +167,12 @@ namespace rglikeworknamelib.Dungeon.Items {
         public void Craft(ItemCraftData selectedCraft, Player crafter) {
             var able = CraftRequireCheck(selectedCraft);
 
-            foreach (var req in selectedCraft.Require)
-            {
-                if (crafter.Abilities.List[req.Ability].XpLevel < req.Level) {
-                    EventLog.Add("Недостаточный навык", Color.Yellow, LogEntityType.Consume);
-                    return;
+            if (selectedCraft.Require != null) {
+                foreach (var req in selectedCraft.Require) {
+                    if (crafter.Abilities.List[req.Ability].XpLevel < req.Level) {
+                        EventLog.Add("Недостаточный навык", Color.Yellow, LogEntityType.Consume);
+                        return;
+                    }
                 }
             }
 

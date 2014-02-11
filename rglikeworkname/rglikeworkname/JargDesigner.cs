@@ -438,7 +438,7 @@ namespace jarg {
 
             SchemesExist.Clear();
             foreach (var sch in SchemesDataBase.Data) {
-                var l = new Label(Vector2.Zero, sch.filename, SchemesExist);
+                var l = new Label(Vector2.Zero, sch.FileName, SchemesExist);
                 l.Tag = sch;
                 l.OnLeftPressed += OnSchemesEditorSchemesListSelect;
             }

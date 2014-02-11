@@ -14,7 +14,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         Shop,
         Hospital,
         Storage,
-        WearStore,
+        FoodShop,
+        Fastfood,
 
         BunkerParts,
         WearShop

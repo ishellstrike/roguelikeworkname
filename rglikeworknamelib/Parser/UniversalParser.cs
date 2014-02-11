@@ -220,5 +220,31 @@ namespace rglikeworknamelib.Parser {
             }
             return data;
         }
+
+        public static List<T> JsonListDataLoaderNames<T>(string directory) where T: class, INameable
+        {
+            var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+            serializer.Converters.Add(new StringEnumConverter());
+            var data = new List<T>();
+
+            var dir = Directory.GetFiles(directory, "*.json");
+            foreach (var patch in dir)
+            {
+                using (var sr = new StreamReader(patch, Encoding.Default))
+                {
+                    var t = serializer.Deserialize<List<T>>(new JsonTextReader(sr));
+                    var inf = new FileInfo(patch);
+                    foreach (var v in t) {
+                        v.FileName = inf.Name;
+                    }
+                    data.AddRange(t);
+                }
+            }
+            return data;
+        }
+    }
+
+    public interface INameable {
+        string FileName { get; set; }
     }
 }

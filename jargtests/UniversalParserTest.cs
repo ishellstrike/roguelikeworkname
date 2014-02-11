@@ -71,13 +71,5 @@ namespace jargtests {
             object a = NoIdParserTestHelper<BlockData>("~Block\nName=Imya", @"C:\filepos\", typeof (Block));
             Assert.AreEqual("Imya", ((BlockData) a).Name);
         }
-
-        [TestMethod]
-        public void SchemesV1Parser() {
-            var a = ChemesParser.Parser("#version = 1\r\n~2,2,store\r\n1 1 3 1\r\n\r\n~2,2,house\r\n!test!4\r\n");
-            Assert.AreEqual(a[0].type, SectorBiom.Shop);
-            Assert.AreEqual(a[1].type, SectorBiom.House);
-            Assert.AreEqual(a[1].data[3], "test");
-        }
     }
 }

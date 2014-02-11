@@ -1,4 +1,30 @@
 ﻿{
+  "sharp_stick":{
+  "Name":"Заостренная палка",
+  "Damage":2,
+  "SortType":"Meele",
+  },
+  "board":{
+  "Name":"Деревянная доска",
+  },
+  "bigblade":{
+  "Name":"Большое лезвие",
+  },
+  "bigblade_weapon":{
+  "Name":"Самодельный большой нож",
+  "Damage":9,
+  "SortType":"Meele",
+  },
+  "nail_board":{
+  "Name":"Доска с гвоздями",
+  "Damage":4,
+  "SortType":"Meele",
+  },
+  "nail_stick":{
+  "Name":"Палка с гвоздями",
+  "Damage":3,
+  "SortType":"Meele",
+  },
   "a357":{
     "Name":".357 Magnum",
     "SortType":"Ammo",
@@ -119,6 +145,7 @@
     "Name":"Самодельное копье с ножом",
     "SortType":"Meele",
     "Weight":650,
+	"Damage":5,
   },
   "chipset":{
     "Name":"Печатная плата",
@@ -876,9 +903,13 @@
   "oilbottle":{
 	"Name":"",
   },
-  "kastrul":{
-	"Name":"",
-	"SpawnGroup":"spawn_posuda",
+  "pot":{
+  "Name":"Кастрюля",
+  "SpawnGroup":"spawn_posuda",
+  },
+  "pan":{
+  "Name":"Сковорода",
+  "SpawnGroup":"spawn_posuda",
   },
   "hammer1":{
 	"Name":"Молоток",

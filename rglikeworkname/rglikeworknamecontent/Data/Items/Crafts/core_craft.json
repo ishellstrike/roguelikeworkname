@@ -2,7 +2,6 @@
 	{
 		"Name":"Растереть канифоль",
 		"Input":[
-		
 			{
 				"Alters":[
 					{"Id":"canifol", "Count":1},
@@ -32,5 +31,134 @@
 				"Level":2
 			}
 		]
+	},
+	{
+		"Name":"Заострить палку",
+		"Input":[
+			{
+				"Alters":[
+					{"Id":"stick", "Count":1},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"knife", "Count":1,	"IsTool":true},
+				]
+			},
+		],
+		"Output":[
+			{
+				"Alters":[
+					{"Id":"sharp_stick", "Count":1},
+				]
+			},
+		],
+	},
+	{
+		"Name":"Доска с гвоздями",
+		"Input":[
+			{
+				"Alters":[
+					{"Id":"board", "Count":1},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"nail", "Count":6},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"hammer1", "Count":1,	"IsTool":true},
+					{"Id":"stone", "Count":1, "IsTool":true},
+				]
+			},
+		],
+		"Output":[
+			{
+				"Alters":[
+					{"Id":"nail_board", "Count":1},
+				]
+			},
+		],
+	},
+	{
+		"Name":"Палка с гвоздями",
+		"Input":[
+			{
+				"Alters":[
+					{"Id":"stick", "Count":1},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"nail", "Count":4},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"hammer1", "Count":1,	"IsTool":true},
+					{"Id":"stone", "Count":1, "IsTool":true},
+				]
+			},
+		],
+		"Output":[
+			{
+				"Alters":[
+					{"Id":"nail_stick", "Count":1},
+				]
+			},
+		],
+	},
+	{
+		"Name":"Самодельное копье",
+		"Input":[
+			{
+				"Alters":[
+					{"Id":"stick", "Count":1},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"skotch", "Count":20},
+					{"Id":"izolenta", "Count":35},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"knife", "Count":1},
+				]
+			},
+		],
+		"Output":[
+			{
+				"Alters":[
+					{"Id":"spearknife", "Count":1},
+				]
+			},
+		],
+	},
+	{
+		"Name":"Самодельный большой нож",
+		"Input":[
+			{
+				"Alters":[
+					{"Id":"bigblade", "Count":1},
+				]
+			},
+			{
+				"Alters":[
+					{"Id":"skotch", "Count":200},
+					{"Id":"izolenta", "Count":100},
+				]
+			},
+		],
+		"Output":[
+			{
+				"Alters":[
+					{"Id":"bigblade_weapon", "Count":1},
+				]
+			},
+		],
 	}
 ]
