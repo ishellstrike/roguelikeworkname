@@ -46,7 +46,7 @@ namespace jarg {
                 rememberShoot_ = false;
             }
 
-            if (ms_.ScrollWheelValue != lms_.ScrollWheelValue) {
+            if (ms_.ScrollWheelValue != lms_.ScrollWheelValue && !ws_.Mopusehook) {
                 cam.Zoom += (ms_.ScrollWheelValue - lms_.ScrollWheelValue)/(float)gameTime.ElapsedGameTime.TotalMilliseconds/10;
             }
 

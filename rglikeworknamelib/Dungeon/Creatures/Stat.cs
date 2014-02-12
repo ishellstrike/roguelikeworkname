@@ -16,6 +16,13 @@ namespace rglikeworknamelib.Dungeon.Creatures
             Max = sameValues;
         }
 
+        public float Percent {
+            get
+            {
+                if (Max == 0) return 0; return Current / Max;
+            }
+        }
+
         public override string ToString() {
             return string.Format("{0}/{1}", Current, Max);
         }

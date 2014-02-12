@@ -228,7 +228,7 @@ namespace jarg {
             ImageGlobal.OnMouseUp += ImageGlobalOnOnMouseUp;
             ImageGlobal.OnMouseMove += ImageGlobalOnOnMouseMove;
 
-            InitCaracter(ws);
+            InitCaracterWindow(ws);
 
 
             InfoWindow = new Window(new Vector2(Settings.Resolution.X/3, Settings.Resolution.Y/6), "Info", true, ws) {
@@ -511,7 +511,9 @@ namespace jarg {
             CraftThisButton.OnPressed += CraftThisButton_OnPressed;
         }
 
-        private void InitCaracter(WindowSystem ws) {
+
+        private Label ThirstHungerLabel;
+        private void InitCaracterWindow(WindowSystem ws) {
             int ii = 0;
             CaracterWindow =
                 new Window(new Vector2(Settings.Resolution.X/3*2, Settings.Resolution.Y - Settings.Resolution.Y/10),
@@ -531,6 +533,11 @@ namespace jarg {
                                   (int) CaracterWindow.Height/2 - (10 + 15*ii)), CaracterWindow);
             ii = 0;
             LabelCaracterHp = new DoubleLabel(new Vector2(10 + 300, 10 + 15*ii), "HP : ", CaracterWindow);
+
+            ii++;
+            ThirstHungerLabel = new Label(new Vector2(10 + 300, 10 + 15 * ii), "", CaracterWindow);
+
+
             LabelsAbilities = new List<Label>();
             for (int i = 0; i < 11; i++) {
                 var temp = new Label(new Vector2(10, 400 + 15*ii), "", CaracterWindow);
@@ -1551,6 +1558,51 @@ namespace jarg {
                                                         Ability.XpNeeds[player_.Abilities.ToShow[i].XpLevel]);
             }
 
+            string thhun = "";
+
+            if (player_.Hunger.Percent < 0.50) {
+                if (player_.Hunger.Percent < 0.25) {
+                    if (player_.Hunger.Percent < 0.10) {
+                        thhun += "Вы голодны";
+                    }
+                    else {
+                        thhun += "Вы очень голодны";
+                    }
+                }
+                else {
+                    thhun += "Вы немного голодны";
+                }
+            }
+            if (Settings.DebugInfo) {
+                thhun += " " + player_.Hunger;
+            }
+            thhun += Environment.NewLine;
+
+            if (player_.Thirst.Percent < 0.50)
+            {
+                if (player_.Thirst.Percent < 0.25)
+                {
+                    if (player_.Thirst.Percent < 0.10)
+                    {
+                        thhun += "Вы хотите пить";
+                    }
+                    else
+                    {
+                        thhun += "Вы очень хотите пить";
+                    }
+                }
+                else
+                {
+                    thhun += "Вы немного хотите пить";
+                }
+            }
+            if (Settings.DebugInfo)
+            {
+                thhun += " " + player_.Thirst;
+            }
+
+            ThirstHungerLabel.Text = thhun;
+            ThirstHungerLabel.Color = Color.Red;
             
             LabelCaracterGun.Text2 = player_.ItemGun != null ? itemDataBase.Data[player_.ItemGun.Id].Name : "";
             LabelCaracterAmmo.Text2 = player_.ItemAmmo != null
@@ -1562,7 +1614,6 @@ namespace jarg {
 
             EffectsContainer.Items.Clear();
             for (int i = 0; i < player_.Buffs.Count; i++) {
-                LabelFixed label;
                 if (player_.Buffs[i].Expiring) {
                     EffectsContainer.Items.Add(string.Format("{0} {1}", BuffDataBase.Data[player_.Buffs[i].Id].Name,
                                                          player_.Buffs[i].Expire));

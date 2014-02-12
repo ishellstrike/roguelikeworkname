@@ -494,21 +494,21 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
                 var par = part.Split('~');
 
-                var pos = par[0].Split(',');
-                var BlockIdList = par[1].Split(' ').ToList();
-                BlockIdList.Remove(BlockIdList.Last());
+                string[] pos = par[0].Split(',');
+                var blockIdList = par[1].Split(' ').ToList();
+                blockIdList.Remove(blockIdList.Last());
                 var blIddic = par[2].Split(' ').ToList();
                 blIddic.Remove(blIddic.Last());
-                var FloorIdList = par[3].Split(' ').ToList();
-                FloorIdList.Remove(FloorIdList.Last());
+                var floorIdList = par[3].Split(' ').ToList();
+                floorIdList.Remove(floorIdList.Last());
                 var flIddic = par[4].Split(' ').ToList();
                 flIddic.Remove(flIddic.Last());
-                var MonsterDataList = par[5].Split(' ').ToList();
-                MonsterDataList.Remove(MonsterDataList.Last());
+                var monsterDataList = par[5].Split(' ').ToList();
+                monsterDataList.Remove(monsterDataList.Last());
                 var monIddic = par[6].Split(' ').ToList();
                 monIddic.Remove(monIddic.Last());
-                var ItemDataList = par[7].Split(' ').ToList();
-                ItemDataList.Remove(ItemDataList.Last());
+                var itemDataList = par[7].Split(' ').ToList();
+                itemDataList.Remove(itemDataList.Last());
                 var itemIddic = par[8].Split(' ').ToList();
                 itemIddic.Remove(itemIddic.Last());
 
@@ -519,58 +519,52 @@ namespace rglikeworknamelib.Dungeon.Level {
                 sector.Biom = (SectorBiom) Enum.Parse(typeof (SectorBiom), par[9]);
 
                 var off = 0;
-                foreach (var s in BlockIdList) {
-                    if (s != " ") {
-                        if (s.StartsWith("!")) {
-                            var p2 = s.Split('!');
-                            var id = blIddic[int.Parse(p2[1])];
-                            var cou = int.Parse(p2[2]);
-                            for (var i = 0; i < cou; i++) {
-                                sector.Blocks[off] = BlockFactory.GetInstance(id);
-                                sector.Blocks[off].MTex = sector.Blocks[off].Data.RandomMtexFromAlters();
-                                off++;
-                            }
-                        }
-                        else {
-                            var id = blIddic[int.Parse(s)];
+                foreach (var s in blockIdList.Where(s => s != " ")) {
+                    if (s.StartsWith("!")) {
+                        var p2 = s.Split('!');
+                        var id = blIddic[int.Parse(p2[1])];
+                        var cou = int.Parse(p2[2]);
+                        for (var i = 0; i < cou; i++) {
                             sector.Blocks[off] = BlockFactory.GetInstance(id);
                             sector.Blocks[off].MTex = sector.Blocks[off].Data.RandomMtexFromAlters();
                             off++;
                         }
                     }
+                    else {
+                        var id = blIddic[int.Parse(s)];
+                        sector.Blocks[off] = BlockFactory.GetInstance(id);
+                        sector.Blocks[off].MTex = sector.Blocks[off].Data.RandomMtexFromAlters();
+                        off++;
+                    }
                 }
                 off = 0;
-                foreach (var s in FloorIdList) {
-                    if (s != " ") {
-                        if (s.StartsWith("!")) {
-                            var p2 = s.Split('!');
-                            var id = flIddic[int.Parse(p2[1])];
-                            var cou = int.Parse(p2[2]);
-                            for (var i = 0; i < cou; i++) {
-                                sector.Floors[off].Id = id;
-                                sector.Floors[off].MTex = sector.Floors[off].Data.RandomMtexFromAlters();
-                                off++;
-                            }
-                        }
-                        else {
-                            var id = flIddic[int.Parse(s)];
+                foreach (var s in floorIdList.Where(s => s != " ")) {
+                    if (s.StartsWith("!")) {
+                        var p2 = s.Split('!');
+                        var id = flIddic[int.Parse(p2[1])];
+                        var cou = int.Parse(p2[2]);
+                        for (var i = 0; i < cou; i++) {
                             sector.Floors[off].Id = id;
                             sector.Floors[off].MTex = sector.Floors[off].Data.RandomMtexFromAlters();
                             off++;
                         }
                     }
+                    else {
+                        var id = flIddic[int.Parse(s)];
+                        sector.Floors[off].Id = id;
+                        sector.Floors[off].MTex = sector.Floors[off].Data.RandomMtexFromAlters();
+                        off++;
+                    }
                 }
-                foreach (var s in MonsterDataList) {
-                    if (s != " ") {
+                foreach (var s in monsterDataList.Where(s => s != " ")) {
                         var monparts = s.Split(',');
                         var id = monIddic[int.Parse(monparts[0])];
                         var mpos = new Vector3(int.Parse(monparts[1]), int.Parse(monparts[2]), 0);
                         var mon = CreatureFactory.GetInstance(id, mpos);
                         sector.Creatures.Add(mon);
-                    }
                 }
-                foreach (var s in ItemDataList) {
-                    if (s != " ") {
+                foreach (var s in itemDataList.Where(s => s != " "))
+                {
                         var itemparts = s.Split(',');
                         var id = itemIddic[int.Parse(itemparts[0])];
                         var onedim = int.Parse(itemparts[1]);
@@ -579,7 +573,6 @@ namespace rglikeworknamelib.Dungeon.Level {
                         var item = ItemFactory.GetInstance(id, icount);
                         item.Doses = idoses;
                         sector.Blocks[onedim].StoredItems.Add(item);
-                    }
                 }
                 
                 temp.Add(position, sector);

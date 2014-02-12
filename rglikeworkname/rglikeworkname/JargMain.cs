@@ -149,7 +149,6 @@ namespace jarg {
             graphics_.IsFullScreen = false;
             graphics_.PreferredBackBufferHeight = (int) Settings.Resolution.Y;
             graphics_.PreferredBackBufferWidth = (int) Settings.Resolution.X;
-            graphics_.PreferMultiSampling = true;
             InactiveSleepTime = TimeSpan.FromMilliseconds(200);
 
             IsFixedTimeStep = false;

@@ -24,16 +24,22 @@ namespace jarg
             All.AddRange(new[] {Inventory, Caracter, Statist, Achievements, Debug, Wire, TakeAll});
             Inventory.Name = "Инвентарь";
             Inventory.Default = Keys.I;
+
             Caracter.Name = "Окно персонажа";
             Caracter.Default = Keys.C;
+
             Statist.Name = "Окно статистики";
             Statist.Default = Keys.O;
+
             Achievements.Name = "Окно достижений";
             Achievements.Default = Keys.P;
+
             Debug.Name = "Отладочная информация";
             Debug.Default = Keys.F1;
+
             Wire.Name = "Wireframe";
             Wire.Default = Keys.F2;
+
             TakeAll.Name = "Взять все";
             TakeAll.Default = Keys.R;
 
