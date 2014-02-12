@@ -1276,7 +1276,28 @@ namespace rglikeworknamelib.Dungeon.Level
 
         float ttt = 0;
 
-        public void RenderCreatures(GraphicsDevice graphicsDevice, Camera cam, Effect bilbEffect) {
+        public void SpriteBatchFeatures(Camera cam, SpriteBatch sb)
+        {
+            if (Settings.DebugInfo)
+            {
+                sb.Begin();
+                foreach (var sector in sectors_)
+                {
+                    if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint)
+                    {
+                        continue;
+                    }
+                    foreach (var creature in sector.Value.Creatures)
+                    {
+                        SpriteBatch3dBinded.DrawStringCenteredUppedProjected(sb, cam, creature.creatureWorld.Translation, font_,
+                                                             creature.ToString(), Color.White, 20);
+                    }
+                }
+                sb.End();
+            }
+        }
+
+        public void RenderCreatures(GraphicsDevice graphicsDevice, Camera cam, Effect bilbEffect, SpriteBatch sb) {
             foreach (var pass in bilbEffect.CurrentTechnique.Passes)
             {
                 foreach (var sector in sectors_) {
@@ -1290,6 +1311,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
                         graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, creature.vert, 0,
                                                           creature.vert.Length / 3);
+
                     }
                 }
             }

@@ -205,6 +205,10 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public bool IsIddleOrWander { get { return order_.Type == OrderType.Iddle || order_.Type == OrderType.Wander; } }
 
+        public override string ToString() {
+            return Data.Name + " " + Id + " " + position_;
+        }
+
         public virtual void Update(GameTime gt, MapSector ms_, Player hero, bool test = false) {
             ms = ms_;
             

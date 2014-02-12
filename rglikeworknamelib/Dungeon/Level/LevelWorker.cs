@@ -367,7 +367,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                     stringBuilder.AppendLine();
 
                     stringBuilder.Append("~");
-                    stringBuilder.AppendLine(ms.Biom.ToString());
+                    stringBuilder.Append(ms.Biom.ToString());
+                    stringBuilder.AppendLine();
                 }
                 catch (Exception e)
                 {

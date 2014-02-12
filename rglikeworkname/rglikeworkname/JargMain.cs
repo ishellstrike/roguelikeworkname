@@ -555,7 +555,7 @@ namespace jarg {
             GraphicsDevice.SetRenderTarget(colorMapRenderTarget_);
             GraphicsDevice.Clear(Color.Black);
             currentFloor_.RenderMap(GraphicsDevice,cam,solidEffect, billboardEffect, player_);
-            currentFloor_.RenderCreatures(GraphicsDevice, cam, solidEffect);
+            currentFloor_.RenderCreatures(GraphicsDevice, cam, solidEffect, spriteBatch_);
 
             solidEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateBillboard(player_.creatureWorld.Translation, cam.Position, cam.Backward, null));
             foreach (var pass in solidEffect.CurrentTechnique.Passes) {
@@ -596,6 +596,8 @@ namespace jarg {
             currentFloor_.RenderBlockMap(GraphicsDevice, cam, solidEffect);
 
             lineBatch_.Draw(cam);
+
+            currentFloor_.SpriteBatchFeatures(cam, spriteBatch_);
 
             //solidShadowEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateTranslation(nx, ny, 0));
             //foreach (var pass in solidShadowEffect.CurrentTechnique.Passes)
