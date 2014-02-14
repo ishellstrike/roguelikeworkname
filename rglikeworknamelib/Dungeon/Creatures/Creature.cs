@@ -287,7 +287,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 }
             }
 
-            creatureWorld.Translation = new Vector3(position_.X / 32f + ms.SectorOffsetX * 16, position_.Y / 32f + ms.SectorOffsetY * 16, 0) + new Vector3(0.5f, 0.5f, 0.5f);
+            creatureWorld.Translation = new Vector3(position_.X / 32f + ms.SectorOffsetX * MapSector.Rx, position_.Y / 32f + ms.SectorOffsetY * MapSector.Ry, 0) + new Vector3(0.5f, 0.5f, 0.5f);
 
             for (int i = 0; i < Buffs.Count; i++) {
                 IBuff buff = Buffs[i];

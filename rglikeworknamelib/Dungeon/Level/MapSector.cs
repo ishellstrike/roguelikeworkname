@@ -333,11 +333,13 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         internal VertexPositionNormalTexture[] verteces, verteces_block, verteces_facer;
+        internal short[] indexes_block;
         internal Vector3[] objWorld;
         internal BoundingBox bBox;
         public void RebuildGeometry() {
             var a = new List<VertexPositionNormalTexture>();
             var b = new List<VertexPositionNormalTexture>();
+            var c = new List<short>();
             var d = new List<VertexPositionNormalTexture>();
             var e = new List<Vector3>();
 
@@ -385,7 +387,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                     if (block.Id != "0")
                     {
                         if (block.Data.Wallmaker) {
-                            AddBlockGeom(b, i, j, block);
+                            AddBlockGeom(b, c, i, j, block);
                             
                         }
                         else {
@@ -399,6 +401,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             verteces = a.ToArray();
             verteces_block = b.ToArray();
             verteces_facer = d.ToArray();
+            indexes_block = c.ToArray();
             objWorld = e.ToArray();
             GeomReady = true;
         }
@@ -517,8 +520,9 @@ namespace rglikeworknamelib.Dungeon.Level {
             //        new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
         }
 
-        internal void AddBlockGeom(List<VertexPositionNormalTexture> b, int i, int j, Block block) {
+        internal void AddBlockGeom(List<VertexPositionNormalTexture> b, List<short> c, int i, int j, Block block) {
             var h = block.Data.Height;
+            var l = (short)(c.Count/6*4);
             if (j == Ry - 1 || !Blocks[i * Rx + j + 1].Data.Wallmaker || Blocks[(i) * Rx + j + 1].Data.Height < 32)
             {
                 b.Add(new VertexPositionNormalTexture(
@@ -534,17 +538,17 @@ namespace rglikeworknamelib.Dungeon.Level {
                         block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
                 b.Add(
                     new VertexPositionNormalTexture(
-                        new Vector3(i + 1, j + 1, h), Vector3.Backward,
-                        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-                b.Add(
-                    new VertexPositionNormalTexture(
                         new Vector3(i + 1, j + 1, 0), Vector3.Backward,
                         block.Source +
                         new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
-                b.Add(
-                    new VertexPositionNormalTexture(
-                        new Vector3(i, j + 1, 0), Vector3.Backward,
-                        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+
+                c.Add((short) (l + 0));
+                c.Add((short) (l + 1));
+                c.Add((short) (l + 2));
+                c.Add((short) (l + 3));
+                c.Add((short) (l + 2));
+                c.Add((short) (l + 1));
+                l += 4;
             }
 
             if (j == 0 || !Blocks[(i) * Rx + j - 1].Data.Wallmaker || Blocks[(i ) * Rx + j - 1].Data.Height < 32)
@@ -560,20 +564,19 @@ namespace rglikeworknamelib.Dungeon.Level {
                     new VertexPositionNormalTexture(
                         new Vector3(i + 1, j, h), Vector3.Right,
                         block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-
-                b.Add(
-                    new VertexPositionNormalTexture(
-                        new Vector3(i + 1, j, h), Vector3.Right,
-                        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-                b.Add(
-                    new VertexPositionNormalTexture(
-                        new Vector3(i, j, 0), Vector3.Right,
-                        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
                 b.Add(
                     new VertexPositionNormalTexture(
                         new Vector3(i + 1, j, 0), Vector3.Right,
                         block.Source +
                         new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+
+                c.Add((short) (l + 0));
+                c.Add((short) (l + 1));
+                c.Add((short) (l + 2));
+                c.Add((short) (l + 2));
+                c.Add((short) (l + 1));
+                c.Add((short) (l + 3));
+                l += 4;
             }
 
             if (i == 0 || !Blocks[(i - 1) * Rx + j].Data.Wallmaker || Blocks[(i - 1) * Rx + j].Data.Height < 32)
@@ -591,17 +594,17 @@ namespace rglikeworknamelib.Dungeon.Level {
                         block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
                 b.Add(
                     new VertexPositionNormalTexture(
-                        new Vector3(i, j + 1, h), Vector3.Forward,
-                        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-                b.Add(
-                    new VertexPositionNormalTexture(
                         new Vector3(i, j + 1, 0), Vector3.Forward,
                         block.Source +
                         new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
-                b.Add(
-                    new VertexPositionNormalTexture(
-                        new Vector3(i, j, 0), Vector3.Forward,
-                        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+
+                c.Add((short)(l + 0));
+                c.Add((short)(l + 1));
+                c.Add((short)(l + 2));
+                c.Add((short)(l + 1));
+                c.Add((short)(l + 3));
+                c.Add((short)(l + 2));
+                l += 4;
             }
 
             if (i == Rx - 1 || !Blocks[(i + 1) * Rx + j].Data.Wallmaker || Blocks[(i + 1) * Rx + j].Data.Height < 32)
@@ -617,20 +620,19 @@ namespace rglikeworknamelib.Dungeon.Level {
                     new VertexPositionNormalTexture(
                         new Vector3(i + 1, j + 1, h), Vector3.Left,
                         block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-
-                b.Add(
-                    new VertexPositionNormalTexture(
-                        new Vector3(i + 1, j + 1, h), Vector3.Left,
-                        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-                b.Add(
-                    new VertexPositionNormalTexture(
-                        new Vector3(i + 1, j, 0), Vector3.Left,
-                        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
                 b.Add(
                     new VertexPositionNormalTexture(
                         new Vector3(i + 1, j + 1, 0), Vector3.Left,
                         block.Source +
                         new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+
+                c.Add((short)(l + 0));
+                c.Add((short)(l + 1));
+                c.Add((short)(l + 2));
+                c.Add((short)(l + 2));
+                c.Add((short)(l + 1));
+                c.Add((short)(l + 3));
+                l += 4;
             }
 
 
@@ -645,20 +647,19 @@ namespace rglikeworknamelib.Dungeon.Level {
                 new VertexPositionNormalTexture(
                     new Vector3(i, j + 1, h), Vector3.Up,
                     block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-
-            b.Add(
-                new VertexPositionNormalTexture(
-                    new Vector3(i + 1, j, h), Vector3.Up,
-                    block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
             b.Add(
                 new VertexPositionNormalTexture(
                     new Vector3(i + 1, j + 1, h), Vector3.Up,
                     block.Source +
                     new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
-            b.Add(
-                new VertexPositionNormalTexture(
-                    new Vector3(i, j + 1, h), Vector3.Up,
-                    block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+
+            c.Add((short) (l + 0));
+            c.Add((short) (l + 1));
+            c.Add((short) (l + 2));
+            c.Add((short) (l + 1));
+            c.Add((short) (l + 3));
+            c.Add((short) (l + 2));
+            l += 4;
         }
     }
 }

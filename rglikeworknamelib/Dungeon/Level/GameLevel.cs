@@ -1347,8 +1347,8 @@ namespace rglikeworknamelib.Dungeon.Level
                         solidEffect.Parameters["worldMatrix"].SetValue(
                             Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0));
                         pass.Apply();
-                        graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces_block, 0,
-                                                          sector.Value.verteces_block.Length / 3);
+                        graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,sector.Value.verteces_block, 0,
+                                                          sector.Value.verteces_block.Length, sector.Value.indexes_block, 0, sector.Value.indexes_block.Length/3);
                     }
                     if (sector.Value.verteces_facer.Length > 0) {
                         int i = 0;
