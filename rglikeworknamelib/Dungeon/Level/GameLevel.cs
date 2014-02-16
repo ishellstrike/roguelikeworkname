@@ -1276,7 +1276,7 @@ namespace rglikeworknamelib.Dungeon.Level
 
         float ttt = 0;
 
-        public void SpriteBatchFeatures(Camera cam, SpriteBatch sb)
+        public void SpriteBatchFeatures(Camera cam, SpriteBatch sb, LineBatch  lb)
         {
             if (Settings.DebugInfo)
             {
@@ -1294,6 +1294,16 @@ namespace rglikeworknamelib.Dungeon.Level
                     }
                 }
                 sb.End();
+
+                foreach (var sect in sectors_) {
+                    foreach (var cre in sect.Value.Creatures) {
+                        if (!cre.IsIddle) {
+                            lineBatch_.AddLine3d(cre.creatureWorld.Translation,
+                                new Vector3(cre.CurrentOrder.Point.X/32f, cre.CurrentOrder.Point.Y/32f, 0.1f),
+                                Color.YellowGreen);
+                        }
+                    }
+                }
             }
         }
 
@@ -1347,8 +1357,8 @@ namespace rglikeworknamelib.Dungeon.Level
                         solidEffect.Parameters["worldMatrix"].SetValue(
                             Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0));
                         pass.Apply();
-                        graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,sector.Value.verteces_block, 0,
-                                                          sector.Value.verteces_block.Length, sector.Value.indexes_block, 0, sector.Value.indexes_block.Length/3);
+                        graphicsDevice.SetVertexBuffer(sector.Value.block_bufer);
+                        graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,sector.Value.verteces_block,0,sector.Value.verteces_block.Length,sector.Value.indexes_block,0,sector.Value.indexes_block.Length/3);
                     }
                     if (sector.Value.verteces_facer.Length > 0) {
                         int i = 0;

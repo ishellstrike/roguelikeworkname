@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rglikeworknamelib.Dungeon.Creatures;
@@ -333,6 +334,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         internal VertexPositionNormalTexture[] verteces, verteces_block, verteces_facer;
+        internal VertexBufferBinding block_binding;
+        internal VertexBuffer block_bufer;
+        private IndexBuffer block_ibufer;
         internal short[] indexes_block;
         internal Vector3[] objWorld;
         internal BoundingBox bBox;
@@ -413,111 +417,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             b.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, block.Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
             b.Add(new VertexPositionNormalTexture(new Vector3(0.5f, -0.5f, 0), Vector3.Up, block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
             b.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, block.Source));
-
-            //b.Add(new VertexPositionNormalTexture(
-            //          new Vector3(i, j + 0.51f, 1), Vector3.Backward,
-            //          block.Source));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 1, j + 0.51f, 1), Vector3.Backward,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i, j + 0.51f, 0), Vector3.Backward,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 1, j + 0.51f, 1), Vector3.Backward,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 1, j + 0.51f, 0), Vector3.Backward,
-            //        block.Source +
-            //        new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i, j + 0.51f, 0), Vector3.Backward,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-
-
-            //b.Add(new VertexPositionNormalTexture(
-            //          new Vector3(i, j + 0.5f, 1), Vector3.Right,
-            //          block.Source));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i, j + 0.5f, 0), Vector3.Right,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 1, j + 0.5f, 1), Vector3.Right,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 1, j + 0.5f, 1), Vector3.Right,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i, j + 0.5f, 0), Vector3.Right,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 1, j + 0.5f, 0), Vector3.Right,
-            //        block.Source +
-            //        new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
-
-
-            //b.Add(new VertexPositionNormalTexture(
-            //          new Vector3(i + 0.5f, j, 1), Vector3.Forward,
-            //          block.Source));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.5f, j + 1, 1), Vector3.Forward,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.5f, j, 0), Vector3.Forward,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.5f, j + 1, 1), Vector3.Forward,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.5f, j + 1, 0), Vector3.Forward,
-            //        block.Source +
-            //        new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.5f, j, 0), Vector3.Forward,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-
-
-            //b.Add(new VertexPositionNormalTexture(
-            //          new Vector3(i + 0.49f, j, 1), Vector3.Left,
-            //          block.Source));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.51f, j, 0), Vector3.Left,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.51f, j + 1, 1), Vector3.Left,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.51f, j + 1, 1), Vector3.Left,
-            //        block.Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.51f, j, 0), Vector3.Left,
-            //        block.Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
-            //b.Add(
-            //    new VertexPositionNormalTexture(
-            //        new Vector3(i + 0.51f, j + 1, 0), Vector3.Left,
-            //        block.Source +
-            //        new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
         }
 
         internal void AddBlockGeom(List<VertexPositionNormalTexture> b, List<short> c, int i, int j, Block block) {

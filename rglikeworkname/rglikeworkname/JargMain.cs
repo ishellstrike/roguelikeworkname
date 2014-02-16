@@ -597,7 +597,7 @@ namespace jarg {
 
             lineBatch_.Draw(cam);
 
-            currentFloor_.SpriteBatchFeatures(cam, spriteBatch_);
+            currentFloor_.SpriteBatchFeatures(cam, spriteBatch_, lineBatch_);
 
             //solidShadowEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateTranslation(nx, ny, 0));
             //foreach (var pass in solidShadowEffect.CurrentTechnique.Passes)
