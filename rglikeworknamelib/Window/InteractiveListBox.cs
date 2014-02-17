@@ -105,7 +105,7 @@ namespace rglikeworknamelib.Window
 
         private void buttonDown__onPressed(object sender, EventArgs e) {
             topIndex++;
-            if (topIndex > lastDrawed) {
+            if (topIndex > Items.Count) {
                 topIndex--;
             }
         }
@@ -231,7 +231,22 @@ namespace rglikeworknamelib.Window
         }
 
         public void ScrollBottom() {
-            topIndex = 0;
+            var cur = Items.Count;
+            var bot = location_.Height;
+            while (true) {
+                bot -= textH + 2;
+                if (bot > 0) {
+                    cur--;
+                }
+                else {
+                    break;
+                }
+            }
+            cur++;
+            if (cur < 0) {
+                cur = 0;
+            }
+            topIndex = cur;
         }
     }
 } 
