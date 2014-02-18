@@ -64,7 +64,7 @@ namespace BScriptArea
 
             infostring = "Initialization";
             ism = new InventorySystem();
-            pl = new Player(null, null, null, ism) {Position = new Vector3(100, 100,0)};
+            pl = new Player(null, null, ism) {Position = new Vector3(100, 100,0)};
             cre = new Creature() { Id = "zombie1" };
             gl = new GameLevel(null, null, null, null, lw);
             ms = new MapSector(gl, 0, 0);

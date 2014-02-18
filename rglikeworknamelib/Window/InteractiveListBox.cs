@@ -67,7 +67,7 @@ namespace rglikeworknamelib.Window
         private int textH, textW;
         private int aimed;
         public bool Draggable;
-        public int Dragged;
+        public int Dragged = -1;
         
 
         public InteractiveListBox(Rectangle loc, IGameContainer parent) {

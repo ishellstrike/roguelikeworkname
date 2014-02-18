@@ -1308,23 +1308,13 @@ namespace rglikeworknamelib.Dungeon.Level
         }
 
         public void RenderCreatures(GraphicsDevice graphicsDevice, Camera cam, Effect bilbEffect, SpriteBatch sb) {
-            foreach (var pass in bilbEffect.CurrentTechnique.Passes)
-            {
-                foreach (var sector in sectors_) {
-                    if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
-                    foreach (var creature in sector.Value.Creatures) {
-                        var billboardWorld = Matrix.CreateBillboard(creature.creatureWorld.Translation, cam.Position, cam.Backward, null);
-                        billboardWorld.Translation = creature.creatureWorld.Translation;
+            //foreach (var pass in bilbEffect.CurrentTechnique.Passes)
+            //{
+            //    foreach (var sector in sectors_) {
+            //        if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
 
-                        bilbEffect.Parameters["worldMatrix"].SetValue(billboardWorld);
-                        pass.Apply();
-
-                        graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, creature.vert, 0,
-                                                          creature.vert.Length / 3);
-
-                    }
-                }
-            }
+            //    }
+            //}
         }
 
         public void RenderBlockMap(GraphicsDevice graphicsDevice, Camera cam, Effect solidEffect)
@@ -1346,6 +1336,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 };
             }
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            var billboardWorld = Matrix.CreateBillboard(cam.LookAt, cam.Position, cam.Backward, null);
             foreach (var pass in solidEffect.CurrentTechnique.Passes)
             {
                 foreach (var sector in sectors_)
@@ -1363,7 +1354,6 @@ namespace rglikeworknamelib.Dungeon.Level
                     if (sector.Value.verteces_facer.Length > 0) {
                         int i = 0;
                         foreach (var oW in sector.Value.objWorld) {
-                            var billboardWorld = Matrix.CreateBillboard(oW, cam.Position, cam.Backward, null);
                             billboardWorld.Translation = oW;
                             solidEffect.Parameters["worldMatrix"].SetValue(billboardWorld);
                             pass.Apply();
@@ -1372,6 +1362,18 @@ namespace rglikeworknamelib.Dungeon.Level
                                 sector.Value.verteces_facer, i*6, 2);
                             i++;
                         }
+                    }
+
+                    foreach (var creature in sector.Value.Creatures)
+                    {
+                        billboardWorld.Translation = creature.creatureWorld.Translation;
+
+                        solidEffect.Parameters["worldMatrix"].SetValue(billboardWorld);
+                        pass.Apply();
+
+                        graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, creature.vert, 0,
+                                                          creature.vert.Length / 3);
+
                     }
                 }
             }

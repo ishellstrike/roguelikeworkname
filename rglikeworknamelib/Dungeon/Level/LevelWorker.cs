@@ -237,7 +237,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 using (var stream = new GZipStream(fs, CompressionMode.Compress)) {
                     using (var sw = new StreamWriter(stream)) {
                         foreach (var str in onStore_) {
-                            sw.Write(str.Value);
+                            sw.WriteLine(str.Value);
                         }
                     }
                 }
@@ -245,9 +245,7 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             BinaryFormatter bf = new BinaryFormatter();
             using (var fs = new FileStream(Settings.GetWorldsDirectory() + "mega.rlm", FileMode.Create)) {
-                using (var sw = new StreamWriter(fs)) {
                     bf.Serialize(fs, megaMap);
-                }
             }
         }
 

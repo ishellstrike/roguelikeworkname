@@ -45,16 +45,19 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         private TimeSpan secShoot_ = TimeSpan.Zero;
 
-        public Player(SpriteBatch sb, Texture2D tex, SpriteFont font, InventorySystem ism) {
+        public Player(SpriteBatch sb, SpriteFont font, InventorySystem ism) {
             sb_ = sb;
             Font = font;
-            Tex = tex;
             Position = new Vector3(1, 1, 0);
             Perks = new PerksSystem(this);
             Weared = new Collection<Item>();
             Inventory = ism;
 
+            BuildCloth();
+        }
 
+        public void BuildCloth() {
+            MTex = "car";
             var a = new List<VertexPositionNormalTexture>();
             a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
             a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
@@ -62,6 +65,18 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
             a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, -0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
             a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
+            
+
+            foreach (var item in Weared) {
+                MTex = item.Data.Dress;
+                a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
+                a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(0, Atlases.Instance.SpriteHeight)));
+                a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+                a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, 0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, Atlases.Instance.SpriteHeight)));
+                a.Add(new VertexPositionNormalTexture(new Vector3(0.5f, -0.5f, 0), Vector3.Up, Source + new Vector2(Atlases.Instance.SpriteWidth, 0)));
+                a.Add(new VertexPositionNormalTexture(new Vector3(-0.5f, -0.5f, 0), Vector3.Up, Source));
+            }
+
             vert = a.ToArray();
         }
 
@@ -238,7 +253,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
                 secShoot_ += gt.ElapsedGameTime;
 
-                creatureWorld.Translation = new Vector3(position_.X / 32f, position_.Y / 32f, 0) + new Vector3(0.5f, 0.5f, 0.5f);
+                creatureWorld.Translation = new Vector3(position_.X / 32f, position_.Y / 32f, 0) + new Vector3(0, 0, 0.5f);
 
                 for (var i = 0; i < Buffs.Count; i++) {
                     var buff = Buffs[i];

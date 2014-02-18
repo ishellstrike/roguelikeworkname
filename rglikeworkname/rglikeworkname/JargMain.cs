@@ -270,15 +270,11 @@ namespace jarg {
             basicE = new BasicEffect(GraphicsDevice);
 
             ps_ = new ParticleSystem(spriteBatch_,
-                         ParsersCore.LoadTexturesInOrder(
-                             Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"));
-            new BulletSystem(spriteBatch_,
-                                   ParsersCore.LoadTexturesInOrder(
-                                       Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"),
-                                   currentFloor_, font1_, lineBatch_);
+                         ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"));
+            new BulletSystem(spriteBatch_, ParsersCore.LoadTexturesInOrder(Settings.GetParticleTextureDirectory() + @"/textureloadorder.ord"),currentFloor_, font1_, lineBatch_);
             inventory_ = new InventorySystem();
 
-            player_ = new Player(spriteBatch_, ContentProvider.LoadTexture(@"Textures\Units\car"), font1_, inventory_);
+            player_ = new Player(spriteBatch_, font1_, inventory_);
 
             Logger.Info("ContentProvider loaded {0} textures", ContentProvider.TotalLoaded());
 
