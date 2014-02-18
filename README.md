@@ -3,6 +3,8 @@ roguelikeworkname
 need to run
 [.Net 4.0](http://www.microsoft.com/ru-ru/download/details.aspx?id=17851) , [XNA](http://www.microsoft.com/en-us/download/details.aspx?id=23714)
 
+[Build-server](http://jarg.sytes.net/job/jarg-nightly-build)
+
 Roguelike game 
 
 **Controls**
