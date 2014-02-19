@@ -406,6 +406,22 @@
 		}
 	],
   },
+  "liq_polka":{
+    "Name":"Стелаж с алкоголем",
+    "IsTransparent":true,
+    "MTex":"liqpolka",
+	"A;terMtex":["liqpolka1","liqpolka2","liqpolka3"],
+    "Flame":true,
+	"ItemSpawn": [
+		{
+			"Ids":["vodkabottlecl","vinebottlecl"],
+			"Max":2,
+			"Min":3,
+			"Prob":70,
+			"Repeat":3
+		},
+	],
+  },
   "water_heater":{
     "Name":"Водонагреватель",
     "IsTransparent":true,

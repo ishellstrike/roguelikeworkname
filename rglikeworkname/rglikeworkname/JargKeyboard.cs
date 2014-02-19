@@ -170,7 +170,7 @@ namespace jarg {
                 }
                 currentFloor_.GenerateMap(GraphicsDevice, spriteBatch_, player_, mousemapoffset);
                 ImageGlobal.image = currentFloor_.GetMap();
-                currentFloor_.KillFarSectors(player_, gameTime, camera_, true);
+                currentFloor_.KillFarSectors(player_, gameTime, true);
             }
 
             if (ks_[JargBindings.Wire] == KeyState.Down && lks_[JargBindings.Wire] == KeyState.Up)

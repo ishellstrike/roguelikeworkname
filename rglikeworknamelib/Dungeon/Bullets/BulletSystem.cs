@@ -80,20 +80,21 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         }
 
 
-        public static void Draw(GameTime gameTime, Vector2 cam) {
+        public static void Draw() {
             bool b = Settings.DebugInfo;
             foreach (Bullet bullet in bullet_) {
-                spriteBatch_.Draw(bulletAtlas_[bullet.Mtex],
-                                  bullet.Pos - cam, null,
-                                  Color.White, 0,
-                                  new Vector2(bulletAtlas_[bullet.Mtex].Width/2f,
-                                              bulletAtlas_[bullet.Mtex].Height/2f), 1, SpriteEffects.None, 0);
+                //spriteBatch_.Draw(bulletAtlas_[bullet.Mtex],
+                //                  bullet.Pos - cam, null,
+                //                  Color.White, 0,
+                //                  new Vector2(bulletAtlas_[bullet.Mtex].Width/2f,
+                //                              bulletAtlas_[bullet.Mtex].Height/2f), 1, SpriteEffects.None, 0);
 
-                lb.AddLine(bullet.Start - cam, bullet.Pos - cam, Color.Yellow, 2);
+                lb.AddLine3d(new Vector3(bullet.Start.X/32f, bullet.Start.Y/32f, 0.1f), new Vector3(bullet.Pos.X/32f, bullet.Pos.Y/32f, 0.1f), Color.Yellow);
 
-                if (b) {
-                    spriteBatch_.DrawString(font, bullet.Pos.ToString(), bullet.Pos - cam, Color.White);
-                }
+                //if (b) {
+                //    SpriteBatch3dBinded.DrawStringCenteredUppedProjected(spriteBatch_, cam, bullet.Pos);
+                //    spriteBatch_.DrawString(font, bullet.Pos.ToString(), bullet.Pos - cam, Color.White);
+                //}
             }
         }
 

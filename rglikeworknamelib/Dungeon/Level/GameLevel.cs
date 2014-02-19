@@ -493,7 +493,7 @@ namespace rglikeworknamelib.Dungeon.Level
         /// <param name="gt"></param>
         /// <param name="camera"></param>
         /// <param name="ignore"></param>
-        public void KillFarSectors(Creature cara, GameTime gt, Vector2 camera, bool ignore = false)
+        public void KillFarSectors(Creature cara, GameTime gt, bool ignore = false)
         {
             var hposs = cara.GetWorldPositionInBlocks();
             hposs.X /= MapSector.Rx;

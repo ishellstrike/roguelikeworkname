@@ -125,7 +125,7 @@ namespace jarg {
             //m_basicEffect.CurrentTechnique.Passes[0].Begin();
 
             int primitiveCount = m_vertices.Count/3;
-            int prim = threed_vertices.Count/3;
+            int prim = threed_vertices.Count/2;
 
             UpdateProjection();
             foreach (EffectPass pass in m_basicEffect.CurrentTechnique.Passes) {

@@ -1118,7 +1118,6 @@ namespace jarg {
                         mousemapoffset = Vector2.Zero;
                         EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y),
                                      GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
-                        camera_ = new Vector2(player_.Position.X, player_.Position.Y) -Settings.Resolution / 2;
                     }
                     else {
                         EventLog.Add(string.Format("Wrong number to tp <x> <y>"),
@@ -1542,7 +1541,7 @@ namespace jarg {
                 }
             }
             if (LookWindow.Visible && looklPos != null) {
-                lineBatch_.AddLine(new Vector2(player_.Position.X, player_.Position.Y) -camera_, new Vector2(looklPos.Value.X * 32, looklPos.Value.Y * 32) - camera_, Color.LimeGreen, 5);
+                lineBatch_.AddLine(new Vector2(player_.Position.X, player_.Position.Y), new Vector2(looklPos.Value.X * 32, looklPos.Value.Y * 32), Color.LimeGreen, 5);
             }
         }
 

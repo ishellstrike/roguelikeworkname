@@ -88,22 +88,22 @@ namespace jarg {
 
                 if (f.HasValue) {
                     Vector3 p = carRay.Position + carRay.Direction*f.Value;
-                    nx = (int) (p.X);
-                    ny = (int) (p.Y);
+                    UndermouseX = (int) (p.X);
+                    UndermouseY = (int) (p.Y);
 
-                    nx = p.X < 0 ? nx - 1 : nx;
-                    ny = p.Y < 0 ? ny - 1 : ny;
+                    UndermouseX = p.X < 0 ? UndermouseX - 1 : UndermouseX;
+                    UndermouseY = p.Y < 0 ? UndermouseY - 1 : UndermouseY;
                 }
 
                 WindowIngameHint.Visible = false;
 
                 if (currentFloor_ != null) {
-                    Block nxny = currentFloor_.GetBlock(nx, ny);
+                    Block nxny = currentFloor_.GetBlock(UndermouseX, UndermouseY);
                     bool nothingUndermouse = true;
                     if (nxny != null && !rememberShoot_)
                         // currentFloor_.IsExplored(aa))
                     {
-                        Block a = currentFloor_.GetBlock(nx, ny);
+                        Block a = currentFloor_.GetBlock(UndermouseX, UndermouseY);
                         if (a != null) {
                             BlockData b = BlockDataBase.Data[a.Id];
                             string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
@@ -111,14 +111,14 @@ namespace jarg {
                                 s += " id" + a.Id + " tex" + b.MTex;
                             }
 
-                            if (currentFloor_.IsCreatureMeele(nx, ny, player_)) {
+                            if (currentFloor_.IsCreatureMeele(UndermouseX, UndermouseY, player_)) {
                                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
                                     BlockData undermouseblock = BlockDataBase.Data[a.Id];
                                     if(a.StoredItems != null && a.StoredItems.Count > 0) {
                                         WindowContainer.Visible = true;
                                         WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
                                         UpdateContainerContainer(a.StoredItems);
-                                        ContainerOn = new Vector2(nx, ny);
+                                        ContainerOn = new Vector2(UndermouseX, UndermouseY);
                                     } else
                                     switch (undermouseblock.SmartAction) {
                                         case SmartAction.ActionSee:
@@ -130,10 +130,10 @@ namespace jarg {
                                             WindowContainer.Visible = true;
                                             WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
                                             UpdateContainerContainer(a.StoredItems);
-                                            ContainerOn = new Vector2(nx, ny);
+                                            ContainerOn = new Vector2(UndermouseX, UndermouseY);
                                             break;
                                         case SmartAction.ActionOpenClose:
-                                            currentFloor_.OpenCloseDoor(nx, ny);
+                                            currentFloor_.OpenCloseDoor(UndermouseX, UndermouseY);
                                             break;
                                     }
                                 }

@@ -41,7 +41,6 @@ namespace jarg {
         private Action<GameTime> updateAction_ = x => { };
         private WindowsMediaPlayer wmPs_;
         private Texture2D bag_;
-        private Vector2 camera_;
         private Texture2D caracter;
         private RenderTarget2D colorMapRenderTarget_;
         private GameLevel currentFloor_;
@@ -503,7 +502,7 @@ namespace jarg {
             }
             SendTick++;
 
-            currentFloor_.KillFarSectors(player_, gameTime, camera_);
+            currentFloor_.KillFarSectors(player_, gameTime);
             BulletSystem.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);
@@ -513,7 +512,7 @@ namespace jarg {
             ps_.Update(gameTime);
 
             PlayerSeeAngle =
-                (float) Math.Atan2(ms_.Y - player_.Position.Y + camera_.Y, ms_.X - player_.Position.X + camera_.X);
+                (float) -Math.Atan2(UndermouseX - player_.GetPositionInBlocks().X, UndermouseY - player_.GetPositionInBlocks().Y)+MathHelper.PiOver2;
 
             cam.LookAt = new Vector3(player_.Position.X/32f, player_.Position.Y/32f, 0);
 
@@ -591,6 +590,7 @@ namespace jarg {
 
             currentFloor_.RenderBlockMap(GraphicsDevice, cam, solidEffect);
 
+            BulletSystem.Draw();
             lineBatch_.Draw(cam);
 
             currentFloor_.SpriteBatchFeatures(cam, spriteBatch_, lineBatch_);
@@ -671,65 +671,6 @@ namespace jarg {
         }
 
         private Matrix ScaleAll2 = Matrix.CreateScale(1);
-        private Effect solidShadowEffect;
-
-        private void DrawCombinedMaps() {
-            lightEffect2_.Parameters["ambient"].SetValue(GlobalWorldLogic.GetCurrentSlen());
-            lightEffect2_.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
-
-            //light burst
-            lightEffect2_.Parameters["lightAmbient"].SetValue(1);
-            lightEffect2_.Parameters["ColorMap"].SetValue(colorMapRenderTarget_);
-            lightEffect2_.Parameters["ShadingMap"].SetValue(lightMapTexture_);
-
-            spriteBatch_.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, ScaleAll2);
-            foreach (EffectPass pass in lightEffect2_.CurrentTechnique.Passes) {
-                pass.Apply();
-                spriteBatch_.Draw(colorMapRenderTarget_, Vector2.Zero, Color.White);
-            }
-            spriteBatch_.End();
-        }
-
-        private Texture2D GenerateShadowMap() {
-            //GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.SetRenderTarget(lightMapRenderTarget_);
-            GraphicsDevice.Clear(Color.Black);
-            spriteBatch_.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-            spriteBatch_.Draw(fltex, (new Vector2(player_.Position.X,player_.Position.Y)  - camera_)/LightQ, null, Color.White, PlayerSeeAngle + MathHelper.PiOver2, new Vector2((fltex.Width / 2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
-            if (client_ != null) {
-                foreach (var otherclient in client_.otherclients) {
-                    spriteBatch_.Draw(fltex, (new Vector2(otherclient.Value.x, otherclient.Value.y) - camera_)/LightQ,
-                                      null, Color.White, otherclient.Value.angle + MathHelper.PiOver2,
-                                      new Vector2((fltex.Width/2f), fltex.Height), 1f/LightQ, SpriteEffects.None, 0);
-                }
-            }
-            //currentFloor_.DrawAmbient(camera_, LightQ);
-            spriteBatch_.End();
-
-            GraphicsDevice.BlendState = BlendState.Additive;
-            //GraphicsDevice.BlendState = new BlendState{AlphaSourceBlend = Blend.Zero, AlphaDestinationBlend = Blend.One};
-
-            // For every light inside the current scene, you can optimize this
-            // list to only draw the lights that are visible a.t.m.
-            foreach (Light light in lightCollection_) {
-                lightEffect1_.CurrentTechnique = lightEffect1_.Techniques["DeferredPointLight"];
-                lightEffect1_.Parameters["lightStrength"].SetValue(light.Power);
-                lightEffect1_.Parameters["lightPosition"].SetValue(light.GetWorldPosition(camera_, LightQ));
-                lightEffect1_.Parameters["lightColor"].SetValue(light.Color.ToVector3());
-                lightEffect1_.Parameters["lightRadius"].SetValue(light.LightRadius/LightQ);
-
-                lightEffect1_.Parameters["screenWidth"].SetValue(GraphicsDevice.Viewport.Width);
-                lightEffect1_.Parameters["screenHeight"].SetValue(GraphicsDevice.Viewport.Height);
-
-                foreach (EffectPass pass in lightEffect1_.CurrentTechnique.Passes) {
-                    pass.Apply();
-
-                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices_, 0, 2);
-                }
-            }
-
-            return lightMapRenderTarget_;
-        }
 
         private VertexPositionNormalTexture[] qube;
         private void CreateQube() {
@@ -861,7 +802,9 @@ namespace jarg {
             qube = b.ToArray();
         }
 
-        private int nx, ny;
+        private int UndermouseX, UndermouseY;
+        private Effect solidShadowEffect;
+
         private void DebugInfoDraw() {
             string ss =
                 string.Format(
@@ -874,7 +817,7 @@ namespace jarg {
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 
 
-            spriteBatch_.DrawString(font1_, string.Format("       {0} {1}", nx, ny), new Vector2(ms_.X, ms_.Y),
+            spriteBatch_.DrawString(font1_, string.Format("       {0} {1}", UndermouseX, UndermouseY), new Vector2(ms_.X, ms_.Y),
                                     Color.White);
 
             spriteBatch_.End();

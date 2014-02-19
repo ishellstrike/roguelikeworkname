@@ -54,8 +54,8 @@ namespace rglikeworknamelib.Dungeon.Level {
                         if (drop.Prob >= thr)
                         {
                             var item = ItemFactory.GetInstance(drop.Ids[rnd.Next(drop.Ids.Count)],
-                                rnd.Next(drop.Max - drop.Min) +
-                                drop.Min);
+                                rnd.Next(Math.Abs(drop.Max - drop.Min)) +
+                                Math.Min(drop.Min, drop.Max));
                             if (item != null)
                             {
                                 block.StoredItems.Add(item);
