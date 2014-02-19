@@ -203,6 +203,7 @@ namespace jarg {
             if(height == 0 || width == 0) {return;}
             graphics_.PreferredBackBufferHeight = height;
             graphics_.PreferredBackBufferWidth = width;
+            graphics_.SynchronizeWithVerticalRetrace = Settings.FpsLimit;
             graphics_.ApplyChanges();
             Tuple<int, bool>[] t = ws_.GetVisibleList();
             ws_.Clear();

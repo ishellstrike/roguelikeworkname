@@ -38,6 +38,7 @@ namespace jarg {
         public void UpdateProjection() {
             m_basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
                 0, Settings.Resolution.X, Settings.Resolution.Y, 0, 0, 1);
+            m_basicEffect.View = Matrix.Identity;
         }
 
         #endregion

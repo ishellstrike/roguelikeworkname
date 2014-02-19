@@ -1,1 +1,1 @@
-namespace rglikeworknamelib{public static class AutoVersion{public static string Version = "v0.1.19-indev-128-gfe94e99"; public static string Time = "1392844819";}}
+namespace rglikeworknamelib{public static class AutoVersion{public static string Version = "v0.1.19-indev-129-g78fc1d6"; public static string Time = "1392847048";}}

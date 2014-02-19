@@ -975,11 +975,13 @@ namespace jarg {
         }
 
         private void ButtonFramelimitOff_onPressed(object sender, EventArgs e) {
-            IsFixedTimeStep = false;
+            Settings.FpsLimit = false;
+            ResolutionChanging();
         }
 
         private void ButtonFramelimitOn_onPressed(object sender, EventArgs e) {
-            IsFixedTimeStep = true;
+            Settings.FpsLimit = true;
+            ResolutionChanging();
         }
 
         private void ButtonResolution19201024_onPressed(object sender, EventArgs e) {

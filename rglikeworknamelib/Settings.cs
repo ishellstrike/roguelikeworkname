@@ -47,6 +47,7 @@ namespace rglikeworknamelib {
 
         public static bool Server;
         public static bool Normalwalk = true;
+        public static bool FpsLimit;
 
         public static int GetFloorAtlasWidth() {
             return 10;
