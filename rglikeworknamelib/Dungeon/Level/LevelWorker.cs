@@ -237,7 +237,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 using (var stream = new GZipStream(fs, CompressionMode.Compress)) {
                     using (var sw = new StreamWriter(stream)) {
                         foreach (var str in onStore_) {
-                            sw.WriteLine(str.Value);
+                            sw.Write(str.Value);
                         }
                     }
                 }
@@ -292,7 +292,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                 {
                     if (block is Block)
                     {
-                        foreach (var item in (block as Block).StoredItems)
+                        foreach (var item in block.StoredItems)
                         {
                             if (!itemIdVocab.Contains(item.Id))
                             {
@@ -366,7 +366,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
                     stringBuilder.Append("~");
                     stringBuilder.Append(ms.Biom);
-                    stringBuilder.AppendLine();
                     stringBuilder.AppendLine();
                 }
                 catch (Exception e)
@@ -471,7 +470,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                         var t = str.Substring(0,str.IndexOf(','));
                         var tt = str.Substring(str.IndexOf(',') + 1, str.IndexOf('~') - str.IndexOf(',')-3);
                         var position = new Point(int.Parse(t), int.Parse(tt));
-                        temp.Add(position, str);
+                        temp.Add(position, "#"+str);
                     }
                     catch(Exception ex)
                     {
@@ -514,9 +513,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
 
                 var position = new Point(int.Parse(pos[0].Trim('#')), int.Parse(pos[1].Trim('\r').Trim('\n')));
-                var sector = new MapSector(gl, position.X, position.Y);
-
-                sector.Biom = (SectorBiom) Enum.Parse(typeof (SectorBiom), par[9]);
+                var sector = new MapSector(gl, position.X, position.Y) {
+                    Biom = (SectorBiom) Enum.Parse(typeof (SectorBiom), par[9])
+                };
 
                 var off = 0;
                 foreach (var s in blockIdList.Where(s => s != " ")) {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,14 +10,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using NLog.LayoutRenderers.Wrappers;
 using rglikeworknamelib;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Window;
 using EventLog = rglikeworknamelib.EventLog;
 using IGameComponent = rglikeworknamelib.Window.IGameComponent;
@@ -603,7 +600,7 @@ namespace jarg {
             ContainerInventoryItems =
                 new InteractiveListBox(
                     new Rectangle(10, 10, InventoryWindow.Locate.Width/2, InventoryWindow.Locate.Height - 40),
-                    InventoryWindow) {Draggable = true};
+                    InventoryWindow);
 
             InventoryMoreInfo = new LabelFixed(new Vector2(ContainerInventoryItems.GetPosition().X + 10, 40), "", 26,
                                                InventoryWindow);
@@ -716,7 +713,10 @@ namespace jarg {
         private JargClient client_;
         void ButtonConnect_OnPressed(object sender, EventArgs e) {
             if (client_ == null) {
-                string s = "some" + (char) Settings.rnd.Next(60, 70);
+                string s = "some";
+                for (int i = 0; i < 10; i++) {
+                    s += (char) Settings.rnd.Next('a', 'z' + 1);
+                }
                 client_ = new JargClient(s, levelWorker_, currentFloor_);
                 levelWorker_.client = client_;
                 levelWorker_.ServerGame = true;
