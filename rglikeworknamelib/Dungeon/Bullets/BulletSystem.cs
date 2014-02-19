@@ -89,7 +89,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                 //                  new Vector2(bulletAtlas_[bullet.Mtex].Width/2f,
                 //                              bulletAtlas_[bullet.Mtex].Height/2f), 1, SpriteEffects.None, 0);
 
-                lb.AddLine3d(new Vector3(bullet.Start.X/32f, bullet.Start.Y/32f, 0.1f), new Vector3(bullet.Pos.X/32f, bullet.Pos.Y/32f, 0.1f), Color.Yellow);
+                lb.AddLine3D(new Vector3(bullet.Start.X/32f, bullet.Start.Y/32f, 0.1f), new Vector3(bullet.Pos.X/32f, bullet.Pos.Y/32f, 0.1f), Color.Yellow);
 
                 //if (b) {
                 //    SpriteBatch3dBinded.DrawStringCenteredUppedProjected(spriteBatch_, cam, bullet.Pos);

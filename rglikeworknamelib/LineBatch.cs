@@ -29,8 +29,7 @@ namespace jarg {
             m_device = graphicsDevice;
             //m_vertexDeclaration = new Vert exDeclaration(graphicsDevice, );
 
-            m_basicEffect = new BasicEffect(graphicsDevice);
-            m_basicEffect.VertexColorEnabled = true;
+            m_basicEffect = new BasicEffect(graphicsDevice) {VertexColorEnabled = true};
 
             UpdateProjection();
         }
@@ -38,7 +37,6 @@ namespace jarg {
         public void UpdateProjection() {
             m_basicEffect.Projection = Matrix.CreateOrthographicOffCenter(
                 0, Settings.Resolution.X, Settings.Resolution.Y, 0, 0, 1);
-            m_basicEffect.View = Matrix.Identity;
         }
 
         #endregion
@@ -105,12 +103,12 @@ namespace jarg {
             m_vertices.Add(new VertexPositionColor(v4, color2));
         }
 
-        public void AddLine3d(Vector3 v, Vector3 v2, Color col) {
+        public void AddLine3D(Vector3 v, Vector3 v2, Color col) {
             threed_vertices.Add(new VertexPositionColor(v,col));
             threed_vertices.Add(new VertexPositionColor(v2,col));
         }
 
-        public void AddLine3d(Vector3 v, Vector3 v2, Color col, Color col2)
+        public void AddLine3D(Vector3 v, Vector3 v2, Color col, Color col2)
         {
             threed_vertices.Add(new VertexPositionColor(v, col));
             threed_vertices.Add(new VertexPositionColor(v2, col2));
@@ -119,12 +117,6 @@ namespace jarg {
         /// <summary>
         /// </summary>
         public void Draw(Camera cam) {
-            //m_device.VertexDeclaration = m_vertexDeclaration;
-
-
-            //m_basicEffect.Begin();
-            //m_basicEffect.CurrentTechnique.Passes[0].Begin();
-
             int primitiveCount = m_vertices.Count/3;
             int prim = threed_vertices.Count/2;
 
@@ -138,6 +130,7 @@ namespace jarg {
                 }
             }
 
+            var view = m_basicEffect.View;
             m_basicEffect.Projection = cam.ProjectionMatrix;
             m_basicEffect.View = cam.ViewMatrix;
             foreach (EffectPass pass in m_basicEffect.CurrentTechnique.Passes)
@@ -150,7 +143,7 @@ namespace jarg {
                                                 threed_vertices.ToArray(), 0, prim);
                 }
             }
-
+            m_basicEffect.View = view;
 
             m_vertices.Clear();
             threed_vertices.Clear();

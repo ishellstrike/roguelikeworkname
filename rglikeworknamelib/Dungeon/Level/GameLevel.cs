@@ -1298,7 +1298,7 @@ namespace rglikeworknamelib.Dungeon.Level
                 foreach (var sect in sectors_) {
                     foreach (var cre in sect.Value.Creatures) {
                         if (!cre.IsIddle) {
-                            lineBatch_.AddLine3d(cre.creatureWorld.Translation,
+                            lineBatch_.AddLine3D(cre.creatureWorld.Translation,
                                 new Vector3(cre.CurrentOrder.Point.X/32f, cre.CurrentOrder.Point.Y/32f, 0.1f),
                                 Color.YellowGreen);
                         }

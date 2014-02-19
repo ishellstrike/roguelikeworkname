@@ -592,7 +592,6 @@ namespace jarg {
             currentFloor_.RenderBlockMap(GraphicsDevice, cam, solidEffect);
 
             BulletSystem.Draw();
-            lineBatch_.Draw(cam);
 
             currentFloor_.SpriteBatchFeatures(cam, spriteBatch_, lineBatch_);
 
