@@ -885,7 +885,7 @@ namespace jarg {
             selectedCraft = null;
             CraftMoreInfo.Text = string.Empty;
 
-            foreach (var craftData in ItemDataBase.Craft) {
+            foreach (var craftData in ItemDataBase.Instance.Craft) {
                 var a = new LabelFixed(Vector2.Zero,  craftData.Name,
                                        CraftItems) { Tag = craftData };
                 a.OnLeftPressed += CraftItemsLabelOnLeftPressed;
@@ -1320,7 +1320,7 @@ namespace jarg {
         }
 
         private void AddInventoryItemString(Item item) {
-            Color col = item.Data.ItemScript != null ? Color.LightGoldenrodYellow : Color.LightGray;
+            Color col = item.GetActionList != null ? Color.LightGoldenrodYellow : Color.LightGray;
             var i = new ListBoxItem(item.ToString(), col, item);
             ContainerInventoryItems.Items.Add(i);
             i.OnMousePressed += PressInInventory;
@@ -1368,7 +1368,7 @@ namespace jarg {
             }
 
 
-            if (i.Data.ItemScript == null)
+            if (i.GetActionList == null)
             {
                 return;
             }
@@ -1377,11 +1377,11 @@ namespace jarg {
             {
                 InventoryDropDownContainer.Clear();
                 var itemDataBase = ItemDataBase.Instance;
-                foreach (var actionid in i.Data.ItemScript) {
+                foreach (var actionid in i.GetActionList) {
 
-                    var a = new LabelFixed(Vector2.Zero, itemDataBase.ItemScripts[actionid].Name,
+                    var a = new LabelFixed(Vector2.Zero, actionid.Name,
                         InventoryDropDownContainer);
-                    a.Tag = new Tuple<Item, ItemAction>(i, itemDataBase.ItemScripts[actionid]);
+                    a.Tag = new Tuple<Item, ItemAction>(i, actionid);
                     a.OnLeftPressed += AOnOnLeftPressed;
                 }
 
@@ -1649,7 +1649,7 @@ namespace jarg {
                     format = string.Format("{0} x{1}", tuple.Item2.Data.Name, tuple.Item2.Count);
                 }
 
-                Color col = tuple.Item2.Data.ItemScript != null ? Color.LightGoldenrodYellow : Color.LightGray;
+                Color col = tuple.Item2.GetActionList != null ? Color.LightGoldenrodYellow : Color.LightGray;
                 var lookl = new LabelFixed(Vector2.Zero, format, col, LookContainer);
                 lookl.Tag = tuple;
                 lookl.OnLeftPressed += lookl_OnLeftPressed;
@@ -1667,7 +1667,7 @@ namespace jarg {
             var t = (Tuple<Vector2, Item>)(((Label)sender).Tag);
             looklPos = t.Item1;
             foreach (var gameComponent in LookContainer.GetItems()) {
-                ((Label)gameComponent).Color = ((Tuple<Vector2, Item>)(((Label)gameComponent).Tag)).Item2.Data.ItemScript != null ? Color.LightGoldenrodYellow : Color.LightGray;
+                ((Label)gameComponent).Color = ((Tuple<Vector2, Item>)(((Label)gameComponent).Tag)).Item2.GetActionList != null ? Color.LightGoldenrodYellow : Color.LightGray;
             }
             ((Label) sender).Color = Color.LimeGreen;
         }

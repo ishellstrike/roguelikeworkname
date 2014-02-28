@@ -17,11 +17,9 @@ namespace rglikeworknamelib.Dungeon.Items
     {
         private static readonly Logger logger = LogManager.GetLogger("ItemDataBase");
 
-        private static Logger logger_ = LogManager.GetCurrentClassLogger();
-
         public Dictionary<string, ItemData> Data;
 
-        public static List<ItemCraftData> Craft;
+        public List<ItemCraftData> Craft;
         private static ItemDataBase instance_;
         public Dictionary<string,ItemAction> ItemScripts;
 
@@ -32,11 +30,18 @@ namespace rglikeworknamelib.Dungeon.Items
         {
             //texatlas = texatlas_;
             Data = UniversalParser.JsonDictionaryDataLoader<ItemData>(Settings.GetItemDataDirectory());
+            foreach (var itemData in Data) {
+                if (itemData.Value.Type != null) {
+                    itemData.Value.TypeParsed = Type.GetType(typeof (ItemDataBase).Namespace + "." + itemData.Value.Type);
+                }
+                else {
+                    itemData.Value.TypeParsed = typeof (Item);
+                }
+            }
             ItemScripts = new Dictionary<string, ItemAction>();
             Craft = UniversalParser.JsonListDataLoader<ItemCraftData>(Settings.GetCraftsDirectory());
 
             ItemScripts.Add("nothing", new ItemAction(Nothing, "Ошибка"));
-            ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));
             ItemScripts.Add("dissass", new ItemAction(Disass, "Разобрать радио"));
             ItemScripts.Add("turnradio", new ItemAction(RadioOnOff, "Включить радио"));
             ItemScripts.Add("openbottle", new ItemAction(OpenBottle, "Открыть бутылку"));
@@ -59,11 +64,6 @@ namespace rglikeworknamelib.Dungeon.Items
         public string GetItemDescription(Item i)
         {
             return i.Data.Description;
-        }
-
-        public static void ScriptExecute(GameTime gt, MapSector ms_, Player hero, Creature target)
-        {
-            //ItemScripts[target.Data.BehaviorScript].BehaviorScript(gt, ms_, hero, target, Settings.rnd);
         }
 
         public List<KeyValuePair<string, ItemData>> GetBySpawnGroup(string group)
@@ -137,19 +137,7 @@ namespace rglikeworknamelib.Dungeon.Items
 
         #region ItemScripts
 
-        public void OpenCan(Player p, Item target)
-        {
-            if (p.Inventory.ContainsId("knife") || p.Inventory.ContainsId("otvertka"))
-            {
-                p.Inventory.TryRemoveItem(target.Id, 1);
-                p.Inventory.AddItem(ItemFactory.GetInstance(Data[target.Id].AfteruseId, 1));
-            }
-            else
-            {
-                EventLog.Add("Чтобы открывать банки вам нужен нож или отвертка", Color.Yellow,
-                    LogEntityType.NoAmmoWeapon);
-            }
-        }
+        
 
         private void Disass(Player p, Item target)
         {
@@ -180,51 +168,7 @@ namespace rglikeworknamelib.Dungeon.Items
             p.Inventory.AddItem(ItemFactory.GetInstance(Data[target.Id].AfteruseId, 1));
         }
 
-        public void DestroyCloth(Player p, Item target)
-        {
-            int weight = target.Data.Weight;
-            if (weight > 10000)
-            {
-                EventLog.Add("Предмет слишком большой", Color.Yellow, LogEntityType.NoAmmoWeapon);
-                return;
-            }
-            if (weight < 100)
-            {
-                EventLog.Add("Предмет слишком маленький", Color.Yellow, LogEntityType.NoAmmoWeapon);
-                return;
-            }
-            p.Inventory.TryRemoveItem(target.Id, 1);
-            int smallparts = 0;
-            int bigparts = 0;
-            Random rnd = Settings.rnd;
-            while (weight >= 50)
-            {
-                int part = rnd.Next(2);
-                switch (part)
-                {
-                    case 0:
-                        weight -= 50;
-                        p.Inventory.AddItem(ItemFactory.GetInstance("brcloth", 1));
-                        smallparts++;
-                        break;
-                    case 1:
-                        weight -= 100;
-                        p.Inventory.AddItem(ItemFactory.GetInstance("partcloth", 1));
-                        bigparts++;
-                        break;
-                }
-            }
-            string mess = string.Format("Вы успешно разорвали {0} на", target.Data.Name);
-            if (bigparts > 0)
-            {
-                mess += string.Format(" {0} {1}", bigparts, Data["brcloth"].Name);
-            }
-            if (smallparts > 0)
-            {
-                mess += string.Format(" {0} {1}", smallparts, Data["partcloth"].Name);
-            }
-            EventLog.Add(mess, Color.Yellow, LogEntityType.NoAmmoWeapon);
-        }
+        
 
         public void Smoke(Player p, Item target)
         {

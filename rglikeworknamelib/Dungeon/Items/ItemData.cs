@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace rglikeworknamelib.Dungeon.Items {
@@ -43,8 +44,8 @@ namespace rglikeworknamelib.Dungeon.Items {
         
         public int NutH2O;
 
-        
-        public string[] ItemScript;
+        public string Type;
+        public Type TypeParsed;
 
         public ItemType SortType;
         

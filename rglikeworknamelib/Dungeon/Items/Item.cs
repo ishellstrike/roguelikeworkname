@@ -44,6 +44,11 @@ namespace rglikeworknamelib.Dungeon.Items {
                        : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count);
         }
 
+        public virtual ItemAction[] GetActionList
+        {
+            get { return null; }
+        }
+
         public static void Log(string s, params object[] p)
         {
             EventLog.Add(string.Format(s, p), Color.Yellow, LogEntityType.NoAmmoWeapon);

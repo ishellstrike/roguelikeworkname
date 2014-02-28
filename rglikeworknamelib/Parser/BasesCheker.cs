@@ -34,18 +34,6 @@ namespace rglikeworknamelib.Parser
                         errorIDB++;
                     }
                 }
-                if (data.Value.ItemScript != null)
-                {
-                    for (int i = 0; i < data.Value.ItemScript.Length; i++) {
-                        var script = data.Value.ItemScript[i];
-                        if (!ItemDataBase.Instance.ItemScripts.ContainsKey(script)) {
-                            Logger.Error(string.Format("Item script \"{0}\" not found", script));
-                            data.Value.ItemScript[i] = "nothing";
-                            errorIDB++;
-                        }
-                        
-                    }
-                }
             }
 
             int errorFDB = 0;
@@ -82,8 +70,9 @@ namespace rglikeworknamelib.Parser
             }
 
             int errorCrDB = 0;
-            for (int i = 0; i < ItemDataBase.Craft.Count; i++) {
-                var craftData = ItemDataBase.Craft[i];
+            ItemDataBase itemDataBase = ItemDataBase.Instance;
+            for (int i = 0; i < itemDataBase.Craft.Count; i++) {
+                var craftData = itemDataBase.Craft[i];
                 foreach (var s in craftData.Input)
                 {
                     for (int j = 0; j < s.Alters.Count; j++)
@@ -112,7 +101,7 @@ namespace rglikeworknamelib.Parser
 
                 if (craftData.Input.Any(x => x.Alters.Count == 0) || craftData.Output.Any(x => x.Alters.Count == 0))
                 {
-                    ItemDataBase.Craft.Remove(craftData);
+                    itemDataBase.Craft.Remove(craftData);
                 }
             }
 
