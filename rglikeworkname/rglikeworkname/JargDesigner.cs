@@ -1341,7 +1341,6 @@ namespace jarg {
             foreach (Item item in a) {
                 var i = new ListBoxItem(item.ToString(), Color.White, cou);
                 ContainerContainer.Items.Add(i);
-                i.Progress = (double)item.DoubleTag;
                 i.OnMousePressed += PressInContainer;
                 cou++;
             }
@@ -1544,7 +1543,11 @@ namespace jarg {
                 }
 
                 if (WindowContainer.Visible) {
-                    UpdateContainerContainer(inContainer_);
+                    int i = 0;
+                    foreach (var item in inContainer_) {
+                        ContainerContainer.Items[i].Progress = item.DoubleTag;
+                        i++;
+                    }
                 }
             }
             if (LookWindow.Visible && looklPos != null) {
