@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -107,6 +108,21 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public bool GeomReady;
+
+        private List<Block> activeBlocks; 
+        public List<Block> ActiveBlocks {
+            get { return GeomReady ? activeBlocks ?? (activeBlocks = GetActive()) : (activeBlocks = GetActive()); }
+        }
+
+        private List<Block> GetActive() {
+            var a = new List<Block>();
+            foreach (var block in Blocks) {
+                if (block.Data.BlockScript != null) {
+                    a.Add(block);
+                }
+            }
+            return a;
+        }
 
         public void ResetLightingSources() {
             Lights.Clear();

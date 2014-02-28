@@ -504,6 +504,7 @@ namespace jarg {
             SendTick++;
 
             currentFloor_.KillFarSectors(player_, gameTime);
+            currentFloor_.UpdateBlocks(gameTime);
             BulletSystem.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);

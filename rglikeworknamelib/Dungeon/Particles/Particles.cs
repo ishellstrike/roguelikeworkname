@@ -66,6 +66,13 @@ namespace rglikeworknamelib.Dungeon.Particles {
                                         texn, TimeSpan.FromMilliseconds(lifeInSeconds*GetRandorization(rndPercent))));
         }
 
+        public static void CreateParticleWithRandomization(float x, float y, float vel, float an, float asp, int texn,
+                                                           int lifeInSeconds, int rndPercent)
+        {
+            particles_.Add(new Particle(new Vector2(x,y), vel * GetRandorization(rndPercent), an, asp * GetRandorization(rndPercent),
+                                        texn, TimeSpan.FromMilliseconds(lifeInSeconds * GetRandorization(rndPercent))));
+        }
+
         public void Draw(GameTime gameTime, Vector2 camera) {
             for (int i = 0; i < particles_.Count; i++) {
                 Particle particle = particles_[i];

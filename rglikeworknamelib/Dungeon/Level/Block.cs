@@ -8,6 +8,8 @@ namespace rglikeworknamelib.Dungeon.Level {
     public class Block {
         private string id_;
 
+        public object ScriptTag;
+
         public List<Item> StoredItems = new List<Item>();
 
         public string Id {

@@ -808,8 +808,13 @@ namespace rglikeworknamelib.Dungeon.Level
         /// </summary>
         /// <param name="gt"></param>
         /// <param name="camera"></param>
-        public void UpdateBlocks(GameTime gt, Vector2 camera)
+        public void UpdateBlocks(GameTime gt)
         {
+            foreach (var mapSector in sectors_) {
+                foreach (var activeBlock in mapSector.Value.ActiveBlocks) {
+                    BlockDataBase.BlockScripts[activeBlock.Data.BlockScript].Action.BlockScript(gt, activeBlock, Settings.rnd);
+                }
+            }
         }
 
         private void AddShadowpointForBlock(Vector2 camera, Creature per, float xpos, float ypos, int wide)

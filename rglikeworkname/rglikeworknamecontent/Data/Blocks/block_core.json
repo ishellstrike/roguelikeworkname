@@ -338,6 +338,7 @@
     "IsTransparent":true,
     "MTex":"chair1",
     "Flame":true,
+	"BlockScript":"bs_firetest",
   },
   "fence_wood":{
     "Name":"Деревянная изгородь",
@@ -406,11 +407,16 @@
 		}
 	],
   },
+  "plita":{
+  "Name":"Газовая плита",
+  "MTex":"plita",
+  "Flame":true,
+  },
   "liq_polka":{
     "Name":"Стелаж с алкоголем",
     "IsTransparent":true,
     "MTex":"liqpolka",
-	"A;terMtex":["liqpolka1","liqpolka2","liqpolka3"],
+	"AterMtex":["liqpolka1","liqpolka2","liqpolka3"],
     "Flame":true,
 	"ItemSpawn": [
 		{
