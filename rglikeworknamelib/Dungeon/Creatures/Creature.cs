@@ -218,7 +218,8 @@ namespace rglikeworknamelib.Dungeon.Creatures
             if ((!Skipp || !ms_.Ready))
             {
                 sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
-                CreatureDataBase.Scripts[Data.BehaviorScript].BehaviorScript(gt, ms_, hero, this, Settings.rnd);
+                //TODO
+                //CreatureDataBase.Scripts[Data.BehaviorScript].BehaviorScript(gt, ms_, hero, this, Settings.rnd);
 
 
                 OrdersMaker(ms_, gt);

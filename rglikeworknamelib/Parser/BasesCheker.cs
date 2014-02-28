@@ -40,7 +40,7 @@ namespace rglikeworknamelib.Parser
                         var script = data.Value.ItemScript[i];
                         if (!ItemDataBase.Instance.ItemScripts.ContainsKey(script)) {
                             Logger.Error(string.Format("Item script \"{0}\" not found", script));
-                            data.Value.ItemScript[i] = "is_nothing";
+                            data.Value.ItemScript[i] = "nothing";
                             errorIDB++;
                         }
                         
@@ -67,17 +67,6 @@ namespace rglikeworknamelib.Parser
                             errorFDB++;
                         }
                     }
-                }
-            }
-
-            int errorCScript = 0;
-            foreach (var crea in CreatureDataBase.Data)
-            {
-                if (crea.Value.BehaviorScript != null && !CreatureDataBase.Scripts.ContainsKey(crea.Value.BehaviorScript))
-                {
-                    Logger.Error(string.Format("Behavior script \"{0}\" not found", crea.Value.BehaviorScript));
-                    crea.Value.BehaviorScript = "bs_nothing";
-                    errorCScript++;
                 }
             }
 
@@ -127,7 +116,7 @@ namespace rglikeworknamelib.Parser
                 }
             }
 
-            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in ItemCraftDataBase\n     {1} in ItemDataBase     {6} in Creature behavior scripts\n\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB, errorCScript));
+            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in ItemCraftDataBase\n     {1} in ItemDataBase\n\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB));
         }
 
         public static int ErrorBdb()

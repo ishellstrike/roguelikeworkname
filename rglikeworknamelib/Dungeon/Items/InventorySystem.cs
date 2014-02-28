@@ -3,7 +3,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using IronPython.Modules;
 using Microsoft.Xna.Framework;
 using jarg;
 using rglikeworknamelib.Dungeon.Creatures;

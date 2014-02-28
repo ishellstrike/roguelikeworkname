@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using IronPython.Hosting;
 using jarg;
-using Microsoft.Scripting.Hosting;
 using Microsoft.Xna.Framework;
 using NLog;
 using rglikeworknamelib.Dungeon.Buffs;
@@ -23,12 +19,11 @@ namespace rglikeworknamelib.Dungeon.Items
 
         private static Logger logger_ = LogManager.GetCurrentClassLogger();
 
-        private static volatile ItemDataBase instance_;
-        private readonly ScriptRuntime ipy = Python.CreateRuntime();
         public Dictionary<string, ItemData> Data;
-        public Dictionary<string, ItemAction> ItemScripts;
 
         public static List<ItemCraftData> Craft;
+        private static ItemDataBase instance_;
+        public Dictionary<string,ItemAction> ItemScripts;
 
         /// <summary>
         ///     WARNING! Also loading all data from standart patch
@@ -37,75 +32,20 @@ namespace rglikeworknamelib.Dungeon.Items
         {
             //texatlas = texatlas_;
             Data = UniversalParser.JsonDictionaryDataLoader<ItemData>(Settings.GetItemDataDirectory());
-
+            ItemScripts = new Dictionary<string, ItemAction>();
             Craft = UniversalParser.JsonListDataLoader<ItemCraftData>(Settings.GetCraftsDirectory());
 
-            Settings.NeedToShowInfoWindow = true;
-            Settings.NTS1 = "Item assembly loading";
+            ItemScripts.Add("nothing", new ItemAction(Nothing, "Ошибка"));
+            ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));
+            ItemScripts.Add("dissass", new ItemAction(Disass, "Разобрать радио"));
+            ItemScripts.Add("turnradio", new ItemAction(RadioOnOff, "Включить радио"));
+            ItemScripts.Add("openbottle", new ItemAction(OpenBottle, "Открыть бутылку"));
+            ItemScripts.Add("destroycloth", new ItemAction(DestroyCloth, "Разорать на тряпки"));
+            ItemScripts.Add("smoke", new ItemAction(Smoke, "Выкурить сигарету"));
+        }
 
-            ipy.LoadAssembly(Assembly.GetAssembly(typeof (Item)));
-
-            Settings.NeedToShowInfoWindow = true;
-            Settings.NTS1 = "Item base script loading";
-
-            dynamic isNothing = ipy.UseFile(Settings.GetItemDataDirectory() + "\\is_nothing.py");
-
-            string[] files = Directory.GetFiles(Settings.GetItemDataDirectory(), "*.py");
-            ItemScripts = new Dictionary<string, ItemAction>();
-            int i = 0;
-            foreach (string f in files)
-            {
-                string name = Path.GetFileNameWithoutExtension(f);
-                Settings.NeedToShowInfoWindow = true;
-                Settings.NTS1 = "IScripts: ";
-                Settings.NTS2 = string.Format("{0}/{1} ({2})", i + 1, files.Length, name);
-                i++;
-                dynamic temp;
-                string disc = string.Empty;
-                try
-                {
-                    temp = ipy.UseFile(f);
-                }
-                catch (Exception ex)
-                {
-                    if (name != null) {
-                        ItemScripts.Add(name, new ItemAction(isNothing, "ошибка"));
-                    }
-                    logger.Error(ex);
-#if DEBUG
-                    throw;
-#else
-                    continue;
-#endif
-                }
-                var ia = new ItemAction(temp, disc);
-                string ss;
-                try {
-                    ss = (string) temp.Name();
-                } catch (Exception ex) {
-                    ia.Name = "error";
-                    ItemScripts.Add(name, ia);
-#if DEBUG
-                    throw;
-#else
-                    continue;
-#endif
-                }
-
-                ia.Name = ss;
-                ItemScripts.Add(name, ia);
-                
-            }
-
-            Settings.NTS2 = string.Empty;
-            Settings.NeedToShowInfoWindow = false;
-
-            //ItemScripts.Add("opencan", new ItemAction(OpenCan, "Открыть банку"));
-            //ItemScripts.Add("disass", new ItemAction(Disass, "Разобрать радио"));
-            //ItemScripts.Add("turnradio", new ItemAction(RadioOnOff, "Включить радио"));
-            //ItemScripts.Add("openbottle", new ItemAction(OpenBottle, "Открыть бутылку"));
-            //ItemScripts.Add("destroycloth", new ItemAction(DestroyCloth, "Разорать на тряпки"));
-            //ItemScripts.Add("smoke", new ItemAction(Smoke, "Выкурить сигарету"));
+        private void Nothing(Player arg1, Item arg2) {
+            
         }
 
         /// <summary>
