@@ -45,7 +45,6 @@ namespace rglikeworknamelib.Dungeon.Items
             ItemScripts.Add("dissass", new ItemAction(Disass, "Разобрать радио"));
             ItemScripts.Add("turnradio", new ItemAction(RadioOnOff, "Включить радио"));
             ItemScripts.Add("openbottle", new ItemAction(OpenBottle, "Открыть бутылку"));
-            ItemScripts.Add("destroycloth", new ItemAction(DestroyCloth, "Разорать на тряпки"));
             ItemScripts.Add("smoke", new ItemAction(Smoke, "Выкурить сигарету"));
         }
 

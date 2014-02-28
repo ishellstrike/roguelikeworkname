@@ -37,6 +37,16 @@ namespace rglikeworknamelib.Dungeon.Level {
 
             Data = UniversalParser.JsonDictionaryDataLoader<BlockData>(Settings.GetObjectDataDirectory());
 
+            foreach (var blockData in Data) {
+                if (blockData.Value.Type != null) {
+                    blockData.Value.TypeParsed =
+                        Type.GetType(typeof (BlockDataBase).Namespace + "." + blockData.Value.Type);
+                }
+                else {
+                    blockData.Value.TypeParsed = typeof (Block);
+                }
+            }
+
             foreach (var pair in Data.Where(pair => pair.Value.ItemSpawn != null)) {
                 Storages.Add(pair.Key, pair.Value);
             }

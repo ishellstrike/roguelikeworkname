@@ -9,6 +9,7 @@ namespace rglikeworknamelib.Window
     public class ListBoxItem {
         public string Text;
         public object Tag;
+        public double Progress;
         public event EventHandler<ListBoxItemPressEventArgs> OnMousePressed;
         public Color Color = Color.White;
 
@@ -129,15 +130,21 @@ namespace rglikeworknamelib.Window
                     break;
                 }
                 if (item != Dragged || !Draggable) {
+                    Vector2 tp = p + new Vector2(10, bottom);
+                    string txt = Items[item].Text;
                     if (aimed == item) {
-                        var tp = p + new Vector2(10, bottom);
-                        var txt = Items[item].Text;
                         var c = new Rectangle((int) tp.X - 1, (int) tp.Y - 1, txt.Length*textW + 2, textH + 2);
                         DrawBox(sb, c, 1);
                         sb.DrawString(font1_, txt, tp, Items[item].Color);
                     }
                     else {
                         sb.DrawString(font1_, Items[item].Text, p + new Vector2(10, bottom), Items[item].Color);
+                    }
+
+                    if (Items[item].Progress > 0) {
+                        var c2 = new Rectangle((int) tp.X - 1, (int) tp.Y - 1,
+                            (int) ((txt.Length*textW + 2)*((Items[item].Progress > 100) ? 1 : Items[item].Progress/100.0)),textH + 2);
+                        sb.Draw(whitepixel_, c2, new Color(0, 0.1f, 0, 0.5f));
                     }
                 }
 

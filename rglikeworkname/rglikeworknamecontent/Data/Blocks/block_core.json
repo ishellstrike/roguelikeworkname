@@ -62,7 +62,8 @@
 			"Prob":25, 
 			"Repeat":20
 		},
-	]
+	],
+	"Type":"BlockFurnance",
   },
   "stelaj_weapon":{
     "Name":"Оруженый стелаж",

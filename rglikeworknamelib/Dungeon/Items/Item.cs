@@ -16,7 +16,8 @@ namespace rglikeworknamelib.Dungeon.Items {
             set { id_ = value; OnLoad(); }
         }
 
-        public int Uid;
+        public double DoubleTag;
+
         [NonSerialized]internal ItemData data_;
         private string id_;
 
@@ -53,5 +54,8 @@ namespace rglikeworknamelib.Dungeon.Items {
         {
             EventLog.Add(string.Format(s, p), Color.Yellow, LogEntityType.NoAmmoWeapon);
         }
+    }
+
+    class ItemImpl : Item {
     }
 }

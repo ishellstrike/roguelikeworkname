@@ -118,6 +118,7 @@
     <Compile Include="Dungeon\Level\BlockData.cs" />
     <Compile Include="Dungeon\Level\BlockDataBase.cs" />
     <Compile Include="Dungeon\Level\BlockFactory.cs" />
+    <Compile Include="Dungeon\Level\BlockFurnance.cs" />
     <Compile Include="Dungeon\Level\Floor.cs" />
     <Compile Include="Dungeon\Level\FloorData.cs" />
     <Compile Include="Dungeon\Level\FloorDataBase.cs" />

@@ -117,7 +117,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         private List<Block> GetActive() {
             var a = new List<Block>();
             foreach (var block in Blocks) {
-                if (block.Data.BlockScript != null) {
+                if (block.Data.Type != null) {
                     a.Add(block);
                 }
             }

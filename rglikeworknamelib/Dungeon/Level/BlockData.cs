@@ -16,7 +16,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         public Color MMCol;
         public string MTex;
         public string Name;
-        public string BlockScript;
+        public string Type;
+        public Type TypeParsed;
         public float Height = 1;
         public SmartAction SmartAction;
 

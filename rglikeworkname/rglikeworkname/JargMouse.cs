@@ -108,7 +108,7 @@ namespace jarg {
                             BlockData b = BlockDataBase.Data[a.Id];
                             string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
                             if (Settings.DebugInfo) {
-                                s += " id:" + a.Id + " tex:" + b.MTex + " s:" +b.BlockScript;
+                                s += " id:" + a.Id + " tex:" + b.MTex + " t:" +b.Type ?? string.Empty;
                             }
 
                             if (currentFloor_.IsCreatureMeele(UndermouseX, UndermouseY, player_)) {

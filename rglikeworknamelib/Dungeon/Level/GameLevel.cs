@@ -812,8 +812,7 @@ namespace rglikeworknamelib.Dungeon.Level
         {
             foreach (var mapSector in sectors_) {
                 foreach (var activeBlock in mapSector.Value.ActiveBlocks) {
-                    //TODO
-                   // BlockDataBase.BlockScripts[activeBlock.Data.BlockScript].Action.BlockScript(gt, activeBlock, Settings.rnd);
+                    activeBlock.Update(gt.ElapsedGameTime);
                 }
             }
         }

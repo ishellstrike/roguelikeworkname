@@ -1341,6 +1341,7 @@ namespace jarg {
             foreach (Item item in a) {
                 var i = new ListBoxItem(item.ToString(), Color.White, cou);
                 ContainerContainer.Items.Add(i);
+                i.Progress = (double)item.DoubleTag;
                 i.OnMousePressed += PressInContainer;
                 cou++;
             }
@@ -1540,6 +1541,10 @@ namespace jarg {
 
                 if (CaracterWindow.Visible) {
                     UpdateCaracterWindowItems(null, null);
+                }
+
+                if (WindowContainer.Visible) {
+                    UpdateContainerContainer(inContainer_);
                 }
             }
             if (LookWindow.Visible && looklPos != null) {
