@@ -1,8 +1,10 @@
+using System;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Items {
-    internal class ItemCan : Item {
+    [Serializable]
+    public class ItemCan : Item {
         private ItemAction[] actionlist_;
 
         public override ItemAction[] GetActionList

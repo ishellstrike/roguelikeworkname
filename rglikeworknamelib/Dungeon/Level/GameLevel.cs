@@ -808,11 +808,11 @@ namespace rglikeworknamelib.Dungeon.Level
         /// </summary>
         /// <param name="gt"></param>
         /// <param name="camera"></param>
-        public void UpdateBlocks(GameTime gt)
+        public void UpdateBlocks(GameTime gt, Player p)
         {
             foreach (var mapSector in sectors_) {
                 foreach (var activeBlock in mapSector.Value.ActiveBlocks) {
-                    activeBlock.Update(gt.ElapsedGameTime);
+                    activeBlock.Update(gt.ElapsedGameTime, mapSector.Value, p);
                 }
             }
         }

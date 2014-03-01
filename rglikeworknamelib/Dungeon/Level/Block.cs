@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Level {
@@ -48,7 +49,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public virtual void Update(TimeSpan ts)
+        public virtual void Update(TimeSpan ts, MapSector ms, Player p)
         {
         }
 

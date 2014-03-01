@@ -17,6 +17,7 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public double DoubleTag;
+        public ItemModifer Modifer = ItemModifer.Nothing;
 
         [NonSerialized]internal ItemData data_;
         private string id_;
@@ -40,9 +41,9 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public override string ToString() {
-            return Doses != 0
+            return ItemDataBase.Instance.ItemModifers[(int)Modifer].Name+ " " + (Doses != 0
                        ? string.Format("{0} ({1})", ItemDataBase.Instance.Data[Id].Name, Doses)
-                       : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count);
+                       : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count));
         }
 
         public virtual ItemAction[] GetActionList
@@ -54,8 +55,5 @@ namespace rglikeworknamelib.Dungeon.Items {
         {
             EventLog.Add(string.Format(s, p), Color.Yellow, LogEntityType.NoAmmoWeapon);
         }
-    }
-
-    class ItemImpl : Item {
     }
 }

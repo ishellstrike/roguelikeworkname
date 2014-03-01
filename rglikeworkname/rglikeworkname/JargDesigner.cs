@@ -571,7 +571,7 @@ namespace jarg {
 
             for (int i = 0; i < EventLog.log.Count; i++) {
                 var logEntity = EventLog.log[i];
-                new LabelFixed(Vector2.Zero, logEntity.message, logEntity.col, BigLogContainer);
+                new LabelFixed(Vector2.Zero, logEntity.ToString(), logEntity.col, BigLogContainer);
             }
             BigLogContainer.ScrollBottom();
         }
@@ -1202,7 +1202,7 @@ namespace jarg {
             for (int j = 0; j < EventLog.log.Count; j++)
             {
                 LogEntity ss = EventLog.log[j];
-                ContainerEventLog.Items.Add(new ListBoxItem(ss.message, ss.col));
+                ContainerEventLog.Items.Add(new ListBoxItem(ss.ToString(), ss.col));
             }
             ContainerEventLog.ScrollBottom();
         }
@@ -1342,6 +1342,7 @@ namespace jarg {
                 var i = new ListBoxItem(item.ToString(), Color.White, cou);
                 ContainerContainer.Items.Add(i);
                 i.OnMousePressed += PressInContainer;
+                i.Progress = item.DoubleTag;
                 cou++;
             }
         }
@@ -1376,11 +1377,9 @@ namespace jarg {
             if (e.Ms.RightButton == ButtonState.Pressed)
             {
                 InventoryDropDownContainer.Clear();
-                var itemDataBase = ItemDataBase.Instance;
                 foreach (var actionid in i.GetActionList) {
 
-                    var a = new LabelFixed(Vector2.Zero, actionid.Name,
-                        InventoryDropDownContainer);
+                    var a = new LabelFixed(Vector2.Zero, actionid.Name, InventoryDropDownContainer);
                     a.Tag = new Tuple<Item, ItemAction>(i, actionid);
                     a.OnLeftPressed += AOnOnLeftPressed;
                 }
@@ -1543,11 +1542,7 @@ namespace jarg {
                 }
 
                 if (WindowContainer.Visible) {
-                    int i = 0;
-                    foreach (var item in inContainer_) {
-                        ContainerContainer.Items[i].Progress = item.DoubleTag;
-                        i++;
-                    }
+                    UpdateContainerContainer(inContainer_);
                 }
             }
             if (LookWindow.Visible && looklPos != null) {

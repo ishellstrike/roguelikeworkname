@@ -3,7 +3,8 @@ using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Items {
-    internal class ItemCloth : Item
+    [Serializable]
+    public class ItemCloth : Item
     {
         private ItemAction[] actionlist_;
 

@@ -21,7 +21,7 @@ namespace rglikeworknamelib.Dungeon.Items
 
         public List<ItemCraftData> Craft;
         private static ItemDataBase instance_;
-        public Dictionary<string,ItemAction> ItemScripts;
+        public List<ItemModiferData> ItemModifers; 
 
         /// <summary>
         ///     WARNING! Also loading all data from standart patch
@@ -38,18 +38,14 @@ namespace rglikeworknamelib.Dungeon.Items
                     itemData.Value.TypeParsed = typeof (Item);
                 }
             }
-            ItemScripts = new Dictionary<string, ItemAction>();
             Craft = UniversalParser.JsonListDataLoader<ItemCraftData>(Settings.GetCraftsDirectory());
 
-            ItemScripts.Add("nothing", new ItemAction(Nothing, "Ошибка"));
-            ItemScripts.Add("dissass", new ItemAction(Disass, "Разобрать радио"));
-            ItemScripts.Add("turnradio", new ItemAction(RadioOnOff, "Включить радио"));
-            ItemScripts.Add("openbottle", new ItemAction(OpenBottle, "Открыть бутылку"));
-            ItemScripts.Add("smoke", new ItemAction(Smoke, "Выкурить сигарету"));
-        }
-
-        private void Nothing(Player arg1, Item arg2) {
-            
+            ItemModifers = new List<ItemModiferData>();
+            ItemModifers.Add(new ItemModiferData { Name = string.Empty });
+            ItemModifers.Add(new ItemModiferData { Name = "Разогретый" });
+            ItemModifers.Add(new ItemModiferData { Name = "Приготовленный" });
+            ItemModifers.Add(new ItemModiferData { Name = "Пережареный" });
+            ItemModifers.Add(new ItemModiferData { Name = "Обуглившийся" });
         }
 
         /// <summary>
@@ -136,65 +132,26 @@ namespace rglikeworknamelib.Dungeon.Items
 
         #region ItemScripts
 
-        
-
-        private void Disass(Player p, Item target)
-        {
-            if (p.Inventory.ContainsId("otvertka"))
-            {
-                p.Inventory.TryRemoveItem(target.Id, 1);
-                p.Inventory.AddItem(ItemFactory.GetInstance("chipset", 1));
-                p.Inventory.AddItem(ItemFactory.GetInstance("batery", 1));
-                p.Inventory.AddItem(ItemFactory.GetInstance("smallvint", Settings.rnd.Next(5) + 10));
-
-                EventLog.Add(string.Format("Вы успешно разбираете {0}", target.Data.Name), Color.Yellow,
-                    LogEntityType.NoAmmoWeapon);
-            }
-            else
-            {
-                EventLog.Add("Чтобы разбирать электронику вам нужна отвертка", Color.Yellow, LogEntityType.NoAmmoWeapon);
-            }
-        }
-
-        private void RadioOnOff(Player p, Item target)
-        {
-            EventLog.Add("Радио включается", Color.White, LogEntityType.Default);
-        }
-
         public void OpenBottle(Player p, Item target)
         {
             p.Inventory.TryRemoveItem(target.Id, 1);
             p.Inventory.AddItem(ItemFactory.GetInstance(Data[target.Id].AfteruseId, 1));
         }
 
-        
-
-        public void Smoke(Player p, Item target)
-        {
-            if (p.Inventory.ContainsId("lighter1") || p.Inventory.ContainsId("lighter2"))
-            {
-                EventLog.Add(
-                    string.Format("Вы выкурили сигарету "),
-                    GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
-                foreach (IBuff buff in target.Buffs)
-                {
-                    buff.ApplyToTarget(p);
-                }
-
-                AchievementDataBase.Stat["sigause"].Count++;
-
-                target.Doses--;
-                if (target.Doses <= 0)
-                {
-                    p.Inventory.RemoveItem(target);
-                }
-            }
-            else
-            {
-                EventLog.Add("Чтобы курить вам нужна зажигалка", Color.Yellow, LogEntityType.NoAmmoWeapon);
-            }
-        }
-
         #endregion
+    }
+
+    public enum ItemModifer
+    {
+        Nothing,
+        Razogretyi,
+        Prigotovlenniy,
+        Perejareniy,
+        Obuglivshiysa
+    }
+
+    public class ItemModiferData
+    {
+        public string Name;
     }
 }

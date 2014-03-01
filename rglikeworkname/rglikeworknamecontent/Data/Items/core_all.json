@@ -687,6 +687,7 @@
   "radio1":{
     "Name":"Небольшое радио",
     "Weight":300,
+	"Type":"ItemRadio",
 	"ItemScript":["dissass","turnradio"],
 	"Description":"Использует пальчиковые батарейки, похоже еще работает.",
   },
@@ -699,6 +700,7 @@
     "Name":"Пачка сигарет",
     "Doses":20,
     "Weight":20,
+	"Type":"ItemCigarets",
     "AfteruseId":"nocigarets",
 	"ItemScript":["smoke"],
 	"Description":"Открытая пачка сиграет. Вы нашли ее полной",
@@ -707,6 +709,7 @@
   "cigarets10":{
     "Name":"Пачка сигарет",
     "Doses":10,
+	"Type":"ItemCigarets",
     "Weight":20,
     "AfteruseId":"nocigarets",
 	"ItemScript":["smoke"],
@@ -716,6 +719,7 @@
     "Name":"Пачка сигарет",
     "Doses":4,
     "Weight":20,
+	"Type":"ItemCigarets",
     "AfteruseId":"nocigarets",
 	"ItemScript":["smoke"],
 	"Description":"Давно открытая пачка сигарет. Вы нашли ее уже практически пустой",
@@ -765,7 +769,7 @@
     "Weight":100,
     "Volume":300,
     "SortType":"Wear",
-	"ItemScript":["destroycloth"]
+	"Type":"ItemCloth"
   },
   "testhat2":{
     "Name":"Тестовая шляпа2",
@@ -773,7 +777,7 @@
     "Weight":100,
     "Volume":300,
     "SortType":"Wear",
-	"ItemScript":["destroycloth"]
+	"Type":"ItemCloth"
   },
   "kitty_collar":{
     "Name":"Кошачий ошейник",
@@ -786,8 +790,8 @@
     "Name":"Носки",
     "Weight":50,
     "SortType":"Wear",
+	"Type":"ItemCloth",
     "SpawnGroup":"spawn_commonwear",
-	"ItemScript":["destroycloth"]
   },
   "wool_socks":{
     "Name":"Шерстяные носки",
@@ -847,7 +851,7 @@
     "Weight":500,
     "Dress":"jeans",
     "SpawnGroup":"spawn_commonwear",
-	"ItemScript":["destroycloth"]
+	"Type":"ItemCloth",
   },
   "t-shirt1":{
     "Name":"Футболка",
@@ -855,7 +859,7 @@
     "Weight":200,
     "Dress":"t-shirt1",
     "SpawnGroup":"spawn_commonwear",
-	"ItemScript":["destroycloth"],
+	"Type":"ItemCloth",
   },
   "haer1":{
     "Name":"Волосы",
