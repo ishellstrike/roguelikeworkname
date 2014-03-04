@@ -16,7 +16,9 @@ namespace rglikeworknamelib.Dungeon.Items {
             set { id_ = value; OnLoad(); }
         }
 
-        public int Uid;
+        public double DoubleTag;
+        public ItemModifer Modifer = ItemModifer.Nothing;
+
         [NonSerialized]internal ItemData data_;
         private string id_;
 
@@ -39,9 +41,14 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public override string ToString() {
-            return Doses != 0
+            return ItemDataBase.Instance.ItemModifers[(int)Modifer].Name+ " " + (Doses != 0
                        ? string.Format("{0} ({1})", ItemDataBase.Instance.Data[Id].Name, Doses)
-                       : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count);
+                       : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count));
+        }
+
+        public virtual ItemAction[] GetActionList
+        {
+            get { return null; }
         }
 
         public static void Log(string s, params object[] p)

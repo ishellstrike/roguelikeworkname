@@ -230,7 +230,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan1",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["is_opencan"]
+	"ItemScript":["opencan"]
   },
   "meatcan2":{
     "Name":"Открытая банка паштета",
@@ -248,7 +248,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan2",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["is_opencan"]
+	"ItemScript":["opencan"]
   },
   "milk1":{
     "Name":"Пакет молока",
@@ -429,7 +429,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"beancan1",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["is_opencan"]
+	"ItemScript":["opencan"]
   },
   "corncan1":{
     "Name":"Открытая банка кукурузы",
@@ -447,7 +447,7 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan1",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["is_opencan"]
+	"ItemScript":["opencan"]
   },
   "corncan2":{
     "Name":"Открытая банка горошка",
@@ -465,13 +465,13 @@
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan2",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["is_opencan"]
+	"ItemScript":["opencan"]
   },
   "vinebottlecl":{
     "Name":"Бутылка вина",
     "AfteruseId":"vinebottle",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["is_openbottle"],
+	"ItemScript":["openbottle"],
 	"Weight":1000,
   },
   "vinebottle":{
@@ -486,7 +486,7 @@
     "Name":"Бутылка водки",
     "AfteruseId":"vodkabottle",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["is_openbottle"],
+	"ItemScript":["openbottle"],
 	"Weight":500,
 	"Description":"Она самая",
   },
@@ -687,7 +687,8 @@
   "radio1":{
     "Name":"Небольшое радио",
     "Weight":300,
-	"ItemScript":["is_dissass","is_turnradio"],
+	"Type":"ItemRadio",
+	"ItemScript":["dissass","turnradio"],
 	"Description":"Использует пальчиковые батарейки, похоже еще работает.",
   },
   "nocigarets":{
@@ -699,25 +700,28 @@
     "Name":"Пачка сигарет",
     "Doses":20,
     "Weight":20,
+	"Type":"ItemCigarets",
     "AfteruseId":"nocigarets",
-	"ItemScript":["is_smoke"],
+	"ItemScript":["smoke"],
 	"Description":"Открытая пачка сиграет. Вы нашли ее полной",
 	"SpawnGroup":"spawn_shopfood",
   },
   "cigarets10":{
     "Name":"Пачка сигарет",
     "Doses":10,
+	"Type":"ItemCigarets",
     "Weight":20,
     "AfteruseId":"nocigarets",
-	"ItemScript":["is_smoke"],
+	"ItemScript":["smoke"],
 	"Description":"Давно открытая пачка сигарет. Вы нашли ее наполовину полной",
   },
   "cigarets4":{
     "Name":"Пачка сигарет",
     "Doses":4,
     "Weight":20,
+	"Type":"ItemCigarets",
     "AfteruseId":"nocigarets",
-	"ItemScript":["is_smoke"],
+	"ItemScript":["smoke"],
 	"Description":"Давно открытая пачка сигарет. Вы нашли ее уже практически пустой",
   },
   "brpencil":{
@@ -765,7 +769,7 @@
     "Weight":100,
     "Volume":300,
     "SortType":"Wear",
-	"ItemScript":["is_destroycloth"]
+	"Type":"ItemCloth"
   },
   "testhat2":{
     "Name":"Тестовая шляпа2",
@@ -773,7 +777,7 @@
     "Weight":100,
     "Volume":300,
     "SortType":"Wear",
-	"ItemScript":["is_destroycloth"]
+	"Type":"ItemCloth"
   },
   "kitty_collar":{
     "Name":"Кошачий ошейник",
@@ -786,8 +790,8 @@
     "Name":"Носки",
     "Weight":50,
     "SortType":"Wear",
+	"Type":"ItemCloth",
     "SpawnGroup":"spawn_commonwear",
-	"ItemScript":["is_destroycloth"]
   },
   "wool_socks":{
     "Name":"Шерстяные носки",
@@ -847,7 +851,7 @@
     "Weight":500,
     "Dress":"jeans",
     "SpawnGroup":"spawn_commonwear",
-	"ItemScript":["is_destroycloth"]
+	"Type":"ItemCloth",
   },
   "t-shirt1":{
     "Name":"Футболка",
@@ -855,7 +859,7 @@
     "Weight":200,
     "Dress":"t-shirt1",
     "SpawnGroup":"spawn_commonwear",
-	"ItemScript":["is_destroycloth"],
+	"Type":"ItemCloth",
   },
   "haer1":{
     "Name":"Волосы",

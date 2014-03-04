@@ -100,6 +100,9 @@
     <Compile Include="Dungeon\Buffs\BuffDataBase.cs" />
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
+    <Compile Include="Dungeon\Items\ItemCan.cs" />
+    <Compile Include="Dungeon\Items\ItemCigarets.cs" />
+    <Compile Include="Dungeon\Items\ItemCloth.cs" />
     <Compile Include="Dungeon\Items\ItemCraftType.cs" />
     <Compile Include="Dungeon\Items\DropGroup.cs" />
     <Compile Include="Dungeon\Items\InventorySystem.cs" />
@@ -111,11 +114,13 @@
     <Compile Include="Dungeon\Items\ItemData.cs" />
     <Compile Include="Dungeon\Items\ItemDataBase.cs" />
     <Compile Include="Dungeon\Items\ItemFactory.cs" />
+    <Compile Include="Dungeon\Items\ItemRadio.cs" />
     <Compile Include="Dungeon\Items\ItemType.cs" />
     <Compile Include="Dungeon\Level\Block.cs" />
     <Compile Include="Dungeon\Level\BlockData.cs" />
     <Compile Include="Dungeon\Level\BlockDataBase.cs" />
     <Compile Include="Dungeon\Level\BlockFactory.cs" />
+    <Compile Include="Dungeon\Level\BlockFurnance.cs" />
     <Compile Include="Dungeon\Level\Floor.cs" />
     <Compile Include="Dungeon\Level\FloorData.cs" />
     <Compile Include="Dungeon\Level\FloorDataBase.cs" />
@@ -189,6 +194,7 @@
     <None Include="obj\x86\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Dungeon\Items\Item\" />
     <Folder Include="obj\x86\Debug\TempPE\" />
   </ItemGroup>
   <ItemGroup>
@@ -216,15 +222,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IronPython.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Microsoft.Dynamic.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Microsoft.Scripting.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Newtonsoft.Json.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

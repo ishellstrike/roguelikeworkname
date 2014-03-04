@@ -34,18 +34,6 @@ namespace rglikeworknamelib.Parser
                         errorIDB++;
                     }
                 }
-                if (data.Value.ItemScript != null)
-                {
-                    for (int i = 0; i < data.Value.ItemScript.Length; i++) {
-                        var script = data.Value.ItemScript[i];
-                        if (!ItemDataBase.Instance.ItemScripts.ContainsKey(script)) {
-                            Logger.Error(string.Format("Item script \"{0}\" not found", script));
-                            data.Value.ItemScript[i] = "is_nothing";
-                            errorIDB++;
-                        }
-                        
-                    }
-                }
             }
 
             int errorFDB = 0;
@@ -70,17 +58,6 @@ namespace rglikeworknamelib.Parser
                 }
             }
 
-            int errorCScript = 0;
-            foreach (var crea in CreatureDataBase.Data)
-            {
-                if (crea.Value.BehaviorScript != null && !CreatureDataBase.Scripts.ContainsKey(crea.Value.BehaviorScript))
-                {
-                    Logger.Error(string.Format("Behavior script \"{0}\" not found", crea.Value.BehaviorScript));
-                    crea.Value.BehaviorScript = "bs_nothing";
-                    errorCScript++;
-                }
-            }
-
             int errorScDB = 0;
             foreach (var schemese in SchemesDataBase.Data) {
                 for (int i = 0; i < schemese.data.Length; i++) {
@@ -93,8 +70,9 @@ namespace rglikeworknamelib.Parser
             }
 
             int errorCrDB = 0;
-            for (int i = 0; i < ItemDataBase.Craft.Count; i++) {
-                var craftData = ItemDataBase.Craft[i];
+            ItemDataBase itemDataBase = ItemDataBase.Instance;
+            for (int i = 0; i < itemDataBase.Craft.Count; i++) {
+                var craftData = itemDataBase.Craft[i];
                 foreach (var s in craftData.Input)
                 {
                     for (int j = 0; j < s.Alters.Count; j++)
@@ -123,11 +101,11 @@ namespace rglikeworknamelib.Parser
 
                 if (craftData.Input.Any(x => x.Alters.Count == 0) || craftData.Output.Any(x => x.Alters.Count == 0))
                 {
-                    ItemDataBase.Craft.Remove(craftData);
+                    itemDataBase.Craft.Remove(craftData);
                 }
             }
 
-            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in ItemCraftDataBase\n     {1} in ItemDataBase     {6} in Creature behavior scripts\n\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB, errorCScript));
+            Logger.Info(string.Format("\nTotal:\n     {4} in SchemesDataBase\n     {0} in BlockDataBase\n     {3} in FloorDataBase\n     {5} in ItemCraftDataBase\n     {1} in ItemDataBase\n\nSummary: {2} errors", errorBDB, errorIDB, errorIDB + errorBDB + errorFDB, errorFDB, errorScDB, errorCrDB));
         }
 
         public static int ErrorBdb()

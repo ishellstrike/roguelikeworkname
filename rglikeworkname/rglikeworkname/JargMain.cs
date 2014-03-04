@@ -397,7 +397,7 @@ namespace jarg {
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,
                 NameDataBase.data.Count,
-                ItemDataBase.Craft.Count);
+                ItemDataBase.Instance.Craft.Count);
 
             sw.Start();
             BasesCheker.CheckAndResolve();
@@ -504,7 +504,7 @@ namespace jarg {
             SendTick++;
 
             currentFloor_.KillFarSectors(player_, gameTime);
-            currentFloor_.UpdateBlocks(gameTime);
+            currentFloor_.UpdateBlocks(gameTime, player_);
             BulletSystem.Update(gameTime);
             //currentFloor_.UpdateBlocks(gameTime, camera_);
             GlobalWorldLogic.Update(gameTime);

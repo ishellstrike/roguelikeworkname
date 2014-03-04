@@ -227,7 +227,7 @@ namespace JargServer
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,
                 NameDataBase.data.Count,
-                ItemDataBase.Craft.Count);
+                ItemDataBase.Instance.Craft.Count);
 
             sw.Start();
             BasesCheker.CheckAndResolve();

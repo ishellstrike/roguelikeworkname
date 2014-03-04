@@ -9,6 +9,7 @@
 		"Name":"Лист бумаги",
 		"Weight":5,
 		"SpawnGroup":"spawn_book",
+		"Type":"ItemCan",
 	},
 	"newspaper":{
 		"Name":"Газета",

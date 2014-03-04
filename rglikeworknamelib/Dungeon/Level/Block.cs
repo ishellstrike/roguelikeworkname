@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Level {
@@ -35,7 +36,8 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private string mTex_;
-        [NonSerialized]private BlockData data_;
+        [NonSerialized]
+        private BlockData data_;
 
         public string MTex
         {
@@ -47,7 +49,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             }
         }
 
-        public virtual void Update(TimeSpan ts, Vector2 vector2)
+        public virtual void Update(TimeSpan ts, MapSector ms, Player p)
         {
         }
 

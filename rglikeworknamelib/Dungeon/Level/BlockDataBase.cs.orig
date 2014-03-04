@@ -1,9 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+<<<<<<< HEAD
+using NLog;
+using rglikeworknamelib.Dungeon.Items;
+=======
 using System.Reflection;
 using NLog;
 using rglikeworknamelib.Dungeon.Items;
+using rglikeworknamelib.Dungeon.Particles;
+>>>>>>> origin/master
 using rglikeworknamelib.Parser;
 
 namespace rglikeworknamelib.Dungeon.Level {

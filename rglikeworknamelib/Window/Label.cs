@@ -39,7 +39,12 @@ namespace rglikeworknamelib.Window {
         public virtual string Text {
             get { return text_; }
             set {
-                text_ = value;
+                if (value == null) {
+                    text_ = "null";
+                }
+                else {
+                    text_ = value;
+                }
                 text_ = text_.Trim('\n');
                 Vector2 a = font1_.MeasureString(text_);
                 calcHeight = a.Y;
