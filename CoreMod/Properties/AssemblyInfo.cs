@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Управление общими сведениями о сборке осуществляется с помощью 
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("BScriptArea")]
+[assembly: AssemblyTitle("CoreMod")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("BScriptArea")]
+[assembly: AssemblyProduct("CoreMod")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("398e321c-2cd8-483c-bf6a-aa2fd0e1aece")]
+[assembly: Guid("15094c8a-2c68-490c-b927-2f1e40ce023e")]
 
 // Сведения о версии сборки состоят из следующих четырех значений:
 //
