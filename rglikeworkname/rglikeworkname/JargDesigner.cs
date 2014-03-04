@@ -270,19 +270,19 @@ namespace jarg {
 
         void SpawnItemButton_OnPressed(object sender, EventArgs e)
         {
-            ShowSpawnSomeWindow(ItemDataBase.Instance.Data.Keys.ToList(), true);
+            ShowSpawnSomeWindow(Registry.Instance.Items.Keys.ToList(), true);
         }
 
         private void ShowSpawnSomeWindow(List<string> ids, bool isitem) {
             SpawnSomeWindow.Visible = true;
             SpawnSomeWindow.OnTop();
             SpawnSomeList.Clear();
-            ItemDataBase itemDataBase = ItemDataBase.Instance;
+            var itemDataBase = Registry.Instance;
             if (isitem) {
                 int phase = 0;
                 foreach (var id in ids) {
                     
-                    var a = new LabelFixed(Vector2.Zero, string.Format("{0} - {1}",id, itemDataBase.Data[id].Name), phase == 0 ? Color.Gray : Color.CornflowerBlue, SpawnSomeList);
+                    var a = new LabelFixed(Vector2.Zero, string.Format("{0} - {1}",id, itemDataBase.Items[id].Name), phase == 0 ? Color.Gray : Color.CornflowerBlue, SpawnSomeList);
                     phase = 1 - phase;
                     a.Tag = id;
                     a.OnLeftPressed += a_OnLeftPressed;
@@ -415,19 +415,20 @@ namespace jarg {
             }
 
             SchemesBlocks.Clear();
-            for (int i = 0; i < BlockDataBase.Data.Count; i++) {
+            for (int i = 0; i < Registry.Instance.Blocks.Count; i++)
+            {
                 var l = new Label(Vector2.Zero,
-                          BlockDataBase.Data.ElementAt(i).Key + " " + BlockDataBase.Data.ElementAt(i).Value.Name,
+                          Registry.Instance.Blocks.ElementAt(i).Key + " " + Registry.Instance.Blocks.ElementAt(i).Value.Name,
                           Color.White, SchemesBlocks);
                 l.Tag = i;
                 l.OnLeftPressed += OnSchemesEditorBlockListSelect;
             }
 
             SchemesFloors.Clear();
-            for (int i = 0; i < FloorDataBase.Data.Count; i++)
+            for (int i = 0; i < Registry.Instance.Floors.Count; i++)
             {
                 var l = new Label(Vector2.Zero,
-                          FloorDataBase.Data.ElementAt(i).Key + " " + FloorDataBase.Data.ElementAt(i).Value.Name,
+                          Registry.Instance.Floors.ElementAt(i).Key + " " + Registry.Instance.Floors.ElementAt(i).Value.Name,
                           Color.White, SchemesFloors);
                 l.Tag = i;
                 l.OnLeftPressed += OnSchemesEditorFloorListSelect;
@@ -461,13 +462,13 @@ namespace jarg {
                     SchemEditorTempMap.block[i, j] = new Block()
                     {
                         Id = s.data[i * s.y + j],
-                        MTex = BlockDataBase.Data[s.data[i * s.y + j]].MTex
+                        MTex = Registry.Instance.Blocks[s.data[i * s.y + j]].MTex
                     };
 
                     SchemEditorTempMap.floor[i, j] = new Floor()
                     {
                         Id = s.floor[i * s.y + j],
-                        MTex = FloorDataBase.Data[s.floor[i * s.y + j]].MTex
+                        MTex = Registry.Instance.Floors[s.floor[i * s.y + j]].MTex
                     };
                 }
             }
@@ -478,17 +479,17 @@ namespace jarg {
             
             if(SchemEditorTempMap.rx > schemesOffset.X + p.X && SchemEditorTempMap.ry > schemesOffset.Y + p.Y && schemesOffset.X + p.X > 0 && schemesOffset.Y + p.Y > 0 && e.Ms.LeftButton == ButtonState.Pressed) {
                 if (schemesType == 0) {
-                    string i = BlockDataBase.Data.ElementAt(schemesSelected).Key;
+                    string i = Registry.Instance.Blocks.ElementAt(schemesSelected).Key;
                     SchemEditorTempMap.block[(int) schemesOffset.X + p.X, (int) schemesOffset.Y + p.Y].Id = i;
                     SchemEditorTempMap.block[(int) schemesOffset.X + p.X, (int) schemesOffset.Y + p.Y].MTex =
-                        BlockDataBase.Data[i].MTex;
+                        Registry.Instance.Blocks[i].MTex;
                 }
                 if (schemesType == 1)
                 {
-                    string i = FloorDataBase.Data.ElementAt(schemesSelected).Key;
+                    string i = Registry.Instance.Floors.ElementAt(schemesSelected).Key;
                     SchemEditorTempMap.floor[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].Id = i;
                     SchemEditorTempMap.floor[(int)schemesOffset.X + p.X, (int)schemesOffset.Y + p.Y].MTex =
-                        FloorDataBase.Data[i].MTex;
+                        Registry.Instance.Floors[i].MTex;
                 }
             }
 
@@ -885,7 +886,8 @@ namespace jarg {
             selectedCraft = null;
             CraftMoreInfo.Text = string.Empty;
 
-            foreach (var craftData in ItemDataBase.Instance.Craft) {
+            foreach (var craftData in Registry.Instance.Craft)
+            {
                 var a = new LabelFixed(Vector2.Zero,  craftData.Name,
                                        CraftItems) { Tag = craftData };
                 a.OnLeftPressed += CraftItemsLabelOnLeftPressed;
@@ -1026,7 +1028,8 @@ namespace jarg {
 
             if (s.Contains("spawn c ")) {
                 string ss = s.Substring(8);
-                if (CreatureDataBase.Data.ContainsKey(ss)) {
+                if (Registry.Instance.Creatures.ContainsKey(ss))
+                {
                     Vector2 pp = player_.GetWorldPositionInBlocks();
                     pp.X = (int) pp.X;
                     pp.Y = (int) pp.Y;
@@ -1096,7 +1099,7 @@ namespace jarg {
             }
             if (s.Contains("spawn i ")) {
                 string ss = s.Substring(8);
-                if (ItemDataBase.Instance.Data.ContainsKey(ss))
+                if (Registry.Instance.Items.ContainsKey(ss))
                 {
                     var a = ItemFactory.GetInstance(ss, 1);
                     inventory_.AddItem(a);
@@ -1361,7 +1364,7 @@ namespace jarg {
                 selectedItem = i;
 
                 if (!doubleclick_) {
-                    InventoryMoreInfo.Text = ItemDataBase.Instance.GetItemFullDescription(i);
+                    InventoryMoreInfo.Text = Registry.Instance.GetItemFullDescription(i);
                 }
                 else {
                     IntentoryEquip_onPressed(null, null);
@@ -1394,7 +1397,7 @@ namespace jarg {
             var a = (int) ((ListBoxItem) sender).Tag;
             if (inInv_.Count > a) {
                 ContainerSelected = inContainer_[a];
-                LabelContainer.Text = ItemDataBase.Instance.GetItemFullDescription(ContainerSelected);
+                LabelContainer.Text = Registry.Instance.GetItemFullDescription(ContainerSelected);
                 if (doubleclick_) {
                     if (inContainer_.Contains(ContainerSelected)) {
                         inventory_.AddItem(ContainerSelected);
@@ -1553,7 +1556,7 @@ namespace jarg {
         private void UpdateCaracterWindowItems(object sender, EventArgs eventArgs) {
             LabelCaracterHp.Text2 = string.Format("{0}/{1}", player_.Hp.Current, player_.Hp.Max);
 
-            var itemDataBase = ItemDataBase.Instance;
+            var itemDataBase = Registry.Instance;
 
             for (int i = 0; i < LabelsAbilities.Count; i++) {
                 LabelsAbilities[i].Text = string.Format("{0} {1} ({2}/{3})", player_.Abilities.ToShow[i].Name,
@@ -1608,12 +1611,12 @@ namespace jarg {
             ThirstHungerLabel.Text = thhun;
             ThirstHungerLabel.Color = Color.Red;
             
-            LabelCaracterGun.Text2 = player_.ItemGun != null ? itemDataBase.Data[player_.ItemGun.Id].Name : "";
+            LabelCaracterGun.Text2 = player_.ItemGun != null ? itemDataBase.Items[player_.ItemGun.Id].Name : "";
             LabelCaracterAmmo.Text2 = player_.ItemAmmo != null
-                                          ? string.Format("{0} x{1}", itemDataBase.Data[player_.ItemAmmo.Id].Name, player_.ItemAmmo.Count)
+                                          ? string.Format("{0} x{1}", itemDataBase.Items[player_.ItemAmmo.Id].Name, player_.ItemAmmo.Count)
                                           : string.Empty;
             LabelCaracterMeele.Text2 = player_.ItemMeele != null
-                                           ? itemDataBase.Data[player_.ItemMeele.Id].Name
+                                           ? itemDataBase.Items[player_.ItemMeele.Id].Name
                                            : string.Empty;
 
             EffectsContainer.Items.Clear();

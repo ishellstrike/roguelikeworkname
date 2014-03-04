@@ -9,12 +9,12 @@ namespace rglikeworknamelib.Dungeon.Creatures
         private static readonly Logger logger = LogManager.GetLogger("ItemFactory");
         public static Creature GetInstance(string id, Vector3 pos = default(Vector3))
         {
-            if (!CreatureDataBase.Data.ContainsKey(id))
+            if (!Registry.Instance.Creatures.ContainsKey(id))
             {
                 logger.Error(string.Format("Missing CreatureData id={0}!!!", id));
                 return null;
             }
-            var creatureData = CreatureDataBase.Data[id];
+            var creatureData = Registry.Instance.Creatures[id];
             var a = new Creature {
                 Id = id,
                 MTex = creatureData.MTex,

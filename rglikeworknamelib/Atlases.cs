@@ -73,6 +73,20 @@ namespace rglikeworknamelib {
         public float SpriteWidth { get; private set; }
         public float SpriteHeight { get; private set; }
 
+
+        public static Vector2 GetSource(string s)
+        {
+            //server notex
+            if (Instance == null)
+            {
+                return new Vector2(0, 0);
+            }
+            int index = Instance.MajorIndexes[s];
+            // ReSharper disable PossibleLossOfFraction
+            return new Vector2((index % 32 * 32f) / Instance.MajorAtlas.Width, (index / 32 * 32f) / Instance.MajorAtlas.Height);
+            // ReSharper restore PossibleLossOfFraction
+        }
+
         private Texture2D GenerateMajorAtlas(GraphicsDevice gd, out Dictionary<string, int> indexes, params Dictionary<string, Texture2D>[] texes) {
             indexes = new Dictionary<string, int>();
             var totalcount = texes.Sum(dictionary => dictionary.Count);

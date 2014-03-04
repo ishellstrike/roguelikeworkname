@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace rglikeworknamelib.Registry
+namespace rglikeworknamelib
 {
     public class SneakyDictionary<TKey, TValue> {
         private Dictionary<TKey, TValue> dictionary_;

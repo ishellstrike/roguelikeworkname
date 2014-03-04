@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropListEditor", "DropListE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JargServer", "JargServer\JargServer.csproj", "{DB8AE0D5-670D-4960-9456-4FD386E3186F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreMod", "CoreMod\CoreMod.csproj", "{32218409-76C6-4592-BBC1-BCCA674CA8D5}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = rglikeworkname.vsmdi
@@ -191,18 +189,6 @@ Global
 		{DB8AE0D5-670D-4960-9456-4FD386E3186F}.Release|Win32.ActiveCfg = Release|x86
 		{DB8AE0D5-670D-4960-9456-4FD386E3186F}.Release|x86.ActiveCfg = Release|x86
 		{DB8AE0D5-670D-4960-9456-4FD386E3186F}.Release|x86.Build.0 = Release|x86
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Only Game|Any CPU.ActiveCfg = Release|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Only Game|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Only Game|Win32.ActiveCfg = Release|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Only Game|x86.ActiveCfg = Release|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Release|Win32.ActiveCfg = Release|Any CPU
-		{32218409-76C6-4592-BBC1-BCCA674CA8D5}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

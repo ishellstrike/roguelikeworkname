@@ -1,6 +1,3 @@
 NLog.config
-IronPython.dll
-Microsoft.Dynamic.dll
-Microsoft.Scripting.dll
 Newtonsoft.Json.dll
 NLog.dll

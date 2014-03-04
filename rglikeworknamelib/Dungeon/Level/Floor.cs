@@ -11,7 +11,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             set
             {
                 id_ = value;
-                data_ = FloorDataBase.Data[value];
+                data_ = Registry.Instance.Floors[value];
             }
         }
 
@@ -21,7 +21,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             get { return mTex_; }
             set
             {
-                source_ = FloorData.GetSource(value);
+                source_ = Atlases.GetSource(value);
                 mTex_ = value;
             }
         }

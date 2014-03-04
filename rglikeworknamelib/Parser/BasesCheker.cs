@@ -17,9 +17,9 @@ namespace rglikeworknamelib.Parser
             var errorBDB = ErrorBdb();
 
             int errorIDB = 0;
-            ItemDataBase idb = ItemDataBase.Instance;
+            var reg = Registry.Instance;
             var atlases = Atlases.Instance;
-            foreach (var data in idb.Data) {
+            foreach (var data in reg.Items) {
                 if (atlases != null) {
                     if (data.Value.Dress != null && !atlases.DressAtlas.ContainsKey(data.Value.Dress)) {
                         Logger.Error(string.Format("Texture \"{0}\" for ItemDataBase.Dress not found", data.Value.Dress));
@@ -28,7 +28,7 @@ namespace rglikeworknamelib.Parser
                     }
                 }
                 if (data.Value.AfteruseId != null) {
-                    if (!idb.Data.ContainsKey(data.Value.AfteruseId)) {
+                    if (!reg.Items.ContainsKey(data.Value.AfteruseId)) {
                         Logger.Error(string.Format("Object \"{0}\" for ItemDataBase.AfteruseId not found", data.Value.AfteruseId));
                         data.Value.AfteruseId = null;
                         errorIDB++;
@@ -37,7 +37,8 @@ namespace rglikeworknamelib.Parser
             }
 
             int errorFDB = 0;
-            foreach (var data in FloorDataBase.Data) {
+            foreach (var data in Registry.Instance.Floors)
+            {
                 if (atlases == null) {
                     continue;
                 }
@@ -61,7 +62,7 @@ namespace rglikeworknamelib.Parser
             int errorScDB = 0;
             foreach (var schemese in SchemesDataBase.Data) {
                 for (int i = 0; i < schemese.data.Length; i++) {
-                    if (!BlockDataBase.Data.ContainsKey(schemese.data[i])) {
+                    if (!Registry.Instance.Blocks.ContainsKey(schemese.data[i])) {
                         Logger.Error(string.Format("Block \"{0}\" for SchemesDataBase not found", schemese.data[i]));
                         schemese.data[i] = "error";
                         errorScDB++;
@@ -70,7 +71,7 @@ namespace rglikeworknamelib.Parser
             }
 
             int errorCrDB = 0;
-            ItemDataBase itemDataBase = ItemDataBase.Instance;
+            var itemDataBase = Registry.Instance;
             for (int i = 0; i < itemDataBase.Craft.Count; i++) {
                 var craftData = itemDataBase.Craft[i];
                 foreach (var s in craftData.Input)
@@ -78,7 +79,7 @@ namespace rglikeworknamelib.Parser
                     for (int j = 0; j < s.Alters.Count; j++)
                     {
                         var alt = s.Alters[j];
-                        if (!idb.Data.ContainsKey(alt.Id))
+                        if (!reg.Items.ContainsKey(alt.Id))
                         {
                             s.Alters.Remove(alt);
                             errorCrDB++;
@@ -91,7 +92,7 @@ namespace rglikeworknamelib.Parser
                     for (int j = 0; j < s.Alters.Count; j++)
                     {
                         var alt = s.Alters[j];
-                        if (!idb.Data.ContainsKey(alt.Id))
+                        if (!reg.Items.ContainsKey(alt.Id))
                         {
                             s.Alters.Remove(alt);
                             errorCrDB++;
@@ -112,7 +113,8 @@ namespace rglikeworknamelib.Parser
         {
             int errorBDB = 0;
             var instance = Atlases.Instance;
-            foreach (var data in BlockDataBase.Data) {
+            foreach (var data in Registry.Instance.Blocks)
+            {
                 if (instance == null) {
                     continue;
                 }

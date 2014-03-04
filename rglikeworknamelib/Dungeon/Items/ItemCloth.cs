@@ -49,11 +49,11 @@ namespace rglikeworknamelib.Dungeon.Items {
             string mess = string.Format("Вы успешно разорвали {0} на", target.Data.Name);
             if (bigparts > 0)
             {
-                mess += string.Format(" {0} {1}", bigparts, ItemDataBase.Instance.Data["brcloth"].Name);
+                mess += string.Format(" {0} {1}", bigparts, Registry.Instance.Items["brcloth"].Name);
             }
             if (smallparts > 0)
             {
-                mess += string.Format(" {0} {1}", smallparts, ItemDataBase.Instance.Data["partcloth"].Name);
+                mess += string.Format(" {0} {1}", smallparts, Registry.Instance.Items["partcloth"].Name);
             }
             EventLog.Add(mess, Color.Yellow, LogEntityType.NoAmmoWeapon);
         }

@@ -35,7 +35,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                     AchievementDataBase.Stat["foodtotal"].Count += it.Count;
                     break;
             }
-            ItemDataBase.StackSimilar(ref items_);
+            Registry.StackSimilar(ref items_);
             Settings.InventoryUpdate = true;
         }
 
@@ -122,7 +122,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                 AddItem(item);
             }
             Changed = true;
-            ItemDataBase.StackSimilar(ref items_);
+            Registry.StackSimilar(ref items_);
             Settings.InventoryUpdate = true;
         }
 
@@ -196,10 +196,10 @@ namespace rglikeworknamelib.Dungeon.Items {
                 foreach (var inp in selectedCraft.Output) {
                     int te = Settings.rnd.Next(0, inp.Alters.Count);
                     items_.Add(ItemFactory.GetInstance(inp.Alters[te].Id, inp.Alters[te].Count));
-                    EventLog.Add(string.Format("Вы создали {0}{1}", ItemDataBase.Instance.Data[inp.Alters[te].Id].Name, inp.Alters[te].Count > 1 ? " x" + inp.Alters[te].Count : string.Empty), Color.Yellow, LogEntityType.Consume);
+                    EventLog.Add(string.Format("Вы создали {0}{1}", Registry.Instance.Items[inp.Alters[te].Id].Name, inp.Alters[te].Count > 1 ? " x" + inp.Alters[te].Count : string.Empty), Color.Yellow, LogEntityType.Consume);
                 }
 
-                ItemDataBase.StackSimilar(ref items_);
+                Registry.StackSimilar(ref items_);
                 Settings.InventoryUpdate = true;
             }
             else {

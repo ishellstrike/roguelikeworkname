@@ -105,7 +105,7 @@ namespace jarg {
                     {
                         Block a = currentFloor_.GetBlock(UndermouseX, UndermouseY);
                         if (a != null) {
-                            BlockData b = BlockDataBase.Data[a.Id];
+                            BlockData b = Registry.Instance.Blocks[a.Id];
                             string s = Block.GetSmartActionName(b.SmartAction) + " " + b.Name;
                             if (Settings.DebugInfo) {
                                 s += " id:" + a.Id + " tex:" + b.MTex + " t:" +b.Type ?? string.Empty;
@@ -113,7 +113,7 @@ namespace jarg {
 
                             if (currentFloor_.IsCreatureMeele(UndermouseX, UndermouseY, player_)) {
                                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
-                                    BlockData undermouseblock = BlockDataBase.Data[a.Id];
+                                    BlockData undermouseblock = Registry.Instance.Blocks[a.Id];
                                     if(a.StoredItems != null && a.StoredItems.Count > 0) {
                                         WindowContainer.Visible = true;
                                         WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));

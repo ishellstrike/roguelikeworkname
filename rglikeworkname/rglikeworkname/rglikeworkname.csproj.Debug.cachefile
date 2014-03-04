@@ -13,8 +13,5 @@ Content\Effects\solid.xnb
 Content\Effects\solidshadow.xnb
 Content\Effects\solid_.xnb
 NLog.config
-IronPython.dll
-Microsoft.Dynamic.dll
-Microsoft.Scripting.dll
 Newtonsoft.Json.dll
 NLog.dll

@@ -492,8 +492,8 @@ namespace rglikeworknamelib.Generation {
                             sector.SetBlock(k, l, tt);
                             var block = sector.GetBlock(k, l);
 
-                            BlockDataBase.TrySpawnItems(rnd, block);
-                            ItemDataBase.StackSimilar(ref block.StoredItems);
+                            Registry.TrySpawnItems(rnd, block);
+                            Registry.StackSimilar(ref block.StoredItems);
                         }
                     }
                 }

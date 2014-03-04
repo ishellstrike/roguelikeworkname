@@ -26,12 +26,12 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public virtual void OnLoad() {
-            data_ = ItemDataBase.Instance.Data[Id];
+            data_ = Registry.Instance.Items[Id];
             Doses = Data.Doses;
             Buffs = new List<IBuff>();
-            if (ItemDataBase.Instance.Data[Id].Buff != null)
+            if (Registry.Instance.Items[Id].Buff != null)
             {
-                foreach (string buff in ItemDataBase.Instance.Data[Id].Buff)
+                foreach (string buff in Registry.Instance.Items[Id].Buff)
                 {
                     var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[buff].Prototype);
                     a.Id = buff;
@@ -41,9 +41,9 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public override string ToString() {
-            return ItemDataBase.Instance.ItemModifers[(int)Modifer].Name+ " " + (Doses != 0
-                       ? string.Format("{0} ({1})", ItemDataBase.Instance.Data[Id].Name, Doses)
-                       : string.Format("{0} x{1}", ItemDataBase.Instance.Data[Id].Name, Count));
+            return Registry.Instance.ItemModifers[(int)Modifer].Name + " " + (Doses != 0
+                       ? string.Format("{0} ({1})", Registry.Instance.Items[Id].Name, Doses)
+                       : string.Format("{0} x{1}", Registry.Instance.Items[Id].Name, Count));
         }
 
         public virtual ItemAction[] GetActionList

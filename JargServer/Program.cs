@@ -209,9 +209,6 @@ namespace JargServer
             Console.WriteLine("Loading bases...");
             var sw = new Stopwatch();
             sw.Start();
-            new CreatureDataBase();
-            new FloorDataBase();
-            new BlockDataBase();
             new SchemesDataBase();
             new BuffDataBase();
             new NameDataBase();
@@ -219,15 +216,15 @@ namespace JargServer
             Console.WriteLine(
                 "\nTotal:\n     {1} Monsters\n     {2} Blocks\n     {3} Floors\n     {4} Items\n     {5} Schemes\n     {6} Buffs\n     {7} Dialogs\n     {8} Names\n     {9} Crafts\n     loaded in {0}",
                 sw.Elapsed,
-                CreatureDataBase.Data.Count,
-                BlockDataBase.Data.Count,
-                FloorDataBase.Data.Count,
-                ItemDataBase.Instance.Data.Count,
+                Registry.Instance.Creatures.Count,
+                Registry.Instance.Blocks.Count,
+                Registry.Instance.Floors.Count,
+                Registry.Instance.Items.Count,
                 SchemesDataBase.Data.Count,
                 BuffDataBase.Data.Count,
                 DialogDataBase.data.Count,
                 NameDataBase.data.Count,
-                ItemDataBase.Instance.Craft.Count);
+                Registry.Instance.Craft.Count);
 
             sw.Start();
             BasesCheker.CheckAndResolve();

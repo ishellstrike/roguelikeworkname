@@ -45,15 +45,14 @@ namespace SchemesEditor {
             openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory() + @"\Content\Data\Schemes";
             saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory() + @"\Content\Data\Schemes";
 
-            new BlockDataBase();
-
             gl = new SchemesMap(20, 20);
 
             imageList1.Images.Clear();
 
 
             listBox1.Items.Clear();
-            foreach (var a in BlockDataBase.Data) {
+            foreach (var a in Registry.Instance.Blocks)
+            {
                 listBox1.Items.Add("id" + a.Key + " mtex" + a.Value.MTex + " -- " + a.Value.Name);
             }
 
@@ -64,7 +63,8 @@ namespace SchemesEditor {
             }
 
             Atlases.Instance.BlockIndexes = new Dictionary<string, int>();
-            foreach (var blockData in BlockDataBase.Data) {
+            foreach (var blockData in Registry.Instance.Blocks)
+            {
                 if (!Atlases.Instance.BlockIndexes.ContainsKey(blockData.Value.MTex)) {
                     Atlases.Instance.BlockIndexes.Add(blockData.Value.MTex, 0);
                 }
@@ -170,7 +170,7 @@ namespace SchemesEditor {
                     gl.block[x, y].Id =
                         listBox1.Items[listBox1.SelectedIndex].ToString().Substring(0, listBox1.Items[listBox1.SelectedIndex].ToString().IndexOf(" ")).
                                                                Substring(2);
-                    gl.block[x, y].MTex = BlockDataBase.Data[gl.block[x, y].Id].MTex;
+                    gl.block[x, y].MTex = Registry.Instance.Blocks[gl.block[x, y].Id].MTex;
                 }
             }
         }
@@ -205,10 +205,10 @@ namespace SchemesEditor {
 
         public void CreateAllMapFromArray(string[] ints) {
             for (int i = 0; i < ints.Length; i++) {
-                if (BlockDataBase.Data.ContainsKey(ints[i]))
+                if (Registry.Instance.Blocks.ContainsKey(ints[i]))
                 {
                     block[i/ry, i%ry].Id = ints[i];
-                    block[i/ry, i%ry].MTex = BlockDataBase.Data[ints[i]].MTex;
+                    block[i / ry, i % ry].MTex = Registry.Instance.Blocks[ints[i]].MTex;
                 }
                 else {
                     block[i / ry, i % ry].Id = "error";

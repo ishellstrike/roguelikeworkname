@@ -6,11 +6,7 @@ using rglikeworknamelib.Dungeon.Vehicles;
 
 namespace jarg {
     public partial class JargMain {
-        private readonly Vector2 acA = new Vector2(-10, 0);
-        private readonly Vector2 acD = new Vector2(10, 0);
-        private readonly Vector2 acS = new Vector2(0, 10);
-        private readonly Vector2 acW = new Vector2(0, -10);
-        private float acmodifer = 1;
+
         private Vehicle car;
         //private int iii;
         private Vehicle veh;

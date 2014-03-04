@@ -26,7 +26,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             foreach (var alterse in Input) {
                 s.Append("* ");
                 foreach (var alter in alterse.Alters) {
-                    s.AppendFormat("{0}{1} {2}", ItemDataBase.Instance.Data[alter.Id].Name, alter.Count > 1 ? " x" + alter.Count : string.Empty, alter.IsTool ? "(Tool)" : string.Empty);
+                    s.AppendFormat("{0}{1} {2}", Registry.Instance.Items[alter.Id].Name, alter.Count > 1 ? " x" + alter.Count : string.Empty, alter.IsTool ? "(Tool)" : string.Empty);
                     if (alter != alterse.Alters.Last()) {
                         s.Append(", ");
                     }
@@ -39,7 +39,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                 s.Append("* ");
                 foreach (var alter in alterse.Alters)
                 {
-                    s.AppendFormat("{0}{1} {2}", ItemDataBase.Instance.Data[alter.Id].Name, alter.Count > 1 ? " x" + alter.Count : string.Empty, alter.IsTool ? "(Tool)" : string.Empty);
+                    s.AppendFormat("{0}{1} {2}", Registry.Instance.Items[alter.Id].Name, alter.Count > 1 ? " x" + alter.Count : string.Empty, alter.IsTool ? "(Tool)" : string.Empty);
                     if (alter != alterse.Alters.Last())
                     {
                         s.Append(", ");

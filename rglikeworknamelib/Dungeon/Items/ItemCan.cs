@@ -16,7 +16,7 @@ namespace rglikeworknamelib.Dungeon.Items {
         {
             if (p.Inventory.ContainsId("knife") || p.Inventory.ContainsId("otvertka")) {
                 p.Inventory.TryRemoveItem(target.Id, 1);
-                var afteruseId = ItemDataBase.Instance.Data[target.Id].AfteruseId;
+                var afteruseId = Registry.Instance.Items[target.Id].AfteruseId;
                 if (afteruseId != null) {
                     p.Inventory.AddItem(ItemFactory.GetInstance(afteruseId, 1));
                 }

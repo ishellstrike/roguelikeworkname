@@ -78,7 +78,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             set
             {
                 id_ = value;
-                Data = CreatureDataBase.Data[value];
+                Data = Registry.Instance.Creatures[value];
             }
         }
 
@@ -103,7 +103,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
             }
             set
             {
-                Source = BlockData.GetSource(value);
+                Source = Atlases.GetSource(value);
                 if (!Settings.Server) {
                     BuildGeom();
                 }

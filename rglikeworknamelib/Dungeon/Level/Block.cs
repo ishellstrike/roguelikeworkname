@@ -17,7 +17,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             get { return id_; }
             set {
                 id_ = value;
-                Data = BlockDataBase.Data[value];
+                Data = Registry.Instance.Blocks[value];
             }
         }
 
@@ -44,7 +44,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             get { return mTex_; }
             set
             {
-                Source = BlockData.GetSource(value);
+                Source = Atlases.GetSource(value);
                 mTex_ = value;
             }
         }

@@ -3,11 +3,9 @@ using System.Reflection;
 
 namespace rglikeworknamelib
 {
-    /// <typeparam name="T">Singleton class</typeparam>
     public class Singleton<T> where T : class
     {
         protected Singleton() { }
-
         private sealed class SingletonCreator<S> where S : class
         {
             private static readonly S instance = (S)typeof(S).GetConstructor(
@@ -21,11 +19,9 @@ namespace rglikeworknamelib
                 get { return instance; }
             }
         }
-
         public static T Instance
         {
             get { return SingletonCreator<T>.CreatorInstance; }
         }
-
     }
 }

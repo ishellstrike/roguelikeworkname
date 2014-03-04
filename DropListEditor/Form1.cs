@@ -34,13 +34,15 @@ namespace DropListEditor
             new BuffDataBase();
 
 
-            foreach (var itemData in ItemDataBase.Instance.Data) {
+            foreach (var itemData in Registry.Instance.Items)
+            {
                 listBox1.Items.Add(string.Format("id {0} -- {1}", itemData.Key, itemData.Value.Name));
             }
 
-            new BlockDataBase();
 
-            foreach (var itemData in BlockDataBase.Storages) {
+
+            foreach (var itemData in Registry.Instance.Blocks)
+            {
                 listBox2.Items.Add(string.Format("id {0} -- {1}", itemData.Key, itemData.Value.Name));
             }
         }
@@ -48,7 +50,8 @@ namespace DropListEditor
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
-                foreach (var list in BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Value.ItemSpawn) {
+            foreach (var list in Registry.Instance.Blocks.ElementAt(listBox2.SelectedIndex).Value.ItemSpawn)
+            {
                     sb.Append("x");
                     sb.Append(list.Repeat);
                     sb.Append(" :: ");
@@ -64,9 +67,9 @@ namespace DropListEditor
                 }
             sb.AppendLine();
 
-            Block a = BlockFactory.GetInstance(BlockDataBase.Storages.ElementAt(listBox2.SelectedIndex).Key);
-            BlockDataBase.TrySpawnItems(Settings.rnd, a);
-            ItemDataBase.StackSimilar(ref a.StoredItems);
+            Block a = BlockFactory.GetInstance(Registry.Instance.Blocks.ElementAt(listBox2.SelectedIndex).Key);
+            Registry.TrySpawnItems(Settings.rnd, a);
+            Registry.StackSimilar(ref a.StoredItems);
 
             foreach (var it in a.StoredItems) {
                 sb.AppendFormat("{1} x{2}{0}", Environment.NewLine, it.Id, it.Count);
