@@ -288,11 +288,11 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
 
                 var itemIdVocab = new List<string>();
-                foreach (var block in ms.Blocks)
-                {
-                    if (block is Block)
+                foreach (var block in ms.Blocks) {
+                    var storage = block as IItemStorage;
+                    if (storage != null)
                     {
-                        foreach (var item in block.StoredItems)
+                        foreach (var item in storage.ItemList)
                         {
                             if (!itemIdVocab.Contains(item.Id))
                             {
@@ -341,8 +341,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                     var i = 0;
                     foreach (var block in ms.Blocks)
                     {
-                            foreach (var item in block.StoredItems)
-                            {
+                        var storage = block as IItemStorage;
+                        if (storage != null) {
+                            foreach (var item in storage.ItemList) {
                                 stringBuilder.Append(itemIdVocab.IndexOf(item.Id));
                                 stringBuilder.Append(",");
                                 stringBuilder.Append(i);
@@ -352,6 +353,7 @@ namespace rglikeworknamelib.Dungeon.Level {
                                 stringBuilder.Append(item.Doses);
                                 stringBuilder.Append(" ");
                             }
+                        }
                         i++;
                     }
                     stringBuilder.AppendLine();
@@ -571,7 +573,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                         var idoses = int.Parse(itemparts[3]);
                         var item = ItemFactory.GetInstance(id, icount);
                         item.Doses = idoses;
-                        sector.Blocks[onedim].StoredItems.Add(item);
+                        var storage = sector.Blocks[onedim] as IItemStorage;
+                    if (storage != null) {
+                        storage.AddItem(item);
+                    }
                 }
                 
                 temp.Add(position, sector);

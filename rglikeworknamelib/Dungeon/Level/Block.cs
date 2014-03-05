@@ -11,8 +11,6 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public object ScriptTag;
 
-        public List<Item> StoredItems = new List<Item>();
-
         public string Id {
             get { return id_; }
             set {
@@ -65,5 +63,33 @@ namespace rglikeworknamelib.Dungeon.Level {
                     return "Осмотреть";
             }
         }
+    }
+
+    class BlockChest : Block, IItemStorage {
+        private List<Item> itemList_ = new List<Item>();
+        public List<Item> ItemList {
+            get { return itemList_; }
+            set { itemList_ = value; }
+        }
+
+        public bool RemoveItem(Item i) {
+            if (ItemList.Contains(i))
+            {
+                ItemList.Remove(i);
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddItem(Item i) {
+            ItemList.Add(i);
+            return true;
+        }
+    }
+
+    public interface IItemStorage {
+        List<Item> ItemList { get; set; }
+        bool RemoveItem(Item i);
+        bool AddItem(Item i);
     }
 }

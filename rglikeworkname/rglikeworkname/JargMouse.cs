@@ -114,10 +114,11 @@ namespace jarg {
                             if (currentFloor_.IsCreatureMeele(UndermouseX, UndermouseY, player_)) {
                                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
                                     BlockData undermouseblock = Registry.Instance.Blocks[a.Id];
-                                    if(a.StoredItems != null && a.StoredItems.Count > 0) {
+                                    var storage = a as IItemStorage;
+                                    if(storage != null) {
                                         WindowContainer.Visible = true;
                                         WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
-                                        UpdateContainerContainer(a.StoredItems);
+                                        UpdateContainerContainer(storage.ItemList);
                                         ContainerOn = new Vector2(UndermouseX, UndermouseY);
                                     } else
                                     switch (undermouseblock.SmartAction) {
@@ -125,12 +126,6 @@ namespace jarg {
                                             EventLog.Add("Вы видите " + undermouseblock.Name,
                                                          GlobalWorldLogic.CurrentTime,
                                                          Color.Gray, LogEntityType.SeeSomething);
-                                            break;
-                                        case SmartAction.ActionOpenContainer:
-                                            WindowContainer.Visible = true;
-                                            WindowContainer.SetPosition(new Vector2(Settings.Resolution.X/2, 0));
-                                            UpdateContainerContainer(a.StoredItems);
-                                            ContainerOn = new Vector2(UndermouseX, UndermouseY);
                                             break;
                                         case SmartAction.ActionOpenClose:
                                             currentFloor_.OpenCloseDoor(UndermouseX, UndermouseY);

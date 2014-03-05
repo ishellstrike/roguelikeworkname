@@ -68,11 +68,15 @@ namespace DropListEditor
             sb.AppendLine();
 
             Block a = BlockFactory.GetInstance(Registry.Instance.Blocks.ElementAt(listBox2.SelectedIndex).Key);
-            Registry.TrySpawnItems(Settings.rnd, a);
-            Registry.StackSimilar(ref a.StoredItems);
+            var storage = a as IItemStorage;
+            if (storage != null) {
+                Registry.TrySpawnItems(Settings.rnd, a);
+                List<Item> itemList = storage.ItemList;
+                Registry.StackSimilar(ref itemList);
 
-            foreach (var it in a.StoredItems) {
-                sb.AppendFormat("{1} x{2}{0}", Environment.NewLine, it.Id, it.Count);
+                foreach (var it in storage.ItemList) {
+                    sb.AppendFormat("{1} x{2}{0}", Environment.NewLine, it.Id, it.Count);
+                }
             }
 
             sb.AppendFormat("");

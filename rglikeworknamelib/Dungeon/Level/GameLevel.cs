@@ -1141,10 +1141,10 @@ namespace rglikeworknamelib.Dungeon.Level
                 for (int i = 0; i < mapSector.Value.Blocks.Length; i++)
                 {
                     var block = mapSector.Value.Blocks[i];
-
-                    if (block.StoredItems.Count > 0 && block.Lightness.B != 0)
+                    var storage = block as IItemStorage;
+                    if (storage != null && storage.ItemList.Count > 0 && block.Lightness.B != 0)
                     {
-                        foreach (var storedItem in block.StoredItems)
+                        foreach (var storedItem in storage.ItemList)
                         {
                             temp.Add(new Tuple<Vector2, Item>(new Vector2(i / MapSector.Rx + mapSector.Value.SectorOffsetX * MapSector.Rx + 0.5f, i % MapSector.Ry + mapSector.Value.SectorOffsetY * MapSector.Ry + 0.5f), storedItem));
                         }

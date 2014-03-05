@@ -63,7 +63,7 @@
 			"Repeat":20
 		},
 	],
-	"Type":"BlockFurnance",
+	"Type":"BlockChest",
   },
   "stelaj_weapon":{
     "Name":"Оруженый стелаж",
@@ -101,7 +101,8 @@
 			"Prob":80, 
 			"Repeat":1
 		}
-	]
+	],
+	"Type":"BlockChest",
   },
   "stelaj_wear":{
     "Name":"Cтелаж с одеждой",
@@ -201,7 +202,8 @@
 			"Prob":50,
 			"Repeat":4
 		}
-	]
+	],
+	"Type":"BlockChest",
   },
   "16":{
     "Name":"Дерево",
@@ -312,6 +314,7 @@
 			"Repeat":1
 		}
 	],
+	"Type":"BlockChest",
   },
   "bigsafe":{
     "Name":"Большой сейф",
@@ -333,6 +336,7 @@
 			"Repeat":1
 		}
 	],
+	"Type":"BlockChest",
   },
   "stul":{
     "Name":"Стул",
@@ -385,6 +389,7 @@
 			"Repeat":4
 		}
 	],
+	"Type":"BlockChest",
   },
   "small_fridge":{
     "Name":"Небольшой холодильник",
@@ -407,6 +412,7 @@
 			"Repeat":2
 		}
 	],
+	"Type":"BlockChest",
   },
   "plita":{
   "Name":"Газовая плита",
@@ -428,6 +434,7 @@
 			"Repeat":3
 		},
 	],
+	"Type":"BlockChest",
   },
   "water_heater":{
     "Name":"Водонагреватель",
@@ -448,7 +455,8 @@
 			"Prob":80,
 			"Repeat":3
 		},
-	]
+	],
+	"Type":"BlockChest",
   },
   "trash_can":{
     "Name":"Мусорное ведро",
@@ -465,6 +473,7 @@
 			"Repeat":4
 		}
 	],
+	"Type":"BlockChest",
   },
   "table":{
     "Name":"Стол",
@@ -493,6 +502,7 @@
 			"Repeat":1
 		}
 	],
+	"Type":"BlockChest",
   },
   "rakovina":{
     "Name":"Раковина",
@@ -509,6 +519,7 @@
 			"Repeat":1
 		}
 	],
+	"Type":"BlockChest",
   },
   "lavka":{
     "Name":"Лавка",

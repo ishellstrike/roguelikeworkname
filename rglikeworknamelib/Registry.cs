@@ -176,9 +176,9 @@ namespace rglikeworknamelib
                             var item = ItemFactory.GetInstance(drop.Ids[rnd.Next(drop.Ids.Count)],
                                                                rnd.Next(Math.Abs(drop.Max - drop.Min)) +
                                                                Math.Min(drop.Min, drop.Max));
-                            if (item != null)
+                            if (item != null && block is IItemStorage)
                             {
-                                block.StoredItems.Add(item);
+                                ((IItemStorage)block).AddItem(item);
                             }
                         }
                     }

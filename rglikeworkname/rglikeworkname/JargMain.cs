@@ -230,15 +230,6 @@ namespace jarg {
             cam = new Camera(Settings.Resolution.X / Settings.Resolution.Y, Vector3.Zero){Yaw = a, Pitch = b, Zoom = c};
         }
 
-        protected override void OnActivated(object sender, EventArgs args) {
-            //IsFixedTimeStep = Settings.Framelimit;
-            base.OnActivated(sender, args);
-        }
-
-        protected override void OnDeactivated(object sender, EventArgs args) {
-            base.OnDeactivated(sender, args);
-        }
-
         private Texture2D fltex;
         protected override void LoadContent() {
             spriteBatch_ = new SpriteBatch(GraphicsDevice);
