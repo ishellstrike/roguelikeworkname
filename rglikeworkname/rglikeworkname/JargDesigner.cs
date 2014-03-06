@@ -1345,7 +1345,10 @@ namespace jarg {
                 var i = new ListBoxItem(item.ToString(), Color.White, cou);
                 ContainerContainer.Items.Add(i);
                 i.OnMousePressed += PressInContainer;
-                i.Progress = item.DoubleTag;
+                var cookable = item as ICookable;
+                if (cookable != null) {
+                    i.Progress = cookable.CookProgress;
+                }
                 cou++;
             }
         }

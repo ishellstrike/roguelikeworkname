@@ -224,13 +224,14 @@
     "AfteruseId":"emptycan",
     "SortType":"Food",
     "SpawnGroup":"spawn_cookedfood",
+	"Type":"ItemCookableFood",
   },
   "meatcan1cl":{
     "Name":"Банка тушеной говядины",
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan1",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["opencan"]
+	"Type":"ItemCan"
   },
   "meatcan2":{
     "Name":"Открытая банка паштета",
@@ -242,13 +243,14 @@
     "AfteruseId":"emptycan",
     "SortType":"Food",
     "SpawnGroup":"spawn_cookedfood",
+	"Type":"ItemCookableFood",
   },
   "meatcan2cl":{
     "Name":"Банка паштета",
     "Nameret":"Банка с едой",
     "AfteruseId":"meatcan2",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["opencan"]
+	"Type":"ItemCan"
   },
   "milk1":{
     "Name":"Пакет молока",
@@ -324,6 +326,7 @@
     "SortType":"Food",
     "SpawnGroup":"spawn_cookedfood",
     "Description":"Приготовленный толстый кусок мяса",
+	"Type":"ItemCookableFood",
   },
   "goodsteak":{
     "Name":"Стейк Солсбери",
@@ -333,6 +336,7 @@
     "SortType":"Food",
     "SpawnGroup":"spawn_cookedfood",
     "Description":"Качественно приготовленный толстый кусок мяса",
+	"Type":"ItemCookableFood",
   },
   "chips":{
     "Name":"Чипсы",
@@ -372,6 +376,7 @@
     "NutH2O":100,
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
+	"Type":"ItemCookableFood",
   },
   "banan":{
     "Name":"Банан",
@@ -380,6 +385,7 @@
     "NutH2O":100,
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
+	"Type":"ItemCookableFood",
   },
   "grusha":{
     "Name":"Груша",
@@ -388,6 +394,7 @@
     "NutH2O":150,
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
+	"Type":"ItemCookableFood",
   },
   "carrot":{
     "Name":"Морковь",
@@ -396,6 +403,7 @@
     "NutH2O":70,
     "SortType":"Food",
     "SpawnGroup":"spawn_shopfood",
+	"Type":"ItemCookableFood",
   },
   "raw_meat":{
     "Name":"Сырое мясо",
@@ -423,13 +431,14 @@
     "AfteruseId":"emptycan",
     "SortType":"Food",
     "SpawnGroup":"spawn_cookedfood",
+	"Type":"ItemCookableFood",
   },
   "beancan1cl":{
     "Name":"Банка бобов",
     "Nameret":"Банка с едой",
     "AfteruseId":"beancan1",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["opencan"]
+	"Type":"ItemCan",
   },
   "corncan1":{
     "Name":"Открытая банка кукурузы",
@@ -441,13 +450,14 @@
     "AfteruseId":"emptycan",
     "SortType":"Food",
     "SpawnGroup":"spawn_cookedfood",
+	"Type":"ItemCookableFood",
   },
   "corncan1cl":{
     "Name":"Банка кукурузы",
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan1",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["opencan"]
+	"Type":"ItemCan",
   },
   "corncan2":{
     "Name":"Открытая банка горошка",
@@ -459,19 +469,20 @@
     "AfteruseId":"emptycan",
     "SortType":"Food",
     "SpawnGroup":"spawn_cookedfood",
+	"Type":"ItemCookableFood",
   },
   "corncan2cl":{
     "Name":"Банка горошка",
     "Nameret":"Банка с едой",
     "AfteruseId":"corncan2",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["opencan"]
+	"Type":"ItemCan",
   },
   "vinebottlecl":{
     "Name":"Бутылка вина",
     "AfteruseId":"vinebottle",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["openbottle"],
+	"Type":"ItemBottle",
 	"Weight":1000,
   },
   "vinebottle":{
@@ -486,7 +497,7 @@
     "Name":"Бутылка водки",
     "AfteruseId":"vodkabottle",
     "SpawnGroup":"spawn_shopfood",
-	"ItemScript":["openbottle"],
+	"Type":"ItemBottle",
 	"Weight":500,
 	"Description":"Она самая",
   },

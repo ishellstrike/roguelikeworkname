@@ -100,9 +100,12 @@
     <Compile Include="Dungeon\Buffs\BuffDataBase.cs" />
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
+    <Compile Include="Dungeon\Items\ICookable.cs" />
+    <Compile Include="Dungeon\Items\ItemBottle.cs" />
     <Compile Include="Dungeon\Items\ItemCan.cs" />
     <Compile Include="Dungeon\Items\ItemCigarets.cs" />
     <Compile Include="Dungeon\Items\ItemCloth.cs" />
+    <Compile Include="Dungeon\Items\ItemCookableFood.cs" />
     <Compile Include="Dungeon\Items\ItemCraftType.cs" />
     <Compile Include="Dungeon\Items\DropGroup.cs" />
     <Compile Include="Dungeon\Items\InventorySystem.cs" />

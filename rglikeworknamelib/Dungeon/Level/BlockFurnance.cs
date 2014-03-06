@@ -7,7 +7,6 @@ using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Level {
     class BlockFurnance : Block, IItemStorage {
-        private string[] items_ = { "raw_meat", "carrot", "grusha", "banan", "apple", "steak", "goodsteak" };
         private TimeSpan sec;
         private List<Item> itemList_ = new List<Item>();
 
@@ -15,12 +14,7 @@ namespace rglikeworknamelib.Dungeon.Level {
             var secpos = new Vector3((ms.SectorOffsetX+0.5f)*MapSector.Rx, (ms.SectorOffsetY+0.5f)*MapSector.Ry, 0);
             foreach (var storedItem in ItemList)
             {
-                if (items_.Contains(storedItem.Id)) {
-
-                    if (storedItem.Modifer != ItemModifer.Obuglivshiysa) {
-                        storedItem.DoubleTag = storedItem.DoubleTag + ts.TotalSeconds*40;
-                    }
-                    else {
+                    if (storedItem.Modifer == ItemModifer.Obuglivshiysa) {
                         sec += ts;
                         if (sec.TotalSeconds > 10) {
                             sec = new TimeSpan();
@@ -30,27 +24,16 @@ namespace rglikeworknamelib.Dungeon.Level {
                             //fire!
                         }
                     }
-
-                    if (storedItem.DoubleTag >= 100) {
-                        storedItem.DoubleTag = 0;
-                        switch (storedItem.Modifer) {
-                            case ItemModifer.Razogretyi:
-                                storedItem.Modifer = ItemModifer.Prigotovlenniy;
-                                EventLog.AddLocated("вы чувствуете запах приготовленной пищи", p, secpos);
-                                break;
-                            case ItemModifer.Prigotovlenniy:
-                                storedItem.Modifer = ItemModifer.Perejareniy;
-                                break;
-                            case ItemModifer.Perejareniy:
-                                storedItem.Modifer = ItemModifer.Obuglivshiysa;
-                                EventLog.AddLocated("вы чуствуете запах дыма", p, secpos);
-                                break;
-                            case ItemModifer.Nothing:
-                                storedItem.Modifer = ItemModifer.Razogretyi;
-                                break;
+                    else
+                    {
+                        var cook = storedItem as ICookable;
+                        if (cook != null)
+                        {
+                            cook.GiveHeat(ts.TotalSeconds*40,p, secpos);
                         }
                     }
-                }
+
+                
             }
             base.Update(ts,ms,p);
         }

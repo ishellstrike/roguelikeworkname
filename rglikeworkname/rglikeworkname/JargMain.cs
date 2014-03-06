@@ -539,10 +539,10 @@ namespace jarg {
                 GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, player_.vert, 0, player_.vert.Length / 3);
             }
 
-            //GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
-            //float currentSlen = GlobalWorldLogic.GetCurrentSlen();
-            //GraphicsDevice.Clear(new Color(0,0,0,currentSlen));
-            //currentFloor_.RenderShadowMap(GraphicsDevice, cam, solidShadowEffect);
+            GraphicsDevice.SetRenderTarget(shadowMapRenderTarget_);
+            float currentSlen = GlobalWorldLogic.GetCurrentSlen();
+            GraphicsDevice.Clear(Color.Transparent);
+            currentFloor_.RenderShadowMap(GraphicsDevice, cam, solidShadowEffect);
             //solidEffect.Parameters["worldMatrix"].SetValue(Matrix.CreateRotationZ(PlayerSeeAngle)*Matrix.CreateScale(5)*Matrix.CreateTranslation(player_.Position/32));
             //solidEffect.Parameters["shaderTexture"].SetValue(fltex);
             //solidEffect.Parameters["lightDirection"].SetValue(Vector3.Forward);

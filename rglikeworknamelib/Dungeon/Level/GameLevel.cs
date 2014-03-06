@@ -1199,7 +1199,7 @@ namespace rglikeworknamelib.Dungeon.Level
             solidEffect.Parameters["viewMatrix"].SetValue(cam.ViewMatrix);
             solidEffect.Parameters["projectionMatrix"].SetValue(cam.ProjectionMatrix);
             solidEffect.Parameters["shaderTexture"].SetValue(Atlases.Instance.MajorAtlas);
-            // graphicsDevice.DepthStencilState = DepthStencilState.Default;
+            graphicsDevice.RasterizerState = new RasterizerState(){CullMode = CullMode.None};
             foreach (var pass in solidEffect.CurrentTechnique.Passes)
             {
                 foreach (var sector in sectors_)
@@ -1211,8 +1211,7 @@ namespace rglikeworknamelib.Dungeon.Level
                     pass.Apply();
                     if (sector.Value.verteces_block.Length > 2)
                     {
-                        graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces_block, 0,
-                                                            sector.Value.verteces_block.Length / 3);
+                        graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, sector.Value.verteces_block, 0, sector.Value.verteces_block.Length, sector.Value.indexes_block, 0, sector.Value.indexes_block.Length / 3);
                     }
 
                     if (sector.Value.verteces_facer.Length > 0)

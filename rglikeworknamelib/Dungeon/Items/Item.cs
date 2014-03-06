@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Effects;
 using Microsoft.Xna.Framework;
+using rglikeworknamelib.Dungeon.Level;
 
 namespace rglikeworknamelib.Dungeon.Items {
     [Serializable]
@@ -16,7 +17,6 @@ namespace rglikeworknamelib.Dungeon.Items {
             set { id_ = value; OnLoad(); }
         }
 
-        public double DoubleTag;
         public ItemModifer Modifer = ItemModifer.Nothing;
 
         [NonSerialized]internal ItemData data_;
