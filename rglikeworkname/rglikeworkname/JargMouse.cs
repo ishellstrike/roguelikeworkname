@@ -46,6 +46,10 @@ namespace jarg {
                 rememberShoot_ = false;
             }
 
+            if (ms_.RightButton == ButtonState.Pressed) {
+                Settings.InteractItem = null;
+            }
+
             if (ms_.ScrollWheelValue != lms_.ScrollWheelValue && !ws_.Mopusehook) {
                 cam.Zoom += (ms_.ScrollWheelValue - lms_.ScrollWheelValue)/(float)gameTime.ElapsedGameTime.TotalMilliseconds/10;
             }

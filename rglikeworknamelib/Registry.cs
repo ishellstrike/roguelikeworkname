@@ -90,6 +90,7 @@ namespace rglikeworknamelib
             ItemModifers.Add(new ItemModiferData { Name = "Приготовленный" });
             ItemModifers.Add(new ItemModiferData { Name = "Пережареный" });
             ItemModifers.Add(new ItemModiferData { Name = "Обуглившийся" });
+            ItemModifers.Add(new ItemModiferData { Name = "Горящий" });
         }
         public string GetItemDescription(Item i)
         {
@@ -209,7 +210,8 @@ namespace rglikeworknamelib
         Razogretyi,
         Prigotovlenniy,
         Perejareniy,
-        Obuglivshiysa
+        Obuglivshiysa,
+        Goryashii
     }
 
     public class ItemModiferData

@@ -128,7 +128,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 if (Inventory.ContainsItem(i)) {
                     Inventory.RemoveItem(i);
                 }
-                EventLog.Add(string.Format("Вы надели {0}", i.Data.Name), GlobalWorldLogic.CurrentTime, Color.Yellow,
+                EventLog.Add(string.Format("Вы надели {0}", i), GlobalWorldLogic.CurrentTime, Color.Yellow,
                              LogEntityType.Equip);
                 foreach (var buff in i.Buffs) {
                     Buffs.Add(buff);
@@ -141,7 +141,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             if (i != null) {
                 if (ite != null) {
                     Inventory.AddItem(ite);
-                    EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ite.Data.Name), GlobalWorldLogic.CurrentTime,
+                    EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ite), GlobalWorldLogic.CurrentTime,
                                  Color.Yellow, LogEntityType.Equip);
                     foreach (var buff in ite.Buffs.Where(buff => Buffs.Contains(buff))) {
                         Buffs.Remove(buff);
@@ -152,7 +152,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 if (Inventory.ContainsItem(i)) {
                     Inventory.RemoveItem(i);
                 }
-                EventLog.Add(string.Format("Вы экипировали {0}", i.Data.Name), GlobalWorldLogic.CurrentTime,
+                EventLog.Add(string.Format("Вы экипировали {0}", i), GlobalWorldLogic.CurrentTime,
                              Color.Yellow, LogEntityType.Equip);
                 foreach (var buff in i.Buffs) {
                     Buffs.Add(buff);

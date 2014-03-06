@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Window
 {
@@ -32,9 +33,9 @@ namespace rglikeworknamelib.Window
 
         public void OnPress(MouseState ms, MouseState lms)
         {
-            if (OnMousePressed != null) {
-                OnMousePressed(this, new ListBoxItemPressEventArgs{Ms = ms, Lms = lms});
-            }
+                if (OnMousePressed != null) {
+                    OnMousePressed(this, new ListBoxItemPressEventArgs {Ms = ms, Lms = lms});
+                }
         }
 
         public static implicit operator ListBoxItem(string s)

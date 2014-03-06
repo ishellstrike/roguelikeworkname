@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using rglikeworknamelib.Dungeon.Buffs;
+using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon.Level;
@@ -55,5 +56,44 @@ namespace rglikeworknamelib.Dungeon.Items {
         {
             EventLog.Add(string.Format(s, p), Color.Yellow, LogEntityType.NoAmmoWeapon);
         }
+    }
+
+    [Serializable]
+    public class Fuel : Item, IFuel {
+         
+    }
+
+    public interface IFuel {
+        
+    }
+
+    [Serializable]
+    public class Lighter : Item, ILighter {
+        private ItemAction[] actionlist_;
+
+        public override ItemAction[] GetActionList
+        {
+            get { return actionlist_ ?? (actionlist_ = new[] { new ItemAction(LightItneract, "Поджечь") }); }
+        }
+
+        private void LightItneract(Player arg1, Item arg2) {
+            Settings.InteractItem = new ItemAction(LightSome, "Поджечь (tehnical)");
+        }
+
+        private void LightSome(Player arg1, Item arg2) {
+            var fuel = arg2 as IFuel;
+            if (fuel != null) {
+                EventLog.Add(string.Format("Вы подожгли {0}", arg2), Color.Yellow, LogEntityType.Consume);
+                arg2.Modifer = ItemModifer.Goryashii;
+            }
+            else {
+                EventLog.Add(string.Format("У вас не получилось разжечь {0}", arg2), Color.Yellow, LogEntityType.Consume);
+            }
+            Settings.InteractItem = null;
+        }
+    }
+
+    interface ILighter {
+        
     }
 }

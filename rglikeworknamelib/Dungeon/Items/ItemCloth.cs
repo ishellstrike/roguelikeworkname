@@ -4,7 +4,7 @@ using rglikeworknamelib.Dungeon.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Items {
     [Serializable]
-    public class ItemCloth : Item
+    public class ItemCloth : Item, IFuel
     {
         private ItemAction[] actionlist_;
 

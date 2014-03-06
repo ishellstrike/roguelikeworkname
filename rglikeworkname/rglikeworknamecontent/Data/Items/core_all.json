@@ -767,12 +767,14 @@
     "Weight":20,
     "Doses":100,
 	"SpawnGroup":"spawn_shopfood",
+	"Type":"Lighter",
   },
   "lighter2":{
     "Name":"Зажигалка",
     "Weight":20,
     "Doses":200,
 	"SpawnGroup":"spawn_shopfood",
+	"Type":"Lighter",
   },
   "testhat":{
     "Name":"Тестовая шляпа",

@@ -1362,16 +1362,20 @@ namespace jarg {
 
             var i = (Item) label.Tag;
 
+            if (Settings.InteractItem == null) {
+                if (e.Ms.LeftButton == ButtonState.Pressed) {
+                    selectedItem = i;
 
-            if (label != null && e.Ms.LeftButton == ButtonState.Pressed) {
-                selectedItem = i;
-
-                if (!doubleclick_) {
-                    InventoryMoreInfo.Text = Registry.Instance.GetItemFullDescription(i);
+                    if (!doubleclick_) {
+                        InventoryMoreInfo.Text = Registry.Instance.GetItemFullDescription(i);
+                    }
+                    else {
+                        IntentoryEquip_onPressed(null, null);
+                    }
                 }
-                else {
-                    IntentoryEquip_onPressed(null, null);
-                }
+            }
+            else {
+                Settings.InteractItem.Action(player_, i);
             }
 
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib {
     public static class Settings {
@@ -30,6 +31,7 @@ namespace rglikeworknamelib {
         public static bool SeeAll = false;
         public static bool Noclip;
         public static int DecalCount = 256;
+        public static ItemAction InteractItem = null;
 
         public static Vector2 Resolution {
             set {
