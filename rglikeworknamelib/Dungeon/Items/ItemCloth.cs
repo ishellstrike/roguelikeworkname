@@ -17,12 +17,12 @@ namespace rglikeworknamelib.Dungeon.Items {
             int weight = target.Data.Weight;
             if (weight > 10000)
             {
-                EventLog.Add("Предмет слишком большой", Color.Yellow, LogEntityType.NoAmmoWeapon);
+                EventLog.Add("Предмет слишком большой", LogEntityType.NoAmmoWeapon);
                 return;
             }
             if (weight < 100)
             {
-                EventLog.Add("Предмет слишком маленький", Color.Yellow, LogEntityType.NoAmmoWeapon);
+                EventLog.Add("Предмет слишком маленький", LogEntityType.NoAmmoWeapon);
                 return;
             }
             p.Inventory.TryRemoveItem(target.Id, 1);
@@ -55,7 +55,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             {
                 mess += string.Format(" {0} {1}", smallparts, Registry.Instance.Items["partcloth"].Name);
             }
-            EventLog.Add(mess, Color.Yellow, LogEntityType.NoAmmoWeapon);
+            EventLog.Add(mess, LogEntityType.NoAmmoWeapon);
         }
     }
 }

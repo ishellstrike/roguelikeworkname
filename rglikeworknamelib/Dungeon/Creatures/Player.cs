@@ -128,8 +128,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 if (Inventory.ContainsItem(i)) {
                     Inventory.RemoveItem(i);
                 }
-                EventLog.Add(string.Format("Вы надели {0}", i), GlobalWorldLogic.CurrentTime, Color.Yellow,
-                             LogEntityType.Equip);
+                EventLog.Add(string.Format("Вы надели {0}", i), LogEntityType.Equip);
                 foreach (var buff in i.Buffs) {
                     Buffs.Add(buff);
                     buff.ApplyToTarget(this);
@@ -141,8 +140,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             if (i != null) {
                 if (ite != null) {
                     Inventory.AddItem(ite);
-                    EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ite), GlobalWorldLogic.CurrentTime,
-                                 Color.Yellow, LogEntityType.Equip);
+                    EventLog.Add(string.Format("Вы убрали в инвентарь {0}", ite), LogEntityType.Equip);
                     foreach (var buff in ite.Buffs.Where(buff => Buffs.Contains(buff))) {
                         Buffs.Remove(buff);
                         buff.RemoveFromTarget(this);
@@ -152,8 +150,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                 if (Inventory.ContainsItem(i)) {
                     Inventory.RemoveItem(i);
                 }
-                EventLog.Add(string.Format("Вы экипировали {0}", i), GlobalWorldLogic.CurrentTime,
-                             Color.Yellow, LogEntityType.Equip);
+                EventLog.Add(string.Format("Вы экипировали {0}", i), LogEntityType.Equip);
                 foreach (var buff in i.Buffs) {
                     Buffs.Add(buff);
                     buff.ApplyToTarget(this);
@@ -171,12 +168,10 @@ namespace rglikeworknamelib.Dungeon.Creatures {
 
         public void GiveDamage(float value, DamageType type, MapSector ms) {
             Hp = new Stat(Hp.Current - value, Hp.Max);
-            EventLog.Add(string.Format("Вы получаете {0} урона", value), GlobalWorldLogic.CurrentTime, Color.Red,
-                         LogEntityType.SelfDamage);
+            EventLog.Add(string.Format("Вы получаете {0} урона", value), LogEntityType.SelfDamage);
             if (Hp.Current <= 0 && !isDead) {
                 Kill(ms);
-                EventLog.Add(string.Format("Вы умерли! GAME OVER!"), GlobalWorldLogic.CurrentTime, Color.Red,
-                             LogEntityType.Dies);
+                EventLog.Add(string.Format("Вы умерли! GAME OVER!"), LogEntityType.Dies);
             }
             var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
             ms.AddDecal(new Particle(new Vector2(WorldPosition().X, WorldPosition().Y) + adder, 3)
@@ -301,8 +296,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     else {
                         if (secShoot_.TotalMilliseconds > 1000) {
                             EquipItem(Inventory.TryGetId(ItemGun.Data.Ammo));
-                            EventLog.Add("No ammo", GlobalWorldLogic.CurrentTime, Color.Yellow,
-                                         LogEntityType.NoAmmoWeapon);
+                            EventLog.Add("No ammo", LogEntityType.NoAmmoWeapon);
                             secShoot_ = TimeSpan.Zero;
                         }
                     }
@@ -310,7 +304,7 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             }
             else {
                 if (secShoot_.TotalMilliseconds > 1000) {
-                    EventLog.Add("No weapon", GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.NoAmmoWeapon);
+                    EventLog.Add("No weapon", LogEntityType.NoAmmoWeapon);
                     secShoot_ = TimeSpan.Zero;
                 }
             }
@@ -321,14 +315,12 @@ namespace rglikeworknamelib.Dungeon.Creatures {
             Hunger.Current += selectedItem.Data.NutCal/25f/selectedItem.Data.Doses;
             if (Hunger.Current > Hunger.Max) {
                 Hunger.Current = Hunger.Max;
-                EventLog.Add(string.Format("Вы не смогли съесть {0} целиком", selectedItem.Data.Using ?? selectedItem.Data.Name),
-                             GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Consume);
+                EventLog.Add(string.Format("Вы не смогли съесть {0} целиком", selectedItem.Data.Using ?? selectedItem.Data.Name), LogEntityType.Consume);
             }
             Thirst.Current += selectedItem.Data.NutH2O/25f/selectedItem.Data.Doses;
             if (Thirst.Current > Hunger.Max) {
                 Thirst.Current = Thirst.Max;
-                EventLog.Add(string.Format("Вы не смогли выпить {0} целиком", selectedItem.Data.Using ?? selectedItem.Data.Name),
-                             GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Consume);
+                EventLog.Add(string.Format("Вы не смогли выпить {0} целиком", selectedItem.Data.Using ?? selectedItem.Data.Name), LogEntityType.Consume);
             }
             return true;
         }

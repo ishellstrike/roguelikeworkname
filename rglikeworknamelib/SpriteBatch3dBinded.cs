@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace rglikeworknamelib
 {
-    class SpriteBatch3dBinded
+    public class SpriteBatch3dBinded
     {
         public const int ww = 9;
 

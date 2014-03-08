@@ -326,12 +326,10 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public void GiveDamage(float value, DamageType type) {
             hp_.Current -= value;
-            EventLog.Add(string.Format("{0} получает {1} урона", Data.Name, value),
-                         GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Damage);
+            EventLog.Add(string.Format("{0} получает {1} урона", Data.Name, value), LogEntityType.Damage);
             if (Hp.Current <= 0) {
                 Kill(ms);
-                EventLog.Add(string.Format("{0} УМИРАЕТ!", Data.Name.ToUpper()),
-                             GlobalWorldLogic.CurrentTime, Color.Pink, LogEntityType.Dies);
+                EventLog.Add(string.Format("{0} УМИРАЕТ!", Data.Name.ToUpper()), LogEntityType.Dies);
             }
             var adder = new Vector2(Settings.rnd.Next(-10, 10), Settings.rnd.Next(-10, 10));
 
@@ -492,7 +490,7 @@ namespace rglikeworknamelib.Dungeon.Creatures
 
         public void Say(string s)
         {
-            EventLog.Add(Data.Name+": \""+s+"\"", Color.LightGray, LogEntityType.Default);
+            EventLog.Add(Data.Name+": \""+s+"\"", LogEntityType.Default);
         }
     }
 

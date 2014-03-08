@@ -23,8 +23,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             }
             else
             {
-                EventLog.Add("„тобы открывать банки вам нужен нож или отвертка", Color.Yellow,
-                    LogEntityType.NoAmmoWeapon);
+                EventLog.Add("„тобы открывать банки вам нужен нож или отвертка", LogEntityType.NoAmmoWeapon);
             }
         }
     }

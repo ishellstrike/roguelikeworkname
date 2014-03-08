@@ -128,9 +128,7 @@ namespace jarg {
                                             door.OpenClose(ms);
                                         }
                                         else {
-                                            EventLog.Add("Вы видите " + undermouseblock.Name,
-                                                GlobalWorldLogic.CurrentTime,
-                                                Color.Gray, LogEntityType.SeeSomething);
+                                            EventLog.Add("Вы видите " + undermouseblock.Name, LogEntityType.SeeSomething);
                                         }
                                     }
                                 }

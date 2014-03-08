@@ -20,8 +20,7 @@ namespace rglikeworknamelib.Dungeon.Items {
         public void Smoke(Player p, Item target) {
             if (p.Inventory.ContainsId("lighter1") || p.Inventory.ContainsId("lighter2")) {
                 EventLog.Add(
-                    string.Format("Вы выкурили сигарету "),
-                    GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
+                    string.Format("Вы выкурили сигарету "), LogEntityType.Consume);
                 foreach (IBuff buff in target.Buffs) {
                     buff.ApplyToTarget(p);
                 }
@@ -34,7 +33,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                 }
             }
             else {
-                EventLog.Add("Чтобы курить вам нужна зажигалка", Color.Yellow, LogEntityType.NoAmmoWeapon);
+                EventLog.Add("Чтобы курить вам нужна зажигалка", LogEntityType.NoAmmoWeapon);
             }
         }
     }

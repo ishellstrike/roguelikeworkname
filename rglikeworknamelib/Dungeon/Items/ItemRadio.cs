@@ -19,18 +19,17 @@ namespace rglikeworknamelib.Dungeon.Items {
                 p.Inventory.AddItem(ItemFactory.GetInstance("batery", 1));
                 p.Inventory.AddItem(ItemFactory.GetInstance("smallvint", Settings.rnd.Next(5) + 10));
 
-                EventLog.Add(string.Format("Вы успешно разбираете {0}", target.Data.Name), Color.Yellow,
-                    LogEntityType.NoAmmoWeapon);
+                EventLog.Add(string.Format("Вы успешно разбираете {0}", target.Data.Name), LogEntityType.NoAmmoWeapon);
             }
             else
             {
-                EventLog.Add("Чтобы разбирать электронику вам нужна отвертка", Color.Yellow, LogEntityType.NoAmmoWeapon);
+                EventLog.Add("Чтобы разбирать электронику вам нужна отвертка", LogEntityType.NoAmmoWeapon);
             }
         }
 
         private void RadioOnOff(Player p, Item target)
         {
-            EventLog.Add("Радио включается", Color.White, LogEntityType.Default);
+            EventLog.Add("Радио включается", LogEntityType.Default);
         }
     }
 }

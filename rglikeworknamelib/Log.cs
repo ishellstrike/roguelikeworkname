@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using rglikeworknamelib.Dungeon;
@@ -63,11 +64,6 @@ namespace rglikeworknamelib
     {
         public static List<LogEntity> log = new List<LogEntity>(new[] {new LogEntity("Добро пожаловать в JARG", Color.LightCyan, new DateTime()), });
 
-        public static void Add(string message, Color color, LogEntityType type)
-        {
-            Add(message, GlobalWorldLogic.CurrentTime, color, type);
-        }
-
         public static void AddLocated(string message, Player p, Vector3 pos) {
             var a = p.Position/32/MapSector.Rx;
             var b = a - pos/MapSector.Rx;
@@ -111,7 +107,26 @@ namespace rglikeworknamelib
             Add(s+message, GlobalWorldLogic.CurrentTime, Color.White, LogEntityType.Located);
         }
 
-        public static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type)
+        public static void Add(string message, LogEntityType type) {
+            Color c;
+            switch (type) {
+                case LogEntityType.Console:
+                    c = Color.LightCyan;
+                    break;
+                case LogEntityType.Damage:
+                    c = Color.Red;
+                    break;
+                    case LogEntityType.SeeSomething:
+                    c = Color.Gray;
+                        break;
+                default:
+                    c = Color.White;
+                    break;
+            }
+            Add(message, GlobalWorldLogic.CurrentTime, c, type);
+        }
+
+        private static void Add(string message, DateTime globalDateTime, Color color, LogEntityType type)
         {
             if(log.Last().message == message) {
                 log.Last().Repeat++;

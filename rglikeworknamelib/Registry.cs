@@ -154,11 +154,6 @@ namespace rglikeworknamelib
 
                 sb.Append(Environment.NewLine + Items[item.Ammo].Name);
             }
-            //switch (item.SortType) {
-            //    case ItemType.Medicine:
-            //        sb.Append(item.)
-            //        break;
-            //}
             return sb.ToString();
         }
         public static void TrySpawnItems(Random rnd, Block block)

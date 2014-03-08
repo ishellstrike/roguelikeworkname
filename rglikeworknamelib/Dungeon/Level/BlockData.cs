@@ -12,7 +12,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public string Description;
 
         public float Hp;
-        public bool IsDestructable, Flame, IsTransparent, IsWalkable, Wallmaker;
+        public bool IsDestructable, IsTransparent, IsWalkable, Wallmaker;
         public Color MMCol;
         public string MTex;
         public string Name;
@@ -34,7 +34,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         public override string ToString() {
-            return string.Format("{0} : {1}, t{2}", Name, TypeParsed.Name, MTex);
+            return string.Format("{0} : {1}, t:{2}", Name, TypeParsed.Name, MTex);
         }
     }
 }

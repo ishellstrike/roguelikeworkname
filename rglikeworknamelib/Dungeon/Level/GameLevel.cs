@@ -489,13 +489,11 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 if (a.Data.IsWalkable)
                 {
-                    EventLog.Add("Вы закрыли дверь", GlobalWorldLogic.CurrentTime, Color.Gray,
-                                 LogEntityType.OpenCloseDor);
+                    EventLog.Add("Вы закрыли дверь", LogEntityType.OpenCloseDor);
                 }
                 else
                 {
-                    EventLog.Add("Вы открыли дверь", GlobalWorldLogic.CurrentTime, Color.LightGray,
-                                 LogEntityType.OpenCloseDor);
+                    EventLog.Add("Вы открыли дверь", LogEntityType.OpenCloseDor);
                     AchievementDataBase.Stat["dooro"].Count++;
                 }
                 SetBlock(x, y, GetBlock(x, y).Data.AfterDeathId);

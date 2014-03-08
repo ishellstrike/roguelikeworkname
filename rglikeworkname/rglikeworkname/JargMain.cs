@@ -582,8 +582,12 @@ namespace jarg {
             //    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, qube, 0, qube.Length / 3);
             //}
 
-            if (Settings.DebugInfo)
-            {
+            if (Settings.DebugInfo) {
+                var pp = player_.Position/32f;
+                lineBatch_.AddLine3D(pp, pp + Vector3.Right, Color.LightGreen);
+                lineBatch_.AddLine3D(pp, pp + Vector3.Up, Color.LightGreen);
+                lineBatch_.AddLine3D(pp, pp + Vector3.Backward, Color.LightGreen);
+
                 spriteBatch_.Begin();
                 spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount, new Vector2(11, 101), Color.Black);
                 spriteBatch_.DrawString(font1_, "req:" + levelWorker_.LoadCount, new Vector2(10, 100), Color.White);
@@ -591,6 +595,9 @@ namespace jarg {
                 spriteBatch_.DrawString(font1_, "store:" + levelWorker_.StoreCount, new Vector2(10, 120), Color.White);
                 spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount, new Vector2(11, 141), Color.Black);
                 spriteBatch_.DrawString(font1_, "ready:" + levelWorker_.ReadyCount, new Vector2(10, 140), Color.White);
+                SpriteBatch3dBinded.DrawStringCenteredUppedProjected(spriteBatch_, cam, pp + Vector3.Right, font1_, "x", Color.LightGreen, 3);
+                SpriteBatch3dBinded.DrawStringCenteredUppedProjected(spriteBatch_, cam, pp + Vector3.Up, font1_, "y", Color.LightGreen, 3);
+                SpriteBatch3dBinded.DrawStringCenteredUppedProjected(spriteBatch_, cam, pp + Vector3.Backward, font1_, "z", Color.LightGreen, 3);
                 spriteBatch_.End();
             }
 

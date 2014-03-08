@@ -295,7 +295,7 @@ namespace jarg {
            var a = ItemFactory.GetInstance((string)((Label)sender).Tag, 1);
            inventory_.AddItem(a);
            EventLog.Add(
-               string.Format("Item {0} spawn in inventory", a.Id), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+               string.Format("Item {0} spawn in inventory", a.Id), LogEntityType.Console);
            UpdateInventoryContainer();
         }
 
@@ -1039,10 +1039,10 @@ namespace jarg {
                     currentFloor_.GetSector((int) ppp.X, (int) ppp.Y).Spawn(ss, i/MapSector.Rx, i1/MapSector.Ry);
                     EventLog.Add(
                         string.Format("Creature {0} spawn at ({1}, {2}), in ({3}, {4})", ss, i, i1, (int) ppp.X,
-                                      (int) ppp.Y), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                                      (int) ppp.Y), LogEntityType.Console);
                 }
                 else {
-                    EventLog.Add(string.Format("Creature {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                    EventLog.Add(string.Format("Creature {0} not found", ss),
                                  LogEntityType.Console);
                 }
             }
@@ -1055,7 +1055,7 @@ namespace jarg {
                 var i1 = (int) (player_.Position.Y - (int) ppp.Y*MapSector.Ry*32);
                 EventLog.Add(
                     string.Format("Player position {4} or ({0}, {1}) in sector ({2}, {3})", i, i1, (int) ppp.X,
-                                  (int) ppp.Y, player_.Position), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                                  (int) ppp.Y, player_.Position),
                     LogEntityType.Console);
             }
 
@@ -1064,15 +1064,14 @@ namespace jarg {
                 int res;
                 if(int.TryParse(ss, out res)) {
                     EventLog.Add(
-                        string.Format("Old time"), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                        string.Format("Old time"),
                         LogEntityType.Console);
                     GlobalWorldLogic.CurrentTime = GlobalWorldLogic.CurrentTime.AddHours(res - GlobalWorldLogic.CurrentTime.Hour);
                     EventLog.Add(
-                        string.Format("New time"), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                        string.Format("New time"),
                         LogEntityType.Console);
                 } else {
-                    EventLog.Add(string.Format("Wrong number to time <hour>"),
-                                 GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                    EventLog.Add(string.Format("Wrong number to time <hour>"), LogEntityType.Console);
                 }
             }
 
@@ -1084,18 +1083,17 @@ namespace jarg {
             }
             if (s.Contains("fastwalk")) {
                 Settings.Normalwalk = !Settings.Normalwalk;
-                EventLog.Add(string.Format("walk x{0}", Settings.Normalwalk ? 1 : 4), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                EventLog.Add(string.Format("walk x{0}", Settings.Normalwalk ? 1 : 4),
                              LogEntityType.Console);
             }
             if (s.Contains("noclip")) {
                 Settings.Noclip = !Settings.Noclip;
-                EventLog.Add(string.Format("Noclip = {0}", Settings.Noclip), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                EventLog.Add(string.Format("Noclip = {0}", Settings.Noclip),
                              LogEntityType.Console);
             }
             if (s.Contains("killall")) {
                 int t = currentFloor_.KillAllCreatures();
-                EventLog.Add(string.Format("{0} creatures in active sector killed!", t), GlobalWorldLogic.CurrentTime,
-                             Color.Cyan, LogEntityType.Console);
+                EventLog.Add(string.Format("{0} creatures in active sector killed!", t), LogEntityType.Console);
             }
             if (s.Contains("spawn i ")) {
                 string ss = s.Substring(8);
@@ -1104,12 +1102,12 @@ namespace jarg {
                     var a = ItemFactory.GetInstance(ss, 1);
                     inventory_.AddItem(a);
                     EventLog.Add(
-                        string.Format("Item {0} spawn in inventory", a.Id), GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                        string.Format("Item {0} spawn in inventory", a.Id), LogEntityType.Console);
                     UpdateInventoryContainer();
                 }
                 else
                 {
-                    EventLog.Add(string.Format("Item {0} not found", ss), GlobalWorldLogic.CurrentTime, Color.Cyan,
+                    EventLog.Add(string.Format("Item {0} not found", ss),
                                  LogEntityType.Console);
                 }
             }
@@ -1121,17 +1119,14 @@ namespace jarg {
                     if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y)) {
                         player_.Position = new Vector3(x*MapSector.Rx*32, y*MapSector.Ry*32,0);
                         mousemapoffset = Vector2.Zero;
-                        EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y),
-                                     GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                        EventLog.Add(string.Format("Teleported to sector ({0}, {1})", x, y), LogEntityType.Console);
                     }
                     else {
-                        EventLog.Add(string.Format("Wrong number to tp <x> <y>"),
-                                     GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                        EventLog.Add(string.Format("Wrong number to tp <x> <y>"), LogEntityType.Console);
                     }
                 }
                 else {
-                    EventLog.Add(string.Format("Wrong parameters for tp <x> <y>"),
-                                 GlobalWorldLogic.CurrentTime, Color.Cyan, LogEntityType.Console);
+                    EventLog.Add(string.Format("Wrong parameters for tp <x> <y>"), LogEntityType.Console);
                 }
             }
             if (s.Contains("testitems1")) {
@@ -1160,7 +1155,7 @@ namespace jarg {
         private static void RandomLogFill() {
             for (int i = 0; i <= 128; i++) {
                 Thread.Sleep(50);
-                EventLog.Add(Settings.rnd.Next().ToString()+string.Format(" ({0}/{1})",i+1,128), new Color(Settings.rnd.Next(0, 256), Settings.rnd.Next(0, 256), Settings.rnd.Next(0, 256)), LogEntityType.Default);
+                EventLog.Add(Settings.rnd.Next().ToString()+string.Format(" ({0}/{1})",i+1,128), LogEntityType.Default);
             }
         }
 

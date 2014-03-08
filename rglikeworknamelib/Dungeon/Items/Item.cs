@@ -54,7 +54,7 @@ namespace rglikeworknamelib.Dungeon.Items {
 
         public static void Log(string s, params object[] p)
         {
-            EventLog.Add(string.Format(s, p), Color.Yellow, LogEntityType.NoAmmoWeapon);
+            EventLog.Add(string.Format(s, p), LogEntityType.NoAmmoWeapon);
         }
     }
 
@@ -83,11 +83,11 @@ namespace rglikeworknamelib.Dungeon.Items {
         private void LightSome(Player arg1, Item arg2) {
             var fuel = arg2 as IFuel;
             if (fuel != null) {
-                EventLog.Add(string.Format("Вы подожгли {0}", arg2), Color.Yellow, LogEntityType.Consume);
+                EventLog.Add(string.Format("Вы подожгли {0}", arg2), LogEntityType.Consume);
                 arg2.Modifer = ItemModifer.Goryashii;
             }
             else {
-                EventLog.Add(string.Format("У вас не получилось разжечь {0}", arg2), Color.Yellow, LogEntityType.Consume);
+                EventLog.Add(string.Format("У вас не получилось разжечь {0}", arg2), LogEntityType.Consume);
             }
             Settings.InteractItem = null;
         }

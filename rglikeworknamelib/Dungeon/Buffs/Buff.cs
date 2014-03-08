@@ -23,8 +23,7 @@ namespace rglikeworknamelib.Dungeon.Buffs {
         public virtual bool RemoveFromTarget(Creature target) {
             if (applied_) {
                 Target = target;
-                EventLog.Add(string.Format("Потерян эффект {0}", BuffDataBase.Data[Id].Name),
-                             GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Buff);
+                EventLog.Add(string.Format("Потерян эффект {0}", BuffDataBase.Data[Id].Name), LogEntityType.Buff);
                 applied_ = false;
                 return true;
             }
@@ -41,8 +40,7 @@ namespace rglikeworknamelib.Dungeon.Buffs {
                 else {
                     Expiring = false;
                 }
-                EventLog.Add(string.Format("Получен эффект {0})", BuffDataBase.Data[Id].Name),
-                             GlobalWorldLogic.CurrentTime, Color.Orange, LogEntityType.Buff);
+                EventLog.Add(string.Format("Получен эффект {0})", BuffDataBase.Data[Id].Name), LogEntityType.Buff);
                 applied_ = true;
                 return true;
             }

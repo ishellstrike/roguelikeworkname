@@ -81,8 +81,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                     if (player.EatItem(selectedItem)) {
                         EventLog.Add(
                             string.Format("{1} {0}", selectedItem.Data.Using ?? selectedItem.Data.Name,
-                                          selectedItem.Data.SortType == ItemType.Medicine ? "Вы приняли" : "Вы употребили"),
-                            GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
+                                          selectedItem.Data.SortType == ItemType.Medicine ? "Вы приняли" : "Вы употребили"), LogEntityType.Consume);
                         foreach (IBuff buff in selectedItem.Buffs) {
                             buff.ApplyToTarget(player);
                         }
@@ -109,8 +108,7 @@ namespace rglikeworknamelib.Dungeon.Items {
                     }
                     else {
                         EventLog.Add(
-                            string.Format("Вы не можете съесть больше"),
-                            GlobalWorldLogic.CurrentTime, Color.Yellow, LogEntityType.Consume);
+                            string.Format("Вы не можете съесть больше"), LogEntityType.Consume);
                     }
                     break;
             }
@@ -169,7 +167,7 @@ namespace rglikeworknamelib.Dungeon.Items {
             if (selectedCraft.Require != null) {
                 foreach (var req in selectedCraft.Require) {
                     if (crafter.Abilities.List[req.Ability].XpLevel < req.Level) {
-                        EventLog.Add("Недостаточный навык", Color.Yellow, LogEntityType.Consume);
+                        EventLog.Add("Недостаточный навык", LogEntityType.Consume);
                         return;
                     }
                 }
@@ -196,14 +194,14 @@ namespace rglikeworknamelib.Dungeon.Items {
                 foreach (var inp in selectedCraft.Output) {
                     int te = Settings.rnd.Next(0, inp.Alters.Count);
                     items_.Add(ItemFactory.GetInstance(inp.Alters[te].Id, inp.Alters[te].Count));
-                    EventLog.Add(string.Format("Вы создали {0}{1}", Registry.Instance.Items[inp.Alters[te].Id].Name, inp.Alters[te].Count > 1 ? " x" + inp.Alters[te].Count : string.Empty), Color.Yellow, LogEntityType.Consume);
+                    EventLog.Add(string.Format("Вы создали {0}{1}", Registry.Instance.Items[inp.Alters[te].Id].Name, inp.Alters[te].Count > 1 ? " x" + inp.Alters[te].Count : string.Empty), LogEntityType.Consume);
                 }
 
                 Registry.StackSimilar(ref items_);
                 Settings.InventoryUpdate = true;
             }
             else {
-                EventLog.Add("Недостаточно компонентов", Color.Yellow, LogEntityType.Consume);
+                EventLog.Add("Недостаточно компонентов", LogEntityType.Consume);
             }
         }
 
