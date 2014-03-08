@@ -46,10 +46,6 @@ namespace jarg {
                 rememberShoot_ = false;
             }
 
-            if (ms_.RightButton == ButtonState.Pressed) {
-                Settings.InteractItem = null;
-            }
-
             if (ms_.ScrollWheelValue != lms_.ScrollWheelValue && !ws_.Mopusehook) {
                 cam.Zoom += (ms_.ScrollWheelValue - lms_.ScrollWheelValue)/(float)gameTime.ElapsedGameTime.TotalMilliseconds/10;
             }
@@ -102,7 +98,8 @@ namespace jarg {
                 WindowIngameHint.Visible = false;
 
                 if (currentFloor_ != null) {
-                    Block nxny = currentFloor_.GetBlock(UndermouseX, UndermouseY);
+                    MapSector ms;
+                    Block nxny = currentFloor_.GetBlock(UndermouseX, UndermouseY, out ms);
                     bool nothingUndermouse = true;
                     if (nxny != null && !rememberShoot_)
                         // currentFloor_.IsExplored(aa))
@@ -118,22 +115,23 @@ namespace jarg {
                             if (currentFloor_.IsCreatureMeele(UndermouseX, UndermouseY, player_)) {
                                 if (ms_.LeftButton == ButtonState.Pressed && lms_.LeftButton == ButtonState.Released) {
                                     BlockData undermouseblock = Registry.Instance.Blocks[a.Id];
-                                    var storage = a as IItemStorage;
-                                    if(storage != null) {
+                                    var container = a as IItemStorage;
+                                    if (container != null) {
                                         WindowContainer.Visible = true;
                                         WindowContainer.SetPosition(new Vector2(Settings.Resolution.X / 2, 0));
-                                        UpdateContainerContainer(storage.ItemList);
+                                        UpdateContainerContainer(container.ItemList);
                                         ContainerOn = new Vector2(UndermouseX, UndermouseY);
-                                    } else
-                                    switch (undermouseblock.SmartAction) {
-                                        case SmartAction.ActionSee:
+                                    }
+                                    else {
+                                        var door = a as IDoor;
+                                        if (door != null) {
+                                            door.OpenClose(ms);
+                                        }
+                                        else {
                                             EventLog.Add("Вы видите " + undermouseblock.Name,
-                                                         GlobalWorldLogic.CurrentTime,
-                                                         Color.Gray, LogEntityType.SeeSomething);
-                                            break;
-                                        case SmartAction.ActionOpenClose:
-                                            currentFloor_.OpenCloseDoor(UndermouseX, UndermouseY);
-                                            break;
+                                                GlobalWorldLogic.CurrentTime,
+                                                Color.Gray, LogEntityType.SeeSomething);
+                                        }
                                     }
                                 }
                             }

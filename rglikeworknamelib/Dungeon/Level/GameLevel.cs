@@ -57,7 +57,8 @@ namespace rglikeworknamelib.Dungeon.Level
         {
             MapSeed = Settings.rnd.Next();
             MapGenerators.Seed = MapSeed;
-            if (spriteBatch != null) {
+            if (spriteBatch != null)
+            {
                 whitepixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
                 var data = new uint[1];
                 data[0] = 0xffffffff;
@@ -223,12 +224,28 @@ namespace rglikeworknamelib.Dungeon.Level
         private void GlobalMapAdd(MapSector temp)
         {
             var a = new Tuple<int, int>(temp.SectorOffsetX, temp.SectorOffsetY);
-            if (!globalMap.ContainsKey(a)) {
+            if (!globalMap.ContainsKey(a))
+            {
                 globalMap.Add(a, temp.Biom);
             }
-            else {
+            else
+            {
                 globalMap[a] = temp.Biom;
             }
+        }
+
+        public Block GetBlock(int x, int y,  out MapSector ms)
+        {
+            int divx = x < 0 ? (x + 1) / MapSector.Rx - 1 : x / MapSector.Rx;
+            int divy = y < 0 ? (y + 1) / MapSector.Ry - 1 : y / MapSector.Ry;
+            MapSector sect = GetSector(divx, divy);
+            ms = sect;
+            if (sect != null)
+            {
+                return sect.GetBlock(x - divx * MapSector.Rx, y - divy * MapSector.Ry); //blocks_[x * ry + y];
+            }
+
+            return null;
         }
 
         public Block GetBlock(int x, int y, bool noLoading = false)
@@ -810,8 +827,10 @@ namespace rglikeworknamelib.Dungeon.Level
         /// <param name="camera"></param>
         public void UpdateBlocks(GameTime gt, Player p)
         {
-            foreach (var mapSector in sectors_) {
-                foreach (var activeBlock in mapSector.Value.ActiveBlocks) {
+            foreach (var mapSector in sectors_)
+            {
+                foreach (var activeBlock in mapSector.Value.ActiveBlocks)
+                {
                     activeBlock.Update(gt.ElapsedGameTime, mapSector.Value, p);
                 }
             }
@@ -825,7 +844,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 po[k] = XyToVector3(po[k]);
             }
-            var car = new Vector3(per.Position.X - (int) camera.X, per.Position.Y - (int) camera.Y, 0);
+            var car = new Vector3(per.Position.X - (int)camera.X, per.Position.Y - (int)camera.Y, 0);
             car = XyToVector3(car);
 
             //лучи ко всем вершинам блока
@@ -912,7 +931,7 @@ namespace rglikeworknamelib.Dungeon.Level
         public void ShadowRender()
         {
             gd_.RasterizerState = new RasterizerState { CullMode = CullMode.CullClockwiseFace, FillMode = FillMode.Solid };
-            ((BasicEffect) be_).DiffuseColor = Color.Black.ToVector3();
+            ((BasicEffect)be_).DiffuseColor = Color.Black.ToVector3();
             foreach (var pass in be_.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -1001,7 +1020,8 @@ namespace rglikeworknamelib.Dungeon.Level
 
         public void MapPreload()
         {
-            if (File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm")) {
+            if (File.Exists(Settings.GetWorldsDirectory() + "\\mapdata.rlm"))
+            {
                 lw_.LoadAll(this);
             }
         }
@@ -1038,9 +1058,11 @@ namespace rglikeworknamelib.Dungeon.Level
                 {
                     var binaryFormatter = new BinaryFormatter();
 
-                    using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"), FileMode.Open)) {
-                        using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress)) {
-                            globalMap = (Dictionary<Tuple<int, int>, SectorBiom>) binaryFormatter.Deserialize(gZipStream);
+                    using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("map.rlm"), FileMode.Open))
+                    {
+                        using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress))
+                        {
+                            globalMap = (Dictionary<Tuple<int, int>, SectorBiom>)binaryFormatter.Deserialize(gZipStream);
                         }
                     }
                 }
@@ -1199,14 +1221,14 @@ namespace rglikeworknamelib.Dungeon.Level
             solidEffect.Parameters["viewMatrix"].SetValue(cam.ViewMatrix);
             solidEffect.Parameters["projectionMatrix"].SetValue(cam.ProjectionMatrix);
             solidEffect.Parameters["shaderTexture"].SetValue(Atlases.Instance.MajorAtlas);
-            graphicsDevice.RasterizerState = new RasterizerState(){CullMode = CullMode.None};
+            graphicsDevice.RasterizerState = new RasterizerState() { CullMode = CullMode.None };
             foreach (var pass in solidEffect.CurrentTechnique.Passes)
             {
                 foreach (var sector in sectors_)
                 {
                     if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
                     solidEffect.Parameters["worldMatrix"].SetValue(
-                        Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0) * Matrix.CreateShadow(Vector3.Transform(GlobalWorldLogic.LightVector, Matrix.CreateRotationX((float) +Math.PI/2)), new Plane(Vector3.Forward, 0))
+                        Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0) * Matrix.CreateShadow(Vector3.Transform(GlobalWorldLogic.LightVector, Matrix.CreateRotationX((float)+Math.PI / 2)), new Plane(Vector3.Forward, 0))
                         );
                     pass.Apply();
                     if (sector.Value.verteces_block.Length > 2)
@@ -1233,13 +1255,16 @@ namespace rglikeworknamelib.Dungeon.Level
             }
         }
 
-        public void RenderMap(GraphicsDevice graphicsDevice, Camera cam, Effect solidEffect, Effect billeff, Player p) {
+        public void RenderMap(GraphicsDevice graphicsDevice, Camera cam, Effect solidEffect, Effect billeff, Player p)
+        {
             var hposs = p.GetWorldPositionInBlocks();
             hposs.X /= MapSector.Rx;
             hposs.Y /= MapSector.Ry;
-            for (int i = -2; i < 3; i++) {
-                for (int j = -2; j < 3; j++) {
-                    GetSector((int) hposs.X + i, (int) hposs.Y + j);
+            for (int i = -2; i < 3; i++)
+            {
+                for (int j = -2; j < 3; j++)
+                {
+                    GetSector((int)hposs.X + i, (int)hposs.Y + j);
                 }
             }
 
@@ -1250,22 +1275,29 @@ namespace rglikeworknamelib.Dungeon.Level
             solidEffect.Parameters["diffuseColor"].SetValue(Color.White.ToVector4());
             solidEffect.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
             solidEffect.Parameters["lightDirection"].SetValue(GlobalWorldLogic.LightVector);
-            if (!Settings.DebugWire) {
-                graphicsDevice.RasterizerState = new RasterizerState {
+            if (!Settings.DebugWire)
+            {
+                graphicsDevice.RasterizerState = new RasterizerState
+                {
                     CullMode = CullMode.CullClockwiseFace,
                     FillMode = FillMode.Solid
                 };
             }
-            else {
-                graphicsDevice.RasterizerState = new RasterizerState {
+            else
+            {
+                graphicsDevice.RasterizerState = new RasterizerState
+                {
                     CullMode = CullMode.CullClockwiseFace,
                     FillMode = FillMode.WireFrame,
                 };
             }
             // graphicsDevice.DepthStencilState = DepthStencilState.Default;
-            foreach (var pass in solidEffect.CurrentTechnique.Passes) {
-                foreach (var sector in sectors_) {
-                    if (!sector.Value.GeomReady) {
+            foreach (var pass in solidEffect.CurrentTechnique.Passes)
+            {
+                foreach (var sector in sectors_)
+                {
+                    if (!sector.Value.GeomReady)
+                    {
                         sector.Value.RebuildGeometry();
                     }
                     if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
@@ -1273,14 +1305,14 @@ namespace rglikeworknamelib.Dungeon.Level
                         Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0));
                     pass.Apply();
                     graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, sector.Value.verteces, 0,
-                        sector.Value.verteces.Length/3);
+                        sector.Value.verteces.Length / 3);
                 }
             }
         }
 
         float ttt = 0;
 
-        public void SpriteBatchFeatures(Camera cam, SpriteBatch sb, LineBatch  lb)
+        public void SpriteBatchFeatures(Camera cam, SpriteBatch sb, LineBatch lb)
         {
             if (Settings.DebugInfo)
             {
@@ -1299,11 +1331,14 @@ namespace rglikeworknamelib.Dungeon.Level
                 }
                 sb.End();
 
-                foreach (var sect in sectors_) {
-                    foreach (var cre in sect.Value.Creatures) {
-                        if (!cre.IsIddle) {
+                foreach (var sect in sectors_)
+                {
+                    foreach (var cre in sect.Value.Creatures)
+                    {
+                        if (!cre.IsIddle)
+                        {
                             lineBatch_.AddLine3D(cre.creatureWorld.Translation,
-                                new Vector3(cre.CurrentOrder.Point.X/32f, cre.CurrentOrder.Point.Y/32f, 0.1f),
+                                new Vector3(cre.CurrentOrder.Point.X / 32f, cre.CurrentOrder.Point.Y / 32f, 0.1f),
                                 Color.YellowGreen);
                         }
                     }
@@ -1311,7 +1346,8 @@ namespace rglikeworknamelib.Dungeon.Level
             }
         }
 
-        public void RenderCreatures(GraphicsDevice graphicsDevice, Camera cam, Effect bilbEffect, SpriteBatch sb) {
+        public void RenderCreatures(GraphicsDevice graphicsDevice, Camera cam, Effect bilbEffect, SpriteBatch sb)
+        {
             //foreach (var pass in bilbEffect.CurrentTechnique.Passes)
             //{
             //    foreach (var sector in sectors_) {
@@ -1345,7 +1381,7 @@ namespace rglikeworknamelib.Dungeon.Level
             {
                 foreach (var sector in sectors_)
                 {
-                    if(cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint){continue;}
+                    if (cam.Bounding.Contains(sector.Value.bBox) == ContainmentType.Disjoint) { continue; }
 
                     if (sector.Value.verteces_block.Length > 0)
                     {
@@ -1353,17 +1389,19 @@ namespace rglikeworknamelib.Dungeon.Level
                             Matrix.CreateTranslation(sector.Value.SectorOffsetX * MapSector.Rx, sector.Value.SectorOffsetY * MapSector.Ry, 0));
                         pass.Apply();
                         graphicsDevice.SetVertexBuffer(sector.Value.block_bufer);
-                        graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,sector.Value.verteces_block,0,sector.Value.verteces_block.Length,sector.Value.indexes_block,0,sector.Value.indexes_block.Length/3);
+                        graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, sector.Value.verteces_block, 0, sector.Value.verteces_block.Length, sector.Value.indexes_block, 0, sector.Value.indexes_block.Length / 3);
                     }
-                    if (sector.Value.verteces_facer.Length > 0) {
+                    if (sector.Value.verteces_facer.Length > 0)
+                    {
                         int i = 0;
-                        foreach (var oW in sector.Value.objWorld) {
+                        foreach (var oW in sector.Value.objWorld)
+                        {
                             billboardWorld.Translation = oW;
                             solidEffect.Parameters["worldMatrix"].SetValue(billboardWorld);
                             pass.Apply();
 
                             graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList,
-                                sector.Value.verteces_facer, i*6, 2);
+                                sector.Value.verteces_facer, i * 6, 2);
                             i++;
                         }
                     }

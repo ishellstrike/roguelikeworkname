@@ -52,7 +52,7 @@
     "MTex":"foodpolka",
     "AlterMtex":["foodpolka1", "foodpolka2", "foodpolka3", "foodpolka4"],
     "swide":28,
-    "SmartAction":"ActionOpenContainer",
+    "Type":"BlockChest",
     "Flame":true,
 	"ItemSpawn":[
 		{
@@ -69,14 +69,14 @@
     "Name":"Оруженый стелаж",
     "MTex":"notex",
     "swide":28,
-    "SmartAction":"ActionOpenContainer",
+    "Type":"BlockChest",
     "Flame":true,
   },
   "stelaj_weapon_armored":{
     "Name":"Бронированный стелаж с оружием",
     "MTex":"notex",
     "swide":28,
-    "SmartAction":"ActionOpenContainer",
+    "Type":"BlockChest",
     "Flame":true,
   },
   "stelaj_hospital":{
@@ -84,7 +84,7 @@
     "MTex":"medpolka",
     "AlterMtex":["medpolka1", "medpolka2", "medpolka3", "medpolka4"],
     "swide":28,
-    "SmartAction":"ActionOpenContainer",
+    "Type":"BlockChest",
     "Flame":true,
 	"ItemSpawn":[
 		{
@@ -102,19 +102,18 @@
 			"Repeat":1
 		}
 	],
-	"Type":"BlockChest",
   },
   "stelaj_wear":{
     "Name":"Cтелаж с одеждой",
     "MTex":"wearpolka",
     "AlterMtex":["wearpolka1", "wearpolka2", "wearpolka3", "wearpolka4"],
-    "SmartAction":"ActionOpenContainer",
+    "Type":"BlockChest",
     "Flame":true,
 	"IsTransparent":true,
   },
   "3":{
     "Name":"Деревянная дверь (закрыта)",
-    "SmartAction":"ActionOpenClose",
+    "Type":"BlockDoor",
     "AfterDeathId":7,
     "MTex":"door1",
     "Wallmaker":true,
@@ -122,7 +121,7 @@
   },
   "6":{
     "Name":"Деревянная дверь (закрыта)",
-    "SmartAction":"ActionOpenClose",
+    "Type":"BlockDoor",
     "AfterDeathId":7,
     "MTex":"door1_open",
     "Wallmaker":true,
@@ -130,7 +129,7 @@
   },
   "7":{
     "Name":"Деревянная дверь (открыта)",
-    "SmartAction":"ActionOpenClose",
+    "Type":"BlockDoor",
     "AfterDeathId":3,
     "IsWalkable":true,
     "IsTransparent":true,
@@ -140,21 +139,21 @@
   },
   "4":{
     "Name":"Металлическая дверь (закрыта)",
-    "SmartAction":"ActionOpenClose",
+    "Type":"BlockDoor",
     "AfterDeathId":8,
     "MTex":"door2",
     "Wallmaker":true,
   },
   "5":{
     "Name":"Металлическая дверь (закрыта)",
-    "SmartAction":"ActionOpenClose",
+    "Type":"BlockDoor",
     "AfterDeathId":8,
     "MTex":"door2",
     "Wallmaker":true,
   },
   "8":{
     "Name":"Металлическая дверь (открыта)",
-    "SmartAction":"ActionOpenClose",
+    "Type":"BlockDoor",
     "AfterDeathId":4,
     "IsWalkable":true,
     "IsTransparent":true,
@@ -175,7 +174,7 @@
   },
   "scrapbox":{
     "Name":"Ящик",
-    "SmartAction":"ActionOpenContainer",
+    "Type":"BlockChest",
     "AlterMtex":["crates2", "crates3"],
     "IsTransparent":true,
     "MTex":"crates1",

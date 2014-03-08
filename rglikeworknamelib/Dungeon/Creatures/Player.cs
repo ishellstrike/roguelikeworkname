@@ -222,8 +222,9 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                     if (key == null) {
                         return;
                     }
-                    if (key.Data.SmartAction == SmartAction.ActionOpenClose) {
-                        ms.Parent.OpenCloseDoor(a, b);
+                    var door = key as IDoor;
+                    if (door != null) {
+                        door.OpenClose(ms);
                     }
                 }
                 if (!ms.Parent.IsWalkable(c, d)) {
@@ -231,8 +232,10 @@ namespace rglikeworknamelib.Dungeon.Creatures {
                         Velocity.Y = 0;
                     }
                     var block = ms.Parent.GetBlock(c, d);
-                    if (block != null && block.Data.SmartAction == SmartAction.ActionOpenClose) {
-                        ms.Parent.OpenCloseDoor(c, d);
+                    var door = block as IDoor;
+                    if (door != null)
+                    {
+                        door.OpenClose(ms);
                     }
                 }
 

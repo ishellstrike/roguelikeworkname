@@ -325,13 +325,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             SetBlock(posX*Ry + posY, id);
         }
 
-        public void OpenCloseDoor(int x, int y) {
-            if (Blocks[x*Rx + y].Data.SmartAction == SmartAction.ActionOpenClose) {
-                SetBlock(x, y, Blocks[x*Ry + y].Data.AfterDeathId);
-            }
-            GeomReady = false;
-        }
-
         public void CreateAllMapFromArray(string[] arr) {
             for (int i = 0; i < Rx; i++) {
                 for (int j = 0; j < Ry; j++) {

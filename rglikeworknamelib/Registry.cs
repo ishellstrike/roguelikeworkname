@@ -60,8 +60,7 @@ namespace rglikeworknamelib
             {
                 if (blockData.Value.Type != null)
                 {
-                    blockData.Value.TypeParsed =
-                        Type.GetType(typeof(Block).Namespace + "." + blockData.Value.Type);
+                    blockData.Value.TypeParsed = Type.GetType(typeof(Block).Namespace + "." + blockData.Value.Type);
                 }
                 else
                 {

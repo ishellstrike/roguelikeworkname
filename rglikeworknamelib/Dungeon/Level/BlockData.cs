@@ -16,7 +16,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public Color MMCol;
         public string MTex;
         public string Name;
-        public string Type;
+        public string Type = null;
         public Type TypeParsed;
         public float Height = 1;
         public SmartAction SmartAction;
@@ -31,6 +31,10 @@ namespace rglikeworknamelib.Dungeon.Level {
                 return AlterMtex[Settings.rnd.Next(0, AlterMtex.Length)];
             }
             return MTex;
+        }
+
+        public override string ToString() {
+            return string.Format("{0} : {1}, t{2}", Name, TypeParsed.Name, MTex);
         }
     }
 }
