@@ -9,11 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rglikeworknamelib", "rglike
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemesEditor", "SchemesEditor\SchemesEditor.csproj", "{A42DF490-A81C-4A91-B92E-33DC74FE45A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jargtests", "jargtests\jargtests.csproj", "{17EDE26C-8E60-4AAE-918F-CD525578A82F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataEditor", "DataEditor\DataEditor.csproj", "{4F55B71E-0297-4441-BA36-7E545A728BD4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestArea", "TestArea\TestArea.csproj", "{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropListEditor", "DropListEditor\DropListEditor.csproj", "{3CEAEF0A-126C-4847-93D9-F996B596A2CC}"
 EndProject
@@ -106,21 +102,6 @@ Global
 		{A42DF490-A81C-4A91-B92E-33DC74FE45A3}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{A42DF490-A81C-4A91-B92E-33DC74FE45A3}.Release|Win32.ActiveCfg = Release|x86
 		{A42DF490-A81C-4A91-B92E-33DC74FE45A3}.Release|x86.ActiveCfg = Release|x86
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Only Game|Any CPU.ActiveCfg = Only Game|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Only Game|Any CPU.Build.0 = Only Game|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Only Game|Mixed Platforms.ActiveCfg = Only Game|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Only Game|Win32.ActiveCfg = Only Game|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Only Game|x86.ActiveCfg = Only Game|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Release|Win32.ActiveCfg = Release|Any CPU
-		{17EDE26C-8E60-4AAE-918F-CD525578A82F}.Release|x86.ActiveCfg = Release|Any CPU
 		{4F55B71E-0297-4441-BA36-7E545A728BD4}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{4F55B71E-0297-4441-BA36-7E545A728BD4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{4F55B71E-0297-4441-BA36-7E545A728BD4}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -137,22 +118,6 @@ Global
 		{4F55B71E-0297-4441-BA36-7E545A728BD4}.Release|Win32.ActiveCfg = Release|x86
 		{4F55B71E-0297-4441-BA36-7E545A728BD4}.Release|x86.ActiveCfg = Release|x86
 		{4F55B71E-0297-4441-BA36-7E545A728BD4}.Release|x86.Build.0 = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Debug|Win32.ActiveCfg = Debug|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Debug|x86.ActiveCfg = Debug|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Debug|x86.Build.0 = Debug|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Only Game|Any CPU.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Only Game|Mixed Platforms.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Only Game|Win32.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Only Game|x86.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Only Game|x86.Build.0 = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|Any CPU.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|Win32.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|x86.ActiveCfg = Release|x86
-		{C46C090F-40FD-4628-9ED6-1B0D2245EF1A}.Release|x86.Build.0 = Release|x86
 		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{3CEAEF0A-126C-4847-93D9-F996B596A2CC}.Debug|Mixed Platforms.Build.0 = Debug|x86
