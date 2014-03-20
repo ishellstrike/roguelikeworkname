@@ -14,25 +14,24 @@ namespace rglikeworknamelib.Dungeon.Items {
         public int Doses { get; set; }
 
         public string Id {
-            get { return id_; }
-            set { id_ = value; OnLoad(); }
+            get { return Data.Id; }
+            set { data_ = Registry.Instance.Items[value]; OnLoad(); }
         }
 
         public ItemModifer Modifer = ItemModifer.Nothing;
 
         [NonSerialized]internal ItemData data_;
-        private string id_;
+        //private string id_;
 
         public ItemData Data { get { return data_; }
         }
 
         public virtual void OnLoad() {
-            data_ = Registry.Instance.Items[Id];
-            Doses = Data.Doses;
+            Doses = data_.Doses;
             Buffs = new List<IBuff>();
-            if (Registry.Instance.Items[Id].Buff != null)
+            if (data_.Buff != null)
             {
-                foreach (string buff in Registry.Instance.Items[Id].Buff)
+                foreach (string buff in data_.Buff)
                 {
                     var a = (IBuff)Activator.CreateInstance(BuffDataBase.Data[buff].Prototype);
                     a.Id = buff;

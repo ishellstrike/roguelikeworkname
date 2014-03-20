@@ -2,6 +2,7 @@
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class FloorData {
+        public string Id;
         public int AfterdeathID;
         public string[] AlterMtex;
 

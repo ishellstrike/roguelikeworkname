@@ -4,25 +4,20 @@ using Microsoft.Xna.Framework;
 namespace rglikeworknamelib.Dungeon.Level {
     [Serializable]
     public class Floor {
-        private string id_;
         public string Id
         {
-            get { return id_; }
-            set
-            {
-                id_ = value;
-                data_ = Registry.Instance.Floors[value];
-            }
+            get { return Data.Id; }
+            set { data_ = Registry.Instance.Floors[value]; }
         }
 
-        internal string mTex_;
+        internal ushort mTex_;
         public string MTex
         {
-            get { return mTex_; }
+            get { return Atlases.Instance.MajorIndexesReverse[mTex_]; }
             set
             {
                 source_ = Atlases.GetSource(value);
-                mTex_ = value;
+                mTex_ = Atlases.Instance.MajorIndexes[value];
             }
         }
         [NonSerialized]

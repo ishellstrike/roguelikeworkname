@@ -54,5 +54,6 @@ namespace rglikeworknamelib.Dungeon.Items {
         public int Weight;
         
         public string SpawnGroup;
+        public string Id;
     }
 }

@@ -6,16 +6,10 @@ using rglikeworknamelib.Dungeon.Creatures;
 namespace rglikeworknamelib.Dungeon.Level {
     [Serializable]
     public class Block {
-        private string id_;
-
-        public object ScriptTag;
 
         public string Id {
-            get { return id_; }
-            set {
-                id_ = value;
-                Data = Registry.Instance.Blocks[value];
-            }
+            get { return Data.Id; }
+            set { Data = Registry.Instance.Blocks[value]; }
         }
 
         public BlockData Data {
@@ -23,26 +17,23 @@ namespace rglikeworknamelib.Dungeon.Level {
             private set { data_ = value; }
         }
 
-        public Color Lightness { get; set; }
-
-        public Vector2 Source { get; private set; }
-
-        public bool IsVisible()
-        {
-            return Lightness == Color.White;
+        public Vector2 Source {
+            get { return source_; }
         }
 
-        private string mTex_;
+        private ushort mTex_;
         [NonSerialized]
         private BlockData data_;
 
+        private Vector2 source_;
+
         public string MTex
         {
-            get { return mTex_; }
+            get { return Atlases.Instance.MajorIndexesReverse[mTex_]; }
             set
             {
-                Source = Atlases.GetSource(value);
-                mTex_ = value;
+                source_ = Atlases.GetSource(value);
+                mTex_ = Atlases.Instance.MajorIndexes[value];
             }
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using NLog;
 using rglikeworknamelib.Dialogs;
@@ -29,11 +30,14 @@ namespace rglikeworknamelib
             BlockBdInit();
             ItemBdInit();
             Floors = new Dictionary<string, FloorData>();
-            List<KeyValuePair<string, object>> a = ParsersCore.UniversalParseDirectory(
-                Settings.GetFloorDataDirectory(), UniversalParser.Parser<FloorData>, typeof(Floor));
+            List<KeyValuePair<string, object>> a = ParsersCore.UniversalParseDirectory(Settings.GetFloorDataDirectory(), UniversalParser.Parser<FloorData>, typeof(Floor));
             foreach (var pair in a)
             {
                 Floors.Add(pair.Key, (FloorData)pair.Value);
+            }
+            foreach (var floorData in Floors)
+            {
+                floorData.Value.Id = floorData.Key;
             }
             Creatures = UniversalParser.JsonDictionaryDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
         }
@@ -66,6 +70,7 @@ namespace rglikeworknamelib
                 {
                     blockData.Value.TypeParsed = typeof(Block);
                 }
+                blockData.Value.Id = blockData.Key;
             }
         }
         private void ItemBdInit() {
@@ -80,6 +85,7 @@ namespace rglikeworknamelib
                 {
                     itemData.Value.TypeParsed = typeof(Item);
                 }
+                itemData.Value.Id = itemData.Key;
             }
             Craft = UniversalParser.JsonListDataLoader<ItemCraftData>(Settings.GetCraftsDirectory());
 

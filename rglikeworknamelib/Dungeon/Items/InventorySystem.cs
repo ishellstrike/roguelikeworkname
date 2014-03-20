@@ -134,29 +134,29 @@ namespace rglikeworknamelib.Dungeon.Items {
         }
 
         public void Save() {
-            var binaryFormatter = new BinaryFormatter();
-            using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
-                                                   FileMode.Create)) {
-                using (var gZipStream = new GZipStream(fileStream, CompressionMode.Compress)) {
-                    binaryFormatter.Serialize(gZipStream, items_);
-                }
-            }
+            //var binaryFormatter = new BinaryFormatter();
+            //using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
+            //                                       FileMode.Create)) {
+            //    using (var gZipStream = new GZipStream(fileStream, CompressionMode.Compress)) {
+            //        binaryFormatter.Serialize(gZipStream, items_);
+            //    }
+            //}
         }
 
         public void Load() {
-            if (File.Exists(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"))) {
-                var binaryFormatter = new BinaryFormatter();
+            //if (File.Exists(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"))) {
+            //    var binaryFormatter = new BinaryFormatter();
 
-                using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
-                                                       FileMode.Open)) {
-                    using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress)) {
-                        items_ = (List<Item>) binaryFormatter.Deserialize(gZipStream);
-                    }
-                }
-                foreach (Item item in items_) {
-                    item.OnLoad();
-                }
-            }
+            //    using (var fileStream = new FileStream(Settings.GetWorldsDirectory() + string.Format("inventory.rlp"),
+            //                                           FileMode.Open)) {
+            //        using (var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress)) {
+            //            items_ = (List<Item>) binaryFormatter.Deserialize(gZipStream);
+            //        }
+            //    }
+            //    foreach (Item item in items_) {
+            //        item.OnLoad();
+            //    }
+            //}
         }
 
        // public void ExtractItem(string s,)

@@ -101,6 +101,7 @@
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
     <Compile Include="Dungeon\Items\ICookable.cs" />
+    <Compile Include="Dungeon\Items\ISerializable.cs" />
     <Compile Include="Dungeon\Items\ItemBottle.cs" />
     <Compile Include="Dungeon\Items\ItemCan.cs" />
     <Compile Include="Dungeon\Items\ItemCigarets.cs" />

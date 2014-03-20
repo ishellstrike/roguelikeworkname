@@ -22,7 +22,8 @@ namespace rglikeworknamelib {
         public Dictionary<string, int> VehicleIndexes;
 
         public Texture2D MajorAtlas;
-        public Dictionary<string, int> MajorIndexes;
+        public Dictionary<string, ushort> MajorIndexes;
+        public Dictionary<ushort, string> MajorIndexesReverse;
 
         public ContentManager Content;
         public Collection<Texture2D> ParticleAtlas;
@@ -62,7 +63,7 @@ namespace rglikeworknamelib {
             BlockArray = ParsersCore.LoadTexturesDirectory(Settings.GetObjectTextureDirectory());
             VehicleArray = ParsersCore.LoadTexturesTagged(Settings.GetVehicleTextureDirectory() + @"\textureloadorder.ord");
 
-            MajorAtlas = GenerateMajorAtlas(gd, out MajorIndexes, BlockArray, FloorArray, VehicleArray, CreatureArray);
+            MajorAtlas = GenerateMajorAtlas(gd, out MajorIndexes, out MajorIndexesReverse, BlockArray, FloorArray, VehicleArray, CreatureArray);
             SpriteWidth = 32f / MajorAtlas.Width;
             SpriteHeight = 32f / MajorAtlas.Height;
 
@@ -87,8 +88,10 @@ namespace rglikeworknamelib {
             // ReSharper restore PossibleLossOfFraction
         }
 
-        private Texture2D GenerateMajorAtlas(GraphicsDevice gd, out Dictionary<string, int> indexes, params Dictionary<string, Texture2D>[] texes) {
-            indexes = new Dictionary<string, int>();
+        private Texture2D GenerateMajorAtlas(GraphicsDevice gd, out Dictionary<string, ushort> indexes, out Dictionary<ushort, string> reverse, params Dictionary<string, Texture2D>[] texes)
+        {
+            indexes = new Dictionary<string, ushort>();
+            reverse = new Dictionary<ushort, string>();
             var totalcount = texes.Sum(dictionary => dictionary.Count);
             var atl = new RenderTarget2D(gd, 1024, (totalcount / 32 + 1) * 32);
             Texture2D wp = new Texture2D(gd, 32, 32);
@@ -105,15 +108,10 @@ namespace rglikeworknamelib {
             foreach (var dictionary in texes) {
                 foreach (var tex in dictionary) {
                     sb_.Draw(tex.Value, new Vector2(i % 32 * 32, i / 32 * 32), Color.White);
-                    indexes.Add(tex.Key, i);
+                    indexes.Add(tex.Key, (ushort) i);
+                    reverse.Add((ushort) i, tex.Key);
                     i++;
                 }
-                
-            }
-            for (int j = 0; j < 32; j++) {
-                sb_.Draw(wp, new Vector2(i % 32 * 32, i / 32 * 32), Color.White);
-                indexes.Add("addition_"+j, i);
-                i++;
             }
             sb_.End();
             gd.SetRenderTarget(null);

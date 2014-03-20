@@ -5,6 +5,8 @@ using rglikeworknamelib.Dungeon.Items;
 
 namespace rglikeworknamelib.Dungeon.Level {
     public class BlockData {
+        public string Id;
+
         public string AfterDeathId;
         public string[] AlterMtex;
 
