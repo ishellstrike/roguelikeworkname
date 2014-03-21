@@ -22,7 +22,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\rglikeworkname\rglikeworkname\bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS, MEASURE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>false</NoStdLib>
@@ -87,6 +87,7 @@
     <Compile Include="Dungeon\Creatures\PerkData.cs" />
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />
     <Compile Include="Dungeon\Creatures\PerksSystem.cs" />
+    <Compile Include="Dungeon\Creatures\Rabbit.cs" />
     <Compile Include="Dungeon\Creatures\ShootingCreature.cs" />
     <Compile Include="Dungeon\Creatures\Stat.cs" />
     <Compile Include="Dungeon\Creatures\Dialog.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Dungeon\Buffs\BuffData.cs" />
     <Compile Include="Dungeon\Buffs\BuffDataBase.cs" />
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
+    <Compile Include="Dungeon\Creatures\Zombie.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
     <Compile Include="Dungeon\Items\ICookable.cs" />
     <Compile Include="Dungeon\Items\ISerializable.cs" />

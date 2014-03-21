@@ -23,18 +23,12 @@ namespace rglikeworknamelib.Dungeon.Creatures
         public Matrix creatureWorld = Matrix.Identity;
         public VertexPositionNormalTexture[] vert;
 
-        /// <summary>
-        /// can be used for behavior proposes
-        /// </summary>
-        public object BehaviorTag;
-
         private Order order_ = new Order(), lastOrder_;
 
         public Order CurrentOrder { get { return order_; } }
         public Order LastOrder { get { return lastOrder_; } }
 
         internal Vector3 position_;
-        public TimeSpan reactionT_ = TimeSpan.Zero;
         public TimeSpan sec_ = TimeSpan.Zero;
         public Vector2 sectoroffset_;
         [NonSerialized]
@@ -49,7 +43,6 @@ namespace rglikeworknamelib.Dungeon.Creatures
         }
 
         public Vector2 ShootPoint { get; set; }
-        //public string Id { get; internal set; }
 
         public Vector3 Position {
             get { return position_; }
@@ -202,19 +195,23 @@ namespace rglikeworknamelib.Dungeon.Creatures
             return Data.Name + " " + Id + " " + position_;
         }
 
+        public virtual void CreatureScript(Player hero) {
+            
+        }
+
         public virtual void Update(GameTime gt, MapSector ms_, Player hero, bool test = false) {
             ms = ms_;
             
-            reactionT_ += gt.ElapsedGameTime;
             sec_ += gt.ElapsedGameTime;
             Col = Color.White;
             if ((!Skipp || !ms_.Ready))
             {
                 sectoroffset_ = new Vector2(ms_.SectorOffsetX, ms_.SectorOffsetY);
 
-                //TODO
-               // CreatureDataBase.Scripts[Data.BehaviorScript](gt, ms_.Parent, this);
-
+                if (sec_.TotalMilliseconds > 300) {
+                    sec_ = TimeSpan.Zero;
+                    CreatureScript(hero);
+                }
 
                 OrdersMaker(ms_, gt);
 
@@ -469,9 +466,6 @@ namespace rglikeworknamelib.Dungeon.Creatures
             }
         }
 
-        public static float GetLength(float x, float y){
-            return new Vector2(x, y).Length();
-        }
         public static Vector2 GetInDirection(float centerx, float centery, float targx, float targy, float distance)
         {
             var p2 = new Vector3(centerx, centery, 0);
@@ -486,6 +480,4 @@ namespace rglikeworknamelib.Dungeon.Creatures
             EventLog.Add(Data.Name+": \""+s+"\"", LogEntityType.Default);
         }
     }
-
-    public delegate void CreatureScript(GameTime gt, MapSector ms_, Player hero, Creature target);
 }

@@ -10,6 +10,7 @@
 		"Speed":50,
 		"Hp":20,
 		"BehaviorScript":"bs_zombie",
+		"Type":"Zombie",
 	},
 	
 	"hdzombie":{
@@ -19,6 +20,7 @@
 		"Speed":25,
 		"Hp":30,
 		"BehaviorScript":"bs_zombie",
+		"Type":"Zombie",
 	},
 
 	"rabbit":{
@@ -27,6 +29,7 @@
 		"Speed":200,
 		"Hp":2,
 		"BehaviorScript":"bs_rabbit",
+		"Type":"Rabbit",
 	},
 
 	"dog":{
@@ -35,6 +38,7 @@
 		"Speed":100,
 		"Hp":25,
 		"BehaviorScript":"bs_dog",
+		"Type":"Rabbit",
 	},
 
 	"spider":{
