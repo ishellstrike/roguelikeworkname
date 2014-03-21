@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -26,6 +27,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         public JargClient client;
         private bool exit;
         private GameLevel gl;
+        private SectorPool pool;
 
         /// <summary>
         /// Using local generation - false, Using server generation - true
@@ -36,6 +38,8 @@ namespace rglikeworknamelib.Dungeon.Level {
             onStore_ = new Dictionary<Point, string>();
             Buffer = new Dictionary<Point, MapSector>();
             gl = gl_;
+            pool = new SectorPool();
+            pool.Init(gl_);
         }
 
         public bool Loading() {
@@ -73,19 +77,34 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         private void StoreSector(MapSector ms) {
+#if MEASURE
+            Measure.store.Begin();
+#endif
             StringBuilder sb = new StringBuilder();
             SectorSaver(new[] {ms}, sb);
             onStore_.Add(new Point(ms.SectorOffsetX, ms.SectorOffsetY), sb.ToString());
+#if MEASURE
+            Measure.store.End();
+#endif
         }
 
         private bool UnstoreSector(Point key, out MapSector ret) {
+#if MEASURE
+            Measure.unstore.Begin();
+#endif
             string t;
             onStore_.TryGetValue(key, out t);
             if (t == null) {
                 ret = null;
+#if MEASURE
+                Measure.unstore.End();
+#endif
                 return false;
             }
             ret = SectorLoader(gl, new[] { t }).ElementAt(0).Value;
+#if MEASURE
+            Measure.unstore.End();
+#endif
             return true;
         }
 
@@ -251,6 +270,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public void SectorSaver(IEnumerable<MapSector> array, StringBuilder stringBuilder)
         {
+#if MEASURE
+            Measure.sectorSaving.Begin();
+#endif
             foreach (var ms in array) {
                 var blockIdVocab = new List<string>();
                 //var blockMtexVocab = new List<string>();
@@ -372,10 +394,18 @@ namespace rglikeworknamelib.Dungeon.Level {
                 }
                 catch (Exception e)
                 {
+#if MEASURE
+                    Measure.sectorSaving.End();
+#endif
                     logger.Error(e.ToString);
                 }
+                pool.Release(ms);
             }
-        }
+#if MEASURE
+            Measure.sectorSaving.End();
+#endif
+                  }
+
         private void BlockPart(MapSector ms, List<string> blockIdVocab, StringBuilder stringBuilder) {
             for (var i = 0; i < ms.Blocks.Length; i++) {
                 var id = blockIdVocab.IndexOf(ms.Blocks[i].Id);
@@ -488,6 +518,9 @@ namespace rglikeworknamelib.Dungeon.Level {
 
         public Dictionary<Point, MapSector> SectorLoader(GameLevel gl, IEnumerable<string> parts)
         {
+#if MEASURE
+            Measure.sectorCreation.Begin();
+#endif
             var temp = new Dictionary<Point, MapSector>();
             foreach (var part in parts) {
                 if (part.Length < 2) {
@@ -515,9 +548,10 @@ namespace rglikeworknamelib.Dungeon.Level {
 
 
                 var position = new Point(int.Parse(pos[0].Trim('#')), int.Parse(pos[1].Trim('\r').Trim('\n')));
-                var sector = new MapSector(gl, position.X, position.Y) {
-                    Biom = (SectorBiom) Enum.Parse(typeof (SectorBiom), par[9])
-                };
+                var sector = pool.Take(gl);
+                sector.SectorOffsetX = position.X;
+                sector.SectorOffsetY = position.Y;
+                sector.Biom = (SectorBiom) Enum.Parse(typeof (SectorBiom), par[9]);
 
                 var off = 0;
                 foreach (var s in blockIdList.Where(s => s != " ")) {
@@ -581,6 +615,9 @@ namespace rglikeworknamelib.Dungeon.Level {
                 
                 temp.Add(position, sector);
             }
+#if MEASURE
+            Measure.sectorCreation.End();
+#endif
             return temp;
         }
 
@@ -603,5 +640,63 @@ namespace rglikeworknamelib.Dungeon.Level {
     [Serializable]
     public class MegaMapData {
         public Point up, down, left, right;
+    }
+
+    public class CompressedSector {
+        internal List<CompressedFragment> dataBlock = new List<CompressedFragment>();
+        internal List<CompressedFragment> dataFloor = new List<CompressedFragment>();
+        internal List<CompressedFragment> dataCreatures = new List<CompressedFragment>();
+        internal List<CompressedFragment> dataItems = new List<CompressedFragment>();
+        internal int x, y;
+
+        public static CompressedSector Copress(MapSector ms) {
+            CompressedSector cs = new CompressedSector();
+            cs.x = ms.SectorOffsetX;
+            cs.y = ms.SectorOffsetY;
+
+
+
+            return cs;
+        }
+
+        public static MapSector Decompress(CompressedSector cs) {
+            MapSector ms = new MapSector(cs.x, cs.y);
+
+
+
+            return ms;
+        }
+    }
+
+    public struct CompressedFragment {
+        public string id;
+        public ushort count;
+    }
+
+    public class SectorPool {
+        private MapSector pool;
+        private Stack<MapSector> s = new Stack<MapSector>();
+
+        public void Init(GameLevel gl) {
+            for (int i = 0; i < 100; i++) {
+             //   s.Push(new MapSector(gl,0,0));
+            }
+        }
+
+        public MapSector Take(GameLevel gl)
+        {
+            if (s.Count == 0) {
+              //  s.Push(new MapSector(gl, 0, 0));
+            }
+            return new MapSector(gl, 0,0);
+        }
+
+        public void Release(MapSector ms) {
+            //s.Push(ms);
+            if (s.Count > 100) {
+               // s.Pop();
+               // s.Pop();
+            }
+        }
     }
 }

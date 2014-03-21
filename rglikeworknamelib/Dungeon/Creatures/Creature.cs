@@ -2,17 +2,10 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NLog.Targets;
-using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Bullets;
-using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Effects;
-using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Dungeon.Level.Blocks;
 using rglikeworknamelib.Dungeon.Particles;
-using jarg;
-using rglikeworknamelib.Creatures;
 
 namespace rglikeworknamelib.Dungeon.Creatures
 {

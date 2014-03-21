@@ -22,7 +22,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\rglikeworkname\rglikeworkname\bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS, MEASURE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>false</NoStdLib>
@@ -156,6 +156,7 @@
     <Compile Include="Dungeon\Creatures\CreatureData.cs" />
     <Compile Include="MarshalHelper.cs" />
     <Compile Include="JargMod.cs" />
+    <Compile Include="Measure.cs" />
     <Compile Include="OtherClient.cs" />
     <Compile Include="Parser\BasesCheker.cs" />
     <Compile Include="Parser\ChemesParser.cs" />
