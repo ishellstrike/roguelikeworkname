@@ -88,6 +88,7 @@
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />
     <Compile Include="Dungeon\Creatures\PerksSystem.cs" />
     <Compile Include="Dungeon\Creatures\Rabbit.cs" />
+    <Compile Include="Dungeon\Creatures\Shooter.cs" />
     <Compile Include="Dungeon\Creatures\ShootingCreature.cs" />
     <Compile Include="Dungeon\Creatures\Stat.cs" />
     <Compile Include="Dungeon\Creatures\Dialog.cs" />
@@ -203,6 +204,12 @@
     <Folder Include="obj\x86\Debug\TempPE\" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Google.ProtocolBuffers">
+      <HintPath>.\Google.ProtocolBuffers.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.ProtocolBuffers.Serialization">
+      <HintPath>.\Google.ProtocolBuffers.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Microsoft.Xna.Framework.dll</HintPath>
