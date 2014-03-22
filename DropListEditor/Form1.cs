@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -15,7 +12,6 @@ using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
 using rglikeworknamelib.Dungeon.Level.Blocks;
-using rglikeworknamelib.Parser;
 
 namespace DropListEditor
 {

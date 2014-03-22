@@ -80,7 +80,7 @@ namespace rglikeworknamelib.Dungeon.Bullets {
         }
 
 
-        public static void Draw() {
+        public static void Draw(Camera cam) {
             bool b = Settings.DebugInfo;
             foreach (Bullet bullet in bullet_) {
                 //spriteBatch_.Draw(bulletAtlas_[bullet.Mtex],
@@ -88,13 +88,12 @@ namespace rglikeworknamelib.Dungeon.Bullets {
                 //                  Color.White, 0,
                 //                  new Vector2(bulletAtlas_[bullet.Mtex].Width/2f,
                 //                              bulletAtlas_[bullet.Mtex].Height/2f), 1, SpriteEffects.None, 0);
+                var p = new Vector3(bullet.Pos.X/32f, bullet.Pos.Y/32f, 0.1f);
+                lb.AddLine3D(new Vector3(bullet.Start.X/32f, bullet.Start.Y/32f, 0.1f), p, Color.Yellow);
 
-                lb.AddLine3D(new Vector3(bullet.Start.X/32f, bullet.Start.Y/32f, 0.1f), new Vector3(bullet.Pos.X/32f, bullet.Pos.Y/32f, 0.1f), Color.Yellow);
-
-                //if (b) {
-                //    SpriteBatch3dBinded.DrawStringCenteredUppedProjected(spriteBatch_, cam, bullet.Pos);
-                //    spriteBatch_.DrawString(font, bullet.Pos.ToString(), bullet.Pos - cam, Color.White);
-                //}
+                if (b) {
+                    SpriteBatch3dBinded.DrawStringCenteredUppedProjected(spriteBatch_, cam, p, font, bullet.Pos.ToString(), Color.White, 8);
+                }
             }
         }
 

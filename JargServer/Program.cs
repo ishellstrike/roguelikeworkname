@@ -1,21 +1,14 @@
-﻿
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using rglikeworknamelib;
-using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dialogs;
 using rglikeworknamelib.Dungeon.Buffs;
-using rglikeworknamelib.Dungeon.Bullets;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level;
-using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Generation.Names;
 using rglikeworknamelib.Parser;
-using rglikeworknamelib.Dungeon.Creatures;
 
 namespace JargServer
 {
@@ -35,8 +28,7 @@ namespace JargServer
 
             Settings.Server = true;
 
-            Process[] p;
-            p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
+            Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 
             if (p.Length > 1)
             {
@@ -99,7 +91,7 @@ namespace JargServer
             while (IsMonitor) {
                 Console.Clear();
                 Console.WriteLine("Clients: {0}", udps.GetClients.Count);
-                ;Console.WriteLine("Traffic:{0}      In: {1} ({2}){0}      [{5}]{0}      Out: {3} ({4}){0}      [{6}]", Environment.NewLine, TrafSimp(udps.GetInnerTraffic), TrafSpeedSimp(udps.GetInnerSpeed), TrafSimp(udps.GetOuterTraffic), TrafSpeedSimp(udps.GetOuterSpeed), TrafSpeedSimp(udps.GetInnerTraffic / (cou / 3f)),TrafSpeedSimp(udps.GetOuterTraffic / (cou / 3f)));
+                Console.WriteLine("Traffic:{0}      In: {1} ({2}){0}      [{5}]{0}      Out: {3} ({4}){0}      [{6}]", Environment.NewLine, TrafSimp(udps.GetInnerTraffic), TrafSpeedSimp(udps.GetInnerSpeed), TrafSimp(udps.GetOuterTraffic), TrafSpeedSimp(udps.GetOuterSpeed), TrafSpeedSimp(udps.GetInnerTraffic / (cou / 3f)),TrafSpeedSimp(udps.GetOuterTraffic / (cou / 3f)));
                 Console.WriteLine("Map Generator:{0}      Total: {1}{0}      Session: {2}{0}", Environment.NewLine, levelWorker_.StoreCount, levelWorker_.Generated);
                 Thread.Sleep(300);
                 cou++;
@@ -180,7 +172,7 @@ namespace JargServer
         {
             var sw = new Stopwatch();
             sw.Start();
-            Console.WriteLine("Initial map generation", "");
+            Console.WriteLine("Initial map generation");
             currentFloor_ = new GameLevel(null, null, null, null, levelWorker_);
             if (levelWorker_ != null)
             {

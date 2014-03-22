@@ -14,8 +14,6 @@ namespace JargServer
 {
     public class UDPServer
     {
-        private List<Thread> threads;
-
         private Thread listenthread;
         private Thread sendthread;
         private Thread logicThread;

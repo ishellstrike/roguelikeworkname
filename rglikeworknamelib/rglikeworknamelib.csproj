@@ -144,6 +144,7 @@
     <Compile Include="Dungeon\Level\SmartAction.cs" />
     <Compile Include="Dungeon\Level\StreetOld__.cs" />
     <Compile Include="Dungeon\Particles\Particles.cs" />
+    <Compile Include="Dungeon\Particles\ParticleSystem.cs" />
     <Compile Include="Dungeon\Vehicles\Vehicle.cs" />
     <Compile Include="Generation\MapGenerators.cs" />
     <Compile Include="Generation\Names\NameData.cs" />
@@ -204,12 +205,6 @@
     <Folder Include="obj\x86\Debug\TempPE\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Google.ProtocolBuffers">
-      <HintPath>.\Google.ProtocolBuffers.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.ProtocolBuffers.Serialization">
-      <HintPath>.\Google.ProtocolBuffers.Serialization.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Microsoft.Xna.Framework.dll</HintPath>

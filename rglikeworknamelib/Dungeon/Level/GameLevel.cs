@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NLog;
 using jarg;
-using rglikeworknamelib.Creatures;
 using rglikeworknamelib.Dungeon.Creatures;
 using rglikeworknamelib.Dungeon.Items;
 using rglikeworknamelib.Dungeon.Level.Blocks;
-using rglikeworknamelib.Dungeon.Particles;
 using rglikeworknamelib.Dungeon.Vehicles;
 using rglikeworknamelib.Generation;
-using rglikeworknamelib.Generation.Names;
 
 namespace rglikeworknamelib.Dungeon.Level
 {
@@ -46,7 +41,6 @@ namespace rglikeworknamelib.Dungeon.Level
         private Dictionary<Tuple<int, int>, SectorBiom> globalMap = new Dictionary<Tuple<int, int>, SectorBiom>();
         public LevelWorker lw_;
         public Dictionary<Point, MegaMap> megaMap;
-        private Vector2 pre_pos_vis;
         private TimeSpan sec;
 
         #region Constructor
@@ -646,6 +640,8 @@ namespace rglikeworknamelib.Dungeon.Level
         /// Main loop creature update
         /// </summary>
         /// <param name="gt"></param>
+        /// <param name="hero"></param>
+        /// <param name="hero"></param>
         public void UpdateCreatures(GameTime gt, Player hero, GraphicsDevice gd)
         {
             for (int k = 0; k < sectors_.Count; k++)
@@ -686,7 +682,6 @@ namespace rglikeworknamelib.Dungeon.Level
         /// Main loop blocks update
         /// </summary>
         /// <param name="gt"></param>
-        /// <param name="camera"></param>
         public void UpdateBlocks(GameTime gt, Player p)
         {
             foreach (var mapSector in sectors_)
@@ -999,7 +994,6 @@ namespace rglikeworknamelib.Dungeon.Level
 
         private Vector2 max;
         private Vector2 min;
-        private Vector3 perPrew_;
 
         #endregion
 
@@ -1171,8 +1165,6 @@ namespace rglikeworknamelib.Dungeon.Level
                 }
             }
         }
-
-        float ttt = 0;
 
         public void SpriteBatchFeatures(Camera cam, SpriteBatch sb, LineBatch lb)
         {

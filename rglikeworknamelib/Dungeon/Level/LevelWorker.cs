@@ -109,7 +109,7 @@ namespace rglikeworknamelib.Dungeon.Level {
         }
 
         
-        private List<KeyValuePair<Point,MapSector>> Generator(int x, int y) {
+        private IEnumerable<KeyValuePair<Point, MapSector>> Generator(int x, int y) {
             var a = x / Settings.MegaSectorSize;
             var b = y / Settings.MegaSectorSize;
             var temp = new List<KeyValuePair<Point, MapSector>>();
