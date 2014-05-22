@@ -149,9 +149,13 @@ namespace jarg {
         private Window SchemesEditorWindow;
         private Image[,] SchemesImages, SchemesImagesFloor;
         private ListContainer SchemesBlocks, SchemesFloors;
-        private Button SchemesLoadButton, SchemesSaveButton;
+        private Button SchemesLoadButton, SchemesSaveButton, SchemesClearButton;
         private Label SchemesInfoLabel;
         private Button SchemesSave;
+
+        private Window testWindow_;
+        private InteractiveListBox testListBox_;
+        
 
         #endregion
 
@@ -398,11 +402,11 @@ namespace jarg {
         private void SchemeEditorInit() {
             for (int i = 0; i < SchemEditorTempMap.block.GetLength(0); i++) {
                 for (int j = 0; j < SchemEditorTempMap.block.GetLength(1); j++) {
-                    SchemEditorTempMap.block[i, j] = new Block {
+                    SchemEditorTempMap.block[i, j] = new Block() {
                         Id = "0",
                         MTex = "none"
                     };
-                    SchemEditorTempMap.floor[i, j] = new Floor
+                    SchemEditorTempMap.floor[i, j] = new Floor()
                     {
                         Id = "0",
                         MTex = "none"
@@ -455,13 +459,13 @@ namespace jarg {
             {
                 for (int j = 0; j < SchemEditorTempMap.ry; j++)
                 {
-                    SchemEditorTempMap.block[i, j] = new Block
+                    SchemEditorTempMap.block[i, j] = new Block()
                     {
                         Id = s.data[i * s.y + j],
                         MTex = Registry.Instance.Blocks[s.data[i * s.y + j]].MTex
                     };
 
-                    SchemEditorTempMap.floor[i, j] = new Floor
+                    SchemEditorTempMap.floor[i, j] = new Floor()
                     {
                         Id = s.floor[i * s.y + j],
                         MTex = Registry.Instance.Floors[s.floor[i * s.y + j]].MTex
@@ -684,7 +688,7 @@ namespace jarg {
 
             ButtonConnect = new Button(new Vector2(10, 120 + 40 * 2), "Connect to server", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ButtonConnect);
-            ButtonConnect.OnPressed += ButtonConnect_OnPressed;
+            ButtonConnect.OnPressed += new EventHandler(ButtonConnect_OnPressed);
 
             ModLoaderButton = new Button(new Vector2(10, 100 + 40*4), "ModLoader", WindowMainMenu);
             WindowMainMenu.CenterComponentHor(ModLoaderButton);
@@ -1110,8 +1114,8 @@ namespace jarg {
             if (s.Contains("tp ")) {
                 string ss = s.Substring(3);
                 string[] parts = ss.Split(' ');
+                int x, y;
                 if (parts.Length == 2) {
-                    int x, y;
                     if (int.TryParse(parts[0], out x) && int.TryParse(parts[1], out y)) {
                         player_.Position = new Vector3(x*MapSector.Rx*32, y*MapSector.Ry*32,0);
                         mousemapoffset = Vector2.Zero;
@@ -1151,7 +1155,7 @@ namespace jarg {
         private static void RandomLogFill() {
             for (int i = 0; i <= 128; i++) {
                 Thread.Sleep(50);
-                EventLog.Add(Settings.rnd.Next()+string.Format(" ({0}/{1})",i+1,128), LogEntityType.Default);
+                EventLog.Add(Settings.rnd.Next().ToString()+string.Format(" ({0}/{1})",i+1,128), LogEntityType.Default);
             }
         }
 

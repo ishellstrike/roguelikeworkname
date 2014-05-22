@@ -15,11 +15,35 @@ namespace rglikeworknamelib.Dungeon.Creatures
                 return null;
             }
             var creatureData = Registry.Instance.Creatures[id];
-            var a = (Creature) Activator.CreateInstance(creatureData.TypeParsed);
-            a.Id = id;
-            a.MTex = creatureData.MTex;
-            a.Position = pos;
-            a.Hp = new Stat(creatureData.Hp, creatureData.Hp);
+            var a = new Creature {
+                Id = id,
+                MTex = creatureData.MTex,
+                Position = pos,
+                Hp = new Stat(creatureData.Hp, creatureData.Hp)
+            };
+
+            //TODO
+            //CreatureDataBase.Scripts[a.Data.BehaviorScript].BehaviorInit(a, Settings.rnd);
+
+            //if (a.Data.BehaviorScript == "bs_zombie")
+            //{
+            //    a.behaviorScript = CreatureDataBase.Bs_zombie;
+            //}
+
+            //if (a.Data.BehaviorScript == "bs_wander")
+            //{
+            //    a.behaviorScript = CreatureDataBase.Bs_wander;
+            //}
+
+            //if (a.Data.BehaviorScript == "bs_rabbit")
+            //{
+            //    a.behaviorScript = CreatureDataBase.Bs_rabbit;
+            //}
+
+            //if (a.Data.BehaviorScript == "bs_dog")
+            //{
+            //    a.behaviorScript = CreatureDataBase.Bs_dog;
+            //}
 
             return a;
         }

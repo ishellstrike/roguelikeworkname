@@ -22,7 +22,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\rglikeworkname\rglikeworkname\bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>false</NoStdLib>
@@ -87,8 +87,6 @@
     <Compile Include="Dungeon\Creatures\PerkData.cs" />
     <Compile Include="Dungeon\Creatures\PerkDataBase.cs" />
     <Compile Include="Dungeon\Creatures\PerksSystem.cs" />
-    <Compile Include="Dungeon\Creatures\Rabbit.cs" />
-    <Compile Include="Dungeon\Creatures\Shooter.cs" />
     <Compile Include="Dungeon\Creatures\ShootingCreature.cs" />
     <Compile Include="Dungeon\Creatures\Stat.cs" />
     <Compile Include="Dungeon\Creatures\Dialog.cs" />
@@ -101,7 +99,6 @@
     <Compile Include="Dungeon\Buffs\BuffData.cs" />
     <Compile Include="Dungeon\Buffs\BuffDataBase.cs" />
     <Compile Include="Dungeon\Buffs\IBuff.cs" />
-    <Compile Include="Dungeon\Creatures\Zombie.cs" />
     <Compile Include="Dungeon\GlobalWorldLogic.cs" />
     <Compile Include="Dungeon\Items\ICookable.cs" />
     <Compile Include="Dungeon\Items\ISerializable.cs" />
@@ -144,7 +141,6 @@
     <Compile Include="Dungeon\Level\SmartAction.cs" />
     <Compile Include="Dungeon\Level\StreetOld__.cs" />
     <Compile Include="Dungeon\Particles\Particles.cs" />
-    <Compile Include="Dungeon\Particles\ParticleSystem.cs" />
     <Compile Include="Dungeon\Vehicles\Vehicle.cs" />
     <Compile Include="Generation\MapGenerators.cs" />
     <Compile Include="Generation\Names\NameData.cs" />
@@ -160,7 +156,6 @@
     <Compile Include="Dungeon\Creatures\CreatureData.cs" />
     <Compile Include="MarshalHelper.cs" />
     <Compile Include="JargMod.cs" />
-    <Compile Include="Measure.cs" />
     <Compile Include="OtherClient.cs" />
     <Compile Include="Parser\BasesCheker.cs" />
     <Compile Include="Parser\ChemesParser.cs" />

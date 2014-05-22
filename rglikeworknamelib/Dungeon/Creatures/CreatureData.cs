@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace rglikeworknamelib.Dungeon.Creatures
+﻿namespace rglikeworknamelib.Dungeon.Creatures
 {
     public class CreatureData {
         public int Damage;
@@ -19,9 +17,6 @@ namespace rglikeworknamelib.Dungeon.Creatures
         public int Hp;
 
         public float Accuracy;
-        public string Type;
-        public Type TypeParsed;
-        public string Id;
 
         public override string ToString() {
             return string.Format("{0} hp{1} dmg{2}",Name,Hp,Damage);

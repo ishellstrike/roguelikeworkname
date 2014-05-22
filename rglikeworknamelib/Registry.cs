@@ -39,21 +39,7 @@ namespace rglikeworknamelib
             {
                 floorData.Value.Id = floorData.Key;
             }
-
-
             Creatures = UniversalParser.JsonDictionaryDataLoader<CreatureData>(Settings.GetCreatureDataDirectory());
-            foreach (var creatureData in Creatures)
-            {
-                if (creatureData.Value.Type != null)
-                {
-                    creatureData.Value.TypeParsed = Type.GetType(typeof(Creature).Namespace + "." + creatureData.Value.Type);
-                }
-                else
-                {
-                    creatureData.Value.TypeParsed = typeof(Creature);
-                }
-                creatureData.Value.Id = creatureData.Key;
-            }
         }
         public void Init() {
             foreach (var source in Blocks.Where(pair => pair.Value.ItemSpawn != null))

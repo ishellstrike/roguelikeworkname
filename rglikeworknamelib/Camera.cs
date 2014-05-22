@@ -9,9 +9,9 @@ namespace rglikeworknamelib
 {
     public class Camera {
         public Camera(float aspectRation, Vector3 lookAt)
-            : this(aspectRation, MathHelper.PiOver4, lookAt, 0.1f, float.MaxValue) { }
+            : this(aspectRation, MathHelper.PiOver4, lookAt, Vector3.Up, 0.1f, float.MaxValue) { }
  
-        public Camera(float aspectRatio, float fieldOfView, Vector3 lookAt, float nearPlane, float farPlane)
+        public Camera(float aspectRatio, float fieldOfView, Vector3 lookAt, Vector3 up, float nearPlane, float farPlane)
         {
             this.aspectRatio = aspectRatio;
             this.fieldOfView = fieldOfView;           

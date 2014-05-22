@@ -11,6 +11,7 @@ using Mork;
 using NLog;
 using WMPLib;
 using rglikeworknamelib;
+using rglikeworknamelib.Dialogs;
 using rglikeworknamelib.Dungeon;
 using rglikeworknamelib.Dungeon.Buffs;
 using rglikeworknamelib.Dungeon.Bullets;
@@ -25,8 +26,6 @@ using Color = Microsoft.Xna.Framework.Color;
 using Label = rglikeworknamelib.Window.Label;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Version = rglikeworknamelib.Version;
-
-
 
 namespace jarg {
     public partial class JargMain : Game {
@@ -80,30 +79,12 @@ namespace jarg {
         private WindowSystem ws_;
 
         public JargMain() {
-#if DEBUG
-
-            var myProcess = new Process {
-                StartInfo = {
-                    FileName = "cmd.exe",
-                    Arguments =
-                        @"/C cd " + Application.StartupPath +
-                        " & VersionGetter.cmd",
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true
-                }
-            };
-            myProcess.Start();
-            myProcess.WaitForExit(3000);
-            myProcess.Close();
-            myProcess.Dispose();
-#endif
-
             if (File.Exists("JARGLog_previous.txt")) {
                 File.Delete("JARGLog_previous.txt");
             }
             if (File.Exists("JARGLog.txt")) {
                 File.Move("JARGLog.txt", "JARGLog_previous.txt");
-            }
+            } 
 
 #if DEBUG   
             CopyDir(@"..\..\..\..\rglikeworknamecontent\Data", @"Content\Data");
@@ -273,6 +254,8 @@ namespace jarg {
             ws_ = new WindowSystem(whitepixel_, font1_);
             CreateWindows(ws_);
 
+            levelWorker_ = new LevelWorker(currentFloor_);
+            levelWorker_.Start();
             Action dbl = DataBasesLoadAndThenInitialGeneration;
             dbl.BeginInvoke(null, null);
 
@@ -317,17 +300,12 @@ namespace jarg {
             var sw = new Stopwatch();
             sw.Start();
             ShowInfoWindow("Initial map generation", "");
-            currentFloor_ = new GameLevel(spriteBatch_, lineBatch_, font1_, GraphicsDevice, null);
+            currentFloor_ = new GameLevel(spriteBatch_, lineBatch_, font1_, GraphicsDevice, levelWorker_);
             if (levelWorker_ != null) {
                 levelWorker_.Stop();
                 levelWorker_ = new LevelWorker(currentFloor_);
                 levelWorker_.Start();
             }
-            else {
-                levelWorker_ = new LevelWorker(currentFloor_);
-                levelWorker_.Start();
-            }
-            currentFloor_.lw_ = levelWorker_;
 
             currentFloor_.lw_ = levelWorker_;
             player_.Inventory = inventory_;
@@ -527,11 +505,6 @@ namespace jarg {
                 FrameRateCounter.Draw(gameTime, font1_, spriteBatch_, lineBatch_, (int) Settings.Resolution.X,
                                       (int) Settings.Resolution.Y, swDraw_, swUpdate_);
             }
-#if MEASURE
-            spriteBatch_.Begin();
-            spriteBatch_.DrawString(font1_, "MEASURE DEFINED --- MEASURE DEFINED --- MEASURE DEFINED --- MEASURE DEFINED --- MEASURE DEFINED", Vector2.Zero, Color.Red);
-            spriteBatch_.End();
-#endif
         }
 
 
@@ -813,12 +786,9 @@ namespace jarg {
             spriteBatch_.DrawString(font1_, ss, new Vector2(500, 10), Color.White);
 
 
-            spriteBatch_.DrawString(font1_, string.Format("       {0} {1}", UndermouseX, UndermouseY), new Vector2(ms_.X, ms_.Y), Color.White);
+            spriteBatch_.DrawString(font1_, string.Format("       {0} {1}", UndermouseX, UndermouseY), new Vector2(ms_.X, ms_.Y),
+                                    Color.White);
 
-#if MEASURE
-            spriteBatch_.DrawString(font1_, string.Format("save = {0} from {3}{2}load = {1} from {4}{2}", Measure.sectorCreation.GetAverageTime().TotalMilliseconds, Measure.sectorSaving.GetAverageTime().TotalMilliseconds, Environment.NewLine, Measure.sectorCreation.Count, Measure.sectorSaving.Count), new Vector2(10, 200), Color.White);
-            spriteBatch_.DrawString(font1_, string.Format("store = {0} from {3}{2}unstore = {1} from {4}{2}", Measure.store.GetAverageTime().TotalMilliseconds, Measure.unstore.GetAverageTime().TotalMilliseconds, Environment.NewLine, Measure.store.Count, Measure.unstore.Count), new Vector2(10, 300), Color.White);
-#endif
             spriteBatch_.End();
         }
     }

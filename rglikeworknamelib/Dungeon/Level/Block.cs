@@ -21,17 +21,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             get { return source_; }
         }
 
-        /// <summary>
-        /// Do not use ',' '~' in serialization
-        /// </summary>
-        public virtual string Serialize() {
-            return null;
-        }
-
-        public virtual void Deserialize(string s)
-        {
-        }
-
         private ushort mTex_;
         [NonSerialized]
         private BlockData data_;
