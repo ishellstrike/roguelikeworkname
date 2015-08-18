@@ -16,10 +16,6 @@ namespace rglikeworknamelib.Dungeon.Level {
             get { return data_; }
             private set { data_ = value; }
         }
-
-        public Vector2 Source {
-            get { return source_; }
-        }
         
         [NonSerialized]
         private BlockData data_;
