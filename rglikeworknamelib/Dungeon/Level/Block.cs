@@ -20,22 +20,9 @@ namespace rglikeworknamelib.Dungeon.Level {
         public Vector2 Source {
             get { return source_; }
         }
-
-        private ushort mTex_;
+        
         [NonSerialized]
         private BlockData data_;
-
-        private Vector2 source_;
-
-        public string MTex
-        {
-            get { return Atlases.Instance.MajorIndexesReverse[mTex_]; }
-            set
-            {
-                source_ = Atlases.GetSource(value);
-                mTex_ = Atlases.Instance.MajorIndexes[value];
-            }
-        }
 
         public virtual void Update(TimeSpan ts, MapSector ms, Player p)
         {
@@ -46,11 +33,11 @@ namespace rglikeworknamelib.Dungeon.Level {
             switch (smartAction)
             {
                 case SmartAction.ActionOpenContainer:
-                    return "Осмотреть содержимое";
+                    return "ГЋГ±Г¬Г®ГІГ°ГҐГІГј Г±Г®Г¤ГҐГ°Г¦ГЁГ¬Г®ГҐ";
                 case SmartAction.ActionOpenClose:
-                    return "Открыть/Закрыть";
+                    return "ГЋГІГЄГ°Г»ГІГј/Г‡Г ГЄГ°Г»ГІГј";
                 default:
-                    return "Осмотреть";
+                    return "ГЋГ±Г¬Г®ГІГ°ГҐГІГј";
             }
         }
     }
